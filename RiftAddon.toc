@@ -1,5 +1,6 @@
 Identifier = "ImhoBags"
 Name = "Imhothar's Inventory Management"
+NameShort = "Imho's Bags"
 Description = "Grouping and sorting for your inventory in one frame."
 
 Author = "Imhothar"
@@ -10,7 +11,8 @@ Version = "0.9"
 Environment = "1.7"
 
 RunOnStartup = {
-	"Main.lua"
+	"Main.lua",
+	"ItemDB.lua",
 }
 
 SavedVariables = {

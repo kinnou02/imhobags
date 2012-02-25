@@ -2,6 +2,7 @@ local context = UI.CreateContext("ImhoBags")
 
 ImhoBags = { }
 
+local dump = dump
 local pairs = pairs
 local print = print
 local table = table
@@ -22,7 +23,9 @@ local function printTable(tbl)
 end
 
 local function slot(item)
+	print("Event.Item.Slot")
 	printTable(item)
 end
 
-table.insert(Event.Item.Slot, { slot, "ImhoBags", "slot" })
+AddonName = "ImhoBags"
+ShardName = Inspect.Shard().name
