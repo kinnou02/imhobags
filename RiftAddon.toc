@@ -7,14 +7,16 @@ Author = "Imhothar"
 Website = ""
 Email = "me@there.to"
 
-Version = "0.9"
+Version = "0.1 alpha"
 Environment = "1.7"
 
 RunOnStartup = {
 	"Main.lua",
+	"locales/de.lua",
 	"ItemDB.lua",
 }
 
 SavedVariables = {
-	ImhoBagsItems = "account",
+	ImhoBagsItemMatrix = "account",
+	ImhoBagsPlayerItemMatrix = "character",
 }
