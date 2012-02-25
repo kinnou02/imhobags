@@ -28,14 +28,12 @@ local function button_SetItem(self, type, slots, stack)
 	self.icon:SetTexture("Rift", type.icon)
 	
 	self.stackText:SetText(tostring(stack))
-	self.stackText:ResizeToText()
 	self.stackText:SetVisible(stack > 1)
 
 	if(_G.type(slots) == "table") then
 		slots = #slots
 	end
 	self.slotsText:SetText(tostring(slots))
-	self.slotsText:ResizeToText()
 	self.slotsText:SetVisible(slots > 1)
 end
 
@@ -95,3 +93,5 @@ function Ux.CreateItemButton(parent)
 	end
 	return button
 end
+
+--table.insert(Event.Tooltip, { tooltipChanged, AddonName, "ItemButton_tooltipChanged" })
