@@ -15,7 +15,12 @@ RunOnStartup = {
 	"Utils.lua",
 	
 	"locales/de.lua",
+	
 	"ItemDB.lua",
+	
+	"frames/ItemButton.lua",
+	"frames/ItemWindow.lua",
+	"UiMain.lua",
 }
 
 SavedVariables = {
