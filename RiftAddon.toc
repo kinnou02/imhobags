@@ -1,0 +1,18 @@
+Identifier = "ImhoBags"
+Name = "Imhothar's Inventory Management"
+Description = "Grouping and sorting for your inventory in one frame."
+
+Author = "Imhothar"
+Website = ""
+Email = "me@there.to"
+
+Version = "0.9"
+Environment = "1.7"
+
+RunOnStartup = {
+	"Main.lua"
+}
+
+SavedVariables = {
+	ImhoBagsItems = "account",
+}
