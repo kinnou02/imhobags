@@ -91,34 +91,43 @@ local function extractUnsortedPlayerItems(prefix, condense)
 			table.insert(items, { type = detail, slots = { v[1] }, stack = v[2] })
 		end
 	end
-	return items
+	return items, { }, true
 end
 
 local function extractUnsortedCharacterItems(matrix, prefix, condense)
+	local items = { }
+	local success = true
 	for itemType, slots in pairs(matrix.items) do
 		-- Technically, the player is not able to manipulate items of
 		-- other characters, but we keep the stacking consistent to
 		-- keep the spatial location as visual clue
 		local usedFullSlots = { }
 		local usedPartialSlots = { }
-		local detail = Inspect.Item.Detail(itemType)
-		local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
-		for slot, stack in pairs(slots) do
-			if(string.find(slot, prefix, 1, true) and not string.find(slot, "bg.", 3, true)) then
-				if(condense and stack == stackMax) then
-					table.insert(usedFullSlots, stack)
-				else
-					table.insert(usedPartialSlots, stack)
+		-- If looking at other characters item information might not be available.
+		-- In this case Inspect.Item.Detail throws an error and we need to remember
+		-- to ask later.
+		local result, detail = pcall(Inspect.Item.Detail, itemType)
+		success = success and result
+		if(result) then
+			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
+			for slot, stack in pairs(slots) do
+				if(string.find(slot, prefix, 1, true) and not string.find(slot, "bg.", 3, true)) then
+					if(condense and stack == stackMax) then
+						table.insert(usedFullSlots, stack)
+					else
+						table.insert(usedPartialSlots, stack)
+					end
 				end
 			end
-		end
-		if(#usedFullSlots > 0) then
-			table.insert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
-		end
-		for k, v in ipairs(usedPartialSlots) do
-			table.insert(items, { type = detail, slots = 1, stack = v })
+			if(#usedFullSlots > 0) then
+				table.insert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
+			end
+			for k, v in ipairs(usedPartialSlots) do
+				table.insert(items, { type = detail, slots = 1, stack = v })
+			end
 		end
 	end
+	return items, 0, success
 end
 
 -- Public methods
@@ -130,24 +139,39 @@ location: "inventory", "bank"
 condense: true to condense max stacks together into one displayed item
 predicate: a function to call for sorting items (a, b) => boolean
 	both parameters are item type tables as returned by Inspect.Item.Detail()
-return: For the player, the return value has the following structure:
-[#] = {
-	name = "Name of category",
-	[#] = {
-		type = result of Inspect.Item.Detail(type),
-		slots = { array of item slots }
-		stack = #, -- displayed stack size
+return: items, empty, success
+	"success" determines whether all items could be retrieved successfully or
+	whether the local item cache is incomplete and you have to try again later.
+	This is common if requesting items from other characters than the player.
+	
+	The other return values are as follows:
+	
+	For the player, the return value has the following structure:
+	items = {
+		[#] = {
+			name = "Name of category",
+			[#] = {
+				type = result of Inspect.Item.Detail(type),
+				slots = { array of item slots }
+				stack = #, -- displayed stack size
+			}
+		}
 	}
-}
-For all other characters the structure is as follows:
-[#] = {
-	name = "Name of category",
-	[#] = {
-		type = result of Inspect.Item.Detail(type),
-		slots = number,
-		stack = #, -- displayed stack size
+	empty = {
+		[#] = slot
 	}
-}
+	For all other characters the structure is as follows:
+	items = {
+		[#] = {
+			name = "Name of category",
+			[#] = {
+				type = result of Inspect.Item.Detail(type),
+				slots = number,
+				stack = #, -- displayed stack size
+			}
+		}
+	}
+	empty = number
 ]]
 function ItemDB:GetItems(character, location, condense, predicate)
 	-- Find out the slot prefix we are lookign for
@@ -164,14 +188,14 @@ function ItemDB:GetItems(character, location, condense, predicate)
 	if(character == "player") then
 		matrix = playerItemMatrix;
 	else
-		character = _G.ImhoBagsItemMatrix[Inspect.Shard().name][character] or { items = { }, slots = { } }
+		matrix = _G.ImhoBagsItemMatrix[Inspect.Shard().name][character] or { items = { }, slots = { } }
 	end
 	-- Dump all relevant items into a temporary table to be sorted later
-	local items;
+	local items, empty, success;
 	if(character == "player") then
-		items = extractUnsortedPlayerItems(prefix, condense)
+		items, empty, success = extractUnsortedPlayerItems(prefix, condense)
 	else
-		items = extractUnsortedCharaterItems(matrix, prefix, condense)
+		items, empty, success = extractUnsortedCharacterItems(matrix, prefix, condense)
 	end
 	-- Sort according to provided predicate
 	-- HACK: hardoced stable sort by category, make this customizable
@@ -199,7 +223,7 @@ function ItemDB:GetItems(character, location, condense, predicate)
 	end
 	-- And finally sort by category name
 	table.sort(result, function(a, b) return a.name < b.name end)
-	return result
+	return result, empty, success
 end
 
 table.insert(Event.Addon.Startup.End, { startupEnd, AddonName, "ItemDB_startupEnd" })
