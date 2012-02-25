@@ -113,10 +113,10 @@ local function extractUnsortedCharacterItems(matrix, prefix, condense)
 			end
 		end
 		if(#usedFullSlots > 0) then
-			table.insert(items, { type = detail, stack = #usedFullSlots * stackMax })
+			table.insert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
 		end
 		for k, v in ipairs(usedPartialSlots) do
-			table.insert(items, { type = detail, stack = v })
+			table.insert(items, { type = detail, slots = 1, stack = v })
 		end
 	end
 end
@@ -144,6 +144,7 @@ For all other characters the structure is as follows:
 	name = "Name of category",
 	[#] = {
 		type = result of Inspect.Item.Detail(type),
+		slots = number,
 		stack = #, -- displayed stack size
 	}
 }
@@ -173,6 +174,8 @@ function ItemDB:GetItems(character, location, condense, predicate)
 		items = extractUnsortedCharaterItems(matrix, prefix, condense)
 	end
 	-- Sort according to provided predicate
+	-- HACK: hardoced stable sort by category, make this customizable
+	table.sort(items, function(a, b) return (a.type.category < b.type.category) or (a.type.category == b.type.category and a.type.name < b.type.name) end)
 	table.sort(items, function(a, b) return predicate(a.type, b.type) end)
 	-- Build the sorted category table
 	local result = { }
