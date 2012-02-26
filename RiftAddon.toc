@@ -15,6 +15,7 @@ RunOnStartup = {
 	"Utils.lua",
 	
 	"locales/de.lua",
+	"locales/en.lua",
 	
 	"ItemDB.lua",
 	
