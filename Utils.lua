@@ -12,6 +12,6 @@ setfenv(1, ImhoBags)
 Utils = { }
 
 function Utils.RarityColor(rarity)
-	local col = rarityColors[rarity] or rarityColors.common
-	return { r = col[1], g = col[2], b = col[3] }
+	local col = rarityColors[rarity or ""] or rarityColors.common
+	return col[1], col[2], col[3]
 end
