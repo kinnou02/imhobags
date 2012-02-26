@@ -109,7 +109,8 @@ local function extractUnsortedCharacterItems(matrix, prefix, condense)
 		local result, detail = pcall(Inspect.Item.Detail, itemType)
 		success = success and result
 		if(result) then
-			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
+			-- Non-stackable items have stackMax = nil and must not be condensed
+			local stackMax = detail.stackMax or 0
 			for slot, stack in pairs(slots) do
 				if(string.find(slot, prefix, 1, true) and not string.find(slot, "bg.", 3, true)) then
 					if(condense and stack == stackMax) then
