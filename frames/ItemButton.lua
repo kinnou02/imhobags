@@ -35,6 +35,8 @@ local function button_SetItem(self, type, slots, stack)
 	end
 	self.slotsText:SetText(tostring(slots))
 	self.slotsText:SetVisible(slots > 1)
+	
+	self:SetBackgroundColor(Utils.RarityColor(type.rarity))
 end
 
 local function button_Dispose(self)
@@ -52,7 +54,7 @@ local function button_MouseIn(self)
 	Command.Tooltip(target)
 end
 
-local function button_MouseOut(self, ...)
+local function button_MouseOut(self)
 	Command.Tooltip(nil)
 end
 
@@ -61,18 +63,16 @@ function Ux.CreateItemButton(parent)
 	if(#cachedButtons == 0) then
 		button = UI.CreateFrame("Frame", "ImhoBags_ItemButton", parent)
 		
-		-- TODO: Add background image for "empty button"
-		
 		button:SetWidth(ItemButtonWidth)
 		button:SetHeight(ItemButtonHeight)
 		
 		button.icon = UI.CreateFrame("Texture", "", button)
 		button.icon:SetPoint("CENTER", button, "CENTER")
-		button.icon:SetHeight(button:GetHeight())
-		button.icon:SetWidth(button:GetWidth())
+		button.icon:SetHeight(button:GetHeight() - 2)
+		button.icon:SetWidth(button:GetWidth() - 2)
 		
 		button.stackText = UI.CreateFrame("Text", "", button)
-		button.stackText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+		button.stackText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, -2)
 		button.stackText:SetFontSize(13)
 		button.stackText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
 		button.stackText:SetLayer(button:GetLayer() + 1)
