@@ -1,3 +1,7 @@
+local identifier = (...).id
+local addon = (...).data
+
+-- Builtins
 local _G = _G
 local ipairs = ipairs
 local pairs = pairs
@@ -8,6 +12,7 @@ local table = table
 local tostring = tostring
 local type = type
 
+-- Globals
 local dump = dump
 
 local Event = Event
@@ -20,7 +25,7 @@ local readonly = true
 
 local categoryCache = { } -- Used for avoiding string.match on known categories
 
-setfenv(1, ImhoBags)
+setfenv(1, addon)
 ItemDB = { }
 
 -- Private methods
@@ -228,7 +233,7 @@ function ItemDB:GetItems(character, location, condense, predicate)
 	return result, empty, success
 end
 
-table.insert(Event.Addon.Startup.End, { startupEnd, AddonName, "ItemDB_startupEnd" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, AddonName, "ItemDB_saveVariables" })
-table.insert(Event.Item.Slot, { mergeSlotUpdate, AddonName, "ItemDB_mergeSlotUpdate" })
-table.insert(Event.Item.Update, { function(arg) print("Event.Item.Update") dump(arg) end, AddonName, "ItemDB_print" })
+table.insert(Event.Addon.Startup.End, { startupEnd, identifier, "ItemDB_startupEnd" })
+table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, identifier, "ItemDB_saveVariables" })
+table.insert(Event.Item.Slot, { mergeSlotUpdate, identifier, "ItemDB_mergeSlotUpdate" })
+table.insert(Event.Item.Update, { function(arg) print("Event.Item.Update") dump(arg) end, identifier, "ItemDB_print" })

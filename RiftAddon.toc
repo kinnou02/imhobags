@@ -28,3 +28,6 @@ SavedVariables = {
 	ImhoBagsItemMatrix = "account",
 	ImhoBagsPlayerItemMatrix = "character",
 }
+
+-- Set this value to true to enable chat spamming debug messages and other debugging facilities
+debug = true

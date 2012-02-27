@@ -1,8 +1,11 @@
-local context = UI.CreateContext("ImhoBags")
+local identifier = (...).id
+local toc = (...).toc
+local addon = (...).data
 
-ImhoBags = { }
+if(toc.debug) then
+	_G[identifier] = addon
+end
 
-local dump = dump
 local pairs = pairs
 local print = print
 local table = table
@@ -13,19 +16,6 @@ local Event = Event
 local Inspect = Inspect
 local UI = UI
 
+setfenv(1, addon)
 
-setfenv(1, ImhoBags)
-
-local function printTable(tbl)
-	for k, v in pairs(tbl) do
-		print("["..k.."] = "..tostring(v))
-	end
-end
-
-local function slot(item)
-	print("Event.Item.Slot")
-	printTable(item)
-end
-
-AddonName = "ImhoBags"
-ShardName = Inspect.Shard().name
+debug = (toc.debug and print) or function() end

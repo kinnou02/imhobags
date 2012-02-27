@@ -1,3 +1,5 @@
+local addon = (...).data
+
 local _G = _G
 local print = print
 local table = table
@@ -14,7 +16,7 @@ local UI = UI
 -- Calling Dispose() on a button moves it back to the cache
 local cachedButtons = { }
 
-setfenv(1, ImhoBags)
+setfenv(1, addon)
 Ux = Ux or { }
 
 ItemButtonWidth = 48

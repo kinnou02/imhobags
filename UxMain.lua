@@ -1,11 +1,14 @@
+local identifier = (...).id
+local addon = (...).data
+
 local _G = _G
 
 local UI = UI
 
-setfenv(1, ImhoBags)
+setfenv(1, addon)
 Ux = Ux or { }
 
-Context = UI.CreateContext(AddonName)
+Context = UI.CreateContext(identifier)
 
 BackpackWindow = CreateItemWindow("Rucksack")
 BackpackWindow:SetPoint("CENTER", _G.UIParent, "CENTER", 0, 0)

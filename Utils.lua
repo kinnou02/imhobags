@@ -1,3 +1,5 @@
+local addon = (...).data
+
 local rarityColors = {
 	sellable =	{ 0.34375, 0.34375, 0.34375 },
 	common =	{    0.98,    0.98,    0.98 },
@@ -8,7 +10,7 @@ local rarityColors = {
 	relic =		{     1.0,     0.5,     0.0 },
 }
 
-setfenv(1, ImhoBags)
+setfenv(1, addon)
 Utils = { }
 
 function Utils.RarityColor(rarity)
