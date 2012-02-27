@@ -61,6 +61,7 @@ local function saveVariables(addonName)
 		return
 	end
 	
+	playerItemMatrix.faction = Inspect.Unit.Detail("player").faction
 	_G.ImhoBagsItemMatrix[Inspect.Shard().name][Inspect.Unit.Detail("player").name] = playerItemMatrix
 	_G.ImhoBagsPlayerItemMatrix = playerItemMatrix
 end
