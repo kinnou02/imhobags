@@ -8,6 +8,7 @@ end
 
 local pairs = pairs
 local print = print
+local string = string
 local table = table
 local tostring = tostring
 
@@ -18,4 +19,8 @@ local UI = UI
 
 setfenv(1, addon)
 
-debug = (toc.debug and print) or function() end
+if(toc.debug) then
+	debug = function(...) print(string.tostring(...)) end
+else
+	debug = function() end
+end

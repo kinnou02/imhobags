@@ -10,6 +10,10 @@ Email = "me@there.to"
 Version = "0.1 alpha"
 Environment = "1.7"
 
+Dependencies = {
+	LibString = { "required", "before" }
+}
+
 RunOnStartup = {
 	"Main.lua",
 	"Utils.lua",
