@@ -21,7 +21,7 @@ RunOnStartup = {
 	
 	"frames/ItemButton.lua",
 	"frames/ItemWindow.lua",
-	"UiMain.lua",
+	"UxMain.lua",
 }
 
 SavedVariables = {
