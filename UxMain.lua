@@ -8,15 +8,16 @@ local UI = UI
 setfenv(1, addon)
 Ux = Ux or { }
 
-Context = UI.CreateContext(identifier)
+Ux.Context = UI.CreateContext(identifier)
 
-BackpackWindow = CreateItemWindow("Rucksack")
-BackpackWindow:SetPoint("CENTER", _G.UIParent, "CENTER", 0, 0)
+local window = CreateItemWindow("Rucksack")
+window:SetPoint("CENTER", _G.UIParent, "CENTER", 0, 0)
+Ux.BackpackWindow = window
 
-local button = UI.CreateFrame("RiftButton", "", BackpackWindow)
+local button = UI.CreateFrame("RiftButton", "", Ux.BackpackWindow)
 button:SetText("Test")
-button:SetPoint("BOTTOMCENTER", BackpackWindow, "BOTTOMCENTER", 0, -5)
+button:SetPoint("BOTTOMCENTER", Ux.BackpackWindow, "BOTTOMCENTER", 0, -5)
 function button.Event:LeftClick()
 	local items = ItemDB:GetItems("player", "bank", true, function(a, b) return a.name < b.name end)
-	BackpackWindow:UpdateItems(items)
+	Ux.BackpackWindow:UpdateItems(items)
 end
