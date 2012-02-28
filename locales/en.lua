@@ -22,5 +22,7 @@ L =
 		misc = "Miscellaneous",
 		planar = "Planar",
 		weapon = "Weapons",
+		-- Used for the collapsible group with sellable items
+		sellable = "Junk"
 	},
 }

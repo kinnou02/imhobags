@@ -15,12 +15,14 @@ L =
 	-- only the first word is used for grouping/sorting and needs to be translated.
 	-- Should match the headings in the auction house.
 	CategoryNames = {
-		["armor"] = "Rüstung",
-		["consumable"] = "Verbrauchsgüter",
-		["container"] = "Behälter",
-		["crafting"] = "Handwerk",
-		["misc"] = "Verschiedenes",
-		["planar"] = "Ebenenobjekte",
-		["weapon"] = "Waffen",
+		armor = "Rüstung",
+		consumable = "Verbrauchsgüter",
+		container = "Behälter",
+		crafting = "Handwerk",
+		misc = "Verschiedenes",
+		planar = "Ebenenobjekte",
+		weapon = "Waffen",
+		-- Used for the collapsible group with sellable items
+		sellable = "Plunder"
 	},
 }
