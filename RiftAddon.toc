@@ -15,13 +15,14 @@ Dependencies = {
 }
 
 RunOnStartup = {
-	"Main.lua",
-	"Utils.lua",
-	
 	"locales/de.lua",
 	"locales/en.lua",
 	
+	"Main.lua",
+	"Utils.lua",
+	
 	"ItemDB.lua",
+	"ItemMatrix.lua",
 	
 	"frames/ItemButton.lua",
 	"frames/ItemWindow.lua",

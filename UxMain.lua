@@ -1,4 +1,4 @@
-local identifier = (...).id
+﻿local identifier = (...).id
 local addon = (...).data
 
 local _G = _G
@@ -18,6 +18,6 @@ local button = UI.CreateFrame("RiftButton", "", Ux.BackpackWindow)
 button:SetText("Test")
 button:SetPoint("BOTTOMCENTER", Ux.BackpackWindow, "BOTTOMCENTER", 0, -5)
 function button.Event:LeftClick()
-	local items = ItemDB:GetItems("player", "bank", true, function(a, b) return a.name < b.name end)
-	Ux.BackpackWindow:UpdateItems(items)
+	local matrix = ItemDB.GetItemMatrix("player", "bank")
+	Ux.BackpackWindow:SetItemMatrix(matrix)
 end
