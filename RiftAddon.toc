@@ -23,6 +23,7 @@ RunOnStartup = {
 	
 	"ItemDB.lua",
 	"ItemMatrix.lua",
+	"Sort.Default.lua",
 	
 	"frames/ItemButton.lua",
 	"frames/ItemWindow.lua",
