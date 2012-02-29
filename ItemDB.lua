@@ -30,7 +30,7 @@ ItemDB = { }
 -- Private methods
 -- ============================================================================
 
-local function newCharacter()
+local function ItemDB_newCharacter()
 	return {
 		-- List only locations we care about
 		bank = ItemMatrix.New(),
@@ -41,7 +41,7 @@ local function newCharacter()
 	}
 end
 
-local function mergeSlotChanges(slots)
+local function ItemDB_mergeSlotChanges(slots)
 	for slot, item in pairs(slots) do
 		local container, bag, index = Utility.Item.Slot.Parse(slot)
 		local matrix = playerItems[container]
@@ -51,7 +51,7 @@ local function mergeSlotChanges(slots)
 	end
 end
 
-local function variablesLoaded(addonIdentifier)
+local function ItemDB_variablesLoaded(addonIdentifier)
 	if(addonIdentifier ~= identifier) then
 		return
 	end
@@ -84,7 +84,7 @@ local function variablesLoaded(addonIdentifier)
 	ItemMatrix.ApplyMetaTable(playerItems.wardrobe)
 end
 
-local function saveVariables(addonIdentifier)
+local function ItemDB_saveVariables(addonIdentifier)
 	if(addonIdentifier ~= identifier) then
 		return
 	end
@@ -115,7 +115,7 @@ function ItemDB.GetItemMatrix(character, location)
 	if(character == "player" or Inspect.Unit.Detail("player").name == character) then
 		matrix = playerItems;
 	else
-		matrix = _G.ImhoBagsItemMatrix[Inspect.Shard().name][character] or newCharacter()
+		matrix = _G.ImhoBagsItemMatrix[Inspect.Shard().name][character] or ItemDB_newCharacter()
 	end
 	return matrix[location] or ItemMatrix.New()
 end
@@ -140,7 +140,7 @@ function ItemDB.IsPlayerMatrix(matrix)
 	return false
 end
 
-table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, identifier, "ItemDB_variablesLoaded" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, identifier, "ItemDB_saveVariables" })
-table.insert(Event.Item.Slot, { mergeSlotChanges, identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Item.Update, { mergeSlotChanges, identifier, "ItemDB_mergeSlotChanges" })
+table.insert(Event.Addon.SavedVariables.Load.End, { ItemDB_variablesLoaded, identifier, "ItemDB_variablesLoaded" })
+table.insert(Event.Addon.SavedVariables.Save.Begin, { ItemDB_saveVariables, identifier, "ItemDB_saveVariables" })
+table.insert(Event.Item.Slot, { ItemDB_mergeSlotChanges, identifier, "ItemDB_mergeSlotChanges" })
+table.insert(Event.Item.Update, { ItemDB_mergeSlotChanges, identifier, "ItemDB_mergeSlotChanges" })

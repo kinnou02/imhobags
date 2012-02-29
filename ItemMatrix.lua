@@ -20,7 +20,7 @@ ItemMatrix = { }
 -- Private methods
 -- ============================================================================
 
-local function extractUnsortedPlayerItems(matrix, condensed)
+local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	local items = { }
 	for itemType, slots in pairs(matrix.items) do
 		-- We have to treat full and partial stacks differently
@@ -52,7 +52,7 @@ local function extractUnsortedPlayerItems(matrix, condensed)
 	return items, empty, true
 end
 
-local function extractUnsortedCharacterItems(matrix, condensed)
+local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
 	local items = { }
 	local success = true
 	for itemType, slots in pairs(matrix.items) do
@@ -111,7 +111,11 @@ function ItemMatrix.New()
 		},
 		lastUpdate = -1, -- Forced to -1 on save
 	}
-	return setmetatable(matrix, matrixMetaTable)
+	return setmetatable(matrix, ItemMatrix_matrixMetaTable)
+end
+
+function ItemMatrix.ApplyMetaTable(matrix)
+	return setmetatable(matrix, ItemMatrix_matrixMetaTable)
 end
 
 --[[
@@ -240,14 +244,10 @@ function ItemMatrix.GetGroupedItems(matrix, items, group)
 	return groups, keys
 end
 
-local matrixMetaTable = {
+local ItemMatrix_matrixMetaTable = {
 	__index = {
 		MergeSlot = ItemMatrix.MergeSlot,
 		GetGroupedItems = ItemMatrix.GetGroupedItems,
 		GetUnsortedItems = ItemMatrix.GetUnsortedItems,
 	}
 }
-
-function ItemMatrix.ApplyMetaTable(matrix)
-	return setmetatable(matrix, matrixMetaTable)
-end

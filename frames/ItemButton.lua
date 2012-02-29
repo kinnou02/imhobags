@@ -41,12 +41,12 @@ local function button_SetItem(self, type, slots, stack)
 	self:SetBackgroundColor(Utils.RarityColor(type.rarity))
 end
 
-local function button_Dispose(self)
+local function ItemButton_Dispose(self)
 	table.insert(cachedButtons, self)
 	self:SetVisible(false)
 end
 
-local function button_MouseIn(self)
+local function ItemButton_MouseIn(self)
 	local target
 	if(type(self.slots) == "table") then
 		target = Inspect.Item.Detail(self.slots[1]).id
@@ -56,11 +56,11 @@ local function button_MouseIn(self)
 	Command.Tooltip(target)
 end
 
-local function button_MouseOut(self)
+local function ItemButton_MouseOut(self)
 	Command.Tooltip(nil)
 end
 
-function Ux.CreateItemButton(parent)
+function Ux.ItemButton.New(parent)
 	local button
 	if(#cachedButtons == 0) then
 		button = UI.CreateFrame("Frame", "ImhoBags_ItemButton", parent)
@@ -86,10 +86,10 @@ function Ux.CreateItemButton(parent)
 		button.slotsText:SetFontColor(0.8, 0.8, 0.8)
 		button.slotsText:SetLayer(button:GetLayer() + 1)
 		
-		button.SetItem = button_SetItem
-		button.Dispose = button_Dispose
-		button.Event.MouseIn = button_MouseIn
-		button.Event.MouseOut = button_MouseOut
+		button.SetItem = ItemButton_SetItem
+		button.Dispose = ItemButton_Dispose
+		button.Event.MouseIn = ItemButton_MouseIn
+		button.Event.MouseOut = ItemButton_MouseOut
 	else
 		button = table.remove(cachedButtons)
 		button:SetVisible(true)
