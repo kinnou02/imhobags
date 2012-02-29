@@ -92,8 +92,7 @@ function Ux.CreateItemButton(parent)
 		button.Event.MouseOut = button_MouseOut
 	else
 		button = table.remove(cachedButtons)
+		button:SetVisible(true)
 	end
 	return button
 end
-
---table.insert(Event.Tooltip, { tooltipChanged, AddonName, "ItemButton_tooltipChanged" })
