@@ -28,7 +28,7 @@ L =
 	
 	-- Titles for various windows
 	WindowTitles = {
-		inventory = "Backpack",
-		bank = "Bank",
+		inventory = "BACKPACK",
+		bank = "BANK",
 	}
 }

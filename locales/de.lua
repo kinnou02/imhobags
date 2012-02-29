@@ -26,9 +26,10 @@ L =
 		sellable = "Plunder"
 	},
 	
-	-- Titles for various windows
+	-- Titles for various windows.
+	-- They are all caps as in the default Rift containers
 	WindowTitles = {
-		inventory = "Rucksack",
-		bank = "Bank",
+		inventory = "RUCKSACK",
+		bank = "BANK",
 	}
 }
