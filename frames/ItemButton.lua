@@ -60,6 +60,24 @@ local function ItemButton_ShowTooltip(self)
 		target = self.type.type
 	end
 	Command.Tooltip(target)
+	-- TODO: position tooltip near button
+end
+
+local function ItemButton_RightDown(self)
+	if(type(self.slots) == "table") then
+		self.commandTarget = self.slots[1]
+	end
+end
+
+local function ItemButton_RightUp(self)
+	if(self.commandTarget) then
+		-- TODO: use item
+	end
+	self.commandTarget = nil
+end
+
+local function ItemButton_RightUpoutside(self)
+	self.commandTarget = nil
 end
 
 -- Public methods
@@ -98,6 +116,10 @@ function Ux.ItemButton.New(parent)
 		button.SetItem = ItemButton_SetItem
 		button.Dispose = ItemButton_Dispose
 		button.ShowTooltip = ItemButton_ShowTooltip
+		
+		button.Event.RightDown = ItemButton_RightDown
+		button.Event.RightUp = ItemButton_RightUp
+		button.Event.RightUpoutside = ItemButton_RightUpoutside
 	else
 		button = table.remove(cachedButtons)
 		button:SetVisible(true)
