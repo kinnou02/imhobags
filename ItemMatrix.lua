@@ -114,10 +114,6 @@ function ItemMatrix.New()
 	return setmetatable(matrix, ItemMatrix_matrixMetaTable)
 end
 
-function ItemMatrix.ApplyMetaTable(matrix)
-	return setmetatable(matrix, ItemMatrix_matrixMetaTable)
-end
-
 --[[
 Merge a slot change into the matrix.
 Also available as instance metamethod.
@@ -192,9 +188,9 @@ return: items, empty, success
 ]]
 function ItemMatrix.GetUnsortedItems(matrix, condensed)
 	if(ItemDB.IsPlayerMatrix(matrix)) then
-		return extractUnsortedPlayerItems(matrix, condensed, groupOf)
+		return ItemMatrix_extractUnsortedPlayerItems(matrix, condensed, groupOf)
 	else
-		return extractUnsortedCharacterItems(matrix, condensed, groupOf)
+		return ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, groupOf)
 	end
 end
 
@@ -251,3 +247,7 @@ local ItemMatrix_matrixMetaTable = {
 		GetUnsortedItems = ItemMatrix.GetUnsortedItems,
 	}
 }
+
+function ItemMatrix.ApplyMetaTable(matrix)
+	return setmetatable(matrix, ItemMatrix_matrixMetaTable)
+end
