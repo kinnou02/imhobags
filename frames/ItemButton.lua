@@ -52,12 +52,6 @@ local function ItemButton_Dispose(self)
 	self:SetVisible(false)
 end
 
-local function ItemButton_MouseMove(self)
-	-- Relay mouse move to parent, doesn't happen with active mouse events
-	local parent = self:GetParent()
-	parent.Event.MouseMove(parent)
-end
-
 local function ItemButton_ShowTooltip(self)
 	local target
 	if(type(self.slots) == "table") then
@@ -67,6 +61,18 @@ local function ItemButton_ShowTooltip(self)
 	end
 	Command.Tooltip(target)
 	-- TODO: position tooltip near button
+end
+
+local function ItemButton_MouseMove(self)
+	ItemButton_ShowTooltip(self)
+end
+
+local function ItemButton_MouseOut(self)
+	Command.Tooltip(nil)
+end
+
+local function ItemButton_MouseIn(self)
+	ItemButton_ShowTooltip(self)
 end
 
 local function ItemButton_RightDown(self)
@@ -122,6 +128,8 @@ function Ux.ItemButton.New(parent)
 		button.ShowTooltip = ItemButton_ShowTooltip
 		
 		button.Event.MouseMove = ItemButton_MouseMove
+		button.Event.MouseOut = ItemButton_MouseOut
+		button.Event.MouseIn = ItemButton_MouseIn
 		button.Event.RightDown = ItemButton_RightDown
 		button.Event.RightUp = ItemButton_RightUp
 		button.Event.RightUpoutside = ItemButton_RightUpoutside
