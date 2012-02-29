@@ -25,4 +25,10 @@ L =
 		-- Used for the collapsible group with sellable items
 		sellable = "Plunder"
 	},
+	
+	-- Titles for various windows
+	WindowTitles = {
+		inventory = "Rucksack",
+		bank = "Bank",
+	}
 }
