@@ -21,9 +21,9 @@ setfenv(1, addon)
 Ux = Ux or { }
 Ux.ItemButton = { }
 
-Ux.ItemButtonWidth = 48
-Ux.ItemButtonHeight = 48
-Ux.ItemButtonBorder = 1
+Ux.ItemButtonWidth = 50
+Ux.ItemButtonHeight = 50
+Ux.ItemButtonBorder = 2
 
 -- Private methods
 -- ============================================================================
