@@ -52,6 +52,12 @@ local function ItemButton_Dispose(self)
 	self:SetVisible(false)
 end
 
+local function ItemButton_MouseMove(self)
+	-- Relay mouse move to parent, doesn't happen with active mouse events
+	local parent = self:GetParent()
+	parent.Event.MouseMove(parent)
+end
+
 local function ItemButton_ShowTooltip(self)
 	local target
 	if(type(self.slots) == "table") then
@@ -90,20 +96,18 @@ function Ux.ItemButton.New(parent)
 		
 		button:SetWidth(Ux.ItemButtonWidth)
 		button:SetHeight(Ux.ItemButtonHeight)
-		button:SetMouseMasking("full")
+		button:SetMouseMasking("limited")
 		
 		local border = Ux.ItemButtonBorder
 		button.icon = UI.CreateFrame("Texture", "", button)
 		button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", border, border)
 		button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -border, -border)
-		button.icon:SetMouseMasking("limited")
 		
 		button.stackText = UI.CreateFrame("Text", "", button)
 		button.stackText:SetPoint("BOTTOMRIGHT", button.icon, "BOTTOMRIGHT", 0, 0)
 		button.stackText:SetFontSize(13)
 		button.stackText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
 		button.stackText:SetLayer(button:GetLayer() + 1)
-		button.stackText:SetMouseMasking("limited")
 		
 		button.slotsText = UI.CreateFrame("Text", "", button)
 		button.slotsText:SetPoint("BOTTOMRIGHT", button.stackText, "TOPRIGHT", 0, 0)
@@ -117,6 +121,7 @@ function Ux.ItemButton.New(parent)
 		button.Dispose = ItemButton_Dispose
 		button.ShowTooltip = ItemButton_ShowTooltip
 		
+		button.Event.MouseMove = ItemButton_MouseMove
 		button.Event.RightDown = ItemButton_RightDown
 		button.Event.RightUp = ItemButton_RightUp
 		button.Event.RightUpoutside = ItemButton_RightUpoutside
