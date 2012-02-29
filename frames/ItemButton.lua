@@ -9,6 +9,7 @@ local type = type
 local dump = dump
 
 local Command = Command
+local Event = Event
 local Inspect = Inspect
 local UI = UI
 
@@ -18,11 +19,16 @@ local cachedButtons = { }
 
 setfenv(1, addon)
 Ux = Ux or { }
+Ux.ItemButton = { }
 
-ItemButtonWidth = 48
-ItemButtonHeight = 48
+Ux.ItemButtonWidth = 48
+Ux.ItemButtonHeight = 48
+Ux.ItemButtonBorder = 1
 
-local function button_SetItem(self, type, slots, stack)
+-- Private methods
+-- ============================================================================
+
+local function ItemButton_SetItem(self, type, slots, stack)
 	self.type = type
 	self.slots = slots
 	self.stack = stack
@@ -46,7 +52,7 @@ local function ItemButton_Dispose(self)
 	self:SetVisible(false)
 end
 
-local function ItemButton_MouseIn(self)
+local function ItemButton_ShowTooltip(self)
 	local target
 	if(type(self.slots) == "table") then
 		target = Inspect.Item.Detail(self.slots[1]).id
@@ -56,28 +62,30 @@ local function ItemButton_MouseIn(self)
 	Command.Tooltip(target)
 end
 
-local function ItemButton_MouseOut(self)
-	Command.Tooltip(nil)
-end
+-- Public methods
+-- ============================================================================
 
 function Ux.ItemButton.New(parent)
 	local button
 	if(#cachedButtons == 0) then
 		button = UI.CreateFrame("Frame", "ImhoBags_ItemButton", parent)
 		
-		button:SetWidth(ItemButtonWidth)
-		button:SetHeight(ItemButtonHeight)
+		button:SetWidth(Ux.ItemButtonWidth)
+		button:SetHeight(Ux.ItemButtonHeight)
+		button:SetMouseMasking("full")
 		
+		local border = Ux.ItemButtonBorder
 		button.icon = UI.CreateFrame("Texture", "", button)
-		button.icon:SetPoint("CENTER", button, "CENTER")
-		button.icon:SetHeight(button:GetHeight() - 2)
-		button.icon:SetWidth(button:GetWidth() - 2)
+		button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", border, border)
+		button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -border, -border)
+		button.icon:SetMouseMasking("limited")
 		
 		button.stackText = UI.CreateFrame("Text", "", button)
-		button.stackText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, -2)
+		button.stackText:SetPoint("BOTTOMRIGHT", button.icon, "BOTTOMRIGHT", 0, 0)
 		button.stackText:SetFontSize(13)
 		button.stackText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
 		button.stackText:SetLayer(button:GetLayer() + 1)
+		button.stackText:SetMouseMasking("limited")
 		
 		button.slotsText = UI.CreateFrame("Text", "", button)
 		button.slotsText:SetPoint("BOTTOMRIGHT", button.stackText, "TOPRIGHT", 0, 0)
@@ -85,11 +93,11 @@ function Ux.ItemButton.New(parent)
 		button.slotsText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
 		button.slotsText:SetFontColor(0.8, 0.8, 0.8)
 		button.slotsText:SetLayer(button:GetLayer() + 1)
+		button.slotsText:SetMouseMasking("limited")
 		
 		button.SetItem = ItemButton_SetItem
 		button.Dispose = ItemButton_Dispose
-		button.Event.MouseIn = ItemButton_MouseIn
-		button.Event.MouseOut = ItemButton_MouseOut
+		button.ShowTooltip = ItemButton_ShowTooltip
 	else
 		button = table.remove(cachedButtons)
 		button:SetVisible(true)

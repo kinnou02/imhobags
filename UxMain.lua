@@ -26,7 +26,7 @@ local function Ux_addonStartupEnd()
 		local title = L.WindowTitles[v[1]]
 		local window = Ux.ItemWindow.New(title,"player", v[1], true, v[2])
 		-- TODO: Restore window position
-		window:SetPoint("CENTER", _G.UIParent, "CENTER", 0, 0)
+--		window:SetPoint("TOPLEFT", _G.UIParent, "TOPLEFT", 0, 0)
 		Ux[k] = window
 	end
 end
