@@ -3,6 +3,7 @@ local addon = (...).data
 
 -- Builtins
 local ipairs = ipairs
+local next = next
 local pairs = pairs
 local pcall = pcall
 local table = table
@@ -94,10 +95,6 @@ end
 
 -- Public methods
 -- ============================================================================
-
-function ItemMatrix.ApplyMetaTable(matrix)
-	return setmetatable(matrix, matrixMetaTable)
-end
 
 function ItemMatrix.New()
 	local matrix = {
@@ -245,8 +242,12 @@ end
 
 local matrixMetaTable = {
 	__index = {
-		MergeSlot = matrix_mergeSlot,
-		GetGroupedItems = GetGroupedItems,
-		GetUnsortedItems = GetUnsortedItems,
+		MergeSlot = ItemMatrix.MergeSlot,
+		GetGroupedItems = ItemMatrix.GetGroupedItems,
+		GetUnsortedItems = ItemMatrix.GetUnsortedItems,
 	}
 }
+
+function ItemMatrix.ApplyMetaTable(matrix)
+	return setmetatable(matrix, matrixMetaTable)
+end
