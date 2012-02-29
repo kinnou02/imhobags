@@ -19,7 +19,7 @@ ItemMatrix = { }
 -- Private methods
 -- ============================================================================
 
-local function extractUnsortedPlayerItems(matrix, condense)
+local function extractUnsortedPlayerItems(matrix, condensed)
 	local items = { }
 	for itemType, slots in pairs(matrix.items) do
 		-- We have to treat full and partial stacks differently
@@ -29,7 +29,7 @@ local function extractUnsortedPlayerItems(matrix, condense)
 		local detail = Inspect.Item.Detail(itemType)
 		local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
 		for slot, stack in pairs(slots) do
-			if(condense and stack == stackMax) then
+			if(condensed and stack == stackMax) then
 				table.insert(usedFullSlots, slot)
 			else
 				table.insert(usedPartialSlots, { slot, stack })
@@ -51,7 +51,7 @@ local function extractUnsortedPlayerItems(matrix, condense)
 	return items, empty, true
 end
 
-local function extractUnsortedCharacterItems(matrix, condense)
+local function extractUnsortedCharacterItems(matrix, condensed)
 	local items = { }
 	local success = true
 	for itemType, slots in pairs(matrix.items) do
@@ -69,7 +69,7 @@ local function extractUnsortedCharacterItems(matrix, condense)
 			-- Non-stackable items have stackMax = nil and must not be condensed
 			local stackMax = detail.stackMax or 0
 			for slot, stack in pairs(slots) do
-				if(condense and stack == stackMax) then
+				if(condensed and stack == stackMax) then
 					table.insert(usedFullSlots, stack)
 				else
 					table.insert(usedPartialSlots, stack)
@@ -157,7 +157,7 @@ end
 Get the list of items for this container in one flat table and no particular sorting.
 The returned list serves as staging base for further operations.
 Also available as instance metamethod.
-condense: True to condense max stacks together into one displayed item
+condensed: True to condense max stacks together into one displayed item
 groupOf: A function to determine the group of an item. The return value is used as key.
 	It is called with item type as argument
 return: items, empty, success
@@ -189,11 +189,11 @@ return: items, empty, success
 	}
 	empty = number
 ]]
-function ItemMatrix.GetUnsortedItems(matrix, condense)
+function ItemMatrix.GetUnsortedItems(matrix, condensed)
 	if(ItemDB.IsPlayerMatrix(matrix)) then
-		return extractUnsortedPlayerItems(matrix, condense, groupOf)
+		return extractUnsortedPlayerItems(matrix, condensed, groupOf)
 	else
-		return extractUnsortedCharacterItems(matrix, condense, groupOf)
+		return extractUnsortedCharacterItems(matrix, condensed, groupOf)
 	end
 end
 
