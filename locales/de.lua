@@ -23,7 +23,9 @@ L =
 		planar = "Ebenenobjekte",
 		weapon = "Waffen",
 		-- Used for the collapsible group with sellable items
-		sellable = "Plunder"
+		sellable = "Plunder",
+		-- Special case for collectibles (e.g. artifacts)
+		["misc collectible"] = "Sammlerstück",
 	},
 	
 	-- Titles for various windows.

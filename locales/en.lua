@@ -24,7 +24,9 @@ L =
 		planar = "Planar",
 		weapon = "Weapons",
 		-- Used for the collapsible group with sellable items
-		sellable = "Junk"
+		sellable = "Junk",
+		-- Special case for collectibles (e.g. artifacts)
+		["misc collectible"] = "Collectible",
 	},
 	
 	-- Titles for various windows
