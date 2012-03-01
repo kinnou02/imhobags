@@ -16,7 +16,7 @@ Dependencies = {
 
 RunOnStartup = {
 	"locales/de.lua",
-	"locales/en.lua",
+	"locales/en.lua", -- Must be last locale
 	
 	"Main.lua",
 	"Utils.lua",

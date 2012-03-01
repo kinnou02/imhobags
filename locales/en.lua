@@ -2,11 +2,12 @@
 
 -- Make sure to save this file in UTF-8 encoding
 
-if(Inspect.System.Language() ~= "English" ) then
+setfenv(1, addon)
+-- English is loaded if no other is present
+if(L ~= nil) then
 	return
 end
 
-setfenv(1, addon)
 L =
 {
 	-- Category translation
