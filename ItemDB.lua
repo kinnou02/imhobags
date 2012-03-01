@@ -59,7 +59,7 @@ local function ItemDB_variablesLoaded(addonIdentifier)
 	-- A /reloadui does not trigger all the Event.Item.Slot events as on loggin or teleport.
 	-- That's why we need a separate "character"-stored table with
 	-- readily available data after a /reloadui
-	playerItems = _G.ImhoBagsPlayerItemMatrix or newCharacter()
+	playerItems = _G.ImhoBagsPlayerItemMatrix or ItemDB_newCharacter()
 
 	-- Ensure at least the shard table exists
 	if(_G.ImhoBagsItemMatrix == nil) then
