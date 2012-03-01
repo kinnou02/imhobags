@@ -201,9 +201,9 @@ return: items, empty, success
 ]]
 function ItemMatrix.GetUnsortedItems(matrix, condensed)
 	if(ItemDB.IsPlayerMatrix(matrix)) then
-		return ItemMatrix_extractUnsortedPlayerItems(matrix, condensed, groupOf)
+		return ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	else
-		return ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, groupOf)
+		return ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
 	end
 end
 
