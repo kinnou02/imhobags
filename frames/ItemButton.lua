@@ -28,17 +28,20 @@ Ux.ItemButtonBorder = 2
 -- Private methods
 -- ============================================================================
 
-local function ItemButton_SetItem(self, type, slots, stack)
+local function ItemButton_SetItem(self, type, slots, stack, notLocked)
 	self.type = type
 	self.slots = slots
 	self.stack = stack
+	
+	self.readonly = _G.type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
+	self.notLocked = notLocked -- Reflects whether the location is available to the player
 	
 	self.icon:SetTexture("Rift", type.icon)
 	
 	self.stackText:SetText(tostring(stack))
 	self.stackText:SetVisible(stack > 1)
 
-	if(_G.type(slots) == "table") then
+	if(not self.readonly) then
 		slots = #slots
 	end
 	self.slotsText:SetText(tostring(slots))
@@ -55,10 +58,10 @@ end
 local function ItemButton_ShowTooltip(self)
 	if(self.tooltip) then
 		local target
-		if(type(self.slots) == "table") then
-			target = Inspect.Item.Detail(self.slots[1]).id
-		else
+		if(self.readonly) then
 			target = self.type.type
+		else
+			target = Inspect.Item.Detail(self.slots[1]).id
 		end
 		Command.Tooltip(target)
 		-- TODO: position tooltip near button
@@ -86,14 +89,14 @@ end
 
 local function ItemButton_LeftDown(self)
 	self.moved = false
-	if(type(self.slots) == "table") then
+	if(self.notLocked) then
 		self.pickingUp = Inspect.Item.Detail(self.slots[1]).id
 	end
 end
 
 local function ItemButton_LeftUp(self)
 	local cursor, held = Inspect.Cursor()
-	if(self.moved and cursor == "item" and type(self.slots) == "table") then
+	if(self.moved and cursor == "item" and self.notLocked) then
 		Command.Item.Move(held, self.slots[1])
 	elseif(self.pickingUp) then
 		Command.Cursor(self.pickingUp)
@@ -104,7 +107,7 @@ local function ItemButton_LeftUp(self)
 end
 
 local function ItemButton_RightDown(self)
-	if(type(self.slots) == "table") then
+	if(self.notLocked) then
 		self.commandTarget = self.slots[1]
 	end
 end
