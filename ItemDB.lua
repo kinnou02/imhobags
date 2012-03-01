@@ -91,11 +91,11 @@ local function ItemDB_saveVariables(addonIdentifier)
 	
 	-- Forst lastUpdate to -1 in all matrixes, this ensures the
 	-- math works for all characters on the shard
-	playerItems.lastUpdate = -1
-	playerItems.lastUpdate = -1
-	playerItems.lastUpdate = -1
-	playerItems.lastUpdate = -1
-	playerItems.lastUpdate = -1
+	playerItems.bank.lastUpdate = -1
+	playerItems.equipment.lastUpdate = -1
+	playerItems.guild.lastUpdate = -1
+	playerItems.inventory.lastUpdate = -1
+	playerItems.wardrobe.lastUpdate = -1
 	playerItems.faction = Inspect.Unit.Detail("player").faction
 	_G.ImhoBagsItemMatrix[Inspect.Shard().name][Inspect.Unit.Detail("player").name] = playerItems
 	_G.ImhoBagsPlayerItemMatrix = playerItems
