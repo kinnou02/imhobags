@@ -53,14 +53,16 @@ local function ItemButton_Dispose(self)
 end
 
 local function ItemButton_ShowTooltip(self)
-	local target
-	if(type(self.slots) == "table") then
-		target = Inspect.Item.Detail(self.slots[1]).id
-	else
-		target = self.type.type
+	if(self.tooltip) then
+		local target
+		if(type(self.slots) == "table") then
+			target = Inspect.Item.Detail(self.slots[1]).id
+		else
+			target = self.type.type
+		end
+		Command.Tooltip(target)
+		-- TODO: position tooltip near button
 	end
-	Command.Tooltip(target)
-	-- TODO: position tooltip near button
 end
 
 local function ItemButton_MouseMove(self)
@@ -69,9 +71,11 @@ end
 
 local function ItemButton_MouseOut(self)
 	Command.Tooltip(nil)
+	self.tooltip = false
 end
 
 local function ItemButton_MouseIn(self)
+	self.tooltip = true
 	ItemButton_ShowTooltip(self)
 end
 
