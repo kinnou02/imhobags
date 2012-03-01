@@ -67,6 +67,10 @@ end
 
 local function ItemButton_MouseMove(self)
 	ItemButton_ShowTooltip(self)
+	if(self.pickingUp) then
+		Command.Cursor(self.pickingUp)
+		self.pickingUp = nil
+	end
 end
 
 local function ItemButton_MouseOut(self)
@@ -77,6 +81,20 @@ end
 local function ItemButton_MouseIn(self)
 	self.tooltip = true
 	ItemButton_ShowTooltip(self)
+end
+
+local function ItemButton_LeftDown(self)
+	if(type(self.slots) == "table") then
+		self.pickingUp = Inspect.Item.Detail(self.slots[1]).id
+	end
+end
+
+local function ItemButton_LeftUp(self)
+	if(self.pickingUp) then
+		Command.Cursor(self.pickingUp)
+		self.pickingUp = nil
+	end
+	self.commandTarget = nil
 end
 
 local function ItemButton_RightDown(self)
@@ -134,6 +152,8 @@ function Ux.ItemButton.New(parent)
 		button.Event.MouseMove = ItemButton_MouseMove
 		button.Event.MouseOut = ItemButton_MouseOut
 		button.Event.MouseIn = ItemButton_MouseIn
+		button.Event.LeftDown = ItemButton_LeftDown
+		button.Event.LeftUp = ItemButton_LeftUp
 		button.Event.RightDown = ItemButton_RightDown
 		button.Event.RightUp = ItemButton_RightUp
 		button.Event.RightUpoutside = ItemButton_RightUpoutside
