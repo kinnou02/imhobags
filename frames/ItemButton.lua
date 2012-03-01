@@ -136,6 +136,7 @@ function Ux.ItemButton.New(parent)
 	else
 		button = table.remove(cachedButtons)
 		button:SetVisible(true)
+		button:SetParent(parent)
 	end
 	return button
 end
