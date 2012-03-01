@@ -34,7 +34,7 @@ RunOnStartup = {
 SavedVariables = {
 	ImhoBagsItemMatrix = "account",
 	ImhoBagsPlayerItemMatrix = "character",
-	ImhoBagsWindowPositions = "account",
+	ImhoBagsWindowPositions = "character",
 }
 
 -- Set this value to true to enable chat spamming debug messages and other debugging facilities
