@@ -31,6 +31,7 @@ local function Ux_addonStartupEnd()
 		local position = _G.ImhoBagsWindowPositions[k]
 		if(position) then
 			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", position.x, position.y)
+			window:SetWidth(position.width)
 		else
 			local width, height = UIParent:GetWidth(), UIParent:GetHeight()
 			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (width - window:GetWidth()) / 2, (height - window:GetHeight()) / 2)
@@ -51,7 +52,7 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 		return
 	end
 	for k, v in pairs(defaultItemWindows) do
-		_G.ImhoBagsWindowPositions[k] = { x = Ux[k]:GetLeft(), y = Ux[k]:GetTop() }
+		_G.ImhoBagsWindowPositions[k] = { x = Ux[k]:GetLeft(), y = Ux[k]:GetTop(), width = Ux[k]:GetWidth() }
 	end
 end
 
