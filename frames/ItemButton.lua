@@ -90,7 +90,10 @@ local function ItemButton_LeftDown(self)
 end
 
 local function ItemButton_LeftUp(self)
-	if(self.pickingUp) then
+	local cursor, held = Inspect.Cursor()
+	if(not self.pickingUp and cursor == "item" and type(self.slots) == "table") then
+		Command.Item.Move(held, self.slots[1])
+	elseif(self.pickingUp) then
 		Command.Cursor(self.pickingUp)
 		self.pickingUp = nil
 	end
