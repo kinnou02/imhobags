@@ -10,6 +10,10 @@ Email = "me@there.to"
 Version = "0.1 alpha"
 Environment = "1.7"
 
+Embed = {
+	["libs/LibString"] = true,
+}
+
 Dependencies = {
 	LibString = { "required", "before" }
 }
