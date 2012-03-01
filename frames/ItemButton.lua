@@ -66,6 +66,7 @@ local function ItemButton_ShowTooltip(self)
 end
 
 local function ItemButton_MouseMove(self)
+	self.moved = true
 	ItemButton_ShowTooltip(self)
 	if(self.pickingUp) then
 		Command.Cursor(self.pickingUp)
@@ -84,6 +85,7 @@ local function ItemButton_MouseIn(self)
 end
 
 local function ItemButton_LeftDown(self)
+	self.moved = false
 	if(type(self.slots) == "table") then
 		self.pickingUp = Inspect.Item.Detail(self.slots[1]).id
 	end
@@ -91,12 +93,13 @@ end
 
 local function ItemButton_LeftUp(self)
 	local cursor, held = Inspect.Cursor()
-	if(not self.pickingUp and cursor == "item" and type(self.slots) == "table") then
+	if(self.moved and cursor == "item" and type(self.slots) == "table") then
 		Command.Item.Move(held, self.slots[1])
 	elseif(self.pickingUp) then
 		Command.Cursor(self.pickingUp)
 		self.pickingUp = nil
 	end
+	self.moved = false
 	self.commandTarget = nil
 end
 
