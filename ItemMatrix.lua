@@ -123,8 +123,6 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 		item = Inspect.Item.Detail(slot)
 	end
 	
-	debug(slot, item and item.name)
-	
 	-- Bags are special
 	if(bag == "bag") then
 		if(item) then
@@ -161,7 +159,8 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 			matrix.items[item.type][slot] = item.stack or 1
 		end
 	end
-	matrix.lastUpdate = Inspect.Time.Frame() --Guaranteed to be non-negative
+	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
+	debug("update", bag, slot, item and item.name, matrix.lastUpdate)
 end
 
 --[[
