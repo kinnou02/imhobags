@@ -28,6 +28,64 @@ Ux.ItemButtonBorder = 2
 -- Private methods
 -- ============================================================================
 
+local function mouseMove(self)
+	self.moved = true
+	self:ShowTooltip()
+	if(self.pickingUp) then
+		Command.Cursor(self.pickingUp)
+		self.pickingUp = nil
+	end
+end
+
+local function mouseOut(self)
+	Command.Tooltip(nil)
+	self.tooltip = false
+end
+
+local function mouseIn(self)
+	self.tooltip = true
+	self:ShowTooltip()
+end
+
+local function leftDown(self)
+	self.moved = false
+	if(self.notLocked) then
+		self.pickingUp = Inspect.Item.Detail(self.slots[1]).id
+	end
+end
+
+local function leftUp(self)
+	local cursor, held = Inspect.Cursor()
+	if(self.moved and cursor == "item" and self.notLocked) then
+		Command.Item.Move(held, self.slots[1])
+	elseif(self.pickingUp) then
+		Command.Cursor(self.pickingUp)
+		self.pickingUp = nil
+	end
+	self.moved = false
+	self.commandTarget = nil
+end
+
+local function rightDown(self)
+	if(self.notLocked) then
+		self.commandTarget = self.slots[1]
+	end
+end
+
+local function rightUp(self)
+	if(self.commandTarget) then
+		-- TODO: use item
+	end
+	self.commandTarget = nil
+end
+
+local function rightUpoutside(self)
+	self.commandTarget = nil
+end
+
+-- Public methods
+-- ============================================================================
+
 local function ItemButton_SetItem(self, type, slots, stack, notLocked)
 	self.type = type
 	self.slots = slots
@@ -68,64 +126,6 @@ local function ItemButton_ShowTooltip(self)
 	end
 end
 
-local function ItemButton_MouseMove(self)
-	self.moved = true
-	ItemButton_ShowTooltip(self)
-	if(self.pickingUp) then
-		Command.Cursor(self.pickingUp)
-		self.pickingUp = nil
-	end
-end
-
-local function ItemButton_MouseOut(self)
-	Command.Tooltip(nil)
-	self.tooltip = false
-end
-
-local function ItemButton_MouseIn(self)
-	self.tooltip = true
-	ItemButton_ShowTooltip(self)
-end
-
-local function ItemButton_LeftDown(self)
-	self.moved = false
-	if(self.notLocked) then
-		self.pickingUp = Inspect.Item.Detail(self.slots[1]).id
-	end
-end
-
-local function ItemButton_LeftUp(self)
-	local cursor, held = Inspect.Cursor()
-	if(self.moved and cursor == "item" and self.notLocked) then
-		Command.Item.Move(held, self.slots[1])
-	elseif(self.pickingUp) then
-		Command.Cursor(self.pickingUp)
-		self.pickingUp = nil
-	end
-	self.moved = false
-	self.commandTarget = nil
-end
-
-local function ItemButton_RightDown(self)
-	if(self.notLocked) then
-		self.commandTarget = self.slots[1]
-	end
-end
-
-local function ItemButton_RightUp(self)
-	if(self.commandTarget) then
-		-- TODO: use item
-	end
-	self.commandTarget = nil
-end
-
-local function ItemButton_RightUpoutside(self)
-	self.commandTarget = nil
-end
-
--- Public methods
--- ============================================================================
-
 function Ux.ItemButton.New(parent)
 	local button
 	if(#cachedButtons == 0) then
@@ -158,14 +158,14 @@ function Ux.ItemButton.New(parent)
 		button.Dispose = ItemButton_Dispose
 		button.ShowTooltip = ItemButton_ShowTooltip
 		
-		button.Event.MouseMove = ItemButton_MouseMove
-		button.Event.MouseOut = ItemButton_MouseOut
-		button.Event.MouseIn = ItemButton_MouseIn
-		button.Event.LeftDown = ItemButton_LeftDown
-		button.Event.LeftUp = ItemButton_LeftUp
-		button.Event.RightDown = ItemButton_RightDown
-		button.Event.RightUp = ItemButton_RightUp
-		button.Event.RightUpoutside = ItemButton_RightUpoutside
+		button.Event.MouseMove = mouseMove
+		button.Event.MouseOut = mouseOut
+		button.Event.MouseIn = mouseIn
+		button.Event.LeftDown = leftDown
+		button.Event.LeftUp = leftUp
+		button.Event.RightDown = rightDown
+		button.Event.RightUp = rightUp
+		button.Event.RightUpoutside = rightUpoutside
 	else
 		button = table.remove(cachedButtons)
 		button:SetVisible(true)
