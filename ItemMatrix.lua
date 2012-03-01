@@ -120,31 +120,45 @@ Also available as instance metamethod.
 ]]
 function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 	if(item) then
-		local details = Inspect.Item.Detail(slot)
-		if(bag == "bag") then
-			matrix.bags[index] = details.type
+		item = Inspect.Item.Detail(slot)
+	end
+	
+	debug(slot, item and item.name)
+	
+	-- Bags are special
+	if(bag == "bag") then
+		if(item) then
+			matrix.bags[index] = item.type
 		else
-			matrix.slots[slot] = details.type
-			if(matrix.items[details.type] == nil) then
-				matrix.items[details.type] = { }
-			end
-			matrix.items[details.type][slot] = details.stack or 1
-		end
-	else
-		if(bag == "bag") then
 			matrix.bags[index] = false -- Keep table entries for retrieving empty slots
-		else
-			local type = matrix.slots[slot]
-			if(type) then
-				if(matrix.items[type]) then
-					matrix.items[type][slot] = nil
-					-- Delete empty entries or otherwise the table will grow indefinitely
-					if(next(matrix.items[type]) == nil) then
-						matrix.items[type] = nil
-					end
-				end
+		end
+		return
+	end
+	
+	-- First check if an item needs to be removed from the DB
+	-- This solves the "bag replaced in-place with content" issue
+	local type = matrix.slots[slot]
+	if(type and (not item or type ~= item.type)) then
+		if(matrix.items[type]) then
+			matrix.items[type][slot] = nil
+			-- Delete empty entries or otherwise the table will grow indefinitely
+			if(next(matrix.items[type]) == nil) then
+				matrix.items[type] = nil
 			end
-			matrix.slots[slot] = false -- Keep table entries for retrieving empty slots
+		end
+	end
+	matrix.slots[slot] = item and item.type -- Keep table entries for retrieving empty slots
+	
+	-- Now add the new item
+	if(item) then
+		if(bag == "bag") then
+			matrix.bags[index] = item.type
+		else
+			matrix.slots[slot] = item.type
+			if(matrix.items[item.type] == nil) then
+				matrix.items[item.type] = { }
+			end
+			matrix.items[item.type][slot] = item.stack or 1
 		end
 	end
 	matrix.lastUpdate = Inspect.Time.Frame() --Guaranteed to be non-negative
