@@ -5,7 +5,7 @@ Description = "Grouping and sorting for your inventory in one frame."
 
 Author = "Imhothar"
 Website = ""
-Email = "me@there.to"
+Email = "me@no-mail.com"
 
 Version = "0.1 alpha"
 Environment = "1.7"
