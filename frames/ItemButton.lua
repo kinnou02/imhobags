@@ -74,7 +74,7 @@ end
 
 local function rightUp(self)
 	if(self.commandTarget) then
-		-- TODO: use item
+		debug("TODO", "use item")
 	end
 	self.commandTarget = nil
 end
@@ -122,7 +122,7 @@ local function ItemButton_ShowTooltip(self)
 			target = Inspect.Item.Detail(self.slots[1]).id
 		end
 		Command.Tooltip(target)
-		-- TODO: position tooltip near button
+		debug("TODO", "position tooltip near button")
 	end
 end
 
