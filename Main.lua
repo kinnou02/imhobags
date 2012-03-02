@@ -6,11 +6,11 @@ if(toc.debug) then
 	_G[identifier] = addon
 end
 
-local pairs = pairs
 local print = print
-local string = string
+local select = select
 local table = table
 local tostring = tostring
+local unpack = unpack
 
 local Command = Command
 local Event = Event
@@ -20,7 +20,13 @@ local UI = UI
 setfenv(1, addon)
 
 if(toc.debug) then
-	debug = function(...) print(string.tostring(...)) end
+	debug = function(...)
+		local result = { }
+		for i = 1, select("#", ...) do
+			table.insert(result, tostring(select(i, ...)))
+		end
+		print(unpack(result))
+	end
 else
 	debug = function() end
 end
