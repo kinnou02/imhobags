@@ -167,8 +167,6 @@ Get the list of items for this container in one flat table and no particular sor
 The returned list serves as staging base for further operations.
 Also available as instance metamethod.
 condensed: True to condense max stacks together into one displayed item
-groupOf: A function to determine the group of an item. The return value is used as key.
-	It is called with item type as argument
 return: items, empty, success
 	"success" determines whether all items could be retrieved successfully or
 	whether the local item cache is incomplete and you have to try again later.
