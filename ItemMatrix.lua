@@ -282,5 +282,9 @@ local ItemMatrix_matrixMetaTable = {
 }
 
 function ItemMatrix.ApplyMetaTable(matrix)
-	return setmetatable(matrix, ItemMatrix_matrixMetaTable)
+	if(not matrix) then
+		return ItemMatrix.New()
+	else
+		return setmetatable(matrix, ItemMatrix_matrixMetaTable)
+	end
 end

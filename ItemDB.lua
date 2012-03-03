@@ -36,6 +36,7 @@ local function ItemDB_newCharacter()
 		equipment = ItemMatrix.New(),
 		inventory = ItemMatrix.New(),
 		guild = ItemMatrix.New(),
+		mail = ItemMatrix.New(),
 		wardrobe = ItemMatrix.New(),
 	}
 end
@@ -70,17 +71,19 @@ local function ItemDB_variablesLoaded(addonIdentifier)
 	end
 	-- Apply the metatable to all item matrixes on the current shard
 	for k,v in pairs(_G.ImhoBagsItemMatrix[shardName]) do
-		ItemMatrix.ApplyMetaTable(v.bank)
-		ItemMatrix.ApplyMetaTable(v.equipment)
-		ItemMatrix.ApplyMetaTable(v.guild)
-		ItemMatrix.ApplyMetaTable(v.inventory)
-		ItemMatrix.ApplyMetaTable(v.wardrobe)
+		v.bank = ItemMatrix.ApplyMetaTable(v.bank)
+		v.equipment = ItemMatrix.ApplyMetaTable(v.equipment)
+		v.guild = ItemMatrix.ApplyMetaTable(v.guild)
+		v.inventory = ItemMatrix.ApplyMetaTable(v.inventory)
+		v.mail = ItemMatrix.ApplyMetaTable(v.mail)
+		v.wardrobe = ItemMatrix.ApplyMetaTable(v.wardrobe)
 	end
-	ItemMatrix.ApplyMetaTable(playerItems.bank)
-	ItemMatrix.ApplyMetaTable(playerItems.equipment)
-	ItemMatrix.ApplyMetaTable(playerItems.guild)
-	ItemMatrix.ApplyMetaTable(playerItems.inventory)
-	ItemMatrix.ApplyMetaTable(playerItems.wardrobe)
+	playerItems.bank = ItemMatrix.ApplyMetaTable(playerItems.bank)
+	playerItems.equipment = ItemMatrix.ApplyMetaTable(playerItems.equipment)
+	playerItems.guild = ItemMatrix.ApplyMetaTable(playerItems.guild)
+	playerItems.inventory = ItemMatrix.ApplyMetaTable(playerItems.inventory)
+	playerItems.mail = ItemMatrix.ApplyMetaTable(playerItems.mail)
+	playerItems.wardrobe = ItemMatrix.ApplyMetaTable(playerItems.wardrobe)
 end
 
 local function ItemDB_saveVariables(addonIdentifier)
@@ -94,6 +97,7 @@ local function ItemDB_saveVariables(addonIdentifier)
 	playerItems.equipment.lastUpdate = -1
 	playerItems.guild.lastUpdate = -1
 	playerItems.inventory.lastUpdate = -1
+	playerItems.mail.lastUpdate = -1
 	playerItems.wardrobe.lastUpdate = -1
 	playerItems.faction = Inspect.Unit.Detail("player").faction
 	_G.ImhoBagsItemMatrix[Inspect.Shard().name][Inspect.Unit.Detail("player").name] = playerItems
@@ -105,7 +109,7 @@ end
 
 --[[
 Get the matrix for the given character's location matrix
-location: "inventory", "bank", "equipped", "guild", "wardrobe"
+location: "inventory", "bank", "equipped", "mail", "guild", "wardrobe"
 location: "inventory", "bank"
 return: The matrix table for the character and location
 ]]
