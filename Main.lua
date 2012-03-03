@@ -18,7 +18,7 @@ local UI = UI
 setfenv(1, private)
 
 if(Addon.toc.debug) then
-	debug = function(...)
+	log = function(...)
 		local result = { }
 		for i = 1, select("#", ...) do
 			table.insert(result, tostring(select(i, ...)))
@@ -26,5 +26,5 @@ if(Addon.toc.debug) then
 		print(unpack(result))
 	end
 else
-	debug = function() end
+	log = function() end
 end

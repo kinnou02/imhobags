@@ -159,7 +159,7 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 		end
 	end
 	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
-	debug("update", bag, slot, item and item.name, matrix.lastUpdate)
+	log("update", bag, slot, item and item.name, matrix.lastUpdate)
 end
 
 --[[
