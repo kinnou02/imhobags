@@ -33,5 +33,12 @@ L =
 	WindowTitles = {
 		inventory = "RUCKSACK",
 		bank = "BANK",
-	}
+	},
+	
+	-- The shortcuts used in the tooltip overview
+	TooltipEnhancer = {
+		inventory = "Taschen",
+		bank = "Bank",
+		total = "Gesamt",
+	},
 }
