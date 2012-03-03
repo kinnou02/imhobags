@@ -1,4 +1,4 @@
-local addon = (...).data
+local Addon, private = ...
 
 local rarityColors = {
 	sellable =		{ 0.34375, 0.34375, 0.34375 },
@@ -11,7 +11,7 @@ local rarityColors = {
 	transcendant =	{     1.0,     0.5,     0.0 }, -- WTF?
 }
 
-setfenv(1, addon)
+setfenv(1, private)
 Utils = { }
 
 function Utils.RarityColor(rarity)

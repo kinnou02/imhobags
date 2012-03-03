@@ -1,5 +1,4 @@
-local identifier = (...).id
-local addon = (...).data
+local Addon, private = ...
 
 -- Builtins
 local _G = _G
@@ -24,7 +23,7 @@ local Utility = Utility
 local playerItems
 local readonly = true
 
-setfenv(1, addon)
+setfenv(1, private)
 ItemDB = { }
 
 -- Private methods
@@ -52,7 +51,7 @@ local function ItemDB_mergeSlotChanges(slots)
 end
 
 local function ItemDB_variablesLoaded(addonIdentifier)
-	if(addonIdentifier ~= identifier) then
+	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
 	
@@ -85,7 +84,7 @@ local function ItemDB_variablesLoaded(addonIdentifier)
 end
 
 local function ItemDB_saveVariables(addonIdentifier)
-	if(addonIdentifier ~= identifier) then
+	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
 	
@@ -140,7 +139,7 @@ function ItemDB.IsPlayerMatrix(matrix)
 	return false
 end
 
-table.insert(Event.Addon.SavedVariables.Load.End, { ItemDB_variablesLoaded, identifier, "ItemDB_variablesLoaded" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { ItemDB_saveVariables, identifier, "ItemDB_saveVariables" })
-table.insert(Event.Item.Slot, { ItemDB_mergeSlotChanges, identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Item.Update, { ItemDB_mergeSlotChanges, identifier, "ItemDB_mergeSlotChanges" })
+table.insert(Event.Addon.SavedVariables.Load.End, { ItemDB_variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
+table.insert(Event.Addon.SavedVariables.Save.Begin, { ItemDB_saveVariables, Addon.identifier, "ItemDB_saveVariables" })
+table.insert(Event.Item.Slot, { ItemDB_mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+table.insert(Event.Item.Update, { ItemDB_mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })

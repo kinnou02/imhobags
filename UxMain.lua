@@ -1,5 +1,4 @@
-﻿local identifier = (...).id
-local addon = (...).data
+﻿local Addon, private = ...
 
 local _G = _G
 local pairs = pairs
@@ -15,10 +14,10 @@ local defaultItemWindows =  {
 	BankItemWindow = { "bank", UI.Native.Bank },
 }
 
-setfenv(1, addon)
+setfenv(1, private)
 Ux = Ux or { }
 
-Ux.Context = UI.CreateContext(identifier)
+Ux.Context = UI.CreateContext(Addon.identifier)
 
 --Private methods
 -- ============================================================================
@@ -41,14 +40,14 @@ local function Ux_addonStartupEnd()
 end
 
 local function Ux_savedVariablesLoadEnd(addonIdentifier)
-	if(addonIdentifier ~= identifier) then
+	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
 	_G.ImhoBagsWindowPositions = _G.ImhoBagsWindowPositions or { }
 end
 
 local function Ux_savedVariablesSaveBegin(addonIdentifier)
-	if(addonIdentifier ~= identifier) then
+	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
 	for k, v in pairs(defaultItemWindows) do
@@ -56,6 +55,6 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 	end
 end
 
-table.insert(Event.Addon.Startup.End, { Ux_addonStartupEnd, identifier, "Ux_addonStartupEnd" })
-table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, identifier, "Ux_savedVariablesLoadEnd" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { Ux_savedVariablesSaveBegin, identifier, "Ux_savedVariablesSaveBegin" })
+table.insert(Event.Addon.Startup.End, { Ux_addonStartupEnd, Addon.identifier, "Ux_addonStartupEnd" })
+table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
+table.insert(Event.Addon.SavedVariables.Save.Begin, { Ux_savedVariablesSaveBegin, Addon.identifier, "Ux_savedVariablesSaveBegin" })

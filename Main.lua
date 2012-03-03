@@ -1,9 +1,7 @@
-local identifier = (...).id
-local toc = (...).toc
-local addon = (...).data
+local Addon, private = ...
 
-if(toc.debug) then
-	_G[identifier] = addon
+if(Addon.toc.debug) then
+	_G[Addon.identifier] = private
 end
 
 local print = print
@@ -17,9 +15,9 @@ local Event = Event
 local Inspect = Inspect
 local UI = UI
 
-setfenv(1, addon)
+setfenv(1, private)
 
-if(toc.debug) then
+if(Addon.toc.debug) then
 	debug = function(...)
 		local result = { }
 		for i = 1, select("#", ...) do

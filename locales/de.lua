@@ -1,4 +1,4 @@
-﻿local addon = (...).data
+﻿local Addon, private = ...
 
 -- Make sure to save this file in UTF-8 encoding
 
@@ -6,7 +6,7 @@ if(Inspect.System.Language() ~= "German" ) then
 	return
 end
 
-setfenv(1, addon)
+setfenv(1, private)
 L =
 {
 	-- Category translation

@@ -1,8 +1,8 @@
-﻿local addon = (...).data
+﻿local Addon, private = ...
 
 -- Make sure to save this file in UTF-8 encoding
 
-setfenv(1, addon)
+setfenv(1, private)
 -- English is loaded if no other is present
 if(L ~= nil) then
 	return

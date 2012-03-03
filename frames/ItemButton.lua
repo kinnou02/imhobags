@@ -1,4 +1,4 @@
-local addon = (...).data
+local Addon, private = ...
 
 local _G = _G
 local print = print
@@ -17,7 +17,7 @@ local UI = UI
 -- Calling Dispose() on a button moves it back to the cache
 local cachedButtons = { }
 
-setfenv(1, addon)
+setfenv(1, private)
 Ux = Ux or { }
 Ux.ItemButton = { }
 
