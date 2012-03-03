@@ -32,6 +32,7 @@ RunOnStartup = {
 	"frames/ItemButton.lua",
 	"frames/ItemWindow.lua",
 	"frames/EmptySlotIndicator.lua",
+	"frames/TooltipEnhancer.lua",
 }
 
 SavedVariables = {
