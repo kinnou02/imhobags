@@ -37,8 +37,9 @@ L =
 	
 	-- The shortcuts used in the tooltip overview
 	TooltipEnhancer = {
-		inventory = "Taschen",
-		bank = "Bank",
-		total = "Gesamt",
+		line = "»%s: %i %s", -- 1: character name, 2: item count, 3: detail string
+		inventory = "(Taschen %i)",
+		bank = "(Bank %i)",
+		total = "Gesamt: %i",
 	},
 }

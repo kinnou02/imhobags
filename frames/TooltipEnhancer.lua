@@ -5,6 +5,7 @@ local ipairs = ipairs
 local print = print
 local table = table
 local select = select
+local string = string
 
 local dump = dump
 
@@ -41,17 +42,16 @@ local function showTooltip(tooltip)
 end
 
 local function buildLine(character, total, ...)
-	local result = "»" .. character .. ": " .. total
+	local detail = ""
 	if(total > select(2, ...)) then
-		result = result .. " "
 		for i = 1, select("#", ...), 2 do
-			local name, count = select(i, ...)
+			local fmt, count = select(i, ...)
 			if(count > 0) then
-				result = result .. "(" .. name .. " " .. count .. ")"
+				detail = detail .. string.format(fmt, count)
 			end
 		end
 	end
-	return result
+	return string.format(L.TooltipEnhancer.line, character, total, detail)
 end
 
 local function tooltipTargetChanged(ttype, shown, buff)
@@ -86,7 +86,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		end
 	end
 	if(chars > 1) then
-		tooltip = tooltip .. L.TooltipEnhancer.total .. ": " .. total
+		tooltip = tooltip .. string.format(L.TooltipEnhancer.total, total)
 	end
 
 	if(chars > 0) then
