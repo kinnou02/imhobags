@@ -18,6 +18,8 @@ setfenv(1, private)
 Ux = Ux or { }
 
 Ux.Context = UI.CreateContext(Addon.identifier)
+Ux.TooltipContext = UI.CreateContext(Addon.identifier)
+Ux.TooltipContext:SetStrata("topmost")
 
 --Private methods
 -- ============================================================================

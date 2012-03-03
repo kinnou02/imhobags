@@ -23,7 +23,7 @@ Ux = Ux or { }
 local verticalOffset = 10
 local padding = 10
 
-local window = UI.CreateFrame("Text", "ImhoBags_ItemCountTooltip", Ux.Context)
+local window = UI.CreateFrame("Text", "ImhoBags_ItemCountTooltip", Ux.TooltipContext)
 Ux.TooltipEnhancer = window
 
 window:SetVisible(false)
