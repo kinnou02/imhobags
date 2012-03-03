@@ -15,7 +15,6 @@ local UI = UI
 
 setfenv(1, private)
 Ux = Ux or { }
-Ux.EmptySlotIndicator = { }
 
 -- Private methods
 -- ============================================================================
@@ -25,20 +24,16 @@ local function systemUpdateBegin(self)
 	local now = Inspect.Time.Real()
 	if(self.matrix.lastUpdate >= self.lastUpdate) then
 		local items, empty, success = self.matrix:GetUnsortedItems(false)
-		if(type(empty) == "table") then
-			empty = #empty
-		end
-		self:SetText(tostring(empty))
+		self:SetText(tostring(#empty))
 		self.lastUpdate = now
 	end
 end
 
--- Public methods
--- ============================================================================
-
 -- Create a little window over the native bags frame showing the number of empty bags
-function Ux.EmptySlotIndicator.New()
+local function createFrame()
 	local window = UI.CreateFrame("Text", "ImhoBags_EmptySlotIndicator", Ux.Context)
+	Ux.EmptySlotIndicator = window
+	
 	window:SetFontSize(18)
 	window:SetBackgroundColor(0, 0, 0, 0.5)
 	
@@ -51,3 +46,9 @@ function Ux.EmptySlotIndicator.New()
 	
 	table.insert(Event.System.Update.Begin, { function() systemUpdateBegin(window) end, Addon.identifier, "systemUpdateBegin" })
 end
+
+-- Creation of the frame must be postponed until after saved variables are loaded
+table.insert(Event.Addon.Startup.End, { createFrame, Addon.identifier, "Ux.EmptySlotIndicator createFrame" })
+
+-- Public methods
+-- ============================================================================
