@@ -80,7 +80,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		total = total + charTotal
 		if(charTotal > 0) then
 			chars = chars + 1
-			tooltip = tooltip .. buildLine(v[1], total, "Bags", v[2], "Bank", v[3]) .. "\n"
+			tooltip = tooltip .. buildLine(v[1], charTotal, "Bags", v[2], "Bank", v[3]) .. "\n"
 		end
 	end
 	if(chars > 1) then
