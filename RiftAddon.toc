@@ -28,9 +28,10 @@ RunOnStartup = {
 	"ItemMatrix.lua",
 	"Sort.Default.lua",
 	
+	"UxMain.lua",
 	"frames/ItemButton.lua",
 	"frames/ItemWindow.lua",
-	"UxMain.lua",
+	"frames/EmptySlotIndicator.lua",
 }
 
 SavedVariables = {

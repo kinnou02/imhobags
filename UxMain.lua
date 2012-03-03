@@ -23,6 +23,7 @@ Ux.Context = UI.CreateContext(Addon.identifier)
 -- ============================================================================
 
 local function Ux_addonStartupEnd()
+	-- Create the ordinary item windows
 	for k, v in pairs(defaultItemWindows) do
 		local title = L.WindowTitles[v[1]]
 		local window = Ux.ItemWindow.New(title,"player", v[1], true, v[2])
@@ -37,6 +38,9 @@ local function Ux_addonStartupEnd()
 		end
 		Ux[k] = window
 	end
+	
+	-- Empty slot indicator on bags
+	Ux.EmptySlotIndicatorWindow = Ux.EmptySlotIndicator.New()
 end
 
 local function Ux_savedVariablesLoadEnd(addonIdentifier)
