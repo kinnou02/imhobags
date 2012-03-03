@@ -208,6 +208,7 @@ end
 
 --[[
 Transforms the given items list and returns a table where the items have a grouped structure.
+Also available as instance metamethod.
 items: result of GetUnsortedItems()
 group: A function taking an item type as argument and returning a key
 return: groups, keys
@@ -252,10 +253,30 @@ function ItemMatrix.GetGroupedItems(matrix, items, group)
 	return groups, keys
 end
 
+-- Get the amount of items in this matrix of the given item type (including bags).
+-- Also available as instance metamethod.
+function ItemMatrix.GetItemCount(matrix, itemType)
+	local result = 0
+	for _, type in ipairs(matrix.bags) do
+		if(type == itemType) then
+			result = result + 1
+		end
+	end
+	
+	local entry = matrix.items[itemType]
+	if(entry) then
+		for slot, count in pairs(entry) do
+			result = result + count
+		end
+	end
+	return result
+end
+
 local ItemMatrix_matrixMetaTable = {
 	__index = {
 		MergeSlot = ItemMatrix.MergeSlot,
 		GetGroupedItems = ItemMatrix.GetGroupedItems,
+		GetItemCount = ItemMatrix.GetItemCount,
 		GetUnsortedItems = ItemMatrix.GetUnsortedItems,
 	}
 }

@@ -139,6 +139,29 @@ function ItemDB.IsPlayerMatrix(matrix)
 	return false
 end
 
+--[[
+Return a table containing the counts of the given item type for each character:
+result = {
+	[#] = { name, inventoryCount, bankCount }
+}
+The table is sorted by character name.
+]]
+function ItemDB.GetItemCounts(itemType)
+	local result = { }
+	for character, data in pairs(_G.ImhoBagsItemMatrix[Inspect.Shard().name]) do
+		if(character == Inspect.Unit.Detail("player").name) then
+			data = playerItems
+		end
+		table.insert(result, {
+			character,
+			data.inventory:GetItemCount(itemType),
+			data.bank:GetItemCount(itemType),
+		})
+	end
+	table.sort(result, function(a, b) return a[1] < b[1] end)
+	return result
+end
+
 table.insert(Event.Addon.SavedVariables.Load.End, { ItemDB_variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
 table.insert(Event.Addon.SavedVariables.Save.Begin, { ItemDB_saveVariables, Addon.identifier, "ItemDB_saveVariables" })
 table.insert(Event.Item.Slot, { ItemDB_mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
