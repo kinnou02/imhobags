@@ -142,7 +142,7 @@ end
 --[[
 Return a table containing the counts of the given item type for each character:
 result = {
-	[#] = { name, inventoryCount, bankCount }
+	[#] = { name, inventory, bank, mail, equipment, wardrobe }
 }
 The table is sorted by character name.
 ]]
@@ -156,6 +156,9 @@ function ItemDB.GetItemCounts(itemType)
 			character,
 			data.inventory:GetItemCount(itemType),
 			data.bank:GetItemCount(itemType),
+			data.mail:GetItemCount(itemType),
+			data.equipment:GetItemCount(itemType),
+			data.wardrobe:GetItemCount(itemType),
 		})
 	end
 	table.sort(result, function(a, b) return a[1] < b[1] end)

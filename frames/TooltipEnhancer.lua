@@ -54,6 +54,14 @@ local function buildLine(character, total, ...)
 	return string.format(L.TooltipEnhancer.line, character, total, detail)
 end
 
+local function sum(character)
+	local result = 0
+	for i = 2, #character do
+		result = result + character[i]
+	end
+	return result
+end
+
 local function tooltipTargetChanged(ttype, shown, buff)
 	window:SetVisible(false)
 	
@@ -76,13 +84,16 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	local total = 0
 	local chars = 0
 	for k, v in ipairs(counts) do
-		local charTotal = v[2] + v[3]
+		local charTotal = sum(v)
 		total = total + charTotal
 		if(charTotal > 0) then
 			chars = chars + 1
 			tooltip = tooltip .. buildLine(v[1], charTotal,
 				L.TooltipEnhancer.inventory, v[2],
-				L.TooltipEnhancer.bank, v[3]) .. "\n"
+				L.TooltipEnhancer.bank, v[3],
+				L.TooltipEnhancer.mail, v[4],
+				L.TooltipEnhancer.equipment, v[5],
+				L.TooltipEnhancer.wardrobe, v[6]) .. "\n"
 		end
 	end
 	if(chars > 1) then
