@@ -26,6 +26,7 @@ RunOnStartup = {
 	"Group.Default.lua",
 	"ItemDB.lua",
 	"ItemMatrix.lua",
+	"MailMatrix.lua",
 	"Sort.Default.lua",
 	
 	"UxMain.lua",
