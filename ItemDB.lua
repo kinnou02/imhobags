@@ -110,11 +110,11 @@ local function ItemDB_mailsChanged(mails)
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))
 		end
 	end
---[[	if(Inspect.Interaction().mail) then
-		mails = Inspect.Mail.List()
-		dump(mails)
-		playerItems.mail:Purge(mails)
-	end]]
+	local list = Inspect.Mail.List()
+	for mail in pairs(mails) do
+		list[mail] = false
+	end
+	playerItems.mail:Purge(list)
 end
 
 -- Public methods

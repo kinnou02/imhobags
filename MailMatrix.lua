@@ -84,12 +84,12 @@ function MailMatrix.Purge(matrix, mails)
 	local empty = { }
 	for mail in pairs(matrix.mails) do
 		if(mails[mail] == nil) then
+			log("purge", "mail", mail, matrix.lastUpdate)
 			purge(matrix, mail, empty)
 			matrix.mails[mail] = nil
 		end
 	end
 	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
-	log("purge", "mail", mail.id, matrix.lastUpdate)
 end
 
 -- Get the amount of items in this matrix of the given item type (including bags).
