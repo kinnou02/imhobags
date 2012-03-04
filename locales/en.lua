@@ -1,4 +1,4 @@
-﻿local Addon, private = ...
+local Addon, private = ...
 
 -- Make sure to save this file in UTF-8 encoding
 
@@ -8,8 +8,7 @@ if(L ~= nil) then
 	return
 end
 
-L =
-{
+L = {
 	-- Category translation
 	-- [english] = translated
 	-- Although categories can have multiple words (e.g. "weapon sword onehand")

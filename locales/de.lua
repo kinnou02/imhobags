@@ -1,4 +1,4 @@
-﻿local Addon, private = ...
+local Addon, private = ...
 
 -- Make sure to save this file in UTF-8 encoding
 
@@ -7,8 +7,7 @@ if(Inspect.System.Language() ~= "German" ) then
 end
 
 setfenv(1, private)
-L =
-{
+L = {
 	-- Category translation
 	-- [english] = translated
 	-- Although categories can have multiple words (e.g. "weapon sword onehand")

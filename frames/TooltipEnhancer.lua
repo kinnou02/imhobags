@@ -71,7 +71,12 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	
 	local itemType
 	if(ttype == "item") then
-		itemType = Inspect.Item.Detail(shown).type
+		itemType = Inspect.Item.Detail(shown)
+		-- When looting too quickly this may get called with an invalid item id
+		if(not itemType) then
+			return
+		end
+		itemType = itemType.type
 	elseif(ttype == "itemtype") then
 		itemType = shown
 	else
