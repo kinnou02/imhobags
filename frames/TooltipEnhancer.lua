@@ -72,7 +72,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	local itemType
 	if(ttype == "item") then
 		itemType = Inspect.Item.Detail(shown).type
-	elseif("ttype" == "itemtype") then
+	elseif(ttype == "itemtype") then
 		itemType = shown
 	else
 		return
