@@ -1,5 +1,8 @@
 local Addon, private = ...
 
+local floor = math.floor
+local format = string.format
+
 local rarityColors = {
 	sellable =		{ 0.34375, 0.34375, 0.34375 },
 	common =		{    0.98,    0.98,    0.98 },
@@ -17,4 +20,18 @@ Utils = { }
 function Utils.RarityColor(rarity)
 	local col = rarityColors[rarity or ""] or rarityColors.common
 	return col[1], col[2], col[3]
+end
+
+local coinFormat1 = format("%%i %s %%i %s %%i %s", L.Currency.platin, L.Currency.gold, L.Currency.silver)
+local coinFormat2 = format("%%i %s %%i %s", L.Currency.gold, L.Currency.silver)
+local coinFormat3 = format("%%i %s", L.Currency.silver)
+function Utils.FormatCoin(coin)
+	local p, g, s = floor(coin / 10000), floor(coin / 100 % 100), coin % 100
+	if(p > 0) then
+		return format(coinFormat1, p, g, s)
+	elseif(s > 0) then
+		return format(coinFormat2, g, s)
+	else
+		return format(coinFormat3, s)
+	end
 end
