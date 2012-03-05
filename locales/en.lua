@@ -44,4 +44,10 @@ L = {
 		wardrobe = "(wardrobe %i)",
 		total = "= %i",
 	},
+	
+	Currency = {
+		platin = "platin",
+		gold = "gold",
+		silver = "silver",
+	},
 }
