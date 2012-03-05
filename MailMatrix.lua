@@ -59,7 +59,9 @@ function MailMatrix.MergeMail(matrix, mail)
 	local attachments = { }
 	for _, item in ipairs(mail.attachments) do
 		item = Inspect.Item.Detail(item)
-		attachments[item.type] = (attachments[item.type] or 0) + (item.stack or 1)
+		if(item.type) then -- Is nil for money
+			attachments[item.type] = (attachments[item.type] or 0) + (item.stack or 1)
+		end
 	end
 	
 	purge(matrix, mail.id, attachments)
