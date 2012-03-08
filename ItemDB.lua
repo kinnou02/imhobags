@@ -165,18 +165,22 @@ The table is sorted by character name.
 ]]
 function ItemDB.GetItemCounts(itemType)
 	local result = { }
+	local player = Inspect.Unit.Detail("player")
+	local faction, player = player.faction, player.name
 	for character, data in pairs(_G.ImhoBagsItemMatrix[Inspect.Shard().name]) do
-		if(character == Inspect.Unit.Detail("player").name) then
-			data = playerItems
+		if(data.faction == faction) then
+			if(character == player) then
+				data = playerItems
+			end
+			table.insert(result, {
+				character,
+				data.inventory:GetItemCount(itemType),
+				data.bank:GetItemCount(itemType),
+				data.mail:GetItemCount(itemType),
+				data.equipment:GetItemCount(itemType),
+				data.wardrobe:GetItemCount(itemType),
+			})
 		end
-		table.insert(result, {
-			character,
-			data.inventory:GetItemCount(itemType),
-			data.bank:GetItemCount(itemType),
-			data.mail:GetItemCount(itemType),
-			data.equipment:GetItemCount(itemType),
-			data.wardrobe:GetItemCount(itemType),
-		})
 	end
 	table.sort(result, function(a, b) return a[1] < b[1] end)
 	return result
