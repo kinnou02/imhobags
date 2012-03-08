@@ -7,6 +7,7 @@ local pairs = pairs
 local pcall = pcall
 local table = table
 local setmetatable = setmetatable
+local string = string
 
 -- Globals
 local dump = dump
@@ -26,6 +27,16 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 		-- otherwise the user would not be able to select partial stacks
 		local usedFullSlots = { }
 		local usedPartialSlots = { }
+		
+		-- Temporary fix for invalid item types
+		local components = string.split(itemType, ",")
+		itemType = ""
+		for k, v in ipairs(components) do
+			components[k] = string.sub(v, -16)
+		end
+		itemType = "I" .. table.concat(components, ",")
+		-- fix ends
+		
 		local detail = Inspect.Item.Detail(itemType)
 		local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
 		for slot, stack in pairs(slots) do
