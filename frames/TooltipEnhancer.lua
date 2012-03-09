@@ -50,7 +50,7 @@ local function buildLine(character, total, ...)
 			end
 		end
 	end
-	return string.format(L.TooltipEnhancer.line, character, total, detail)
+	return string.formatn(L.TooltipEnhancer.line, character, total, detail)
 end
 
 local function sum(character)
