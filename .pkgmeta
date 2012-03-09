@@ -1,6 +1,7 @@
 package-as: ImhoBags
 
 license-output: LICENSE.txt
+manual-changelog: CHANGELOG.txt
 
 ignore:
   - Reference.txt
