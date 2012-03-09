@@ -39,7 +39,7 @@ local function unitAvailable(units)
 					info.condensed = true
 				end
 				
-				local title = L.WindowTitle[v[1]]
+				local title = L.Ux.WindowTitle[v[1]]
 				local window = Ux.ItemWindow.New(title, "player", v[1], info.condensed, v[2])
 
 				if(info and info.x and info.y) then

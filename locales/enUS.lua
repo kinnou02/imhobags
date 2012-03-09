@@ -28,12 +28,6 @@ L = {
 		["misc collectible"] = "Collectible",
 	},
 	
-	-- Titles for various windows
-	WindowTitle = {
-		inventory = "Backpack",
-		bank = "Bank",
-	},
-	
 	-- The shortcuts used in the tooltip overview
 	TooltipEnhancer = {
 		line = "+%s: %i %s", -- 1: character name, 2: item count, 3: detail string
@@ -70,4 +64,14 @@ Unknown location "%s".
 	* Bank: "bank" or "b"
 ]],
 	},
+	
+	-- User interface elements
+	Ux = {
+		-- Titles for various windows
+		WindowTitle = {
+			inventory = "Backpack",
+			bank = "Bank",
+		},
+	},
+
 }
