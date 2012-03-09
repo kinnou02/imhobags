@@ -162,10 +162,13 @@ for i = 1, displayItemsCount do
 		Ux.TooltipEnhancer:ClearAll();
 		Ux.TooltipEnhancer:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 6, -4)
 		Ux.TooltipEnhancer:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -6, -4)
+		self:SetBackgroundColor(0, 0, 0, 0.5)
 	end
+	entry.Event.MouseIn = entry.Event.MouseMove
 	
 	function entry.Event:MouseOut()
 		Command.Tooltip(nil)
+		self:SetBackgroundColor(0, 0, 0, 0)
 	end
 end
 
