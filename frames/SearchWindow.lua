@@ -29,6 +29,7 @@ local content = frame:GetContent()
 local border = frame:GetBorder()
 Ux.SearchWindow = frame
 frame:SetVisible(false)
+frame:SetTitle(L.Ux.WindowTitle.search)
 
 Ux.RiftWindowCloseButton.New(frame, frame)
 

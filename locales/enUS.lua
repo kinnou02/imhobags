@@ -73,6 +73,7 @@ Unknown location "%s".
 		WindowTitle = {
 			inventory = "Backpack",
 			bank = "Bank",
+			search = "Search Database",
 		},
 		search = "Search",
 	},
