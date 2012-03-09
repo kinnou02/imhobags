@@ -1,13 +1,13 @@
 Identifier = "ImhoBags"
-Name = "Imhothar's Inventory Management"
+Name = "Imhothar's Bags"
 NameShort = "Imho's Bags"
-Description = "Grouping and sorting for your inventory in one frame."
+Description = "Provides overview and search windows for your inventory as well as inspection of offline characters."
 
 Author = "Imhothar"
 Website = ""
 Email = "none"
 
-Version = "0.1 alpha"
+Version = "0.1"
 Environment = "1.7"
 
 --@no-lib-strip@
