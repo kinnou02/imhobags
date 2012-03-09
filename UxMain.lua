@@ -2,6 +2,7 @@
 
 local _G = _G
 local pairs = pairs
+local string = string
 local table = table
 
 local dump = dump
@@ -34,7 +35,7 @@ local function unitAvailable(units)
 			-- Their creation must be delayed until after Inspect.Unit.Detail("player") is available
 			for k, v in pairs(defaultItemWindows) do
 				local title = L.WindowTitles[v[1]]
-				local window = Ux.ItemWindow.New(title,"player", v[1], true, v[2])
+				local window = Ux.ItemWindow.New(string.upper(title), "player", v[1], true, v[2])
 
 				local position = _G.ImhoBagsWindowPositions[k]
 				if(position) then

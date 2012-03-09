@@ -30,8 +30,8 @@ L = {
 	
 	-- Titles for various windows
 	WindowTitles = {
-		inventory = "BACKPACK",
-		bank = "BANK",
+		inventory = "Backpack",
+		bank = "Bank",
 	},
 	
 	-- The shortcuts used in the tooltip overview

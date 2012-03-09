@@ -30,8 +30,8 @@ L = {
 	-- Titles for various windows.
 	-- They are all caps as in the default Rift containers
 	WindowTitles = {
-		inventory = "RUCKSACK",
-		bank = "BANK",
+		inventory = "Rucksack",
+		bank = "Bank",
 	},
 	
 	-- The shortcuts used in the tooltip overview
