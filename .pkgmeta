@@ -1,7 +1,11 @@
+package-as: ImhoBags
+
 license-output: LICENSE.txt
 
 ignore:
   - Reference.txt
+
+enable-nolib-creation: yes
 
 externals:
   libs/LibString:

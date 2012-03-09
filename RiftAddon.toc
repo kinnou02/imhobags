@@ -10,10 +10,14 @@ Email = "none"
 Version = "0.1 alpha"
 Environment = "1.7"
 
+--@no-lib-strip@
 Embed = {
+	["libs/LibString"] = true,
 }
+--@end-no-lib-strip@
 
 Dependencies = {
+	LibString = { "required", "before" },
 }
 
 RunOnStartup = {
