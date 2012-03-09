@@ -65,6 +65,12 @@ function MailMatrix.MergeMail(matrix, mail)
 	end
 	
 	purge(matrix, mail.id, attachments)
+	if(next(attachments) == nil) then
+		log("deleting mail")
+		matrix.mails[mail.id] = nil
+		return
+	end
+	
 	local t = { }
 	for type in pairs(attachments) do
 		table.insert(t, type)
