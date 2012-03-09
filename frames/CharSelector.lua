@@ -31,7 +31,8 @@ function Ux.CharSelector.New(parent, characters, current, callback)
 		self.menu:SetWidth(math.max(self:GetWidth(), self.menu.contentWidth))
 	end
 	
-	local menu = UI.CreateFrame("Frame", "", frame)
+	local menu = UI.CreateFrame("Frame", "", parent)
+	menu:SetLayer(100)
 	frame.menu = menu
 	menu:SetPoint("CENTER", frame, "CENTER")
 	menu:SetBackgroundColor(0.6, 0.6, 0.6)

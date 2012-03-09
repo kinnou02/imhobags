@@ -129,9 +129,10 @@ scrollbar = UI.CreateFrame("RiftScrollbar", "", frame)
 scrollbar:SetPoint("TOPRIGHT", filter, "BOTTOMRIGHT", 0, 2)
 scrollbar:SetPoint("BOTTOMRIGHT", content, "BOTTOMRIGHT", -4, -4)
 scrollbar.Event.ScrollbarChange = update
+scrollbar:SetLayer(10)
 
 local prevAnchor = filter
-local prevAnchorOffset = -10
+local prevAnchorOffset = -15
 local top = filter:GetHeight()
 for i = 1, displayItemsCount do
 	local entry = UI.CreateFrame("Frame", "", frame)
