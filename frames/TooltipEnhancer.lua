@@ -36,6 +36,7 @@ local function showTooltip(tooltip)
 	
 	window:SetText(tooltip)
 	window:SetVisible(true)
+	window:ClearAll()
 	window:SetPoint("BOTTOMLEFT", UI.Native.Tooltip, "TOPLEFT", padding, verticalOffset)
 	window:SetPoint("BOTTOMRIGHT", UI.Native.Tooltip, "TOPRIGHT", -padding, verticalOffset)
 end
