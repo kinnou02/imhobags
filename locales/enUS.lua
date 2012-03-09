@@ -49,10 +49,12 @@ L = {
 		usage = [[
 Correct usage:
 /imhobags character location
-"character" must be either the full name of one of your characters or "player"
-"location" must be one of: 
-	* Backpack: "inventory", "inv" or "i"
-	* Bank: "bank" or "b"
+	"character" must be either the full name of one of your characters or "player"
+	"location" must be one of: 
+		* Backpack: "inventory", "inv" or "i"
+		* Bank: "bank" or "b"
+/imhobags search
+	Opens the search window
 ]],
 		unknownChar = [[
 No data available for character "%s" (or it is member of the enemy faction).]],
