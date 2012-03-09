@@ -27,6 +27,12 @@ Ux.TooltipContext:SetStrata("topmost")
 -- Private methods
 -- ============================================================================
 
+local function centerWindow(window)
+	local screenWidth = UIParent:GetWidth()
+	local screenHeight = UIParent:GetHeight()
+	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (screenWidth - window:GetWidth()) / 2, (screenHeight - window:GetHeight()) / 2)
+end
+
 local unitAvailableIndex
 local function unitAvailable(units)
 	for k, v in pairs(units) do
@@ -46,8 +52,7 @@ local function unitAvailable(units)
 					window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
 					window:SetWidth(info.width)
 				else
-					local width, height = UIParent:GetWidth(), UIParent:GetHeight()
-					window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (width - window:GetWidth()) / 2, (height - window:GetHeight()) / 2)
+					centerWindow(window)
 				end
 				Ux[k] = window
 			end
@@ -55,6 +60,13 @@ local function unitAvailable(units)
 			Event.Unit.Available[unitAvailableIndex][1] = function() end
 			break
 		end
+	end
+	
+	local info = _G.ImhoBagsWindowInfo.SearchWindow
+	if(info) then
+		Ux.SearchWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
+	else
+		centerWindow(Ux.SearchWindow)
 	end
 end
 
@@ -78,6 +90,10 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 			condensed = window.condensed,
 		}
 	end
+	_G.ImhoBagsWindowInfo.SearchWindow = {
+		x = Ux.SearchWindow:GetLeft(),
+		y = Ux.SearchWindow:GetTop(),
+	}
 end
 
 table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
