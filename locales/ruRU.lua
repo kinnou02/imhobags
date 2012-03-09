@@ -5,4 +5,5 @@ if(Inspect.System.Language() ~= "Russian" ) then
 end
 
 setfenv(1, private)
-L = --@localization(locale="ruRU", format="lua_table", handle-unlocalized="english", handle-subnamespaces="subtable")
+L = { }
+--@localization(locale="ruRU", format="lua_additive_table", table-name="L", handle-unlocalized="english", handle-subnamespaces="subtable")
