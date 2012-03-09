@@ -197,6 +197,26 @@ function ItemDB.CharacterExists(name)
 	return false
 end
 
+-- Return a table with all stored item types where the key is the type and the value is true
+function ItemDB.GetAllItemTypes()
+	local result = { }
+	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
+		if(data.faction == PlayerFaction and char ~= PlayerName) then
+			data.inventory:GetAllItemTypes(result)
+			data.bank:GetAllItemTypes(result)
+			data.mail:GetAllItemTypes(result)
+			data.equipment:GetAllItemTypes(result)
+			data.wardrobe:GetAllItemTypes(result)
+		end
+	end
+	playerItems.inventory:GetAllItemTypes(result)
+	playerItems.bank:GetAllItemTypes(result)
+	playerItems.mail:GetAllItemTypes(result)
+	playerItems.equipment:GetAllItemTypes(result)
+	playerItems.wardrobe:GetAllItemTypes(result)
+	return result
+end
+
 table.insert(Event.Addon.SavedVariables.Load.End, { ItemDB_variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
 table.insert(Event.Addon.SavedVariables.Save.Begin, { ItemDB_saveVariables, Addon.identifier, "ItemDB_saveVariables" })
 table.insert(Event.Item.Slot, { ItemDB_mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })

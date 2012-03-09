@@ -113,8 +113,15 @@ function MailMatrix.GetItemCount(matrix, itemType)
 	return result
 end
 
+function MailMatrix.GetAllItemTypes(matrix, result)
+	for k in pairs(matrix.items) do
+		result[k] = true
+	end
+end
+
 local MailMatrix_matrixMetaTable = {
 	__index = {
+		GetAllItemTypes = MailMatrix.GetAllItemTypes,
 		GetItemCount = MailMatrix.GetItemCount,
 		MergeMail = MailMatrix.MergeMail,
 		Purge = MailMatrix.Purge,

@@ -281,9 +281,16 @@ function ItemMatrix.GetItemCount(matrix, itemType)
 	return result
 end
 
+function ItemMatrix.GetAllItemTypes(matrix, result)
+	for k in pairs(matrix.items) do
+		result[k] = true
+	end
+end
+
 local ItemMatrix_matrixMetaTable = {
 	__index = {
 		MergeSlot = ItemMatrix.MergeSlot,
+		GetAllItemTypes = ItemMatrix.GetAllItemTypes,
 		GetGroupedItems = ItemMatrix.GetGroupedItems,
 		GetItemCount = ItemMatrix.GetItemCount,
 		GetUnsortedItems = ItemMatrix.GetUnsortedItems,
