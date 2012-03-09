@@ -5,7 +5,6 @@ local _G = _G
 local ipairs = ipairs
 local next = next
 local pairs = pairs
-local print = print
 local setfenv = setfenv
 local string = string
 local table = table

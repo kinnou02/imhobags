@@ -2,7 +2,6 @@ local Addon, private = ...
 
 local _G = _G
 local ipairs = ipairs
-local print = print
 local table = table
 local select = select
 local string = string
@@ -65,6 +64,7 @@ end
 local function tooltipTargetChanged(ttype, shown, buff)
 	window:SetVisible(false)
 	
+	log("tooltip", ttype, shown, buff)
 	if(not (ttype and shown)) then
 		return
 	end

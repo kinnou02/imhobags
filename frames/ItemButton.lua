@@ -1,7 +1,6 @@
 local Addon, private = ...
 
 local _G = _G
-local print = print
 local table = table
 local tostring = tostring
 local type = type
