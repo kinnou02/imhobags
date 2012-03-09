@@ -40,7 +40,7 @@ local function unitAvailable(units)
 			-- Create the ordinary item windows.
 			-- Their creation must be delayed until after Inspect.Unit.Detail("player") is available.
 			for k, v in pairs(defaultItemWindows) do
-				local info = _G.ImhoBagsWindowInfo[k]
+				local info = _G.ImhoBagsWindowInfo[k] or { }
 				if(info.condensed == nil) then
 					info.condensed = true
 				end
