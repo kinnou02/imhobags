@@ -37,6 +37,8 @@ local function ItemDB_newCharacter()
 		guild = ItemMatrix.New(),
 		mail = MailMatrix.New(),
 		wardrobe = ItemMatrix.New(),
+		
+		version = Addon.toc.Version,
 	}
 end
 
@@ -75,6 +77,7 @@ local function ItemDB_variablesLoaded(addonIdentifier)
 		v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
 		v.mail		= MailMatrix.ApplyMetaTable(v.mail)
 		v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
+		v.version	= Addon.toc.Version
 	end
 	playerItems.bank		= ItemMatrix.ApplyMetaTable(playerItems.bank)
 	playerItems.equipment	= ItemMatrix.ApplyMetaTable(playerItems.equipment)
@@ -82,6 +85,7 @@ local function ItemDB_variablesLoaded(addonIdentifier)
 	playerItems.inventory	= ItemMatrix.ApplyMetaTable(playerItems.inventory)
 	playerItems.mail		= MailMatrix.ApplyMetaTable(playerItems.mail)
 	playerItems.wardrobe	= ItemMatrix.ApplyMetaTable(playerItems.wardrobe)
+	playerItems.version		= Addon.toc.Version
 end
 
 local function ItemDB_saveVariables(addonIdentifier)
