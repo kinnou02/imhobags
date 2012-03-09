@@ -34,8 +34,8 @@ local function unitAvailable(units)
 			-- Create the ordinary item windows.
 			-- Their creation must be delayed until after Inspect.Unit.Detail("player") is available
 			for k, v in pairs(defaultItemWindows) do
-				local title = L.WindowTitles[v[1]]
-				local window = Ux.ItemWindow.New(string.upper(title), "player", v[1], true, v[2])
+				local title = L.WindowTitle[v[1]]
+				local window = Ux.ItemWindow.New(title, "player", v[1], true, v[2])
 
 				local position = _G.ImhoBagsWindowPositions[k]
 				if(position) then

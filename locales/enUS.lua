@@ -1,8 +1,10 @@
 local Addon, private = ...
 
+local next = next
+
 setfenv(1, private)
 -- English is loaded if no other is present
-if(L ~= nil) then
+if(next(L) ~= nil) then
 	return
 end
 
@@ -12,7 +14,7 @@ L = {
 	-- Although categories can have multiple words (e.g. "weapon sword onehand")
 	-- only the first word is used for grouping/sorting and needs to be translated.
 	-- Should match the headings in the auction house.
-	CategoryNames = {
+	CategoryName = {
 		armor = "Armor",
 		consumable = "Consumables",
 		container = "Containers",
@@ -27,7 +29,7 @@ L = {
 	},
 	
 	-- Titles for various windows
-	WindowTitles = {
+	WindowTitle = {
 		inventory = "Backpack",
 		bank = "Bank",
 	},
@@ -49,7 +51,7 @@ L = {
 		silver = "silver",
 	},
 	
-	SlashMessages = {
+	SlashMessage = {
 		usage = [[
 Correct usage:
 /imhobags character location
