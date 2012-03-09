@@ -65,12 +65,11 @@ local function ItemDB_variablesLoaded(addonIdentifier)
 	if(_G.ImhoBagsItemMatrix == nil) then
 		_G.ImhoBagsItemMatrix = { }
 	end
-	local shardName = Inspect.Shard().name
-	if(_G.ImhoBagsItemMatrix[shardName] == nil) then
-		_G.ImhoBagsItemMatrix[shardName] = { }
+	if(_G.ImhoBagsItemMatrix[PlayerShard] == nil) then
+		_G.ImhoBagsItemMatrix[PlayerShard] = { }
 	end
 	-- Apply the metatable to all item matrixes on the current shard
-	for k,v in pairs(_G.ImhoBagsItemMatrix[shardName]) do
+	for k,v in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
 		v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
 		v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
 		v.guild		= ItemMatrix.ApplyMetaTable(v.guild)
@@ -91,7 +90,7 @@ local function ItemDB_saveVariables(addonIdentifier)
 		return
 	end
 	
-	-- Forst lastUpdate to -1 in all matrixes, this ensures the
+	-- Force lastUpdate to -1 in all matrixes, this ensures the
 	-- math works for all characters on the shard
 	playerItems.bank.lastUpdate = -1
 	playerItems.equipment.lastUpdate = -1
@@ -99,8 +98,8 @@ local function ItemDB_saveVariables(addonIdentifier)
 	playerItems.inventory.lastUpdate = -1
 	playerItems.mail.lastUpdate = -1
 	playerItems.wardrobe.lastUpdate = -1
-	playerItems.faction = Inspect.Unit.Detail("player").faction
-	_G.ImhoBagsItemMatrix[Inspect.Shard().name][Inspect.Unit.Detail("player").name] = playerItems
+	playerItems.faction = PlayerFaction
+	_G.ImhoBagsItemMatrix[PlayerShard][PlayerName] = playerItems
 	_G.ImhoBagsPlayerItemMatrix = playerItems
 end
 
@@ -110,11 +109,6 @@ local function ItemDB_mailsChanged(mails)
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))
 		end
 	end
-	local list = Inspect.Mail.List()
-	for mail in pairs(mails) do
-		list[mail] = false
-	end
-	playerItems.mail:Purge(list)
 end
 
 -- Public methods
@@ -128,10 +122,10 @@ return: The matrix table for the character and location
 ]]
 function ItemDB.GetItemMatrix(character, location)
 	local matrix;
-	if(character == "player" or Inspect.Unit.Detail("player").name == character) then
+	if(character == "player" or PlayerName == character) then
 		matrix = playerItems;
 	else
-		matrix = _G.ImhoBagsItemMatrix[Inspect.Shard().name][character] or ItemDB_newCharacter()
+		matrix = _G.ImhoBagsItemMatrix[PlayerShard][character] or ItemDB_newCharacter()
 	end
 	return matrix[location] or ItemMatrix.New()
 end
@@ -139,9 +133,12 @@ end
 -- Return an array of all characters on the current shard and faction for which item data is available
 function ItemDB.GetAvailableCharacters()
 	local result = { }
-	for k in pairs(_G.ImhoBagsItemMatrix[Inspect.Shard().name]) do
-		table.insert(result, k)
+	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
+		if(data.faction == PlayerFaction and char ~= PlayerName) then
+			table.insert(result, char)
+		end
 	end
+	table.insert(result, PlayerName)
 	table.sort(result)
 	return result
 end
@@ -165,15 +162,10 @@ The table is sorted by character name.
 ]]
 function ItemDB.GetItemCounts(itemType)
 	local result = { }
-	local player = Inspect.Unit.Detail("player")
-	local faction, player = player.faction, player.name
-	for character, data in pairs(_G.ImhoBagsItemMatrix[Inspect.Shard().name]) do
-		if(data.faction == faction) then
-			if(character == player) then
-				data = playerItems
-			end
+	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
+		if(data.faction == PlayerFaction and char ~= PlayerName) then
 			table.insert(result, {
-				character,
+				char,
 				data.inventory:GetItemCount(itemType),
 				data.bank:GetItemCount(itemType),
 				data.mail:GetItemCount(itemType),
@@ -182,8 +174,28 @@ function ItemDB.GetItemCounts(itemType)
 			})
 		end
 	end
+	table.insert(result, {
+		PlayerName,
+		playerItems.inventory:GetItemCount(itemType),
+		playerItems.bank:GetItemCount(itemType),
+		playerItems.mail:GetItemCount(itemType),
+		playerItems.equipment:GetItemCount(itemType),
+		playerItems.wardrobe:GetItemCount(itemType),
+	})
 	table.sort(result, function(a, b) return a[1] < b[1] end)
 	return result
+end
+
+function ItemDB.CharacterExists(name)
+	if(name == "player" or name == PlayerName) then
+		return true
+	end
+	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
+		if(data.faction == PlayerFaction and char == name) then
+			return true
+		end
+	end
+	return false
 end
 
 table.insert(Event.Addon.SavedVariables.Load.End, { ItemDB_variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
