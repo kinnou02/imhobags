@@ -135,23 +135,27 @@ function Ux.ItemButton.New(parent)
 		button:SetMouseMasking("limited")
 		
 		local border = Ux.ItemButtonBorder
-		button.icon = UI.CreateFrame("Texture", "", button)
-		button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", border, border)
-		button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -border, -border)
+		local backdrop = UI.CreateFrame("Frame", "", button)
+		backdrop:SetBackgroundColor(0.0, 0.0, 0.0)
+		backdrop:SetPoint("TOPLEFT", button, "TOPLEFT", border, border)
+		backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -border, -border)
 		
-		button.stackText = UI.CreateFrame("Text", "", button)
+		button.icon = UI.CreateFrame("Texture", "", backdrop)
+		button.icon:SetAllPoints(backdrop)
+
+		button.stackText = UI.CreateFrame("Text", "", button.icon)
 		button.stackText:SetPoint("BOTTOMRIGHT", button.icon, "BOTTOMRIGHT", 0, 0)
 		button.stackText:SetFontSize(13)
 		button.stackText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
-		button.stackText:SetLayer(button:GetLayer() + 1)
+--		button.stackText:SetLayer(button:GetLayer() + 1)
 		
-		button.slotsText = UI.CreateFrame("Text", "", button)
+		button.slotsText = UI.CreateFrame("Text", "", button.icon)
 		button.slotsText:SetPoint("BOTTOMRIGHT", button.stackText, "TOPRIGHT", 0, 0)
 		button.slotsText:SetFontSize(10)
 		button.slotsText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
 		button.slotsText:SetFontColor(0.8, 0.8, 0.8)
 		button.slotsText:SetLayer(button:GetLayer() + 1)
-		button.slotsText:SetMouseMasking("limited")
+--		button.slotsText:SetMouseMasking("limited")
 		
 		button.SetItem = ItemButton_SetItem
 		button.Dispose = ItemButton_Dispose
