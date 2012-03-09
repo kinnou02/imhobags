@@ -50,4 +50,24 @@ L = {
 		gold = "gold",
 		silver = "silver",
 	},
+	
+	SlashMessages = {
+		usage = [[
+Correct usage:
+/imhobags character location
+"character" must be either the full name of one of your characters or "player"
+"location" must be one of: 
+	* Backpack: "inventory", "inv" or "i"
+	* Bank: "bank" or "b"
+]],
+		unknownChar = [[
+No data available for character "%s" (or it is member of the enemy faction).]],
+
+		unknownLocation = [[
+Unknown location "%s".
+"location" must be one of: 
+	* Backpack: "inventory", "inv" or "i"
+	* Bank: "bank" or "b"
+]],
+	},
 }

@@ -50,4 +50,24 @@ L = {
 		gold = "Gold",
 		silver = "Silber",
 	},
+	
+	SlashMessages = {
+		usage = [[
+Richtige Benutzung:
+/imhobags character ort
+"character" muss der volle Name eines deiner Charaktere oder "player" sein.
+"ort" muss eines der folgenden sein
+	* Rucksack: "inventory", "inv" oder "i"
+	* Bank: "bank" oder "b"
+]],
+		unknownChar = [[
+Keine Daten für Charakter "%s" verfügbar (oder er ist Mitglied der gegnerischen Fraktion).]],
+
+		unknownLocation = [[
+Unbekannter Ort "%s".
+"ort" muss eines der folgenden sein:
+	* Rucksack: "inventory", "inv" oder "i"
+	* Bank: "bank" oder "b"
+]],
+	},
 }
