@@ -72,7 +72,7 @@ Unknown location "%s".
 			inventory = "Backpack",
 			bank = "Bank",
 		},
-		search = "Search"
+		search = "Search",
 	},
 
 }
