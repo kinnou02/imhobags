@@ -6,6 +6,7 @@ end
 
 local pairs = pairs
 local print = print
+local string = string
 local table = table
 
 local Command = Command
