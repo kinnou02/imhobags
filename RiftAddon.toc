@@ -30,6 +30,7 @@ RunOnStartup = {
 	"Sort.Default.lua",
 	
 	"UxMain.lua",
+	"frames/CharSelector.lua",
 	"frames/ItemButton.lua",
 	"frames/ItemWindow.lua",
 	"frames/EmptySlotIndicator.lua",

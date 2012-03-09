@@ -77,5 +77,13 @@ unitAvailableIndex = #Event.Unit.Available
 -- Public methods
 -- ============================================================================
 
-function Ux.ToggleItemWindow(char, location)
+function Ux.ShowItemWindow(char, location)
+	for k, v in pairs(defaultItemWindows) do
+		if(v[1] == location) then
+			local window = Ux[k]
+			window:SetCharacter(char, location)
+			window:SetVisible(true)
+			break
+		end
+	end
 end
