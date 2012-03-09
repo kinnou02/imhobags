@@ -173,6 +173,14 @@ for i = 1, displayItemsCount do
 	end
 end
 
+function content.Event:WheelBack()
+	scrollbar:NudgeDown()
+end
+
+function content.Event:WheelForward()
+	scrollbar:NudgeUp()
+end
+
 -- Public methods
 -- ============================================================================
 
