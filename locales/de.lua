@@ -71,3 +71,7 @@ Unbekannter Ort "%s".
 ]],
 	},
 }
+
+L = {
+--@localization(locale="deDE", format="lua_table", handle-unlocalized="english", handle-subnamespaces="subtable")
+}
