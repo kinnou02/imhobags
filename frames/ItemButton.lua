@@ -143,19 +143,19 @@ function Ux.ItemButton.New(parent)
 		button.icon = UI.CreateFrame("Texture", "", backdrop)
 		button.icon:SetAllPoints(backdrop)
 
-		button.stackText = UI.CreateFrame("Text", "", button.icon)
+		button.stackText = UI.CreateFrame("Text", "", button)
 		button.stackText:SetPoint("BOTTOMRIGHT", button.icon, "BOTTOMRIGHT", 0, 0)
 		button.stackText:SetFontSize(13)
 		button.stackText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
---		button.stackText:SetLayer(button:GetLayer() + 1)
+		button.stackText:SetLayer(button.icon:GetLayer() + 1)
 		
-		button.slotsText = UI.CreateFrame("Text", "", button.icon)
+		button.slotsText = UI.CreateFrame("Text", "", button)
 		button.slotsText:SetPoint("BOTTOMRIGHT", button.stackText, "TOPRIGHT", 0, 0)
 		button.slotsText:SetFontSize(10)
 		button.slotsText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
 		button.slotsText:SetFontColor(0.8, 0.8, 0.8)
-		button.slotsText:SetLayer(button:GetLayer() + 1)
---		button.slotsText:SetMouseMasking("limited")
+		button.slotsText:SetLayer(button.icon:GetLayer() + 1)
+		button.slotsText:SetMouseMasking("limited")
 		
 		button.SetItem = ItemButton_SetItem
 		button.Dispose = ItemButton_Dispose
