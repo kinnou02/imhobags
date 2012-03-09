@@ -17,8 +17,14 @@ Dependencies = {
 }
 
 RunOnStartup = {
-	"locales/de.lua",
-	"locales/en.lua", -- Must be last locale
+--[===[@non-debug@
+	"locales/deDE.lua",
+	"locales/frFR.lua",
+	"locales/koKR.lua",
+	"locales/ruRU.lua",
+--@end-non-debug@]===]
+	"locales/enUS.lua",
+
 	
 	"Main.lua",
 	"Utils.lua",
