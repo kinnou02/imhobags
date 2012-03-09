@@ -1,4 +1,9 @@
 license-output: LICENSE.txt
 
 ignore:
-    - Reference.txt
+  - Reference.txt
+
+externals:
+  libs/LibString:
+    url: git://git.curseforge.net/rift/libstring/mainline.git
+    tag: latest
