@@ -48,7 +48,7 @@ local function createFrame()
 end
 
 -- Creation of the frame must be postponed until after saved variables are loaded
-table.insert(Event.Addon.Startup.End, { createFrame, Addon.identifier, "Ux.EmptySlotIndicator createFrame" })
+table.insert(ImhoEvent.Init, { createFrame, Addon.identifier, "Ux.EmptySlotIndicator createFrame" })
 
 -- Public methods
 -- ============================================================================

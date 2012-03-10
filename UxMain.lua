@@ -33,36 +33,29 @@ local function centerWindow(window)
 	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (screenWidth - window:GetWidth()) / 2, (screenHeight - window:GetHeight()) / 2)
 end
 
-local unitAvailableIndex
-local function unitAvailable(units)
-	for k, v in pairs(units) do
-		if(v == "player") then
-			-- Create the ordinary item windows.
-			-- Their creation must be delayed until after Inspect.Unit.Detail("player") is available.
-			for k, v in pairs(defaultItemWindows) do
-				local info = _G.ImhoBagsWindowInfo[k] or { }
-				if(info.condensed == nil) then
-					info.condensed = true
-				end
-				
-				local title = L.Ux.WindowTitle[v[1]]
-				local window = Ux.ItemWindow.New(title, "player", v[1], info.condensed, v[2])
-
-				if(info and info.x and info.y) then
-					window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
-					window:SetWidth(info.width)
-				else
-					centerWindow(window)
-				end
-				Ux[k] = window
-			end
-			
-			Event.Unit.Available[unitAvailableIndex][1] = function() end
-			break
+local function init()
+	-- Create the ordinary item windows.
+	-- Their creation must be delayed until after Inspect.Unit.Detail("player") is available.
+	for k, v in pairs(defaultItemWindows) do
+		local info = _G.ImhoBags_WindowInfo[k] or { }
+		if(info.condensed == nil) then
+			info.condensed = true
 		end
+		
+		local title = L.Ux.WindowTitle[v[1]]
+		local window = Ux.ItemWindow.New(title, "player", v[1], info.condensed, v[2])
+
+		if(info and info.x and info.y) then
+			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
+			window:SetWidth(info.width)
+		else
+			centerWindow(window)
+		end
+		Ux[k] = window
 	end
-	
-	local info = _G.ImhoBagsWindowInfo.SearchWindow
+
+	-- Load the search window's position
+	local info = _G.ImhoBags_WindowInfo.SearchWindow
 	if(info) then
 		Ux.SearchWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
 	else
@@ -74,7 +67,7 @@ local function Ux_savedVariablesLoadEnd(addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
-	_G.ImhoBagsWindowInfo = _G.ImhoBagsWindowInfo or { }
+	_G.ImhoBags_WindowInfo = _G.ImhoBags_WindowInfo or { }
 end
 
 local function Ux_savedVariablesSaveBegin(addonIdentifier)
@@ -83,14 +76,14 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 	end
 	for k, v in pairs(defaultItemWindows) do
 		local window = Ux[k]
-		_G.ImhoBagsWindowInfo[k] = {
+		_G.ImhoBags_WindowInfo[k] = {
 			x = window:GetLeft(),
 			y = window:GetTop(),
 			width = window:GetWidth(),
 			condensed = window.condensed,
 		}
 	end
-	_G.ImhoBagsWindowInfo.SearchWindow = {
+	_G.ImhoBags_WindowInfo.SearchWindow = {
 		x = Ux.SearchWindow:GetLeft(),
 		y = Ux.SearchWindow:GetTop(),
 	}
@@ -98,8 +91,8 @@ end
 
 table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
 table.insert(Event.Addon.SavedVariables.Save.Begin, { Ux_savedVariablesSaveBegin, Addon.identifier, "Ux_savedVariablesSaveBegin" })
-table.insert(Event.Unit.Available, { unitAvailable, Addon.identifier, "Ux_unitAvailable" })
-unitAvailableIndex = #Event.Unit.Available
+
+table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
 
 -- Public methods
 -- ============================================================================

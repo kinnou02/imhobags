@@ -20,7 +20,7 @@ local Utility = Utility
 
 -- Locals
 local playerItems
-local readonly = true
+local factionItems
 
 setfenv(1, private)
 ItemDB = { }
@@ -28,13 +28,12 @@ ItemDB = { }
 -- Private methods
 -- ============================================================================
 
-local function ItemDB_newCharacter()
+local function newCharacter()
 	return {
 		-- List only locations we care about
 		bank = ItemMatrix.New(),
 		equipment = ItemMatrix.New(),
 		inventory = ItemMatrix.New(),
-		guild = ItemMatrix.New(),
 		mail = MailMatrix.New(),
 		wardrobe = ItemMatrix.New(),
 		
@@ -42,7 +41,7 @@ local function ItemDB_newCharacter()
 	}
 end
 
-local function ItemDB_mergeSlotChanges(slots)
+local function mergeSlotChanges(slots)
 	for slot, item in pairs(slots) do
 		local container, bag, index = Utility.Item.Slot.Parse(slot)
 		local matrix = playerItems[container]
@@ -52,61 +51,58 @@ local function ItemDB_mergeSlotChanges(slots)
 	end
 end
 
-local function ItemDB_variablesLoaded(addonIdentifier)
+local function variablesLoaded(addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
-	
-	-- A /reloadui does not trigger all the Event.Item.Slot events as on loggin or teleport.
+	-- A /reloadui does not trigger all the Event.Item.Slot events as on log in or teleport.
 	-- That's why we need a separate "character"-stored table with
 	-- readily available data after a /reloadui
-	playerItems = _G.ImhoBagsPlayerItemMatrix or ItemDB_newCharacter()
-
-	-- Ensure at least the shard table exists
-	if(_G.ImhoBagsItemMatrix == nil) then
-		_G.ImhoBagsItemMatrix = { }
-	end
-	if(_G.ImhoBagsItemMatrix[PlayerShard] == nil) then
-		_G.ImhoBagsItemMatrix[PlayerShard] = { }
-	end
-	-- Apply the metatable to all item matrixes on the current shard
-	for k,v in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
-		v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
-		v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
-		v.guild		= ItemMatrix.ApplyMetaTable(v.guild)
-		v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
-		v.mail		= MailMatrix.ApplyMetaTable(v.mail)
-		v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
-		v.version	= Addon.toc.Version
-	end
+	playerItems = _G.ImhoBags_PlayerItemMatrix or newCharacter()
+	
 	playerItems.bank		= ItemMatrix.ApplyMetaTable(playerItems.bank)
 	playerItems.equipment	= ItemMatrix.ApplyMetaTable(playerItems.equipment)
-	playerItems.guild		= ItemMatrix.ApplyMetaTable(playerItems.guild)
 	playerItems.inventory	= ItemMatrix.ApplyMetaTable(playerItems.inventory)
 	playerItems.mail		= MailMatrix.ApplyMetaTable(playerItems.mail)
 	playerItems.wardrobe	= ItemMatrix.ApplyMetaTable(playerItems.wardrobe)
-	playerItems.version		= Addon.toc.Version
 end
 
-local function ItemDB_saveVariables(addonIdentifier)
+local function prepareTables()
+	-- Ensure our data table exists
+	factionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or {
+		version = Addon.toc.Version,
+	}
+	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = factionItems
+	
+	-- Apply the metatable to all item matrices on the current shard
+	for k, v in pairs(factionItems) do
+		if(type(v) == "table") then
+			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
+			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
+			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
+			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
+			v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
+		end
+	end
+end
+
+local function saveVariables(addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
 	
-	-- Force lastUpdate to -1 in all matrixes, this ensures the
+	-- Force lastUpdate to -1 in all matrices, this ensures the
 	-- math works for all characters on the shard
 	playerItems.bank.lastUpdate = -1
 	playerItems.equipment.lastUpdate = -1
-	playerItems.guild.lastUpdate = -1
 	playerItems.inventory.lastUpdate = -1
 	playerItems.mail.lastUpdate = -1
 	playerItems.wardrobe.lastUpdate = -1
-	playerItems.faction = PlayerFaction
-	_G.ImhoBagsItemMatrix[PlayerShard][PlayerName] = playerItems
-	_G.ImhoBagsPlayerItemMatrix = playerItems
+	_G["ImhoBags_ItemMatrix_" .. PlayerFaction][PlayerName] = playerItems
+	_G.ImhoBags_PlayerItemMatrix = playerItems
 end
 
-local function ItemDB_mailsChanged(mails)
+local function mailsChanged(mails)
 	for mail, info in pairs(mails) do
 		if(info == "detail") then
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))
@@ -114,12 +110,16 @@ local function ItemDB_mailsChanged(mails)
 	end
 end
 
+local function init()
+	prepareTables()
+end
+
 -- Public methods
 -- ============================================================================
 
 --[[
 Get the matrix for the given character's location matrix
-location: "inventory", "bank", "equipped", "guild", "wardrobe"
+location: "inventory", "bank", "equipped", "wardrobe"
 location: "inventory", "bank"
 return: The matrix table for the character and location
 ]]
@@ -128,7 +128,7 @@ function ItemDB.GetItemMatrix(character, location)
 	if(character == "player" or PlayerName == character) then
 		matrix = playerItems;
 	else
-		matrix = _G.ImhoBagsItemMatrix[PlayerShard][character] or ItemDB_newCharacter()
+		matrix = factionItems[character] or ItemDB_newCharacter()
 	end
 	return matrix[location] or ItemMatrix.New()
 end
@@ -136,8 +136,8 @@ end
 -- Return an array of all characters on the current shard and faction for which item data is available
 function ItemDB.GetAvailableCharacters()
 	local result = { }
-	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
-		if(data.faction == PlayerFaction and char ~= PlayerName) then
+	for char, data in pairs(factionItems) do
+		if(char ~= PlayerName and type(data) == "table") then
 			table.insert(result, char)
 		end
 	end
@@ -165,8 +165,8 @@ The table is sorted by character name.
 ]]
 function ItemDB.GetItemCounts(itemType)
 	local result = { }
-	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
-		if(data.faction == PlayerFaction and char ~= PlayerName) then
+	for char, data in pairs(factionItems) do
+		if(char ~= PlayerName and type(data) == "table") then
 			table.insert(result, {
 				char,
 				data.inventory:GetItemCount(itemType),
@@ -193,19 +193,14 @@ function ItemDB.CharacterExists(name)
 	if(name == "player" or name == PlayerName) then
 		return true
 	end
-	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
-		if(data.faction == PlayerFaction and char == name) then
-			return true
-		end
-	end
-	return false
+	return factionItems[name] ~= nil
 end
 
 -- Return a table with all stored item types where the key is the type and the value is true
 function ItemDB.GetAllItemTypes()
 	local result = { }
-	for char, data in pairs(_G.ImhoBagsItemMatrix[PlayerShard]) do
-		if(data.faction == PlayerFaction and char ~= PlayerName) then
+	for char, data in pairs(factionItems) do
+		if(char ~= PlayerName and type(data) == "table") then
 			data.inventory:GetAllItemTypes(result)
 			data.bank:GetAllItemTypes(result)
 			data.mail:GetAllItemTypes(result)
@@ -221,8 +216,10 @@ function ItemDB.GetAllItemTypes()
 	return result
 end
 
-table.insert(Event.Addon.SavedVariables.Load.End, { ItemDB_variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { ItemDB_saveVariables, Addon.identifier, "ItemDB_saveVariables" })
-table.insert(Event.Item.Slot, { ItemDB_mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Item.Update, { ItemDB_mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Mail, { ItemDB_mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
+table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
+table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
+table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
+
+table.insert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })

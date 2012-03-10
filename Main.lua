@@ -13,6 +13,7 @@ local Command = Command
 local Event = Event
 local Inspect = Inspect
 local UI = UI
+local Utility = Utility
 
 setfenv(1, private)
 
@@ -29,6 +30,12 @@ PlayerName = ""
 PlayerFaction = ""
 PlayerShard = Inspect.Shard().name
 
+ImhoEvent = { }
+Trigger = { }
+
+-- The init event is postponed until the full Inspect.Unit.Detail("player") data is available
+Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Init")
+
 local unitAvailableIndex
 local function unitAvailable(units)
 	for k, v in pairs(units) do
@@ -36,6 +43,7 @@ local function unitAvailable(units)
 			local player = Inspect.Unit.Detail("player")
 			PlayerName = player.name
 			PlayerFaction = player.faction
+			Trigger.Init()
 			
 			Event.Unit.Available[unitAvailableIndex][1] = function() end
 			break

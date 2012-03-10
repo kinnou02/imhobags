@@ -51,9 +51,10 @@ RunOnStartup = {
 }
 
 SavedVariables = {
-	ImhoBagsItemMatrix = "account",
-	ImhoBagsPlayerItemMatrix = "character",
-	ImhoBagsWindowInfo = "character",
+	ImhoBags_ItemMatrix_defiant = "shard",
+	ImhoBags_ItemMatrix_guardian = "shard",
+	ImhoBags_PlayerItemMatrix = "character", -- Temporary workaround for /reloadui
+	ImhoBags_WindowInfo = "character",
 }
 
 -- Set this value to true to enable chat spamming debug messages and other debugging facilities
