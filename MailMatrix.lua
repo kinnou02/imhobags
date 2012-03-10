@@ -54,7 +54,6 @@ local function extractUnsortedCharacterItems(matrix)
 		end
 	end
 	-- Get coin info
-	-- Won't work right now as coin attachments don't get tooltips
 	for mail, data in pairs(matrix.mails) do
 		if(data.coin) then
 			local type = {
@@ -63,7 +62,7 @@ local function extractUnsortedCharacterItems(matrix)
 				icon = (data.coin > 10000 and [[Data/\UI\item_icons\loot_platinum_coins.dds]]) or
 					(data.coin > 100 and [[Data/\UI\item_icons\loot_gold_coins.dds]]) or [[Data/\UI\item_icons\loot_silver_coins.dds]],
 			}
-			table.insert(items, { type = type, slots = 1, stack = data.coin })
+			table.insert(items, { type = type, slots = 1, stack = 1 })
 		end
 	end
 	return items, 0, success

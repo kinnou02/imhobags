@@ -6,6 +6,7 @@ local tostring = tostring
 local type = type
 
 local dump = dump
+local UIParent = UIParent
 
 local Command = Command
 local Event = Event
@@ -115,7 +116,13 @@ end
 local function ItemButton_ShowTooltip(self)
 	if(self.tooltip) then
 		local target
-		if(self.readonly) then
+		if(not self.type.type) then
+			local mouse = Inspect.Mouse()
+			Ux.TooltipEnhancer:ClearAll()
+			Ux.TooltipEnhancer:SetText(self.type.name)
+			Ux.TooltipEnhancer:SetVisible(true)
+			Ux.TooltipEnhancer:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", mouse.x, mouse.y)
+		elseif(self.readonly) then
 			target = self.type.type
 		else
 			target = Inspect.Item.Detail(self.slots[1]).id
