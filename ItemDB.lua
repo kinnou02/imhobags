@@ -119,8 +119,7 @@ end
 
 --[[
 Get the matrix for the given character's location matrix
-location: "inventory", "bank", "equipped", "wardrobe"
-location: "inventory", "bank"
+location: "inventory", "bank", "equipped", "mail", "wardrobe"
 return: The matrix table for the character and location
 ]]
 function ItemDB.GetItemMatrix(character, location)
@@ -214,6 +213,52 @@ function ItemDB.GetAllItemTypes()
 	playerItems.equipment:GetAllItemTypes(result)
 	playerItems.wardrobe:GetAllItemTypes(result)
 	return result
+end
+
+--[[
+Transforms the given items list and returns a table where the items have a grouped structure.
+items: result of GetUnsortedItems()
+group: A function taking an item type as argument and returning a key
+return: groups, keys
+
+	groups = { -- Array
+		[#] = { -- Array
+			[#] = item -- value is a reference to an entry in the items table
+		}
+	}
+	The items are given in no particular order, however the relative order
+	of the items as they are listed in the items table is preserved.
+	
+	keys = {
+		[group] = key
+	}
+	The table keys are the values in the groups table.
+	The table values are the keys returned by group()
+	
+	These two tables together allow an efficient sorting of the groups
+	and their contained items without the need to reallocate new tables.
+]]
+function ItemDB.GetGroupedItems(items, group)
+	local groups = { }
+	local keys = { }
+	
+	local function groupForKey(key)
+		for k, v in pairs(keys) do
+			if(key == v) then
+				return k
+			end
+		end
+		local g = { }
+		table.insert(groups, g)
+		keys[g] = key
+		return g
+	end
+	
+	for _, item in ipairs(items) do
+		local g = groupForKey(group(item.type))
+		table.insert(g, item)
+	end
+	return groups, keys
 end
 
 table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
