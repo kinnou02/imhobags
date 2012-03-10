@@ -53,6 +53,7 @@ Correct usage:
 	"location" must be one of: 
 		* Backpack: "inventory", "inv" or "i"
 		* Bank: "bank" or "b"
+		* Mailbox: "mail" or "m"
 /imhobags search
 	Opens the search window
 ]],
@@ -64,6 +65,7 @@ Unknown location "%s".
 "location" must be one of: 
 	* Backpack: "inventory", "inv" or "i"
 	* Bank: "bank" or "b"
+	* Mailbox: "mail" or "m"
 ]],
 	},
 	
@@ -74,6 +76,7 @@ Unknown location "%s".
 			inventory = "Backpack",
 			bank = "Bank",
 			search = "Search Database",
+			mail = "Mailbox",
 		},
 		search = "Search",
 	},
