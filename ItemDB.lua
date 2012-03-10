@@ -102,11 +102,22 @@ local function saveVariables(addonIdentifier)
 	_G.ImhoBags_PlayerItemMatrix = playerItems
 end
 
+local function interactionChanged(interaction, state)
+	if(interaction == "mail" and state) then
+		playerItems.mail:Purge(Inspect.Mail.List())
+	end
+end
+
 local function mailsChanged(mails)
 	for mail, info in pairs(mails) do
 		if(info == "detail") then
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))
 		end
+	end
+	-- Remove deleted mails.
+	-- If interaction is still available then mails flagged as "false" no longer exist.
+	if(Inspect.Interaction("mail")) then
+		playerItems.mail:Purge(Inspect.Mail.List())
 	end
 end
 
@@ -263,6 +274,7 @@ end
 
 table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
 table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
+table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
 table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
 table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
 table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
