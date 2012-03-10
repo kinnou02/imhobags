@@ -106,7 +106,7 @@ function MailMatrix.MergeMail(matrix, mail)
 	
 	purge(matrix, mail.id, attachments)
 	if(not (next(attachments) or coin)) then
-		log("deleting mail", mail.id)
+		log("purge", "mail", mail.id, matrix.lastUpdate)
 		matrix.mails[mail.id] = nil
 		return
 	end
@@ -129,6 +129,20 @@ function MailMatrix.MergeMail(matrix, mail)
 	end
 	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	log("update", "mail", mail.id, matrix.lastUpdate)
+end
+
+-- Remove mails from the matrix which no longer exist.
+-- Also available as instance metamethod.
+function MailMatrix.Purge(matrix, mails)
+	local empty = { }
+	for mail in pairs(matrix.mails) do
+		if(not mails[mail]) then
+			log("purge", "mail", mail, matrix.lastUpdate)
+			purge(matrix, mail, empty)
+			matrix.mails[mail] = nil
+		end
+	end
+	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 end
 
 --[[
@@ -182,6 +196,7 @@ local MailMatrix_matrixMetaTable = {
 		GetItemCount = MailMatrix.GetItemCount,
 		GetUnsortedItems = MailMatrix.GetUnsortedItems,
 		MergeMail = MailMatrix.MergeMail,
+		Purge = MailMatrix.Purge,
 	}
 }
 
