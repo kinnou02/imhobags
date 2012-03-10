@@ -5,6 +5,7 @@ manual-changelog: CHANGELOG.txt
 
 ignore:
   - Reference.txt
+  - screenshots
 
 enable-nolib-creation: yes
 
