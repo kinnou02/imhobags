@@ -22,7 +22,7 @@ function Utils.RarityColor(rarity)
 	return col[1], col[2], col[3]
 end
 
-local coinFormat1 = format("%%i %s %%i %s %%i %s", L.Currency.platin, L.Currency.gold, L.Currency.silver)
+local coinFormat1 = format("%%i %s %%i %s %%i %s", L.Currency.platinum, L.Currency.gold, L.Currency.silver)
 local coinFormat2 = format("%%i %s %%i %s", L.Currency.gold, L.Currency.silver)
 local coinFormat3 = format("%%i %s", L.Currency.silver)
 function Utils.FormatCoin(coin)

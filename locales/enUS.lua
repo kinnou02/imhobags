@@ -40,9 +40,9 @@ L = {
 	},
 	
 	Currency = {
-		platin = "platin",
-		gold = "gold",
-		silver = "silver",
+		platinum = "Platinum",
+		gold = "Gold",
+		silver = "Silver",
 	},
 	
 	SlashMessage = {
