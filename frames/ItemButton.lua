@@ -39,6 +39,7 @@ end
 
 local function mouseOut(self)
 	Command.Tooltip(nil)
+	Ux.TooltipEnhancer:SetVisible(false)
 	self.tooltip = false
 end
 
