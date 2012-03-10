@@ -22,6 +22,7 @@ ItemMatrix = { }
 
 local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	local items = { }
+	local success = true
 	for itemType, slots in pairs(matrix.items) do
 		-- We have to treat full and partial stacks differently
 		-- otherwise the user would not be able to select partial stacks
@@ -40,8 +41,9 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 		end
 		-- fix ends
 		
-		local success, detail = pcall(Inspect.Item.Detail, itemType2)
-		if(success and detail) then
+		local result, detail = pcall(Inspect.Item.Detail, itemType2)
+		success = success and result
+		if(result and detail) then
 			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
 			for slot, stack in pairs(slots) do
 				if(condensed and stack == stackMax) then
@@ -64,7 +66,8 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 			table.insert(empty, slot)
 		end
 	end
-	return items, empty, true
+	-- Force success to true or otherwise poeple with broken item types might get a hevy performance decrease
+	return items, empty, true--success
 end
 
 local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
@@ -81,7 +84,7 @@ local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
 		-- to ask later.
 		local result, detail = pcall(Inspect.Item.Detail, itemType)
 		success = success and result
-		if(result) then
+		if(result and detail) then
 			-- Non-stackable items have stackMax = nil and must not be condensed
 			local stackMax = detail.stackMax or 0
 			for slot, stack in pairs(slots) do
