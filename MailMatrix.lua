@@ -108,7 +108,6 @@ function MailMatrix.MergeMail(matrix, mail)
 	if(not (next(attachments) or coin)) then
 		log("deleting mail", mail.id)
 		matrix.mails[mail.id] = nil
-		matrix.subjects[mail.id] = nil
 		return
 	end
 	
