@@ -15,6 +15,7 @@ local UI = UI
 local defaultItemWindows =  {
 	BackpackItemWindow = { "inventory", UI.Native.BagInventory1 },
 	BankItemWindow = { "bank", UI.Native.Bank },
+	MailItemWindow = { "mail", nil },
 }
 
 setfenv(1, private)
