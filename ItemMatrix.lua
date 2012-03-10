@@ -30,27 +30,32 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 		
 		-- Temporary fix for invalid item types
 		local components = string.split(itemType, ",")
-		itemType = ""
 		for k, v in ipairs(components) do
 			components[k] = string.sub(v, -16)
 		end
-		itemType = "I" .. table.concat(components, ",")
+		local itemType2 = "I" .. table.concat(components, ",")
+		if(itemType ~= itemType2) then
+			log(itemType)
+			log(itemType2)
+		end
 		-- fix ends
 		
-		local detail = Inspect.Item.Detail(itemType)
-		local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
-		for slot, stack in pairs(slots) do
-			if(condensed and stack == stackMax) then
-				table.insert(usedFullSlots, slot)
-			else
-				table.insert(usedPartialSlots, { slot, stack })
+		local success, detail = pcall(Inspect.Item.Detail, itemType2)
+		if(success and detail) then
+			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
+			for slot, stack in pairs(slots) do
+				if(condensed and stack == stackMax) then
+					table.insert(usedFullSlots, slot)
+				else
+					table.insert(usedPartialSlots, { slot, stack })
+				end
 			end
-		end
-		if(#usedFullSlots > 0) then
-			table.insert(items, { type = detail, slots = usedFullSlots, stack = #usedFullSlots * stackMax })
-		end
-		for k, v in ipairs(usedPartialSlots) do
-			table.insert(items, { type = detail, slots = { v[1] }, stack = v[2] })
+			if(#usedFullSlots > 0) then
+				table.insert(items, { type = detail, slots = usedFullSlots, stack = #usedFullSlots * stackMax })
+			end
+			for k, v in ipairs(usedPartialSlots) do
+				table.insert(items, { type = detail, slots = { v[1] }, stack = v[2] })
+			end
 		end
 	end
 	local empty = { }
