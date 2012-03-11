@@ -24,7 +24,8 @@ local displayItemsCount = 24
 -- Private methods
 -- ============================================================================
 
-local frame = UI.CreateFrame("RiftWindow", "", Ux.Context)
+local context = UI.CreateContext(Addon.identifier)
+local frame = UI.CreateFrame("RiftWindow", "", context)
 local content = frame:GetContent()
 local border = frame:GetBorder()
 Ux.SearchWindow = frame
