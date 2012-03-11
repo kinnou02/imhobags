@@ -29,7 +29,7 @@ function Utils.FormatCoin(coin)
 	local p, g, s = floor(coin / 10000), floor(coin / 100 % 100), coin % 100
 	if(p > 0) then
 		return format(coinFormat1, p, g, s)
-	elseif(s > 0) then
+	elseif(g > 0) then
 		return format(coinFormat2, g, s)
 	else
 		return format(coinFormat3, s)
