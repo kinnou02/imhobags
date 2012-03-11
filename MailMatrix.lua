@@ -111,11 +111,6 @@ function MailMatrix.MergeMail(matrix, mail)
 	end
 	
 	purge(matrix, mail.id, attachments)
-	if(not (next(attachments) or coin)) then
-		log("purge", "mail", mail.id, matrix.lastUpdate)
-		matrix.mails[mail.id] = nil
-		return
-	end
 	
 	local t = matrix.mails[mail.id] or {
 		from = mail.from,
