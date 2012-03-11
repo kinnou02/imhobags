@@ -116,12 +116,12 @@ function MailMatrix.MergeMail(matrix, mail)
 		from = mail.from,
 		subject = mail.subject,
 		body = mail.body,
-		coin = coin,
-		cod = mail.cod,
 	}
 	for type in pairs(attachments) do
 		table.insert(t, type)
 	end
+	t.coin = coin
+	t.cod = mail.cod
 	matrix.mails[mail.id] = t
 
 	for type, count in pairs(attachments) do
