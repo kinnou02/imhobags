@@ -7,7 +7,7 @@ Author = "Imhothar"
 Website = ""
 Email = "none"
 
-Version = "0.4"
+Version = "0.5"
 Environment = "1.7"
 
 --@no-lib-strip@
