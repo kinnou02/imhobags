@@ -196,11 +196,16 @@ function MailMatrix.GetAllItemTypes(matrix, result)
 	end
 end
 
+function MailMatrix.GetUnsortedMails(matrix, character)
+	return matrix.mails
+end
+
 local MailMatrix_matrixMetaTable = {
 	__index = {
 		GetAllItemTypes = MailMatrix.GetAllItemTypes,
 		GetItemCount = MailMatrix.GetItemCount,
 		GetUnsortedItems = MailMatrix.GetUnsortedItems,
+		GetUnsortedMails = MailMatrix.GetUnsortedMails,
 		MergeMail = MailMatrix.MergeMail,
 		Purge = MailMatrix.Purge,
 	}
