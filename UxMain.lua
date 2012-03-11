@@ -13,9 +13,9 @@ local Event = Event
 local UI = UI
 
 local defaultItemWindows =  {
-	BackpackItemWindow = { "inventory", UI.Native.BagInventory1 },
-	BankItemWindow = { "bank", UI.Native.Bank },
-	MailItemWindow = { "mail", nil },
+	BackpackItemWindow = { "inventory", UI.Native.BagInventory1, "ItemWindow" },
+	BankItemWindow = { "bank", UI.Native.Bank, "ItemWindow" },
+	MailItemWindow = { "mail", nil, "MailWindow" },
 }
 
 setfenv(1, private)
@@ -44,7 +44,7 @@ local function init()
 		end
 		
 		local title = L.Ux.WindowTitle[v[1]]
-		local window = Ux.ItemWindow.New(title, "player", v[1], info.condensed, v[2])
+		local window = Ux[v[3]].New(title, "player", v[1], info.condensed, v[2])
 
 		if(info and info.x and info.y) then
 			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
