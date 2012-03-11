@@ -29,6 +29,17 @@ local function systemUpdateBegin(self)
 	end
 end
 
+local function adjustPosition()
+	local normalWidth = 275 -- Width of UI.Native.Bag at 100% scale
+	local actualWidth = UI.Native.Bag:GetWidth()
+	local factor = actualWidth / normalWidth
+	
+	Ux.EmptySlotIndicator:SetWidth(28 * factor)
+	Ux.EmptySlotIndicator:SetHeight(28 * factor)
+	Ux.EmptySlotIndicator:SetFontSize(18 * factor)
+	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", 71 * factor, 29 * factor)
+end
+
 -- Create a little window over the native bags frame showing the number of empty bags
 local function createFrame()
 	local window = UI.CreateFrame("Text", "ImhoBags_EmptySlotIndicator", Ux.Context)
@@ -42,9 +53,14 @@ local function createFrame()
 	window.location = location
 	window.lastUpdate = -2
 	
-	window:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", 71, 29)
-	
 	table.insert(Event.System.Update.Begin, { function() systemUpdateBegin(window) end, Addon.identifier, "systemUpdateBegin" })
+
+	local resizeFrame = UI.CreateFrame("Frame", "", Ux.Context)
+	resizeFrame:SetAllPoints(UI.Native.Bag)
+	resizeFrame:SetVisible(false)
+	function resizeFrame.Event:Size()
+		adjustPosition()
+	end
 end
 
 -- Creation of the frame must be postponed until after saved variables are loaded
