@@ -79,6 +79,7 @@ Unknown location "%s".
 			mail = "Mailbox",
 		},
 		search = "Search",
+		cashOnDelivery = "Cash on Delivery",
 	},
 
 }
