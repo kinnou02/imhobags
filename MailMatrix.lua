@@ -49,7 +49,7 @@ local function extractUnsortedCharacterItems(matrix)
 		if(result) then
 			for mail, count in pairs(slots) do
 				table.insert(items, { type = detail, slots = 1, stack = count })
-				items[#items].type.ImhoBags_mailSubject = matrix.mails[mail].subject
+				items[#items].type.ImhoBags_mail = matrix.mails[mail]
 			end
 		end
 	end
