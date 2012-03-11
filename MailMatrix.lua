@@ -57,7 +57,7 @@ local function extractUnsortedCharacterItems(matrix)
 	for mail, data in pairs(matrix.mails) do
 		if(data.coin) then
 			local type = {
-				ImhoBags_mailSubject = data.subject,
+				ImhoBags_mail = data,
 				name = Utils.FormatCoin(data.coin),
 				icon = (data.coin > 10000 and [[Data/\UI\item_icons\loot_platinum_coins.dds]]) or
 					(data.coin > 100 and [[Data/\UI\item_icons\loot_gold_coins.dds]]) or [[Data/\UI\item_icons\loot_silver_coins.dds]],
@@ -99,12 +99,14 @@ Also available as instance metamethod.
 function MailMatrix.MergeMail(matrix, mail)
 	local attachments = { }
 	local coin = nil
-	for _, item in ipairs(mail.attachments) do
-		item = Inspect.Item.Detail(item)
-		if(item.type) then -- Is nil for money
-			attachments[item.type] = (attachments[item.type] or 0) + (item.stack or 1)
-		else
-			coin = item.coin
+	if(mail.attachments) then
+		for _, item in ipairs(mail.attachments) do
+			item = Inspect.Item.Detail(item)
+			if(item.type) then -- Is nil for money
+				attachments[item.type] = (attachments[item.type] or 0) + (item.stack or 1)
+			else
+				coin = item.coin
+			end
 		end
 	end
 	
