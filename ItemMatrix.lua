@@ -66,8 +66,7 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 			table.insert(empty, slot)
 		end
 	end
-	-- Force success to true or otherwise poeple with broken item types might get a hevy performance decrease
-	return items, empty, true--success
+	return items, empty, success
 end
 
 local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
