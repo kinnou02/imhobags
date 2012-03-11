@@ -81,7 +81,11 @@ function MailMatrix.New()
 		mails = {
 --[[		[mail] = {
 				[#] = type,
-				subject = "sender: subject"
+				subject = string,
+				from = string,
+				body = string,
+				cod = number, -- may be nil
+				coin = number, -- may be nil
 ]]		},
 		lastUpdate = -1, -- Forced to -1 on save
 	}
@@ -112,9 +116,11 @@ function MailMatrix.MergeMail(matrix, mail)
 	end
 	
 	local t = matrix.mails[mail.id] or {
-		subject = string.format("%s: %s", mail.from, mail.subject),
+		from = mail.from,
+		subject = mail.subject,
 		body = mail.body,
 		coin = coin,
+		cod = mail.cod,
 	}
 	for type in pairs(attachments) do
 		table.insert(t, type)
