@@ -272,6 +272,11 @@ function ItemDB.GetGroupedItems(items, group)
 	return groups, keys
 end
 
+function ItemDB.GetUnsortedMails(character)
+	local matrix = ItemDB.GetItemMatrix(character, "mail") or MailMatrix.New()
+	return matrix.mails
+end
+
 table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
 table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
 table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
