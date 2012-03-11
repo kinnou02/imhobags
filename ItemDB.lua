@@ -114,11 +114,22 @@ local function mailsChanged(mails)
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))
 		end
 	end
+	
 	-- Remove deleted mails.
 	-- If interaction is still available then mails flagged as "false" no longer exist.
-	if(Inspect.Interaction("mail")) then
-		playerItems.mail:Purge(Inspect.Mail.List())
+	-- TODO: When the window is closing this method is called with all entries false
+	-- 		We have to fall back to deleting when the window is opened
+--[[	if(Inspect.Interaction("mail")) then
+		-- Inspect.Mail.List() returns an empty table when the window is closing.
+		-- Thus merge the two tables as the mails argument always contains at least one mail.
+		local list = Inspect.Mail.List()
+		for k, v in pairs(mails) do
+			list[k] = v
+		end
+		dump(list)
+		playerItems.mail:Purge(list)
 	end
+]]
 end
 
 local function init()
