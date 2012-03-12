@@ -1,14 +1,12 @@
-local Addon, private = ...
+local private = select(2, ...)
 
-local next = next
-
-setfenv(1, private)
--- English is loaded if no other is present
-if(next(L) ~= nil) then
+--[===[@non-debug@
+if(Inspect.System.Language() ~= "English" ) then
 	return
 end
+--@end-non-debug@]===]
 
-L = {
+private.L = {
 	-- Category translation
 	-- [english] = translated
 	-- Although categories can have multiple words (e.g. "weapon sword onehand")
@@ -81,5 +79,4 @@ Unknown location "%s".
 		search = "Search",
 		cashOnDelivery = "Cash on Delivery",
 	},
-
 }
