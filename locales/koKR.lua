@@ -1,4 +1,4 @@
-local Addon, private = ...
+local private = select(2, ...)
 
 if(Inspect.System.Language() ~= "Korean" ) then
 	return
