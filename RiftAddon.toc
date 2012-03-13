@@ -10,13 +10,11 @@ Email = "none"
 Version = "0.5"
 Environment = "1.7"
 
---[===[@non-debug@
 --@no-lib-strip@
 Embed = {
 	["libs/LibString"] = true,
 }
 --@end-no-lib-strip@
---@end-non-debug@]===]
 
 Dependencies = {
 	LibString = { "required", "before" },
