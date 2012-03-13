@@ -11,9 +11,11 @@ Version = "0.5"
 Environment = "1.7"
 
 --@no-lib-strip@
+--[===[@non-debug@
 Embed = {
 	["libs/LibString"] = true,
 }
+--@end-non-debug@]===]
 --@end-no-lib-strip@
 
 Dependencies = {
