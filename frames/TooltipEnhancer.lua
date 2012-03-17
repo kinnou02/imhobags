@@ -84,7 +84,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		return
 	end
 
-	local counts = ItemDB.GetItemCounts(itemType)
+	local counts = ItemDB.GetItemCounts(Inspect.Item.Detail(itemType))
 	
 	local tooltip = ""
 	local total = 0

@@ -28,6 +28,7 @@ end
 -- Always available
 PlayerName = ""
 PlayerFaction = ""
+EnemyFaction = ""
 PlayerShard = Inspect.Shard().name
 
 ImhoEvent = { }
@@ -45,6 +46,7 @@ local function unitAvailable(units)
 			local player = Inspect.Unit.Detail("player")
 			PlayerName = player.name
 			PlayerFaction = player.faction
+			EnemyFaction = (PlayerFaction == "defiant" and "guardian") or "defiant"
 			Trigger.Init()
 			
 			Event.Unit.Available[unitAvailableIndex][1] = function() end

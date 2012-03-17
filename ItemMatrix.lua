@@ -69,7 +69,7 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	return items, empty, success
 end
 
-local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
+local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accountBoundOnly)
 	local items = { }
 	local success = true
 	for itemType, slots in pairs(matrix.items) do
@@ -84,20 +84,22 @@ local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
 		local result, detail = pcall(Inspect.Item.Detail, itemType)
 		success = success and result
 		if(result and detail) then
-			-- Non-stackable items have stackMax = nil and must not be condensed
-			local stackMax = detail.stackMax or 0
-			for slot, stack in pairs(slots) do
-				if(condensed and stack == stackMax) then
-					table.insert(usedFullSlots, stack)
-				else
-					table.insert(usedPartialSlots, stack)
+			if(not accountBoundOnly or detail.bind == "account") then
+				-- Non-stackable items have stackMax = nil and must not be condensed
+				local stackMax = detail.stackMax or 0
+				for slot, stack in pairs(slots) do
+					if(condensed and stack == stackMax) then
+						table.insert(usedFullSlots, stack)
+					else
+						table.insert(usedPartialSlots, stack)
+					end
 				end
-			end
-			if(#usedFullSlots > 0) then
-				table.insert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
-			end
-			for k, v in ipairs(usedPartialSlots) do
-				table.insert(items, { type = detail, slots = 1, stack = v })
+				if(#usedFullSlots > 0) then
+					table.insert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
+				end
+				for k, v in ipairs(usedPartialSlots) do
+					table.insert(items, { type = detail, slots = 1, stack = v })
+				end
 			end
 		end
 	end
@@ -185,6 +187,7 @@ Get the list of items for this container in one flat table and no particular sor
 The returned list serves as staging base for further operations.
 Also available as instance metamethod.
 condensed: True to condense max stacks together into one displayed item
+accountBoundOnly: Return only items which are account-bound (ignored for the player)
 return: items, empty, success
 	"success" determines whether all items could be retrieved successfully or
 	whether the local item cache is incomplete and you have to try again later.
@@ -214,11 +217,11 @@ return: items, empty, success
 	}
 	empty = number
 ]]
-function ItemMatrix.GetUnsortedItems(matrix, condensed)
+function ItemMatrix.GetUnsortedItems(matrix, condensed, accountBoundOnly)
 	if(ItemDB.IsPlayerMatrix(matrix)) then
 		return ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	else
-		return ItemMatrix_extractUnsortedCharacterItems(matrix, condensed)
+		return ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accountBoundOnly)
 	end
 end
 
@@ -242,9 +245,18 @@ function ItemMatrix.GetItemCount(matrix, itemType)
 	return result
 end
 
-function ItemMatrix.GetAllItemTypes(matrix, result)
-	for k in pairs(matrix.items) do
-		result[k] = true
+function ItemMatrix.GetAllItemTypes(matrix, result, accountBoundOnly)
+	if(accountBoundOnly) then
+		for k in pairs(matrix.items) do
+			local s, detail = pcall(Inspect.Item.Detail, k)
+			if(s and detail.bind == "account") then
+				result[k] = true
+			end
+		end
+	else
+		for k in pairs(matrix.items) do
+			result[k] = true
+		end
 	end
 end
 

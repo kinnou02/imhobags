@@ -187,9 +187,18 @@ function MailMatrix.GetItemCount(matrix, itemType)
 	return result
 end
 
-function MailMatrix.GetAllItemTypes(matrix, result)
-	for k in pairs(matrix.items) do
-		result[k] = true
+function MailMatrix.GetAllItemTypes(matrix, result, accountBoundOnly)
+	if(accountBoundOnly) then
+		for k in pairs(matrix.items) do
+			local s, detail = pcall(Inspect.Item.Detail(k))
+			if(s and detail.bind == "account") then
+				result[k] = true
+			end
+		end
+	else
+		for k in pairs(matrix.items) do
+			result[k] = true
+		end
 	end
 end
 

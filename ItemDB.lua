@@ -20,7 +20,8 @@ local Utility = Utility
 
 -- Locals
 local playerItems
-local factionItems
+local playerFactionItems
+local enemyFactionItems
 
 setfenv(1, private)
 ItemDB = { }
@@ -69,13 +70,26 @@ end
 
 local function prepareTables()
 	-- Ensure our data table exists
-	factionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or {
+	playerFactionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or {
 		version = Addon.toc.Version,
 	}
-	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = factionItems
+	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = playerFactionItems
+	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or {
+		version = Addon.toc.Version,
+	}
+	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionItems
 	
 	-- Apply the metatable to all item matrices on the current shard
-	for k, v in pairs(factionItems) do
+	for k, v in pairs(playerFactionItems) do
+		if(type(v) == "table") then
+			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
+			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
+			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
+			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
+			v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
+		end
+	end
+	for k, v in pairs(enemyFactionItems) do
 		if(type(v) == "table") then
 			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
 			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
@@ -142,24 +156,37 @@ end
 --[[
 Get the matrix for the given character's location matrix
 location: "inventory", "bank", "equipped", "mail", "wardrobe"
-return: The matrix table for the character and location
+return: matrix, enemy
+	matrix: The matrix table for the character and location
+	enemy: True if the matrix belongs to the enemy faction
 ]]
 function ItemDB.GetItemMatrix(character, location)
-	local matrix;
+	local items
+	local enemy
 	if(character == "player" or PlayerName == character) then
-		matrix = playerItems;
+		items, enemy = playerItems, false
 	else
-		matrix = factionItems[character] or ItemDB_newCharacter()
+		items, enemy = playerFactionItems[character], false
+		if(not items and Config.showEnemyFaction ~= "no") then
+			items, enemy = enemyFactionItems[character], true
+		end
 	end
-	return matrix[location] or ItemMatrix.New()
+	return (items and items[location]) or ItemMatrix.New(), enemy
 end
 
 -- Return an array of all characters on the current shard and faction for which item data is available
 function ItemDB.GetAvailableCharacters()
 	local result = { }
-	for char, data in pairs(factionItems) do
+	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
 			table.insert(result, char)
+		end
+	end
+	if(Config.showEnemyFaction ~= "no") then
+		for char, data in pairs(enemyFactionItems) do
+			if(type(data) == "table") then
+				table.insert(result, char)
+			end
 		end
 	end
 	table.insert(result, PlayerName)
@@ -186,25 +213,42 @@ The table is sorted by character name.
 ]]
 function ItemDB.GetItemCounts(itemType)
 	local result = { }
-	for char, data in pairs(factionItems) do
+	local t = itemType.type
+	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
 			table.insert(result, {
 				char,
-				data.inventory:GetItemCount(itemType),
-				data.bank:GetItemCount(itemType),
-				data.mail:GetItemCount(itemType),
-				data.equipment:GetItemCount(itemType),
-				data.wardrobe:GetItemCount(itemType),
+				data.inventory:GetItemCount(t),
+				data.bank:GetItemCount(t),
+				data.mail:GetItemCount(t),
+				data.equipment:GetItemCount(t),
+				data.wardrobe:GetItemCount(t),
 			})
+		end
+	end
+	if(Config.showEnemyFaction ~= "no") then
+		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
+			for char, data in pairs(enemyFactionItems) do
+				if(type(data) == "table") then
+					table.insert(result, {
+						char,
+						data.inventory:GetItemCount(t),
+						data.bank:GetItemCount(t),
+						data.mail:GetItemCount(t),
+						data.equipment:GetItemCount(t),
+						data.wardrobe:GetItemCount(t),
+					})
+				end
+			end
 		end
 	end
 	table.insert(result, {
 		PlayerName,
-		playerItems.inventory:GetItemCount(itemType),
-		playerItems.bank:GetItemCount(itemType),
-		playerItems.mail:GetItemCount(itemType),
-		playerItems.equipment:GetItemCount(itemType),
-		playerItems.wardrobe:GetItemCount(itemType),
+		playerItems.inventory:GetItemCount(t),
+		playerItems.bank:GetItemCount(t),
+		playerItems.mail:GetItemCount(t),
+		playerItems.equipment:GetItemCount(t),
+		playerItems.wardrobe:GetItemCount(t),
 	})
 	table.sort(result, function(a, b) return a[1] < b[1] end)
 	return result
@@ -214,19 +258,31 @@ function ItemDB.CharacterExists(name)
 	if(name == "player" or name == PlayerName) then
 		return true
 	end
-	return factionItems[name] ~= nil
+	return playerFactionItems[name] ~= nil
 end
 
 -- Return a table with all stored item types where the key is the type and the value is true
 function ItemDB.GetAllItemTypes()
 	local result = { }
-	for char, data in pairs(factionItems) do
+	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
 			data.inventory:GetAllItemTypes(result)
 			data.bank:GetAllItemTypes(result)
 			data.mail:GetAllItemTypes(result)
 			data.equipment:GetAllItemTypes(result)
 			data.wardrobe:GetAllItemTypes(result)
+		end
+	end
+	if(Config.showEnemyFaction ~= "no") then
+		local accountBoundOnly = Config.showEnemyFaction == "account"
+		for char, data in pairs(enemyFactionItems) do
+			if(type(data) == "table") then
+				data.inventory:GetAllItemTypes(result, accountBoundOnly)
+				data.bank:GetAllItemTypes(result, accountBoundOnly)
+				data.mail:GetAllItemTypes(result, accountBoundOnly)
+				data.equipment:GetAllItemTypes(result, accountBoundOnly)
+				data.wardrobe:GetAllItemTypes(result, accountBoundOnly)
+			end
 		end
 	end
 	playerItems.inventory:GetAllItemTypes(result)
