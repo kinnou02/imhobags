@@ -34,10 +34,10 @@ local function adjustPosition()
 	local actualWidth = UI.Native.Bag:GetWidth()
 	local factor = actualWidth / normalWidth
 	
-	Ux.EmptySlotIndicator:SetWidth(28 * factor)
-	Ux.EmptySlotIndicator:SetHeight(28 * factor)
+	Ux.EmptySlotIndicator:SetWidth(29 * factor)
+	Ux.EmptySlotIndicator:SetHeight(29 * factor)
 	Ux.EmptySlotIndicator.label:SetFontSize(18 * factor)
-	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", 71 * factor, 29 * factor)
+	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", 71 * factor, 28 * factor)
 end
 
 -- Create a little window over the native bags frame showing the number of empty bags
