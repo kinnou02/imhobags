@@ -24,7 +24,7 @@ local function systemUpdateBegin(self)
 	local now = Inspect.Time.Real()
 	if(self.matrix.lastUpdate >= self.lastUpdate) then
 		local items, empty, success = self.matrix:GetUnsortedItems(false)
-		self:SetText(tostring(#empty))
+		self.label:SetText(tostring(#empty))
 		self.lastUpdate = now
 	end
 end
@@ -36,16 +36,19 @@ local function adjustPosition()
 	
 	Ux.EmptySlotIndicator:SetWidth(28 * factor)
 	Ux.EmptySlotIndicator:SetHeight(28 * factor)
-	Ux.EmptySlotIndicator:SetFontSize(18 * factor)
+	Ux.EmptySlotIndicator.label:SetFontSize(18 * factor)
 	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", 71 * factor, 29 * factor)
 end
 
 -- Create a little window over the native bags frame showing the number of empty bags
 local function createFrame()
-	local window = UI.CreateFrame("Text", "ImhoBags_EmptySlotIndicator", Ux.Context)
+	local window = UI.CreateFrame("Frame", "ImhoBags_EmptySlotIndicator", Ux.Context)
 	Ux.EmptySlotIndicator = window
 	
-	window:SetFontSize(18)
+	local label = UI.CreateFrame("Text", "", window)
+	window.label = label
+	label:SetPoint("CENTER", window, "CENTER")
+	
 	window:SetBackgroundColor(0, 0, 0, 0.5)
 	
 	window.matrix = ItemDB.GetItemMatrix("player", "inventory")
