@@ -10,14 +10,26 @@ local allowedValues = {
 	showEnemyFaction = { no = true, yes = true, account = true }
 }
 
+local boolStrings = {
+	["true"] = true,
+	["t"] = true,
+	["yes"] = true,
+	["y"] = true,
+	
+	["false"] = false,
+	["f"] = false,
+	["no"] = false,
+	["n"] = false,
+}
+
 local function setBoolean(k, v)
 	if(type(v) == "boolean") then
 		ImhoBags_Config[k] = v
 	elseif(type(v) == "string") then
 		local l, n = string.lower(v), tonumber(v)
-		if(l == "true" or l == "t" or (n and n == 1)) then
+		if(boolStrings[l] == true or (n and n == 1)) then
 			ImhoBags_Config[k] = true
-		elseif(l == "false" or l == "f" or (n and n == 0)) then
+		elseif(boolStrings[l] == false or (n and n == 0)) then
 			ImhoBags_Config[k] = false
 		else
 			error(string.format("Invalid value for boolean %s: %s", k, v), 0)
