@@ -258,7 +258,11 @@ function ItemDB.CharacterExists(name)
 	if(name == "player" or name == PlayerName) then
 		return true
 	end
-	return playerFactionItems[name] ~= nil
+	if(Config.showEnemyFaction ~= "no") then
+		return (playerFactionItems[name] or enemyFactionItems) ~= nil
+	else
+		return playerFactionItems[name] ~= nil
+	end
 end
 
 -- Return a table with all stored item types where the key is the type and the value is true
