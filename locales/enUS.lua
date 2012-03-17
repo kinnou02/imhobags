@@ -56,8 +56,8 @@ Correct usage:
 	Opens the search window
 /imhobags config value
 	Set a configuration option.
-	Example: "/imhobags showEnemyFaction yes"
-	Type "/imhobags config help" for a list of all options.
+	Example: /imhobags showEnemyFaction yes
+	List of all options: /imhobags config
 ]],
 		unknownChar = [[
 No data available for character "%s" (or it is member of the enemy faction).]],
@@ -71,8 +71,8 @@ Unknown location "%s".
 ]],
 		configOptions = [[
 Available config options:
-* showEnemyFaction: yes/no/account
-	Controls how items of the enemy faction are considered.
+* showEnemyFaction yes/no/account
+	Controls whether items of the enemy faction are considered.
 	no: Enemy faction characters are completely ignored.
 	yes: All items of enemy faction characters are included.
 	account: Only account-bound items of the enemy faction are included.
