@@ -3,6 +3,7 @@ local Addon, private = ...
 -- Only the keys in this table are valid config options
 local defaults = {
 	showEnemyFaction = "no",
+	autoOpen = false,
 }
 
 -- Contains valid values for string/int
