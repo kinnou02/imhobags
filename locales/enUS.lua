@@ -54,6 +54,10 @@ Correct usage:
 		* Mailbox: "mail" or "m"
 /imhobags search
 	Opens the search window
+/imhobags config value
+	Set a configuration option.
+	Example: "/imhobags showEnemyFaction yes"
+	Type "/imhobags config help" for a list of all options.
 ]],
 		unknownChar = [[
 No data available for character "%s" (or it is member of the enemy faction).]],
@@ -64,6 +68,14 @@ Unknown location "%s".
 	* Backpack: "inventory", "inv" or "i"
 	* Bank: "bank" or "b"
 	* Mailbox: "mail" or "m"
+]],
+		configOptions = [[
+Available config options:
+* showEnemyFaction: yes/no/account
+	Controls how items of the enemy faction are considered.
+	no: Enemy faction characters are completely ignored.
+	yes: All items of enemy faction characters are included.
+	account: Only account-bound items of the enemy faction are included.
 ]],
 	},
 	

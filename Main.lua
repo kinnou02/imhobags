@@ -33,8 +33,10 @@ PlayerShard = Inspect.Shard().name
 ImhoEvent = { }
 Trigger = { }
 
--- The init event is postponed until the full Inspect.Unit.Detail("player") data is available
+-- The Init event is postponed until the full Inspect.Unit.Detail("player") data is available
 Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Init")
+-- The Config event is fired whenever a cvonfig option has changed: (name, value)
+Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Config")
 
 local unitAvailableIndex
 local function unitAvailable(units)

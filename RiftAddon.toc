@@ -28,6 +28,7 @@ RunOnStartup = {
 	"locales/ruRU.lua",
 	
 	"Main.lua",
+	"Config.lua",
 	"Utils.lua",
 	
 	"Group.Default.lua",
@@ -57,6 +58,7 @@ SavedVariables = {
 	ImhoBags_ItemMatrix_guardian = "shard",
 	ImhoBags_PlayerItemMatrix = "character", -- Temporary workaround for /reloadui
 	ImhoBags_WindowInfo = "character",
+	ImhoBags_Config = "account",
 }
 
 -- Set this value to true to enable chat spamming debug messages and other debugging facilities
