@@ -46,16 +46,17 @@ private.L = {
 	SlashMessage = {
 		usage = [[
 Correct usage:
-/imhobags character location
+/imhobags character [location]
 	"character" must be either the full name of one of your characters or "player"
 	"location" must be one of: 
 		* Backpack: "inventory", "inv" or "i"
 		* Bank: "bank" or "b"
 		* Mailbox: "mail" or "m"
+		* defaults to "inventory" if omitted
 /imhobags search
 	Opens the search window
-/imhobags config value
-	Set a configuration option.
+/imhobags config [value]
+	Set or get a configuration option.
 	Example: /imhobags showEnemyFaction yes
 	List of all options: /imhobags config
 ]],
@@ -68,6 +69,7 @@ Unknown location "%s".
 	* Backpack: "inventory", "inv" or "i"
 	* Bank: "bank" or "b"
 	* Mailbox: "mail" or "m"
+	* defaults to "inventory" if omitted
 ]],
 		configOptions = [[
 Available config options:
