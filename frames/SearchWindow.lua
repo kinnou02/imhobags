@@ -84,10 +84,10 @@ local function update()
 		else
 			v:SetVisible(true)
 			local item = display[index]
-			v.text:SetText(item[2])
-			v.text:SetFontColor(Utils.RarityColor(item[3]))
-			v.icon:SetTexture("Rift", item[4])
-			v.type = item[5]
+			v.text:SetText(item[1])
+			v.text:SetFontColor(Utils.RarityColor(item[2]))
+			v.icon:SetTexture("Rift", item[3])
+			v.type = item[4]
 		end
 	end
 end
@@ -96,15 +96,19 @@ local function applySearchFilter()
 	local strfind = string.find
 	local tinsert = table.insert
 	
-	local s = string.lower(filter.text:GetText())
-	if(s == "") then
+	local pattern = filter.text:GetText()
+	if(pattern == "" or pattern == L.Ux.search) then
 		for k, v in ipairs(items) do
 			display[k] = v
 		end
 	else
+		-- Make a case-insensitive search pattern
+		pattern = string.gsub(filter.text:GetText(), "%a", function(s)
+			return string.format("[%s%s]", string.lower(s), string.upper(s))
+		end)
 		display = { }
 		for k, v in ipairs(items) do
-			if(strfind(v[1], s, 1, plain)) then
+			if(strfind(v[1], pattern)) then
 				tinsert(display, v)
 			end
 		end
@@ -174,22 +178,7 @@ for i = 1, displayItemsCount do
 	end
 end
 
-function content.Event:WheelBack()
-	scrollbar:NudgeDown()
-end
-
-function content.Event:WheelForward()
-	scrollbar:NudgeUp()
-end
-
--- Public methods
--- ============================================================================
-
-function frame:Show()
-	frame:SetVisible(true)
-	filter.text:SetText("")
-	filter.text:SetKeyFocus(true)
-	
+local function updateItemList()
 	local strlower = string.lower
 	local tinsert = table.insert
 	
@@ -200,10 +189,37 @@ function frame:Show()
 		local result, detail = pcall(Inspect.Item.Detail, k)
 		if(result) then
 			local n = string.gsub(detail.name, "\n", "")
-			tinsert(items, { strlower(n), n, detail.rarity, detail.icon, k })
+			tinsert(items, { n, detail.rarity, detail.icon, k })
 			tinsert(display, items[#items])
 		end
 	end
 	table.sort(items, function(a, b) return a[1] < b[1] end)
+end
+
+function content.Event:WheelBack()
+	scrollbar:NudgeDown()
+end
+
+function content.Event:WheelForward()
+	scrollbar:NudgeUp()
+end
+
+local function configChanged(name, value)
+	if(name == "showEnemyFaction" and frame:GetVisible()) then
+		updateItemList()
+		applySearchFilter()
+	end
+end
+table.insert(ImhoEvent.Config, { configChanged, Addon.identifier, "SearchWindow_configChanged" })
+
+-- Public methods
+-- ============================================================================
+
+function frame:Show()
+	frame:SetVisible(true)
+	filter.text:SetText("")
+	filter.text:SetKeyFocus(true)
+	
+	updateItemList()
 	applySearchFilter()
 end
