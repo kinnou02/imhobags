@@ -93,7 +93,7 @@ Available config options:
 			search = "Search Database",
 			mail = "Mailbox",
 		},
-		search = "Search",
+		search = "<Enter search text>",
 		cashOnDelivery = "Cash on Delivery",
 	},
 }
