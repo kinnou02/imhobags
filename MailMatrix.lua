@@ -48,8 +48,15 @@ local function extractUnsortedCharacterItems(matrix)
 		success = success and result
 		if(result) then
 			for mail, count in pairs(slots) do
-				table.insert(items, { type = detail, slots = 1, stack = count })
-				items[#items].type.ImhoBags_mail = matrix.mails[mail]
+				local t = {
+					name = detail.name,
+					type = detail.type,
+					id = detail.type,
+					category = detail.category,
+					icon = detail.icon,					
+					ImhoBags_mail = matrix.mails[mail],
+				}
+				table.insert(items, { type = t, slots = 1, stack = count, mail = matrix.mails[mail] })
 			end
 		end
 	end
@@ -59,8 +66,8 @@ local function extractUnsortedCharacterItems(matrix)
 			local type = {
 				ImhoBags_mail = data,
 				name = Utils.FormatCoin(data.coin),
-				icon = (data.coin > 10000 and [[Data/\UI\item_icons\loot_platinum_coins.dds]]) or
-					(data.coin > 100 and [[Data/\UI\item_icons\loot_gold_coins.dds]]) or [[Data/\UI\item_icons\loot_silver_coins.dds]],
+				icon = (data.coin >= 10000 and [[Data/\UI\item_icons\loot_platinum_coins.dds]]) or
+					(data.coin >= 100 and [[Data/\UI\item_icons\loot_gold_coins.dds]]) or [[Data/\UI\item_icons\loot_silver_coins.dds]],
 			}
 			table.insert(items, { type = type, slots = 1, stack = 1 })
 		end
