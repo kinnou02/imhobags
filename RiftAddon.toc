@@ -40,6 +40,7 @@ RunOnStartup = {
 	"UxMain.lua",
 	"frames/Checkbox.lua",
 	"frames/CharSelector.lua",
+	"frames/MoneyFrame.lua",
 	"frames/Textfield.lua",
 	"frames/RiftWindowCloseButton.lua",
 	"frames/ItemButton.lua",
