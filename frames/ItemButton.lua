@@ -63,8 +63,8 @@ local function leftUp(self)
 	if(self.moved and cursor == "item" and self.available) then
 		Command.Item.Move(held, self.slots[1])
 	elseif(self.pickingUp) then
-		Command.Cursor(self.pickingUp)
-		self.pickingUp = nil
+--		Command.Cursor(self.pickingUp)
+--		self.pickingUp = nil
 	end
 	self.moved = false
 	self.commandTarget = nil
