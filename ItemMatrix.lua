@@ -29,19 +29,23 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 		local usedPartialSlots = { }
 		
 		local detail = Inspect.Item.Detail((next(slots)))
-		local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
-		for slot, stack in pairs(slots) do
-			if(condensed and stack == stackMax) then
-				table.insert(usedFullSlots, slot)
-			else
-				usedPartialSlots[slot] = stack
+		if(detail) then
+			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
+			for slot, stack in pairs(slots) do
+				if(condensed and stack == stackMax) then
+					table.insert(usedFullSlots, slot)
+				else
+					usedPartialSlots[slot] = stack
+				end
 			end
-		end
-		if(#usedFullSlots > 0) then
-			table.insert(items, { type = Inspect.Item.Detail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax })
-		end
-		for slot, stack in pairs(usedPartialSlots) do
-			table.insert(items, { type = Inspect.Item.Detail(slot), slots = { slot }, stack = stack })
+			if(#usedFullSlots > 0) then
+				table.insert(items, { type = Inspect.Item.Detail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax })
+			end
+			for slot, stack in pairs(usedPartialSlots) do
+				table.insert(items, { type = Inspect.Item.Detail(slot), slots = { slot }, stack = stack })
+			end
+		else
+			log("item detail nil", next(slots))
 		end
 	end
 	local empty = { }
