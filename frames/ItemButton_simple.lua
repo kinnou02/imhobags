@@ -95,5 +95,8 @@ function Ux.ItemButton_simple.New(parent)
 	self.SetIcon = ItemButton_simple_SetIcon
 	self.SetDepressed = ItemButton_simple_SetDepressed
 	
+	self:SetStack(0)
+	self:SetSlots(0)
+	
 	return self
 end
