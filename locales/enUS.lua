@@ -81,6 +81,11 @@ Available config options:
 * autoOpen yes/no
 	Controls whether the inventory or bank windows open/close automatically
 	together with the respective Trion frames.
+* itemButtonSkin pretty/simple
+	Controls how the item buttons are displayed. "simple" lacks nice
+	visuals, "pretty" aims to look like Trion item buttons. Requires
+	/reloadui before taking effect. "simple" may look better on very
+	low UI-scalings.
 ]],
 	},
 	
