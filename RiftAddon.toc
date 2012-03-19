@@ -43,6 +43,8 @@ RunOnStartup = {
 	"frames/MoneyFrame.lua",
 	"frames/Textfield.lua",
 	"frames/RiftWindowCloseButton.lua",
+	"frames/ItemButton_simple.lua",
+	"frames/ItemButton_pretty.lua",
 	"frames/ItemButton.lua",
 	"frames/ItemWindowBase.lua",
 	"frames/ItemWindow.lua",

@@ -9,11 +9,9 @@ local dump = dump
 local UIParent = UIParent
 
 local Command = Command
-local Event = Event
 local Inspect = Inspect
-local UI = UI
 
--- Frames vannot be deleted, keep a cache and only create new frames if the cache is empty
+-- Frames cannot be deleted, keep a cache and only create new frames if the cache is empty
 -- Calling Dispose() on a button moves it back to the cache
 local cachedButtons = { }
 
@@ -21,12 +19,12 @@ setfenv(1, private)
 Ux = Ux or { }
 Ux.ItemButton = { }
 
-Ux.ItemButtonWidth = 50
-Ux.ItemButtonHeight = 50
-Ux.ItemButtonBorder = 2
+Ux.ItemButtonSize = 50
 
 -- Private methods
 -- ============================================================================
+
+local skinFactory
 
 local function mouseMove(self)
 	self.moved = true
@@ -38,6 +36,7 @@ local function mouseMove(self)
 end
 
 local function mouseOut(self)
+	self:SetDepressed(false)
 	Command.Tooltip(nil)
 	Ux.TooltipEnhancer:SetVisible(false)
 	self.tooltip = false
@@ -50,14 +49,16 @@ end
 
 local function leftDown(self)
 	self.moved = false
-	if(self.notLocked) then
+	self:SetDepressed(true)
+	if(self.available) then
 		self.pickingUp = Inspect.Item.Detail(self.slots[1]).id
 	end
 end
 
 local function leftUp(self)
 	local cursor, held = Inspect.Cursor()
-	if(self.moved and cursor == "item" and self.notLocked) then
+	self:SetDepressed(false)
+	if(self.moved and cursor == "item" and self.available) then
 		Command.Item.Move(held, self.slots[1])
 	elseif(self.pickingUp) then
 		Command.Cursor(self.pickingUp)
@@ -68,12 +69,14 @@ local function leftUp(self)
 end
 
 local function rightDown(self)
-	if(self.notLocked) then
+	self:SetDepressed(true)
+	if(self.available) then
 		self.commandTarget = self.slots[1]
 	end
 end
 
 local function rightUp(self)
+	self:SetDepressed(false)
 	if(self.commandTarget) then
 		log("TODO", "use item")
 	end
@@ -87,26 +90,18 @@ end
 -- Public methods
 -- ============================================================================
 
-local function ItemButton_SetItem(self, type, slots, stack, notLocked)
+local function ItemButton_SetItem(self, type, slots, stack, available)
 	self.type = type
 	self.slots = slots
 	self.stack = stack
 	
 	self.readonly = _G.type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
-	self.notLocked = notLocked -- Reflects whether the location is available to the player
+	self.available = available -- Reflects whether the location is available to the player
 	
-	self.icon:SetTexture("Rift", type.icon)
-	
-	self.stackText:SetText(tostring(stack))
-	self.stackText:SetVisible(stack > 1)
-
-	if(not self.readonly) then
-		slots = #slots
-	end
-	self.slotsText:SetText(tostring(slots))
-	self.slotsText:SetVisible(slots > 1)
-	
-	self:SetBackgroundColor(Utils.RarityColor(type.rarity))
+	self:SetIcon(type.icon)
+	self:SetStack(stack)
+	self:SetSlots(not self.readonly and #slots or slots)
+	self:SetRarity(type.rarity)
 end
 
 local function ItemButton_Dispose(self)
@@ -136,34 +131,9 @@ end
 function Ux.ItemButton.New(parent)
 	local button
 	if(#cachedButtons == 0) then
-		button = UI.CreateFrame("Frame", "ImhoBags_ItemButton", parent)
+		button = skinFactory(parent)
 		
-		button:SetWidth(Ux.ItemButtonWidth)
-		button:SetHeight(Ux.ItemButtonHeight)
 		button:SetMouseMasking("limited")
-		
-		local border = Ux.ItemButtonBorder
-		local backdrop = UI.CreateFrame("Frame", "", button)
-		backdrop:SetBackgroundColor(0.0, 0.0, 0.0)
-		backdrop:SetPoint("TOPLEFT", button, "TOPLEFT", border, border)
-		backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -border, -border)
-		
-		button.icon = UI.CreateFrame("Texture", "", backdrop)
-		button.icon:SetAllPoints(backdrop)
-
-		button.stackText = UI.CreateFrame("Text", "", button)
-		button.stackText:SetPoint("BOTTOMRIGHT", button.icon, "BOTTOMRIGHT", 0, 0)
-		button.stackText:SetFontSize(13)
-		button.stackText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
-		button.stackText:SetLayer(button.icon:GetLayer() + 1)
-		
-		button.slotsText = UI.CreateFrame("Text", "", button)
-		button.slotsText:SetPoint("BOTTOMRIGHT", button.stackText, "TOPRIGHT", 0, 0)
-		button.slotsText:SetFontSize(10)
-		button.slotsText:SetBackgroundColor(0.0, 0.0, 0.0, 0.5)
-		button.slotsText:SetFontColor(0.8, 0.8, 0.8)
-		button.slotsText:SetLayer(button.icon:GetLayer() + 1)
-		button.slotsText:SetMouseMasking("limited")
 		
 		button.SetItem = ItemButton_SetItem
 		button.Dispose = ItemButton_Dispose
@@ -184,3 +154,5 @@ function Ux.ItemButton.New(parent)
 	end
 	return button
 end
+
+table.insert(ImhoEvent.Init, { function() skinFactory = Ux["ItemButton_" .. Config.itemButtonSkin].New end, Addon.identifier, "" })
