@@ -6,7 +6,8 @@ manual-changelog: CHANGELOG.txt
 ignore:
   - Reference.txt
   - screenshots
-  - textures/*.pspimage
+  - textures/border.pspimage
+  - textures/overlay.pspimage
 
 enable-nolib-creation: yes
 
