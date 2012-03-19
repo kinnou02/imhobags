@@ -79,6 +79,7 @@ local function rightUp(self)
 	self:SetDepressed(false)
 	if(self.commandTarget) then
 		log("TODO", "use item")
+		ItemHandler.UseItem(self.commandTarget)
 	end
 	self.commandTarget = nil
 end
