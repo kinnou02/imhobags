@@ -18,7 +18,7 @@ setfenv(1, private)
 Utils = { }
 
 function Utils.RarityColor(rarity)
-	local col = rarityColors[rarity or ""] or rarityColors.common
+	local col = rarityColors[rarity or "common"] or rarityColors.common
 	return col[1], col[2], col[3]
 end
 
