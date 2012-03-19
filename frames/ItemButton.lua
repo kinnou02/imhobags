@@ -1,11 +1,9 @@
 local Addon, private = ...
 
-local _G = _G
 local table = table
 local tostring = tostring
 local type = type
 
-local dump = dump
 local UIParent = UIParent
 
 local Command = Command
@@ -53,7 +51,7 @@ local function leftDown(self)
 	self.moved = false
 	self:SetDepressed(true)
 	if(self.available) then
-		self.pickingUp = Inspect.Item.Detail(self.slots[1]).id
+		self.pickingUp = self.item.id
 	end
 end
 
@@ -93,18 +91,18 @@ end
 -- Public methods
 -- ============================================================================
 
-local function ItemButton_SetItem(self, type, slots, stack, available)
-	self.type = type
+local function ItemButton_SetItem(self, item, slots, stack, available)
+	self.item = item
 	self.slots = slots
 	self.stack = stack
 	
-	self.readonly = _G.type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
+	self.readonly = type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
 	
-	self:SetIcon(type.icon)
+	self:SetIcon(item.icon)
 	self:SetStack(stack)
 	self:SetSlots(not self.readonly and #slots or slots)
-	self:SetRarity(type.rarity)
+	self:SetRarity(item.rarity)
 end
 
 local function ItemButton_Dispose(self)
@@ -115,14 +113,14 @@ end
 local function ItemButton_ShowTooltip(self)
 	if(self.tooltip) then
 		local target
-		if(not self.type.type) then
+		if(not self.item.type) then
 			local mouse = Inspect.Mouse()
 			Ux.TooltipEnhancer:ClearAll()
-			Ux.TooltipEnhancer:SetText(self.type.name)
+			Ux.TooltipEnhancer:SetText(self.item.name)
 			Ux.TooltipEnhancer:SetVisible(true)
 			Ux.TooltipEnhancer:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", mouse.x, mouse.y)
 		elseif(self.readonly) then
-			target = self.type.type
+			target = self.item.type
 		else
 			target = Inspect.Item.Detail(self.slots[1]).id
 		end

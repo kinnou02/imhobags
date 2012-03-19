@@ -22,10 +22,44 @@ ItemMatrix = { }
 
 local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	local items = { }
-	local success = true
 	for itemType, slots in pairs(matrix.items) do
 		-- We have to treat full and partial stacks differently
 		-- otherwise the user would not be able to select partial stacks
+		local usedFullSlots = { }
+		local usedPartialSlots = { }
+		
+		local detail = Inspect.Item.Detail((next(slots)))
+		local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
+		for slot, stack in pairs(slots) do
+			if(condensed and stack == stackMax) then
+				table.insert(usedFullSlots, slot)
+			else
+				table.insert(usedPartialSlots, { slot, stack })
+			end
+		end
+		if(#usedFullSlots > 0) then
+			table.insert(items, { type = Inspect.Item.Detail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax })
+		end
+		for k, v in ipairs(usedPartialSlots) do
+			table.insert(items, { type = Inspect.Item.Detail(v[1]), slots = { v[1] }, stack = v[2] })
+		end
+	end
+	local empty = { }
+	for slot, type in pairs(matrix.slots) do
+		if(not type) then
+			table.insert(empty, slot)
+		end
+	end
+	return items, empty, true
+end
+
+local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accountBoundOnly)
+	local items = { }
+	local success = true
+	for itemType, slots in pairs(matrix.items) do
+		-- Technically, the player is not able to manipulate items of
+		-- other characters, but we keep the stacking consistent to
+		-- keep the spatial location as visual clue
 		local usedFullSlots = { }
 		local usedPartialSlots = { }
 		
@@ -39,45 +73,9 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 			log(itemType)
 			log(itemType2)
 		end
+		itemType = itemType2
 		-- fix ends
 		
-		local result, detail = pcall(Inspect.Item.Detail, itemType2)
-		success = success and result
-		if(result and detail) then
-			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
-			for slot, stack in pairs(slots) do
-				if(condensed and stack == stackMax) then
-					table.insert(usedFullSlots, slot)
-				else
-					table.insert(usedPartialSlots, { slot, stack })
-				end
-			end
-			if(#usedFullSlots > 0) then
-				table.insert(items, { type = detail, slots = usedFullSlots, stack = #usedFullSlots * stackMax })
-			end
-			for k, v in ipairs(usedPartialSlots) do
-				table.insert(items, { type = detail, slots = { v[1] }, stack = v[2] })
-			end
-		end
-	end
-	local empty = { }
-	for slot, type in pairs(matrix.slots) do
-		if(not type) then
-			table.insert(empty, slot)
-		end
-	end
-	return items, empty, success
-end
-
-local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accountBoundOnly)
-	local items = { }
-	local success = true
-	for itemType, slots in pairs(matrix.items) do
-		-- Technically, the player is not able to manipulate items of
-		-- other characters, but we keep the stacking consistent to
-		-- keep the spatial location as visual clue
-		local usedFullSlots = { }
-		local usedPartialSlots = { }
 		-- If looking at other characters item information might not be available.
 		-- In this case Inspect.Item.Detail throws an error and we need to remember
 		-- to ask later.
