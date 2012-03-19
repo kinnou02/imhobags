@@ -61,13 +61,14 @@ local function createFrame()
 	local resizeFrame = UI.CreateFrame("Frame", "", Ux.Context)
 	resizeFrame:SetAllPoints(UI.Native.Bag)
 	resizeFrame:SetVisible(false)
+	adjustPosition()
 	function resizeFrame.Event:Size()
 		adjustPosition()
 	end
 end
 
 -- Creation of the frame must be postponed until after saved variables are loaded
-table.insert(ImhoEvent.Init, { createFrame, Addon.identifier, "Ux.EmptySlotIndicator createFrame" })
+table.insert(ImhoEvent.Init, { createFrame, Addon.identifier, "Ux.EmptySlotIndicator_createFrame" })
 
 -- Public methods
 -- ============================================================================
