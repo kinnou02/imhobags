@@ -34,14 +34,14 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 			if(condensed and stack == stackMax) then
 				table.insert(usedFullSlots, slot)
 			else
-				table.insert(usedPartialSlots, { slot, stack })
+				usedPartialSlots[slot] = stack
 			end
 		end
 		if(#usedFullSlots > 0) then
 			table.insert(items, { type = Inspect.Item.Detail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax })
 		end
-		for k, v in ipairs(usedPartialSlots) do
-			table.insert(items, { type = Inspect.Item.Detail(v[1]), slots = { v[1] }, stack = v[2] })
+		for slot, stack in pairs(usedPartialSlots) do
+			table.insert(items, { type = Inspect.Item.Detail(slot), slots = { slot }, stack = stack })
 		end
 	end
 	local empty = { }
