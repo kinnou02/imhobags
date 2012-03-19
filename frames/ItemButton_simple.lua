@@ -20,6 +20,9 @@ local function ItemButton_simple_SetFiltered(self, filtered)
 	self.icon:SetAlpha(filtered and 0.3 or 1.0)
 end
 
+local function ItemButton_simple_SetHighlighted(self, highlighted)
+end
+
 local function ItemButton_simple_SetRarity(self, rarity)
 	self:SetBackgroundColor(Utils.RarityColor(rarity))
 end
@@ -88,6 +91,7 @@ function Ux.ItemButton_simple.New(parent)
 	self.slotsText:SetFontColor(0.8, 0.8, 0.8)
 	self.slotsText:SetLayer(self.slotsBack:GetLayer() + 1)
 	
+	self.SetHighlighted = ItemButton_simple_SetHighlighted
 	self.SetFiltered = ItemButton_simple_SetFiltered
 	self.SetRarity = ItemButton_simple_SetRarity
 	self.SetStack = ItemButton_simple_SetStack

@@ -39,14 +39,17 @@ RunOnStartup = {
 	"Sort.Default.lua",
 	
 	"UxMain.lua",
+	
 	"frames/Checkbox.lua",
 	"frames/CharSelector.lua",
-	"frames/MoneyFrame.lua",
-	"frames/Textfield.lua",
-	"frames/RiftWindowCloseButton.lua",
+	"frames/IconButton.lua",
+	"frames/ItemButton.lua",
 	"frames/ItemButton_simple.lua",
 	"frames/ItemButton_pretty.lua",
-	"frames/ItemButton.lua",
+	"frames/MoneyFrame.lua",
+	"frames/RiftWindowCloseButton.lua",
+	"frames/Textfield.lua",
+	
 	"frames/ItemWindowBase.lua",
 	"frames/ItemWindow.lua",
 	"frames/MailWindow.lua",

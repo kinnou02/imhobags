@@ -8,6 +8,7 @@ ignore:
   - screenshots
   - textures/border.pspimage
   - textures/overlay.pspimage
+  - textures/highlight.pspimage
 
 enable-nolib-creation: yes
 

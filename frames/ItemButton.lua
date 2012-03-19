@@ -40,11 +40,13 @@ local function mouseOut(self)
 	Command.Tooltip(nil)
 	Ux.TooltipEnhancer:SetVisible(false)
 	self.tooltip = false
+	self:SetHighlighted(false)
 end
 
 local function mouseIn(self)
 	self.tooltip = true
 	self:ShowTooltip()
+	self:SetHighlighted(true)
 end
 
 local function leftDown(self)
