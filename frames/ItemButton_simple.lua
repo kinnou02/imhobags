@@ -77,7 +77,6 @@ function Ux.ItemButton_simple.New(parent)
 	self.stackText = UICreateFrame("Text", "", self.stackBack)
 	self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 5)
 	self.stackText:SetFontSize(14)
-	self.stackText:SetLayer(self.stackBack:GetLayer() + 1)
 	
 	self.slotsBack = UICreateFrame("Frame", "", self)
 	self.slotsBack:SetPoint("BOTTOMRIGHT", self.stackBack, "TOPRIGHT", 0, 0)
@@ -89,7 +88,6 @@ function Ux.ItemButton_simple.New(parent)
 	self.slotsText:SetPoint("BOTTOMRIGHT", self.slotsBack, "BOTTOMRIGHT", 0, 3)
 	self.slotsText:SetFontSize(11)
 	self.slotsText:SetFontColor(0.8, 0.8, 0.8)
-	self.slotsText:SetLayer(self.slotsBack:GetLayer() + 1)
 	
 	self.SetHighlighted = ItemButton_simple_SetHighlighted
 	self.SetFiltered = ItemButton_simple_SetFiltered

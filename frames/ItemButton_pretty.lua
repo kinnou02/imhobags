@@ -45,15 +45,12 @@ function Ux.ItemButton_pretty.New(parent)
 	self.highlight:SetVisible(false)
 	
 	self.stackBack:SetLayer(self.highlight:GetLayer() + 1)
-	self.stackText:SetLayer(self.stackBack:GetLayer() + 1)
-	
 	self.slotsBack:SetLayer(self.highlight:GetLayer() + 1)
-	self.slotsText:SetLayer(self.slotsBack:GetLayer() + 1)
 
 	self.border = UICreateFrame("Texture", "", self)
 	self.border:SetPoint("TOPLEFT", self, "TOPLEFT")
 	self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT")
-	self.border:SetLayer(self.stackText:GetLayer() + 1)
+	self.border:SetLayer(self.stackBack:GetLayer() + 1)
 	
 	self.SetHighlighted = ItemButton_pretty_SetHighlighted
 	self.SetRarity = ItemButton_pretty_SetRarity
