@@ -4,11 +4,13 @@ local Addon, private = ...
 local defaults = {
 	showEnemyFaction = "account",
 	autoOpen = false,
+	itemButtonSkin = "pretty",
 }
 
 -- Contains valid values for string/int
 local allowedValues = {
-	showEnemyFaction = { no = true, yes = true, account = true }
+	showEnemyFaction = { no = true, yes = true, account = true },
+	itemButtonSkin = { simple = true, pretty = true },
 }
 
 local boolStrings = {
