@@ -98,12 +98,16 @@ table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
 -- Public methods
 -- ============================================================================
 
-function Ux.ShowItemWindow(char, location)
+function Ux.ToggleItemWindow(char, location)
 	for k, v in pairs(defaultItemWindows) do
 		if(v[1] == location) then
 			local window = Ux[k]
-			window:SetCharacter(char, location)
-			window:SetVisible(true)
+			if(window:GetVisible()) then
+				window:SetVisible(false)
+			else
+				window:SetCharacter(char, location)
+				window:SetVisible(true)
+			end
 			break
 		end
 	end

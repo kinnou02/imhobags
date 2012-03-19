@@ -223,3 +223,11 @@ function frame:Show()
 	updateItemList()
 	applySearchFilter()
 end
+
+function frame:Toggle()
+	if(frame:GetVisible()) then
+		frame:SetVisible(false)
+	else
+		frame:Show()
+	end
+end
