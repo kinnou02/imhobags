@@ -1,6 +1,7 @@
 ﻿local Addon, private = ...
 
 local _G = _G
+local math = math
 local pairs = pairs
 local string = string
 local table = table
@@ -31,7 +32,7 @@ Ux.TooltipContext:SetStrata("topmost")
 local function centerWindow(window)
 	local screenWidth = UIParent:GetWidth()
 	local screenHeight = UIParent:GetHeight()
-	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (screenWidth - window:GetWidth()) / 2, (screenHeight - window:GetHeight()) / 2)
+	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor((screenWidth - window:GetWidth()) / 2), math.floor((screenHeight - window:GetHeight()) / 2))
 end
 
 local function init()
@@ -47,7 +48,7 @@ local function init()
 		local window = Ux[v[3]].New(title, "player", v[1], info.condensed, v[2])
 
 		if(info and info.x and info.y) then
-			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
+			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor(info.x), math.floor(info.y))
 			window:SetWidth(info.width)
 		else
 			centerWindow(window)
