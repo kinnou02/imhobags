@@ -107,4 +107,18 @@ local function variablesLoaded(addonIdentifier)
 	})
 end
 
+local function variablesSaved(addonIdentifier)
+	if(addonIdentifier ~= Addon.identifier) then
+		return
+	end
+	
+	-- Remove default values
+	for k, v in pairs(ImhoBags_Config) do
+		if(v == defaults[k]) then
+			ImhoBags_Config[k] = nil
+		end
+	end
+end
+
 table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "Config_variablesLoaded"})
+table.insert(Event.Addon.SavedVariables.Save.Begin, { variablesSaved, Addon.identifier, "Config_variablesSaved"})
