@@ -88,6 +88,10 @@ Available config options:
 	visuals, "pretty" aims to look like Trion item buttons. Requires
 	/reloadui before taking effect. "simple" may look better on very
 	low UI-scalings.
+* stackGroups true/false
+	If set to true reducing screen space has a higher priority than
+	correct sorting of groups. Small groups are stacked in a single
+	line instead of creating a new line for every item group.
 ]],
 	},
 	
