@@ -24,6 +24,8 @@ private.L = {
 		sellable = "Junk",
 		-- Special case for collectibles (e.g. artifacts)
 		["misc collectible"] = "Collectible",
+		-- Special case for lootable container items
+		lootable = "Lootable",
 	},
 	
 	-- The shortcuts used in the tooltip overview
