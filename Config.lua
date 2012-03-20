@@ -5,7 +5,7 @@ local defaults = {
 	showEnemyFaction = "account",
 	autoOpen = false,
 	itemButtonSkin = "pretty",
-	stackGroups = true,
+	packGroups = true,
 }
 
 -- Contains valid values for string/int
