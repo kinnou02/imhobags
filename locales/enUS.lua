@@ -89,7 +89,7 @@ Available config options:
 	/reloadui before taking effect. "simple" may look better on very
 	low UI-scalings.
 * packGroups yes/no
-	If set to true reducing screen space has a higher priority than
+	If set to yes reducing screen space has a higher priority than
 	correct sorting of groups. Multiple groups are packed together
 	per line where possible.
 * showEmptySlots yes/no
