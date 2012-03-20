@@ -92,6 +92,9 @@ Available config options:
 	If set to true reducing screen space has a higher priority than
 	correct sorting of groups. Multiple groups are packed together
 	per line where possible.
+* showEmptySlots yes/no
+	Controls whether the number of empty bag slots is displayed above
+	the Trion bags bar.
 ]],
 	},
 	

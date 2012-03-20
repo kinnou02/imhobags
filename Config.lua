@@ -6,6 +6,7 @@ local defaults = {
 	autoOpen = false,
 	itemButtonSkin = "pretty",
 	packGroups = true,
+	showEmptySlots = true,
 }
 
 -- Contains valid values for string/int

@@ -65,10 +65,22 @@ local function createFrame()
 	function resizeFrame.Event:Size()
 		adjustPosition()
 	end
+	
+	function UI.Native.Bag.Event:Loaded()
+		window:SetVisible(self:GetLoaded() and Config.showEmptySlots)
+	end
+	window:SetVisible(UI.Native.Bag:GetLoaded() and Config.showEmptySlots)
+end
+
+local function configChanged(name, value)
+	if(name == "showEmptySlots") then
+		Ux.EmptySlotIndicator:SetVisible(UI.Native.Bag:GetLoaded() and Config.showEmptySlots)
+	end
 end
 
 -- Creation of the frame must be postponed until after saved variables are loaded
 table.insert(ImhoEvent.Init, { createFrame, Addon.identifier, "Ux.EmptySlotIndicator_createFrame" })
+table.insert(ImhoEvent.Config, { configChanged, Addon.identifier, "Ux.EmptySlotIndicator_createFrame" })
 
 -- Public methods
 -- ============================================================================
