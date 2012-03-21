@@ -50,7 +50,7 @@ local function extractUnsortedCharacterItems(matrix)
 			for mail, count in pairs(slots) do
 				local t = {
 					name = detail.name,
-					type = detail.type,
+					type = itemType,
 					id = detail.type,
 					category = detail.category,
 					icon = detail.icon,					
@@ -110,6 +110,7 @@ function MailMatrix.MergeMail(matrix, mail)
 		for _, item in ipairs(mail.attachments) do
 			item = Inspect.Item.Detail(item)
 			if(item.type) then -- Is nil for money
+				item.type = Utils.FixItemType(item.type)
 				attachments[item.type] = (attachments[item.type] or 0) + (item.stack or 1)
 			else
 				coin = item.coin

@@ -67,19 +67,6 @@ local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accou
 		local usedFullSlots = { }
 		local usedPartialSlots = { }
 		
-		-- Temporary fix for invalid item types
-		local components = string.split(itemType, ",")
-		for k, v in ipairs(components) do
-			components[k] = string.sub(v, -16)
-		end
-		local itemType2 = "I" .. table.concat(components, ",")
-		if(itemType ~= itemType2) then
-			log(itemType)
-			log(itemType2)
-		end
-		itemType = itemType2
-		-- fix ends
-		
 		-- If looking at other characters item information might not be available.
 		-- In this case Inspect.Item.Detail throws an error and we need to remember
 		-- to ask later.
@@ -142,6 +129,8 @@ Also available as instance metamethod.
 function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 	if(item) then
 		item = Inspect.Item.Detail(slot)
+		-- Make sure only working types land in the DB
+		item.type = Utils.FixItemType(item.type)
 	end
 	
 	-- Bags are special
@@ -231,6 +220,7 @@ end
 -- Get the amount of items in this matrix of the given item type (including bags).
 -- Also available as instance metamethod.
 function ItemMatrix.GetItemCount(matrix, itemType)
+	itemType = Utils.FixItemType(itemType)
 	local result = 0
 	for _, type in ipairs(matrix.bags) do
 		if(type == itemType) then
