@@ -17,6 +17,8 @@ local Utility = Utility
 
 setfenv(1, private)
 
+print("Looking for French, Korean and Russian translators and reviewers.")
+
 if(Addon.toc.debug) then
 	log = function(...)
 		print(string.tostring(...))
