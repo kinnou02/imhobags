@@ -18,6 +18,7 @@ Ux = Ux or { }
 Ux.ItemButton = { }
 
 Ux.ItemButtonSize = 50
+Ux.ItemButtonSizeJunk = 30
 
 -- Private methods
 -- ============================================================================
