@@ -3,17 +3,12 @@ local Addon, private = ...
 -- Builtins
 local _G = _G
 local ipairs = ipairs
-local next = next
 local pairs = pairs
-local setfenv = setfenv
-local string = string
-local table = table
-local tostring = tostring
+local sort = table.sort
+local tinsert = table.insert
 local type = type
 
 -- Globals
-local dump = dump
-
 local Event = Event
 local Inspect = Inspect
 local Utility = Utility
@@ -179,18 +174,18 @@ function ItemDB.GetAvailableCharacters()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
-			table.insert(result, char)
+			tinsert(result, char)
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		for char, data in pairs(enemyFactionItems) do
 			if(type(data) == "table") then
-				table.insert(result, char)
+				tinsert(result, char)
 			end
 		end
 	end
-	table.insert(result, PlayerName)
-	table.sort(result)
+	tinsert(result, PlayerName)
+	sort(result)
 	return result
 end
 
@@ -216,7 +211,7 @@ function ItemDB.GetItemCounts(itemType)
 	local t = itemType.type
 	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
-			table.insert(result, {
+			tinsert(result, {
 				char,
 				data.inventory:GetItemCount(t),
 				data.bank:GetItemCount(t),
@@ -230,7 +225,7 @@ function ItemDB.GetItemCounts(itemType)
 		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
 			for char, data in pairs(enemyFactionItems) do
 				if(type(data) == "table") then
-					table.insert(result, {
+					tinsert(result, {
 						char,
 						data.inventory:GetItemCount(t),
 						data.bank:GetItemCount(t),
@@ -242,7 +237,7 @@ function ItemDB.GetItemCounts(itemType)
 			end
 		end
 	end
-	table.insert(result, {
+	tinsert(result, {
 		PlayerName,
 		playerItems.inventory:GetItemCount(t),
 		playerItems.bank:GetItemCount(t),
@@ -250,7 +245,7 @@ function ItemDB.GetItemCounts(itemType)
 		playerItems.equipment:GetItemCount(t),
 		playerItems.wardrobe:GetItemCount(t),
 	})
-	table.sort(result, function(a, b) return a[1] < b[1] end)
+	sort(result, function(a, b) return a[1] < b[1] end)
 	return result
 end
 
@@ -331,23 +326,23 @@ function ItemDB.GetGroupedItems(items, group)
 			end
 		end
 		local g = { }
-		table.insert(groups, g)
+		tinsert(groups, g)
 		keys[g] = key
 		return g
 	end
 	
 	for _, item in ipairs(items) do
 		local g = groupForKey(group(item.type))
-		table.insert(g, item)
+		tinsert(g, item)
 	end
 	return groups, keys
 end
 
-table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
-table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
-table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
+tinsert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
+tinsert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
+tinsert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
+tinsert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+tinsert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+tinsert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
 
-table.insert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })
+tinsert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })

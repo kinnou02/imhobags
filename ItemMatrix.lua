@@ -5,9 +5,11 @@ local ipairs = ipairs
 local next = next
 local pairs = pairs
 local pcall = pcall
-local table = table
+local tconcat = table.concat
+local tinsert = table.insert
 local setmetatable = setmetatable
-local string = string
+local strsplit = string.split
+local strsub = string.sub
 
 -- Globals
 local dump = dump
@@ -33,16 +35,16 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
 			for slot, stack in pairs(slots) do
 				if(condensed and stack == stackMax) then
-					table.insert(usedFullSlots, slot)
+					tinsert(usedFullSlots, slot)
 				else
 					usedPartialSlots[slot] = stack
 				end
 			end
 			if(#usedFullSlots > 0) then
-				table.insert(items, { type = Inspect.Item.Detail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax })
+				tinsert(items, { type = Inspect.Item.Detail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax })
 			end
 			for slot, stack in pairs(usedPartialSlots) do
-				table.insert(items, { type = Inspect.Item.Detail(slot), slots = { slot }, stack = stack })
+				tinsert(items, { type = Inspect.Item.Detail(slot), slots = { slot }, stack = stack })
 			end
 		else
 			log("item detail nil", next(slots))
@@ -51,7 +53,7 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	local empty = { }
 	for slot, type in pairs(matrix.slots) do
 		if(not type) then
-			table.insert(empty, slot)
+			tinsert(empty, slot)
 		end
 	end
 	return items, empty, true
@@ -78,16 +80,16 @@ local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accou
 				local stackMax = detail.stackMax or 0
 				for slot, stack in pairs(slots) do
 					if(condensed and stack == stackMax) then
-						table.insert(usedFullSlots, stack)
+						tinsert(usedFullSlots, stack)
 					else
-						table.insert(usedPartialSlots, stack)
+						tinsert(usedPartialSlots, stack)
 					end
 				end
 				if(#usedFullSlots > 0) then
-					table.insert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
+					tinsert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
 				end
 				for k, v in ipairs(usedPartialSlots) do
-					table.insert(items, { type = detail, slots = 1, stack = v })
+					tinsert(items, { type = detail, slots = 1, stack = v })
 				end
 			end
 		end
