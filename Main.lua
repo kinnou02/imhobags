@@ -6,8 +6,6 @@ end
 
 local pairs = pairs
 local print = print
-local string = string
-local table = table
 
 local Command = Command
 local Event = Event
@@ -20,9 +18,7 @@ setfenv(1, private)
 print("Looking for French, Korean and Russian translators and reviewers.")
 
 if(Addon.toc.debug) then
-	log = function(...)
-		print(string.tostring(...))
-	end
+	log = print
 else
 	log = function() end
 end
@@ -41,7 +37,7 @@ Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "ImhoBags.
 -- The Config event is fired whenever a cvonfig option has changed: (name, value)
 Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Config")
 
-local unitAvailableIndex
+local unitAvailableEntry
 local function unitAvailable(units)
 	for k, v in pairs(units) do
 		if(v == "player") then
@@ -51,11 +47,11 @@ local function unitAvailable(units)
 			EnemyFaction = (PlayerFaction == "defiant" and "guardian") or "defiant"
 			Trigger.Init()
 			
-			Event.Unit.Available[unitAvailableIndex][1] = function() end
+			unitAvailableEntry[1] = function() end
 			break
 		end
 	end
 end
 
-table.insert(Event.Unit.Available, { unitAvailable, Addon.identifier, "unitAvailable" })
-unitAvailableIndex = #Event.Unit.Available
+unitAvailableEntry = { unitAvailable, Addon.identifier, "Main_unitAvailable" }
+Event.Unit.Available[#Event.Unit.Available + 1] = unitAvailableEntry

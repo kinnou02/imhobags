@@ -1,16 +1,10 @@
 local Addon, private = ...
 
-local _G = _G
-local print = print
-local table = table
 local tostring = tostring
-local type = type
 
-local dump = dump
-
-local Command = Command
+-- Globals
 local Event = Event
-local Inspect = Inspect
+local InspectTimeReal = Inspect.Time.Real
 local UI = UI
 
 setfenv(1, private)
@@ -21,7 +15,7 @@ Ux = Ux or { }
 
 local function systemUpdateBegin(self)
 	-- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
-	local now = Inspect.Time.Real()
+	local now = InspectTimeReal()
 	if(self.matrix.lastUpdate >= self.lastUpdate) then
 		local items, empty, success = self.matrix:GetUnsortedItems(false)
 		self.label:SetText(tostring(#empty))
@@ -56,7 +50,7 @@ local function createFrame()
 	window.location = location
 	window.lastUpdate = -2
 	
-	table.insert(Event.System.Update.Begin, { function() systemUpdateBegin(window) end, Addon.identifier, "systemUpdateBegin" })
+	Event.System.Update.Begin[#Event.System.Update.Begin + 1] = { function() systemUpdateBegin(window) end, Addon.identifier, "systemUpdateBegin" }
 
 	local resizeFrame = UI.CreateFrame("Frame", "", Ux.Context)
 	resizeFrame:SetAllPoints(UI.Native.Bag)
@@ -79,8 +73,8 @@ local function configChanged(name, value)
 end
 
 -- Creation of the frame must be postponed until after saved variables are loaded
-table.insert(ImhoEvent.Init, { createFrame, Addon.identifier, "Ux.EmptySlotIndicator_createFrame" })
-table.insert(ImhoEvent.Config, { configChanged, Addon.identifier, "Ux.EmptySlotIndicator_createFrame" })
+ImhoEvent.Init[#ImhoEvent.Init + 1] = { createFrame, Addon.identifier, "Ux.EmptySlotIndicator_createFrame" }
+ImhoEvent.Config[#ImhoEvent.Config + 1] = { configChanged, Addon.identifier, "Ux.EmptySlotIndicator_configChanged" }
 
 -- Public methods
 -- ============================================================================

@@ -2,10 +2,8 @@ local Addon, private = ...
 
 -- Builtins
 local _G = _G
-local ipairs = ipairs
 local pairs = pairs
 local sort = table.sort
-local tinsert = table.insert
 local type = type
 
 -- Globals
@@ -118,8 +116,8 @@ local function interactionChanged(interaction, state)
 end
 
 local function mailsChanged(mails)
-	for mail, info in pairs(mails) do
-		if(info == "detail") then
+	for mail = 1, #mails do
+		if(mails[mail] == "detail") then
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))
 		end
 	end
@@ -174,17 +172,17 @@ function ItemDB.GetAvailableCharacters()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
-			tinsert(result, char)
+			result[#result + 1] = char
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		for char, data in pairs(enemyFactionItems) do
 			if(type(data) == "table") then
-				tinsert(result, char)
+				result[#result + 1] = char
 			end
 		end
 	end
-	tinsert(result, PlayerName)
+	result[#result + 1] = PlayerName
 	sort(result)
 	return result
 end
@@ -211,40 +209,40 @@ function ItemDB.GetItemCounts(itemType)
 	local t = itemType.type
 	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
-			tinsert(result, {
+			result[#result + 1] = {
 				char,
 				data.inventory:GetItemCount(t),
 				data.bank:GetItemCount(t),
 				data.mail:GetItemCount(t),
 				data.equipment:GetItemCount(t),
 				data.wardrobe:GetItemCount(t),
-			})
+			}
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
 			for char, data in pairs(enemyFactionItems) do
 				if(type(data) == "table") then
-					tinsert(result, {
+					result[#result + 1] = {
 						char,
 						data.inventory:GetItemCount(t),
 						data.bank:GetItemCount(t),
 						data.mail:GetItemCount(t),
 						data.equipment:GetItemCount(t),
 						data.wardrobe:GetItemCount(t),
-					})
+					}
 				end
 			end
 		end
 	end
-	tinsert(result, {
+	result[#result + 1] = {
 		PlayerName,
 		playerItems.inventory:GetItemCount(t),
 		playerItems.bank:GetItemCount(t),
 		playerItems.mail:GetItemCount(t),
 		playerItems.equipment:GetItemCount(t),
 		playerItems.wardrobe:GetItemCount(t),
-	})
+	}
 	sort(result, function(a, b) return a[1] < b[1] end)
 	return result
 end
@@ -326,23 +324,24 @@ function ItemDB.GetGroupedItems(items, group)
 			end
 		end
 		local g = { }
-		tinsert(groups, g)
+		groups[#groups + 1] = g
 		keys[g] = key
 		return g
 	end
 	
-	for _, item in ipairs(items) do
+	for i = 1, #items do
+		local item = items[i]
 		local g = groupForKey(group(item.type))
-		tinsert(g, item)
+		g[#g + 1] = item
 	end
 	return groups, keys
 end
 
-tinsert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
-tinsert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
-tinsert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
-tinsert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-tinsert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-tinsert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
+_G.table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
+_G.table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
+_G.table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
+_G.table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+_G.table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+_G.table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
 
-tinsert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })
+_G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })

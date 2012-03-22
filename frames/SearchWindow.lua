@@ -1,20 +1,20 @@
 local Addon, private = ...
 
-local ipairs = ipairs
-local math = math
+local floor = math.floor
+local format = string.format
 local pairs = pairs
 local pcall = pcall
-local string = string
-local table = table
-local tostring = tostring
-
-local dump  = dump
-local UIParent = UIParent
+local sort = table.sort
+local strfind = string.find
+local strgsub = string.gsub
+local strlower = string.lower
+local strupper = string.upper
 
 local Command = Command
-local Event = Event
 local Inspect = Inspect
+local InspectItemDetail = Inspect.Item.Detail
 local UI = UI
+local UIParent = UIParent
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -76,40 +76,39 @@ local buttons = { }
 local items = { }
 
 local function update()
-	local offset = math.floor(scrollbar:GetPosition())
-	for k, v in ipairs(buttons) do
+	local offset = floor(scrollbar:GetPosition())
+	for i = 1, #buttons do
+		local button = buttons[i]
 		local index = k + offset
 		if(index > #display) then
-			v:SetVisible(false)
+			button:SetVisible(false)
 		else
-			v:SetVisible(true)
+			button:SetVisible(true)
 			local item = display[index]
-			v.text:SetText(item[1])
-			v.text:SetFontColor(Utils.RarityColor(item[2]))
-			v.icon:SetTexture("Rift", item[3])
-			v.type = item[4]
+			button.text:SetText(item[1])
+			button.text:SetFontColor(Utils.RarityColor(item[2]))
+			button.icon:SetTexture("Rift", item[3])
+			button.type = item[4]
 		end
 	end
 end
 
 local function applySearchFilter()
-	local strfind = string.find
-	local tinsert = table.insert
-	
 	local pattern = filter.text:GetText()
 	if(pattern == "" or pattern == L.Ux.search) then
-		for k, v in ipairs(items) do
-			display[k] = v
+		for i = 1, #items do
+			display[k] = items[i]
 		end
 	else
 		-- Make a case-insensitive search pattern
-		pattern = string.gsub(filter.text:GetText(), "%a", function(s)
-			return string.format("[%s%s]", string.lower(s), string.upper(s))
+		pattern = strgsub(filter.text:GetText(), "%a", function(s)
+			return format("[%s%s]", strlower(s), strupper(s))
 		end)
 		display = { }
-		for k, v in ipairs(items) do
-			if(strfind(v[1], pattern)) then
-				tinsert(display, v)
+		for i = 1, #items do
+			local item = items[i]
+			if(strfind(item[1], pattern)) then
+				display[#display + 1] = item
 			end
 		end
 	end
@@ -145,7 +144,7 @@ for i = 1, displayItemsCount do
 	entry:SetPoint("TOPRIGHT", prevAnchor, "BOTTOMRIGHT", prevAnchorOffset, 0)
 	prevAnchorOffset = 0
 	prevAnchor = entry
-	table.insert(buttons, entry)
+	buttons[#buttons + 1] = entry
 
 	local text = UI.CreateFrame("Text", "", entry)
 	text:SetText("x")
@@ -179,21 +178,18 @@ for i = 1, displayItemsCount do
 end
 
 local function updateItemList()
-	local strlower = string.lower
-	local tinsert = table.insert
-	
 	local itemTypes = ItemDB.GetAllItemTypes()
 	items = { }
 	display = { }
 	for k in pairs(itemTypes) do
-		local result, detail = pcall(Inspect.Item.Detail, k)
+		local result, detail = pcall(InspectItemDetail, k)
 		if(result) then
-			local n = string.gsub(detail.name, "\n", "")
-			tinsert(items, { n, detail.rarity, detail.icon, k })
-			tinsert(display, items[#items])
+			local n = strgsub(detail.name, "\n", "")
+			items[#items + 1] = { n, detail.rarity, detail.icon, k }
+			display[#display + 1] = items[#items]
 		end
 	end
-	table.sort(items, function(a, b) return a[1] < b[1] end)
+	sort(items, function(a, b) return a[1] < b[1] end)
 end
 
 function content.Event:WheelBack()
@@ -210,7 +206,7 @@ local function configChanged(name, value)
 		applySearchFilter()
 	end
 end
-table.insert(ImhoEvent.Config, { configChanged, Addon.identifier, "SearchWindow_configChanged" })
+ImhoEvent.Config[#ImhoEvent.Config + 1] = { configChanged, Addon.identifier, "SearchWindow_configChanged" }
 
 -- Public methods
 -- ============================================================================

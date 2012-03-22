@@ -1,6 +1,5 @@
 local Addon, private = ...
 
-local ipairs = ipairs
 local floor = math.floor
 local format = string.format
 local strsplit = string.split
@@ -43,8 +42,8 @@ end
 function Utils.FixItemType(itemType)
 	-- Temporary fix for invalid item types
 	local components = strsplit(itemType, ",")
-	for k, v in ipairs(components) do
-		components[k] = strsub(v, -16)
+	for i = 1, #components do
+		components[i] = strsub(components[i], -16)
 	end
 	local itemType2 = "I" .. tconcat(components, ",")
 	if(itemType ~= itemType2) then

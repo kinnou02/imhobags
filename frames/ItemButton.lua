@@ -1,13 +1,12 @@
 local Addon, private = ...
 
-local table = table
-local tostring = tostring
+-- Builtins
 local type = type
 
-local UIParent = UIParent
-
+-- Globals
 local Command = Command
 local Inspect = Inspect
+local UIParent = UIParent
 
 -- Frames cannot be deleted, keep a cache and only create new frames if the cache is empty
 -- Calling Dispose() on a button moves it back to the cache
@@ -107,7 +106,7 @@ local function ItemButton_SetItem(self, item, slots, stack, available)
 end
 
 local function ItemButton_Dispose(self)
-	table.insert(cachedButtons, self)
+	cachedButtons[#cachedButtons + 1] = self
 	self:SetVisible(false)
 end
 
@@ -150,11 +149,12 @@ function Ux.ItemButton.New(parent)
 		button.Event.RightUp = rightUp
 		button.Event.RightUpoutside = rightUpoutside
 	else
-		button = table.remove(cachedButtons)
+		button = cachedButtons[#cachedButtons]
+		cachedButtons[#cachedButtons] = nil
 		button:SetVisible(true)
 		button:SetParent(parent)
 	end
 	return button
 end
 
-table.insert(ImhoEvent.Init, { function() skinFactory = Ux["ItemButton_" .. Config.itemButtonSkin].New end, Addon.identifier, "" })
+ImhoEvent.Init[#ImhoEvent.Init + 1] = { function() skinFactory = Ux["ItemButton_" .. Config.itemButtonSkin].New end, Addon.identifier, "" }

@@ -1,20 +1,14 @@
 local Addon, private = ...
 
 -- Builtins
-local ipairs = ipairs
 local next = next
 local pairs = pairs
 local pcall = pcall
-local tconcat = table.concat
-local tinsert = table.insert
 local setmetatable = setmetatable
-local strsplit = string.split
-local strsub = string.sub
 
 -- Globals
-local dump = dump
-
-local Inspect = Inspect
+local InspectItemDetail = Inspect.Item.Detail
+local InspectTimeReal = Inspect.Time.Real
 
 setfenv(1, private)
 ItemMatrix = { }
@@ -30,21 +24,21 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 		local usedFullSlots = { }
 		local usedPartialSlots = { }
 		
-		local detail = Inspect.Item.Detail((next(slots)))
+		local detail = InspectItemDetail((next(slots)))
 		if(detail) then
 			local stackMax = detail.stackMax or 0 -- non-stackable items have stackMax = nil and must not be condensed
 			for slot, stack in pairs(slots) do
 				if(condensed and stack == stackMax) then
-					tinsert(usedFullSlots, slot)
+					usedFullSlots[#usedFullSlots + 1] = slot
 				else
 					usedPartialSlots[slot] = stack
 				end
 			end
 			if(#usedFullSlots > 0) then
-				tinsert(items, { type = Inspect.Item.Detail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax })
+				items[#items + 1] = { type = InspectItemDetail(usedFullSlots[1]), slots = usedFullSlots, stack = #usedFullSlots * stackMax }
 			end
 			for slot, stack in pairs(usedPartialSlots) do
-				tinsert(items, { type = Inspect.Item.Detail(slot), slots = { slot }, stack = stack })
+				items[#items + 1] = { type = InspectItemDetail(slot), slots = { slot }, stack = stack }
 			end
 		else
 			log("item detail nil", next(slots))
@@ -53,7 +47,7 @@ local function ItemMatrix_extractUnsortedPlayerItems(matrix, condensed)
 	local empty = { }
 	for slot, type in pairs(matrix.slots) do
 		if(not type) then
-			tinsert(empty, slot)
+			empty[#empty + 1] = slot
 		end
 	end
 	return items, empty, true
@@ -72,7 +66,7 @@ local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accou
 		-- If looking at other characters item information might not be available.
 		-- In this case Inspect.Item.Detail throws an error and we need to remember
 		-- to ask later.
-		local result, detail = pcall(Inspect.Item.Detail, itemType)
+		local result, detail = pcall(InspectItemDetail, itemType)
 		success = success and result
 		if(result and detail) then
 			if(not accountBoundOnly or detail.bind == "account") then
@@ -80,16 +74,16 @@ local function ItemMatrix_extractUnsortedCharacterItems(matrix, condensed, accou
 				local stackMax = detail.stackMax or 0
 				for slot, stack in pairs(slots) do
 					if(condensed and stack == stackMax) then
-						tinsert(usedFullSlots, stack)
+						usedFullSlots[#usedFullSlots + 1] = stack
 					else
-						tinsert(usedPartialSlots, stack)
+						usedPartialSlots[#usedPartialSlots + 1] = stack
 					end
 				end
 				if(#usedFullSlots > 0) then
-					tinsert(items, { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax })
+					items[#items + 1] = { type = detail, slots = #usedFullSlots, stack = #usedFullSlots * stackMax }
 				end
-				for k, v in ipairs(usedPartialSlots) do
-					tinsert(items, { type = detail, slots = 1, stack = v })
+				for i = 1, #usedPartialSlots do
+					items[#items + 1] = { type = detail, slots = 1, stack = usedPartialSlots[i] }
 				end
 			end
 		end
@@ -130,7 +124,7 @@ Also available as instance metamethod.
 ]]
 function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 	if(item) then
-		item = Inspect.Item.Detail(slot)
+		item = InspectItemDetail(slot)
 		-- Make sure only working types land in the DB
 		item.type = Utils.FixItemType(item.type)
 	end
@@ -171,7 +165,7 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 			matrix.items[item.type][slot] = item.stack or 1
 		end
 	end
-	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
+	matrix.lastUpdate = InspectTimeReal() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	log("update", bag, slot, item and item.name, matrix.lastUpdate)
 end
 
@@ -224,8 +218,8 @@ end
 function ItemMatrix.GetItemCount(matrix, itemType)
 	itemType = Utils.FixItemType(itemType)
 	local result = 0
-	for _, type in ipairs(matrix.bags) do
-		if(type == itemType) then
+	for i = 1, #matrix.bags do
+		if(matrix.bags[i] == itemType) then
 			result = result + 1
 		end
 	end
@@ -242,7 +236,7 @@ end
 function ItemMatrix.GetAllItemTypes(matrix, result, accountBoundOnly)
 	if(accountBoundOnly) then
 		for k in pairs(matrix.items) do
-			local s, detail = pcall(Inspect.Item.Detail, k)
+			local s, detail = pcall(InspectItemDetail, k)
 			if(s and detail.bind == "account") then
 				result[k] = true
 			end
