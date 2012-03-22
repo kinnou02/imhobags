@@ -116,8 +116,8 @@ local function interactionChanged(interaction, state)
 end
 
 local function mailsChanged(mails)
-	for mail = 1, #mails do
-		if(mails[mail] == "detail") then
+	for mail, info in pairs(mails) do
+		if(info == "detail") then
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))
 		end
 	end
