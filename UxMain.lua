@@ -4,6 +4,7 @@
 local _G = _G
 local floor = math.floor
 local pairs = pairs
+local type = type
 
 -- Globals
 local Event = Event
@@ -153,5 +154,13 @@ function Ux.HideItemWindow(character, location)
 			end
 			break
 		end
+	end
+end
+
+function Ux.ToggleConfigWindow()
+	if(type(Ux.ConfigWindow) == "function") then
+		Ux.ConfigWindow()
+	else
+		Ux.ConfigWindow:SetVisible(not Ux.ConfigWindow:GetVisible())
 	end
 end

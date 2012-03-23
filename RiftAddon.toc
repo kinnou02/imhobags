@@ -51,6 +51,7 @@ RunOnStartup = {
 	"frames/RiftWindowCloseButton.lua",
 	"frames/Textfield.lua",
 	
+	"frames/ConfigWindow.lua",
 	"frames/CurrencyWindow.lua",
 	"frames/EmptySlotIndicator.lua",
 	"frames/ItemWindowBase.lua",
