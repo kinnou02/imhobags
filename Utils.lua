@@ -47,6 +47,7 @@ function Utils.FixItemType(itemType)
 	end
 	local itemType2 = "I" .. tconcat(components, ",")
 	if(itemType ~= itemType2) then
+		log("Broken item type: ", Inspect.Item.Detail(itemType2).name)
 		log(itemType)
 		log(itemType2)
 	end
