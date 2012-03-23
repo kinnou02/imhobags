@@ -7,6 +7,7 @@ local defaults = {
 	itemButtonSkin = "pretty",
 	packGroups = true,
 	showEmptySlots = true,
+	condensed = true,
 }
 
 -- Contains valid values for string/int
@@ -98,6 +99,11 @@ local function variablesLoaded(addonIdentifier)
 			for k in pairs(ImhoBags_Config) do
 				ImhoBags_Config[k] = nil
 				private.Trigger.Config(k, ImhoBags_Config[k])
+			end
+		end,
+		print = function()
+			for k in pairs(defaults) do
+				print(k .. " = " .. tostring(ImhoBags_Config[k]))
 			end
 		end,
 	}

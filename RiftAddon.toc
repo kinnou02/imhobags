@@ -7,7 +7,7 @@ Author = "Imhothar"
 Website = ""
 Email = "none"
 
-Version = "0.8beta2"
+Version = "0.9beta"
 Environment = "1.7"
 
 --@no-lib-strip@
@@ -51,6 +51,7 @@ RunOnStartup = {
 	"frames/RiftWindowCloseButton.lua",
 	"frames/Textfield.lua",
 	
+	"frames/ConfigWindow.lua",
 	"frames/CurrencyWindow.lua",
 	"frames/EmptySlotIndicator.lua",
 	"frames/ItemWindowBase.lua",

@@ -54,6 +54,7 @@ Correct usage:
 		* Backpack: "inventory", "inv" or "i"
 		* Bank: "bank" or "b"
 		* Mailbox: "mail" or "m"
+		* Currencies: "currency" or "c"
 		* defaults to "inventory" if omitted
 /imhobags search
 	Opens the search window
@@ -71,18 +72,17 @@ Unknown location "%s".
 	* Backpack: "inventory", "inv" or "i"
 	* Bank: "bank" or "b"
 	* Mailbox: "mail" or "m"
+	* Currencies: "currency" or "c"
 	* defaults to "inventory" if omitted
 ]],
 		configOptions = [[
 Available config options:
-* showEnemyFaction yes/no/account
-	Controls whether items of the enemy faction are considered.
-	no: Enemy faction characters are completely ignored.
-	yes: All items of enemy faction characters are considered.
-	account: Only account-bound items of the enemy faction are considered.
 * autoOpen yes/no
 	Controls whether the inventory or bank windows open/close automatically
 	together with the respective Trion frames.
+* condensed yes/no
+	Controls whether multiple full stacks of the same item are condensed
+	into one button to save screen space.
 * itemButtonSkin pretty/simple
 	Controls how the item buttons are displayed. "simple" lacks nice
 	visuals, "pretty" aims to look like Trion item buttons. Requires
@@ -95,6 +95,11 @@ Available config options:
 * showEmptySlots yes/no
 	Controls whether the number of empty bag slots is displayed above
 	the Trion bags bar.
+* showEnemyFaction yes/no/account
+	Controls whether items of the enemy faction are considered.
+	no: Enemy faction characters are completely ignored.
+	yes: All items of enemy faction characters are considered.
+	account: Only account-bound items of enemy faction characters are considered.
 ]],
 	},
 	
@@ -110,5 +115,16 @@ Available config options:
 		},
 		search = "<Enter search text>",
 		cashOnDelivery = "Cash on Delivery",
+		
+		-- All text for the configuration window goes here
+		ConfigWindow = {
+			title = "Imhothar's Bags Configuration",
+			showTooltips = "Show slash commands",
+			appearanceSection = "Appearance",
+			behaviorSection = "Behavior",
+			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
+			packGroups = "Choose whether multiple small groups should be packed into one line where possible instead of creating a new line for every single group. The former may result in inconsistent group sorting but can drastically decrease the size of the item windows.",
+			itemButtonSkin = "Choose how item buttons should be rendered. The left option requires more resources than the right one but looks better. If you play with a very low UI scale the right button skin might look better. Note that changes to this option require a /reloadui before becoming effective.",
+		},
 	},
 }
