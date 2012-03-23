@@ -18,6 +18,7 @@ Ux.ItemButton = { }
 
 Ux.ItemButtonSize = 50
 Ux.ItemButtonSizeJunk = 30
+Ux.ItemButtonSizeCurrency = 50
 
 -- Private methods
 -- ============================================================================
