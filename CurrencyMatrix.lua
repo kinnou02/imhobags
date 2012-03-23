@@ -28,14 +28,12 @@ local function extractUnsortedCharacterItems(matrix)
 			-- If looking at other characters item information might not be available.
 			-- In this case Inspect.Item.Detail throws an error and we need to remember
 			-- to ask later.
-			local result, curr = pcall(InspectCurrencyDetail, itemType)
-			local result2, item = pcall(InspectItemDetail, itemType)
-			success = success and (result and result2)
-			if(result and result2) then
-				items[#items + 1] = { type = curr, slots = 1, stack = amount, }
-				-- Missing in currency info
-				curr.type = itemType
-				curr.rarity = item.rarity
+			local result, item = pcall(InspectItemDetail, itemType)
+			success = success and result
+			if(result) then
+				items[#items + 1] = { type = item, slots = 1, stack = amount, }
+				-- Use currency category instead of item
+				item.category = matrix.categories[itemType]
 			end
 		end
 	end
@@ -51,6 +49,9 @@ function CurrencyMatrix.New()
 		items = {
 --			[type] = count
 		},
+		categories = {
+--			[type] = categoryId
+		},
 		lastUpdate = -1, -- Forced to -1 on save
 	}
 	return setmetatable(matrix, matrixMetaTable)
@@ -63,8 +64,10 @@ Also available as instance metamethod.
 function CurrencyMatrix.MergeCurrency(matrix, type, amount)
 	if(amount <= 0) then
 		matrix.items[type] = nil
+		matrix.categories[type] = nil
 	else
 		matrix.items[type] = amount
+		matrix.categories[type] = InspectCurrencyDetail(type).category
 	end
 	matrix.lastUpdate = InspectTimeReal() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	log("update", "currency", type, matrix.lastUpdate)
