@@ -1,29 +1,27 @@
 ﻿local Addon, private = ...
 
+-- Builtins
 local _G = _G
-local math = math
+local floor = math.floor
 local pairs = pairs
-local string = string
-local table = table
 
-local dump = dump
-local UIParent = UIParent
-
-local Command = Command
+-- Globals
 local Event = Event
-local UI = UI
+local UICreateContext = UI.CreateContext
+local UIParent = UIParent
 
 local defaultItemWindows =  {
 	BackpackItemWindow = { "inventory", UI.Native.BagInventory1, "ItemWindow" },
 	BankItemWindow = { "bank", UI.Native.Bank, "ItemWindow" },
 	MailItemWindow = { "mail", nil, "MailWindow" },
+	CurrencyItemWindow = { "currency", nil, "CurrencyWindow" },
 }
 
 setfenv(1, private)
 Ux = Ux or { }
 
-Ux.Context = UI.CreateContext(Addon.identifier)
-Ux.TooltipContext = UI.CreateContext(Addon.identifier)
+Ux.Context = UICreateContext(Addon.identifier)
+Ux.TooltipContext = UICreateContext(Addon.identifier)
 Ux.TooltipContext:SetStrata("topmost")
 
 -- Private methods
@@ -32,7 +30,7 @@ Ux.TooltipContext:SetStrata("topmost")
 local function centerWindow(window)
 	local screenWidth = UIParent:GetWidth()
 	local screenHeight = UIParent:GetHeight()
-	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor((screenWidth - window:GetWidth()) / 2), math.floor((screenHeight - window:GetHeight()) / 2))
+	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor((screenWidth - window:GetWidth()) / 2), floor((screenHeight - window:GetHeight()) / 2))
 end
 
 local function init()
@@ -48,7 +46,7 @@ local function init()
 		local window = Ux[v[3]].New(title, "player", v[1], info.condensed, v[2])
 
 		if(info and info.x and info.y) then
-			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor(info.x), math.floor(info.y))
+			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor(info.x), floor(info.y))
 			window:SetWidth(info.width)
 		else
 			centerWindow(window)
@@ -91,10 +89,10 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 	}
 end
 
-table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { Ux_savedVariablesSaveBegin, Addon.identifier, "Ux_savedVariablesSaveBegin" })
+_G.table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
+_G.table.insert(Event.Addon.SavedVariables.Save.Begin, { Ux_savedVariablesSaveBegin, Addon.identifier, "Ux_savedVariablesSaveBegin" })
 
-table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
+_G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
 
 -- Public methods
 -- ============================================================================

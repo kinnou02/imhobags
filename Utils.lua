@@ -2,6 +2,9 @@ local Addon, private = ...
 
 local floor = math.floor
 local format = string.format
+local strsplit = string.split
+local strsub = string.sub
+local tconcat = table.concat
 
 local rarityColors = {
 	sellable =		{ 0.34375, 0.34375, 0.34375 },
@@ -34,4 +37,19 @@ function Utils.FormatCoin(coin)
 	else
 		return format(coinFormat3, s)
 	end
+end
+
+function Utils.FixItemType(itemType)
+	-- Temporary fix for invalid item types
+	local components = strsplit(itemType, ",")
+	for i = 1, #components do
+		components[i] = strsub(components[i], -16)
+	end
+	local itemType2 = "I" .. tconcat(components, ",")
+	if(itemType ~= itemType2) then
+		log("Broken item type: ", Inspect.Item.Detail(itemType2).name)
+		log(itemType)
+		log(itemType2)
+	end
+	return itemType2
 end

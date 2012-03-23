@@ -1,18 +1,14 @@
 local Addon, private = ...
 
 -- Builtins
-local ipairs = ipairs
 local next = next
 local pairs = pairs
 local pcall = pcall
 local setmetatable = setmetatable
-local string = string
-local table = table
 
 -- Globals
-local dump = dump
-
-local Inspect = Inspect
+local InspectItemDetail = Inspect.Item.Detail
+local InspectTimeReal = Inspect.Time.Real
 
 setfenv(1, private)
 MailMatrix = { }
@@ -21,8 +17,10 @@ MailMatrix = { }
 -- ============================================================================
 
 local function purge(matrix, mail, attachments)
-	if(matrix.mails[mail]) then
-		for _, type in ipairs(matrix.mails[mail]) do
+	local t = matrix.mails[mail]
+	if(t) then
+		for i = 1, #t do
+			local type = t[i]
 			if(not attachments[type] and matrix.items[type]) then
 				matrix.items[type][mail] = nil
 				-- Delete empty entries or otherwise the table will grow indefinitely
@@ -44,19 +42,20 @@ local function extractUnsortedCharacterItems(matrix)
 		-- If looking at other characters item information might not be available.
 		-- In this case Inspect.Item.Detail throws an error and we need to remember
 		-- to ask later.
-		local result, detail = pcall(Inspect.Item.Detail, itemType)
+		local result, detail = pcall(InspectItemDetail, itemType)
 		success = success and result
 		if(result) then
 			for mail, count in pairs(slots) do
 				local t = {
 					name = detail.name,
-					type = detail.type,
+					type = itemType,
 					id = detail.type,
 					category = detail.category,
 					icon = detail.icon,					
 					ImhoBags_mail = matrix.mails[mail],
+					rarity = detail.rarity,
 				}
-				table.insert(items, { type = t, slots = 1, stack = count, mail = matrix.mails[mail] })
+				items[#items + 1] = { type = t, slots = 1, stack = count, mail = matrix.mails[mail] }
 			end
 		end
 	end
@@ -69,7 +68,7 @@ local function extractUnsortedCharacterItems(matrix)
 				icon = (data.coin >= 10000 and [[Data/\UI\item_icons\loot_platinum_coins.dds]]) or
 					(data.coin >= 100 and [[Data/\UI\item_icons\loot_gold_coins.dds]]) or [[Data/\UI\item_icons\loot_silver_coins.dds]],
 			}
-			table.insert(items, { type = type, slots = 1, stack = 1 })
+			items[#items + 1] = { type = type, slots = 1, stack = 1 }
 		end
 	end
 	return items, 0, success
@@ -78,6 +77,7 @@ end
 -- Public methods
 -- ============================================================================
 
+local matrixMetaTable
 function MailMatrix.New()
 	local matrix = {
 		items = {
@@ -96,7 +96,7 @@ function MailMatrix.New()
 ]]		},
 		lastUpdate = -1, -- Forced to -1 on save
 	}
-	return setmetatable(matrix, MailMatrix_matrixMetaTable)
+	return setmetatable(matrix, matrixMetaTable)
 end
 
 --[[
@@ -107,9 +107,10 @@ function MailMatrix.MergeMail(matrix, mail)
 	local attachments = { }
 	local coin = nil
 	if(mail.attachments) then
-		for _, item in ipairs(mail.attachments) do
-			item = Inspect.Item.Detail(item)
+		for i = 1, #mail.attachments do
+			local item = InspectItemDetail(mail.attachments[i])
 			if(item.type) then -- Is nil for money
+				item.type = Utils.FixItemType(item.type)
 				attachments[item.type] = (attachments[item.type] or 0) + (item.stack or 1)
 			else
 				coin = item.coin
@@ -125,7 +126,7 @@ function MailMatrix.MergeMail(matrix, mail)
 		body = mail.body,
 	}
 	for type in pairs(attachments) do
-		table.insert(t, type)
+		t[#t + 1] = type
 	end
 	t.coin = coin
 	t.cod = mail.cod
@@ -137,7 +138,7 @@ function MailMatrix.MergeMail(matrix, mail)
 		end
 		matrix.items[type][mail.id] = count
 	end
-	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
+	matrix.lastUpdate = InspectTimeReal() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	log("update", "mail", mail.id, matrix.lastUpdate)
 end
 
@@ -152,7 +153,7 @@ function MailMatrix.Purge(matrix, mails)
 			matrix.mails[mail] = nil
 		end
 	end
-	matrix.lastUpdate = Inspect.Time.Real() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
+	matrix.lastUpdate = InspectTimeReal() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 end
 
 --[[
@@ -197,7 +198,7 @@ end
 function MailMatrix.GetAllItemTypes(matrix, result, accountBoundOnly)
 	if(accountBoundOnly) then
 		for k in pairs(matrix.items) do
-			local s, detail = pcall(Inspect.Item.Detail(k))
+			local s, detail = pcall(InspectItemDetail, k)
 			if(s and detail.bind == "account") then
 				result[k] = true
 			end
@@ -213,7 +214,7 @@ function MailMatrix.GetUnsortedMails(matrix, character)
 	return matrix.mails
 end
 
-local MailMatrix_matrixMetaTable = {
+matrixMetaTable = {
 	__index = {
 		GetAllItemTypes = MailMatrix.GetAllItemTypes,
 		GetItemCount = MailMatrix.GetItemCount,
@@ -228,6 +229,6 @@ function MailMatrix.ApplyMetaTable(matrix)
 	if(not matrix) then
 		return MailMatrix.New()
 	else
-		return setmetatable(matrix, MailMatrix_matrixMetaTable)
+		return setmetatable(matrix, matrixMetaTable)
 	end
 end

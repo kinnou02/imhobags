@@ -1,13 +1,8 @@
 local Addon, private = ...
 
-local math = math
-local pairs = pairs
-local table = table
+local max = math.max
 
-local dump  = dump
-local Event = Event
-local Inspect = Inspect
-local UI = UI
+local UICreateFrame = UI.CreateFrame
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -20,15 +15,15 @@ local borderWidth = 2
 
 local function showMenu(self)
 	self.menu:SetVisible(true)
-	self.menu:SetWidth(math.max(self:GetWidth(), self.menu.contentWidth))
+	self.menu:SetWidth(max(self:GetWidth(), self.menu.contentWidth))
 end
 
 local function getButton(self, i)
 	if(self.menu.buttons[i]) then
 		return self.menu.buttons[i]
 	else
-		local btn = UI.CreateFrame("Frame", "", self.menu)
-		local label = UI.CreateFrame("Text", "", btn)
+		local btn = UICreateFrame("Frame", "", self.menu)
+		local label = UICreateFrame("Text", "", btn)
 		label:SetFontSize(14)
 		label:SetPoint("CENTER", btn, "CENTER")
 		label:SetText("X")
@@ -56,7 +51,7 @@ local function getButton(self, i)
 			self:SetText(label:GetText())
 			self.callback(label:GetText())
 		end
-		table.insert(self.menu.buttons, btn)
+		self.menu.buttons[#self.menu.buttons + 1] = btn
 		return btn
 	end
 end
@@ -77,7 +72,7 @@ local function updateMenu(self)
 	for i = #chars + 1, #self.menu.buttons do
 		self.menu.buttons[i]:SetVisible(false)
 	end
-	self.menu:SetWidth(math.max(width, self:GetWidth()))
+	self.menu:SetWidth(max(width, self:GetWidth()))
 	self.menu:SetHeight(height + 2 * borderWidth)
 end
 
@@ -85,20 +80,20 @@ end
 -- ============================================================================
 
 function Ux.CharSelector.New(parent, current, callback)
-	local frame = UI.CreateFrame("RiftButton", "", parent)
+	local frame = UICreateFrame("RiftButton", "", parent)
 	frame:SetText(current)
 	frame.callback = callback
 	
 	frame.Event.LeftPress = showMenu
 	
-	local menu = UI.CreateFrame("Frame", "", parent)
+	local menu = UICreateFrame("Frame", "", parent)
 	menu:SetLayer(100)
 	frame.menu = menu
 	menu:SetPoint("CENTER", frame, "CENTER")
 	menu:SetBackgroundColor(0.6, 0.6, 0.6)
 	menu.contentWidth = 0
 	menu:SetVisible(false)
-	menu.background = UI.CreateFrame("Frame", "", menu)
+	menu.background = UICreateFrame("Frame", "", menu)
 	menu.background:SetPoint("TOPLEFT", menu, "TOPLEFT", borderWidth + 1, borderWidth + 1)
 	menu.background:SetPoint("BOTTOMRIGHT", menu, "BOTTOMRIGHT", -borderWidth, -borderWidth)
 	menu.background:SetBackgroundColor(0, 0, 0)
@@ -107,11 +102,11 @@ function Ux.CharSelector.New(parent, current, callback)
 	
 	updateMenu(frame)
 	
-	table.insert(ImhoEvent.Config, { function(name)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(name)
 		if(name == "showEnemyFaction") then
 			updateMenu(frame)
 		end
-	end, Addon.identifier, "Ux.CharSelector_updateMenu" })
+	end, Addon.identifier, "Ux.CharSelector_updateMenu" }
 	
 	return frame
 end

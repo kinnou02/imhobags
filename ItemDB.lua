@@ -2,18 +2,14 @@ local Addon, private = ...
 
 -- Builtins
 local _G = _G
-local ipairs = ipairs
-local next = next
 local pairs = pairs
-local setfenv = setfenv
-local string = string
-local table = table
-local tostring = tostring
+local print = print
+local sort = table.sort
+local strmatch = string.match
+local tonumber = tonumber
 local type = type
 
 -- Globals
-local dump = dump
-
 local Event = Event
 local Inspect = Inspect
 local Utility = Utility
@@ -22,6 +18,8 @@ local Utility = Utility
 local playerItems
 local playerFactionItems
 local enemyFactionItems
+local lowestCompatibleItemDBMajor = 0
+local lowestCompatibleItemDBMinor = 9
 
 setfenv(1, private)
 ItemDB = { }
@@ -33,6 +31,7 @@ local function newCharacter()
 	return {
 		-- List only locations we care about
 		bank = ItemMatrix.New(),
+		currency = CurrencyMatrix.New(),
 		equipment = ItemMatrix.New(),
 		inventory = ItemMatrix.New(),
 		mail = MailMatrix.New(),
@@ -42,13 +41,21 @@ local function newCharacter()
 	}
 end
 
-local function mergeSlotChanges(slots)
-	for slot, item in pairs(slots) do
-		local container, bag, index = Utility.Item.Slot.Parse(slot)
-		local matrix = playerItems[container]
-		if(matrix) then
-			matrix:MergeSlot(slot, item, bag, index)
-		end
+local function checkForCompatibleItemDB(character, name)
+	local major, minor = strmatch(character.version or "0.1", "(%d+)%.(%d+)")
+	if(tonumber(major) < lowestCompatibleItemDBMajor or tonumber(minor) < lowestCompatibleItemDBMinor) then
+		print("Deleting incompatible item database for: " .. name, character.version)
+		return nil
+	else
+		character.bank		= ItemMatrix.ApplyMetaTable(character.bank)
+		character.currency	= CurrencyMatrix.ApplyMetaTable(character.currency)
+		character.equipment	= ItemMatrix.ApplyMetaTable(character.equipment)
+		character.inventory	= ItemMatrix.ApplyMetaTable(character.inventory)
+		character.mail		= MailMatrix.ApplyMetaTable(character.mail)
+		character.wardrobe	= ItemMatrix.ApplyMetaTable(character.wardrobe)
+		
+		character.version = Addon.toc.Version
+		return character
 	end
 end
 
@@ -59,45 +66,29 @@ local function variablesLoaded(addonIdentifier)
 	-- A /reloadui does not trigger all the Event.Item.Slot events as on log in or teleport.
 	-- That's why we need a separate "character"-stored table with
 	-- readily available data after a /reloadui
-	playerItems = _G.ImhoBags_PlayerItemMatrix or newCharacter()
-	
-	playerItems.bank		= ItemMatrix.ApplyMetaTable(playerItems.bank)
-	playerItems.equipment	= ItemMatrix.ApplyMetaTable(playerItems.equipment)
-	playerItems.inventory	= ItemMatrix.ApplyMetaTable(playerItems.inventory)
-	playerItems.mail		= MailMatrix.ApplyMetaTable(playerItems.mail)
-	playerItems.wardrobe	= ItemMatrix.ApplyMetaTable(playerItems.wardrobe)
+	playerItems = checkForCompatibleItemDB(_G.ImhoBags_PlayerItemMatrix, "player") or newCharacter()
 end
 
 local function prepareTables()
 	-- Ensure our data table exists
-	playerFactionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or {
-		version = Addon.toc.Version,
-	}
+	playerFactionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or { }
 	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = playerFactionItems
-	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or {
-		version = Addon.toc.Version,
-	}
+	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or { }
 	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionItems
 	
 	-- Apply the metatable to all item matrices on the current shard
 	for k, v in pairs(playerFactionItems) do
 		if(type(v) == "table") then
-			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
-			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
-			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
-			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
-			v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
+			playerFactionItems[k] = checkForCompatibleItemDB(v, k)
 		end
 	end
 	for k, v in pairs(enemyFactionItems) do
 		if(type(v) == "table") then
-			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
-			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
-			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
-			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
-			v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
+			enemyFactionItems[k] = checkForCompatibleItemDB(v, k)
 		end
 	end
+	-- Delete the player from the shard DB to save space and other computations
+	playerFactionItems[PlayerName] = nil
 end
 
 local function saveVariables(addonIdentifier)
@@ -108,6 +99,7 @@ local function saveVariables(addonIdentifier)
 	-- Force lastUpdate to -1 in all matrices, this ensures the
 	-- math works for all characters on the shard
 	playerItems.bank.lastUpdate = -1
+	playerItems.currency.lastUpdate = -1
 	playerItems.equipment.lastUpdate = -1
 	playerItems.inventory.lastUpdate = -1
 	playerItems.mail.lastUpdate = -1
@@ -119,6 +111,16 @@ end
 local function interactionChanged(interaction, state)
 	if(interaction == "mail" and state) then
 		playerItems.mail:Purge(Inspect.Mail.List())
+	end
+end
+
+local function mergeSlotChanges(slots)
+	for slot, item in pairs(slots) do
+		local container, bag, index = Utility.Item.Slot.Parse(slot)
+		local matrix = playerItems[container]
+		if(matrix) then
+			matrix:MergeSlot(slot, item, bag, index)
+		end
 	end
 end
 
@@ -146,6 +148,12 @@ local function mailsChanged(mails)
 ]]
 end
 
+local function currencyChanged(currencies)
+	for k, v in pairs(currencies) do
+		playerItems.currency:MergeCurrency(k, v)
+	end
+end
+
 local function init()
 	prepareTables()
 end
@@ -155,14 +163,13 @@ end
 
 --[[
 Get the matrix for the given character's location matrix
-location: "inventory", "bank", "equipped", "mail", "wardrobe"
+location: "inventory", "bank", "equipped", "mail", "wardrobe", "currency"
 return: matrix, enemy
 	matrix: The matrix table for the character and location
 	enemy: True if the matrix belongs to the enemy faction
 ]]
 function ItemDB.GetItemMatrix(character, location)
-	local items
-	local enemy
+	local items, enemy
 	if(character == "player" or PlayerName == character) then
 		items, enemy = playerItems, false
 	else
@@ -178,19 +185,19 @@ end
 function ItemDB.GetAvailableCharacters()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
-		if(char ~= PlayerName and type(data) == "table") then
-			table.insert(result, char)
+		if(type(data) == "table") then
+			result[#result + 1] = char
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		for char, data in pairs(enemyFactionItems) do
 			if(type(data) == "table") then
-				table.insert(result, char)
+				result[#result + 1] = char
 			end
 		end
 	end
-	table.insert(result, PlayerName)
-	table.sort(result)
+	result[#result + 1] = PlayerName
+	sort(result)
 	return result
 end
 
@@ -207,7 +214,7 @@ end
 --[[
 Return a table containing the counts of the given item type for each character:
 result = {
-	[#] = { name, inventory, bank, mail, equipment, wardrobe }
+	[#] = { name, inventory, bank, mail, equipment, wardrobe, currency }
 }
 The table is sorted by character name.
 ]]
@@ -215,42 +222,45 @@ function ItemDB.GetItemCounts(itemType)
 	local result = { }
 	local t = itemType.type
 	for char, data in pairs(playerFactionItems) do
-		if(char ~= PlayerName and type(data) == "table") then
-			table.insert(result, {
+		if(type(data) == "table") then
+			result[#result + 1] = {
 				char,
 				data.inventory:GetItemCount(t),
 				data.bank:GetItemCount(t),
 				data.mail:GetItemCount(t),
 				data.equipment:GetItemCount(t),
 				data.wardrobe:GetItemCount(t),
-			})
+				data.currency:GetItemCount(t),
+			}
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
 			for char, data in pairs(enemyFactionItems) do
 				if(type(data) == "table") then
-					table.insert(result, {
+					result[#result + 1] = {
 						char,
 						data.inventory:GetItemCount(t),
 						data.bank:GetItemCount(t),
 						data.mail:GetItemCount(t),
 						data.equipment:GetItemCount(t),
 						data.wardrobe:GetItemCount(t),
-					})
+						data.currency:GetItemCount(t),
+					}
 				end
 			end
 		end
 	end
-	table.insert(result, {
+	result[#result + 1] = {
 		PlayerName,
 		playerItems.inventory:GetItemCount(t),
 		playerItems.bank:GetItemCount(t),
 		playerItems.mail:GetItemCount(t),
 		playerItems.equipment:GetItemCount(t),
 		playerItems.wardrobe:GetItemCount(t),
-	})
-	table.sort(result, function(a, b) return a[1] < b[1] end)
+		playerItems.currency:GetItemCount(t),
+	}
+	sort(result, function(a, b) return a[1] < b[1] end)
 	return result
 end
 
@@ -269,9 +279,10 @@ end
 function ItemDB.GetAllItemTypes()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
-		if(char ~= PlayerName and type(data) == "table") then
-			data.inventory:GetAllItemTypes(result)
+		if(type(data) == "table") then
 			data.bank:GetAllItemTypes(result)
+			data.currency:GetAllItemTypes(result)
+			data.inventory:GetAllItemTypes(result)
 			data.mail:GetAllItemTypes(result)
 			data.equipment:GetAllItemTypes(result)
 			data.wardrobe:GetAllItemTypes(result)
@@ -281,16 +292,18 @@ function ItemDB.GetAllItemTypes()
 		local accountBoundOnly = Config.showEnemyFaction == "account"
 		for char, data in pairs(enemyFactionItems) do
 			if(type(data) == "table") then
-				data.inventory:GetAllItemTypes(result, accountBoundOnly)
 				data.bank:GetAllItemTypes(result, accountBoundOnly)
+				data.currency:GetAllItemTypes(result, accountBoundOnly)
+				data.inventory:GetAllItemTypes(result, accountBoundOnly)
 				data.mail:GetAllItemTypes(result, accountBoundOnly)
 				data.equipment:GetAllItemTypes(result, accountBoundOnly)
 				data.wardrobe:GetAllItemTypes(result, accountBoundOnly)
 			end
 		end
 	end
-	playerItems.inventory:GetAllItemTypes(result)
 	playerItems.bank:GetAllItemTypes(result)
+	playerItems.currency:GetAllItemTypes(result)
+	playerItems.inventory:GetAllItemTypes(result)
 	playerItems.mail:GetAllItemTypes(result)
 	playerItems.equipment:GetAllItemTypes(result)
 	playerItems.wardrobe:GetAllItemTypes(result)
@@ -331,23 +344,25 @@ function ItemDB.GetGroupedItems(items, group)
 			end
 		end
 		local g = { }
-		table.insert(groups, g)
+		groups[#groups + 1] = g
 		keys[g] = key
 		return g
 	end
 	
-	for _, item in ipairs(items) do
+	for i = 1, #items do
+		local item = items[i]
 		local g = groupForKey(group(item.type))
-		table.insert(g, item)
+		g[#g + 1] = item
 	end
 	return groups, keys
 end
 
-table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
-table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
-table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
-table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
+_G.table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
+_G.table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
+_G.table.insert(Event.Currency, { currencyChanged, Addon.identifier, "ItemDB_currencyChanged" })
+_G.table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
+_G.table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+_G.table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+_G.table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
 
-table.insert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })
+_G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })

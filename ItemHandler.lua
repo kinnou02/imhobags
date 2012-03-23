@@ -1,13 +1,5 @@
 local Addon, private = ...
 
-local _G = _G
-local ipairs = ipairs
-local getmetatable = getmetatable
-local math = math
-local string = string
-local table = table
-local type = type
-
 local Command = Command
 local Inspect = Inspect
 local Utility = Utility

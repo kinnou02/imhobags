@@ -31,6 +31,13 @@ local function ItemButton_simple_SetStack(self, stack)
 	self.stackText:SetText(tostring(stack))
 	self.stackBack:SetWidth(self.stackText:GetFullWidth())
 	self.stackBack:SetVisible(stack > 1)
+	if(stack >= 100000) then
+		self.stackText:SetFontSize(12)
+		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 3)
+	else
+		self.stackText:SetFontSize(14)
+		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 5)
+	end
 end
 
 local function ItemButton_simple_SetSlots(self, slots)

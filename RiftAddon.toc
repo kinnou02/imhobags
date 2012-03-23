@@ -7,7 +7,7 @@ Author = "Imhothar"
 Website = ""
 Email = "none"
 
-Version = "0.8beta"
+Version = "0.8beta2"
 Environment = "1.7"
 
 --@no-lib-strip@
@@ -34,6 +34,7 @@ RunOnStartup = {
 	"Group.Default.lua",
 	"ItemDB.lua",
 	"ItemHandler.lua",
+	"CurrencyMatrix.lua",
 	"ItemMatrix.lua",
 	"MailMatrix.lua",
 	"Sort.Default.lua",
@@ -50,10 +51,11 @@ RunOnStartup = {
 	"frames/RiftWindowCloseButton.lua",
 	"frames/Textfield.lua",
 	
+	"frames/CurrencyWindow.lua",
+	"frames/EmptySlotIndicator.lua",
 	"frames/ItemWindowBase.lua",
 	"frames/ItemWindow.lua",
 	"frames/MailWindow.lua",
-	"frames/EmptySlotIndicator.lua",
 	"frames/TooltipEnhancer.lua",
 	"frames/SearchWindow.lua",
 	

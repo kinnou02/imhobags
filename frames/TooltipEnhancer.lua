@@ -1,17 +1,16 @@
 local Addon, private = ...
 
-local _G = _G
-local ipairs = ipairs
-local table = table
+-- Builtins
+local format = string.format
+local formatn = string.formatn
 local select = select
-local string = string
 
-local dump = dump
-
+-- Globals
 local Command = Command
 local Event = Event
 local Inspect = Inspect
 local UI = UI
+local UIParent = UIParent
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -31,7 +30,7 @@ window:SetBackgroundColor(0, 0, 0, 0.75)
 
 local function showTooltip(tooltip)
 	local left, top, right, bottom = UI.Native.Tooltip:GetBounds()
-	local screenHeight = _G.UIParent:GetHeight()
+	local screenHeight = UIParent:GetHeight()
 	local height = window:GetHeight()
 	
 	window:SetText(tooltip)
@@ -47,11 +46,11 @@ local function buildLine(character, total, ...)
 		for i = 1, select("#", ...), 2 do
 			local fmt, count = select(i, ...)
 			if(count > 0) then
-				detail = detail .. string.format(fmt, count)
+				detail = detail .. format(fmt, count)
 			end
 		end
 	end
-	return string.formatn(L.TooltipEnhancer.line, character, total, detail)
+	return formatn(L.TooltipEnhancer.line, character, total, detail)
 end
 
 local function sum(character)
@@ -84,12 +83,13 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		return
 	end
 
-	local counts = ItemDB.GetItemCounts(Inspect.Item.Detail(itemType))
+	local counts = ItemDB.GetItemCounts(Inspect.Item.Detail(Utils.FixItemType(itemType)))
 	
 	local tooltip = ""
 	local total = 0
 	local chars = 0
-	for k, v in ipairs(counts) do
+	for i = 1, #counts do
+		local v = counts[i]
 		local charTotal = sum(v)
 		total = total + charTotal
 		if(charTotal > 0) then
@@ -100,10 +100,11 @@ local function tooltipTargetChanged(ttype, shown, buff)
 				L.TooltipEnhancer.mail, v[4],
 				L.TooltipEnhancer.equipment, v[5],
 				L.TooltipEnhancer.wardrobe, v[6]) .. "\n"
+				-- Do not display currency as separate category as currency items cannot be in any other container
 		end
 	end
 	if(chars > 1) then
-		tooltip = tooltip .. string.format(L.TooltipEnhancer.total, total)
+		tooltip = tooltip .. format(L.TooltipEnhancer.total, total)
 	end
 
 	if(chars > 0) then
@@ -111,4 +112,4 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	end
 end
 
-table.insert(Event.Tooltip, { tooltipTargetChanged, Addon.identifier, "TooltipEnhancer tooltipTargetChanged" })
+Event.Tooltip[#Event.Tooltip + 1] = { tooltipTargetChanged, Addon.identifier, "TooltipEnhancer tooltipTargetChanged" }
