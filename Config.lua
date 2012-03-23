@@ -101,6 +101,11 @@ local function variablesLoaded(addonIdentifier)
 				private.Trigger.Config(k, ImhoBags_Config[k])
 			end
 		end,
+		print = function()
+			for k in pairs(defaults) do
+				print(k .. " = " .. tostring(ImhoBags_Config[k]))
+			end
+		end,
 	}
 	
 	private.Config = setmetatable(interface, {
