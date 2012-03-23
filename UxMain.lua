@@ -105,6 +105,13 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 		x = Ux.SearchWindow:GetLeft(),
 		y = Ux.SearchWindow:GetTop(),
 	}
+	if(type(Ux.ConfigWindow) ~= "function") then
+		log("save")
+		_G.ImhoBags_WindowInfo.ConfigWindow = {
+			x = Ux.ConfigWindow:GetLeft(),
+			y = Ux.ConfigWindow:GetTop(),
+		}
+	end
 end
 
 _G.table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
@@ -162,6 +169,13 @@ end
 function Ux.ToggleConfigWindow()
 	if(type(Ux.ConfigWindow) == "function") then
 		Ux.ConfigWindow()
+		-- Load the config window's position
+		local info = _G.ImhoBags_WindowInfo.ConfigWindow
+		if(info) then
+			Ux.ConfigWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
+		else
+			centerWindow(Ux.ConfigWindow)
+		end
 	else
 		Ux.ConfigWindow:SetVisible(not Ux.ConfigWindow:GetVisible())
 	end
