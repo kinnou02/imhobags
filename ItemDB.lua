@@ -3,7 +3,10 @@ local Addon, private = ...
 -- Builtins
 local _G = _G
 local pairs = pairs
+local print = print
 local sort = table.sort
+local strmatch = string.match
+local tonumber = tonumber
 local type = type
 
 -- Globals
@@ -15,6 +18,8 @@ local Utility = Utility
 local playerItems
 local playerFactionItems
 local enemyFactionItems
+local lowestCompatibleItemDBMajor = 0
+local lowestCompatibleItemDBMinor = 9
 
 setfenv(1, private)
 ItemDB = { }
@@ -36,6 +41,24 @@ local function newCharacter()
 	}
 end
 
+local function checkForCompatibleItemDB(character, name)
+	local major, minor = strmatch(character.version or "0.1", "(%d+)%.(%d+)")
+	if(tonumber(major) < lowestCompatibleItemDBMajor or tonumber(minor) < lowestCompatibleItemDBMinor) then
+		print("Deleting incompatible item database for: " .. name, character.version)
+		return nil
+	else
+		character.bank		= ItemMatrix.ApplyMetaTable(character.bank)
+		character.currency	= CurrencyMatrix.ApplyMetaTable(character.currency)
+		character.equipment	= ItemMatrix.ApplyMetaTable(character.equipment)
+		character.inventory	= ItemMatrix.ApplyMetaTable(character.inventory)
+		character.mail		= MailMatrix.ApplyMetaTable(character.mail)
+		character.wardrobe	= ItemMatrix.ApplyMetaTable(character.wardrobe)
+		
+		character.version = Addon.toc.Version
+		return character
+	end
+end
+
 local function variablesLoaded(addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
@@ -43,48 +66,29 @@ local function variablesLoaded(addonIdentifier)
 	-- A /reloadui does not trigger all the Event.Item.Slot events as on log in or teleport.
 	-- That's why we need a separate "character"-stored table with
 	-- readily available data after a /reloadui
-	playerItems = _G.ImhoBags_PlayerItemMatrix or newCharacter()
-	
-	playerItems.bank		= ItemMatrix.ApplyMetaTable(playerItems.bank)
-	playerItems.currency	= CurrencyMatrix.ApplyMetaTable(playerItems.currency)
-	playerItems.equipment	= ItemMatrix.ApplyMetaTable(playerItems.equipment)
-	playerItems.inventory	= ItemMatrix.ApplyMetaTable(playerItems.inventory)
-	playerItems.mail		= MailMatrix.ApplyMetaTable(playerItems.mail)
-	playerItems.wardrobe	= ItemMatrix.ApplyMetaTable(playerItems.wardrobe)
+	playerItems = checkForCompatibleItemDB(_G.ImhoBags_PlayerItemMatrix, "player") or newCharacter()
 end
 
 local function prepareTables()
 	-- Ensure our data table exists
-	playerFactionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or {
-		version = Addon.toc.Version,
-	}
+	playerFactionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or { }
 	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = playerFactionItems
-	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or {
-		version = Addon.toc.Version,
-	}
+	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or { }
 	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionItems
 	
 	-- Apply the metatable to all item matrices on the current shard
 	for k, v in pairs(playerFactionItems) do
 		if(type(v) == "table") then
-			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
-			v.currency	= CurrencyMatrix.ApplyMetaTable(v.currency)
-			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
-			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
-			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
-			v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
+			playerFactionItems[k] = checkForCompatibleItemDB(v, k)
 		end
 	end
 	for k, v in pairs(enemyFactionItems) do
 		if(type(v) == "table") then
-			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
-			v.currency	= CurrencyMatrix.ApplyMetaTable(v.currency)
-			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
-			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
-			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
-			v.wardrobe	= ItemMatrix.ApplyMetaTable(v.wardrobe)
+			enemyFactionItems[k] = checkForCompatibleItemDB(v, k)
 		end
 	end
+	-- Delete the player from the shard DB to save space and other computations
+	playerFactionItems[PlayerName] = nil
 end
 
 local function saveVariables(addonIdentifier)
@@ -95,6 +99,7 @@ local function saveVariables(addonIdentifier)
 	-- Force lastUpdate to -1 in all matrices, this ensures the
 	-- math works for all characters on the shard
 	playerItems.bank.lastUpdate = -1
+	playerItems.currency.lastUpdate = -1
 	playerItems.equipment.lastUpdate = -1
 	playerItems.inventory.lastUpdate = -1
 	playerItems.mail.lastUpdate = -1
@@ -164,8 +169,7 @@ return: matrix, enemy
 	enemy: True if the matrix belongs to the enemy faction
 ]]
 function ItemDB.GetItemMatrix(character, location)
-	local items
-	local enemy
+	local items, enemy
 	if(character == "player" or PlayerName == character) then
 		items, enemy = playerItems, false
 	else
@@ -181,7 +185,7 @@ end
 function ItemDB.GetAvailableCharacters()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
-		if(char ~= PlayerName and type(data) == "table") then
+		if(type(data) == "table") then
 			result[#result + 1] = char
 		end
 	end
@@ -218,7 +222,7 @@ function ItemDB.GetItemCounts(itemType)
 	local result = { }
 	local t = itemType.type
 	for char, data in pairs(playerFactionItems) do
-		if(char ~= PlayerName and type(data) == "table") then
+		if(type(data) == "table") then
 			result[#result + 1] = {
 				char,
 				data.inventory:GetItemCount(t),
@@ -275,7 +279,7 @@ end
 function ItemDB.GetAllItemTypes()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
-		if(char ~= PlayerName and type(data) == "table") then
+		if(type(data) == "table") then
 			data.bank:GetAllItemTypes(result)
 			data.currency:GetAllItemTypes(result)
 			data.inventory:GetAllItemTypes(result)
