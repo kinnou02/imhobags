@@ -31,8 +31,8 @@ private.L = {
 	-- The shortcuts used in the tooltip overview
 	TooltipEnhancer = {
 		line = "+%s: %i %s", -- 1: character name, 2: item count, 3: detail string
-		inventory = "(bags %i)",
 		bank = "(bank %i)",
+		inventory = "(bags %i)",
 		mail = "(mail %i)",
 		equipment = "(equipped %i)",
 		wardrobe = "(wardrobe %i)",
@@ -104,6 +104,7 @@ Available config options:
 		WindowTitle = {
 			inventory = "Backpack",
 			bank = "Bank",
+			currency = "Currencies",
 			search = "Search Database",
 			mail = "Mailbox",
 		},
