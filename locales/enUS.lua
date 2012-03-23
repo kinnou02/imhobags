@@ -54,6 +54,7 @@ Correct usage:
 		* Backpack: "inventory", "inv" or "i"
 		* Bank: "bank" or "b"
 		* Mailbox: "mail" or "m"
+		* Currencies: "currency" or "c"
 		* defaults to "inventory" if omitted
 /imhobags search
 	Opens the search window
@@ -71,18 +72,17 @@ Unknown location "%s".
 	* Backpack: "inventory", "inv" or "i"
 	* Bank: "bank" or "b"
 	* Mailbox: "mail" or "m"
+	* Currencies: "currency" or "c"
 	* defaults to "inventory" if omitted
 ]],
 		configOptions = [[
 Available config options:
-* showEnemyFaction yes/no/account
-	Controls whether items of the enemy faction are considered.
-	no: Enemy faction characters are completely ignored.
-	yes: All items of enemy faction characters are considered.
-	account: Only account-bound items of the enemy faction are considered.
 * autoOpen yes/no
 	Controls whether the inventory or bank windows open/close automatically
 	together with the respective Trion frames.
+* condensed yes/no
+	Controls whether multiple full stacks of the same item are condensed
+	into one button to save screen space.
 * itemButtonSkin pretty/simple
 	Controls how the item buttons are displayed. "simple" lacks nice
 	visuals, "pretty" aims to look like Trion item buttons. Requires
@@ -95,9 +95,11 @@ Available config options:
 * showEmptySlots yes/no
 	Controls whether the number of empty bag slots is displayed above
 	the Trion bags bar.
-* condensed yes/no
-	Controls whether multiple full stacks of the same item are condensed
-	into one button to save screen space.
+* showEnemyFaction yes/no/account
+	Controls whether items of the enemy faction are considered.
+	no: Enemy faction characters are completely ignored.
+	yes: All items of enemy faction characters are considered.
+	account: Only account-bound items of enemy faction characters are considered.
 ]],
 	},
 	
