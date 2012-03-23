@@ -38,7 +38,7 @@ local function createItemWindow(name, character)
 	local info = _G.ImhoBags_WindowInfo[name] or { }
 	
 	local title = L.Ux.WindowTitle[data[1]]
-	local window = Ux[data[3]].New(title, character, data[1], data[2])
+	local window = Ux[data[3]].New(title, character, data[1])
 
 	if(info and info.x and info.y) then
 		window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor(info.x), floor(info.y))
