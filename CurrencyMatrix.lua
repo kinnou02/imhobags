@@ -45,6 +45,7 @@ end
 -- Public methods
 -- ============================================================================
 
+local matrixMetaTable
 function CurrencyMatrix.New()
 	local matrix = {
 		items = {
@@ -116,7 +117,7 @@ function CurrencyMatrix.GetAllItemTypes(matrix, result, accountBoundOnly)
 	end
 end
 
-local matrixMetaTable = {
+matrixMetaTable = {
 	__index = {
 		GetAllItemTypes = CurrencyMatrix.GetAllItemTypes,
 		GetItemCount = CurrencyMatrix.GetItemCount,

@@ -77,6 +77,7 @@ end
 -- Public methods
 -- ============================================================================
 
+local matrixMetaTable
 function MailMatrix.New()
 	local matrix = {
 		items = {
@@ -95,7 +96,7 @@ function MailMatrix.New()
 ]]		},
 		lastUpdate = -1, -- Forced to -1 on save
 	}
-	return setmetatable(matrix, MailMatrix_matrixMetaTable)
+	return setmetatable(matrix, matrixMetaTable)
 end
 
 --[[
@@ -213,7 +214,7 @@ function MailMatrix.GetUnsortedMails(matrix, character)
 	return matrix.mails
 end
 
-local MailMatrix_matrixMetaTable = {
+local matrixMetaTable = {
 	__index = {
 		GetAllItemTypes = MailMatrix.GetAllItemTypes,
 		GetItemCount = MailMatrix.GetItemCount,
@@ -228,6 +229,6 @@ function MailMatrix.ApplyMetaTable(matrix)
 	if(not matrix) then
 		return MailMatrix.New()
 	else
-		return setmetatable(matrix, MailMatrix_matrixMetaTable)
+		return setmetatable(matrix, matrixMetaTable)
 	end
 end

@@ -100,6 +100,7 @@ end
 -- Public methods
 -- ============================================================================
 
+local matrixMetaTable
 function ItemMatrix.New()
 	local matrix = {
 		items = {
@@ -115,7 +116,7 @@ function ItemMatrix.New()
 		},
 		lastUpdate = -1, -- Forced to -1 on save
 	}
-	return setmetatable(matrix, ItemMatrix_matrixMetaTable)
+	return setmetatable(matrix, matrixMetaTable)
 end
 
 --[[
@@ -248,7 +249,7 @@ function ItemMatrix.GetAllItemTypes(matrix, result, accountBoundOnly)
 	end
 end
 
-local ItemMatrix_matrixMetaTable = {
+matrixMetaTable = {
 	__index = {
 		MergeSlot = ItemMatrix.MergeSlot,
 		GetAllItemTypes = ItemMatrix.GetAllItemTypes,
@@ -261,6 +262,6 @@ function ItemMatrix.ApplyMetaTable(matrix)
 	if(not matrix) then
 		return ItemMatrix.New()
 	else
-		return setmetatable(matrix, ItemMatrix_matrixMetaTable)
+		return setmetatable(matrix, matrixMetaTable)
 	end
 end
