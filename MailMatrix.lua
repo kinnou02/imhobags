@@ -53,6 +53,7 @@ local function extractUnsortedCharacterItems(matrix)
 					category = detail.category,
 					icon = detail.icon,					
 					ImhoBags_mail = matrix.mails[mail],
+					rarity = detail.rarity,
 				}
 				items[#items + 1] = { type = t, slots = 1, stack = count, mail = matrix.mails[mail] }
 			end
