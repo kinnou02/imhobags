@@ -63,6 +63,9 @@ end
 
 local function tooltipTargetChanged(ttype, shown, buff)
 	window:SetVisible(false)
+	if(not Config.enhanceTooltips) then
+		return
+	end
 	
 	log("tooltip", ttype, shown, buff)
 	if(not (ttype and shown)) then
