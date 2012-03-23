@@ -126,6 +126,7 @@ Available config options:
 			packGroups = "Choose whether multiple small groups should be packed into one line where possible instead of creating a new line for every single group. The former may result in inconsistent group sorting but can drastically decrease the size of the item windows.",
 			itemButtonSkin = "Choose how item buttons should be rendered. The left option requires more resources than the right one but looks better. If you play with a very low UI scale the right button skin might look better. Note that changes to this option require a /reloadui before becoming effective.",
 			autoOpen = "Open and close the ImhoBags inventory or bank windows automatically when the respective Trion windows are opened and closed.",
+			showEnemyFaction = "Choose how items of enemy faction characters are treated. The options are to show all items regardless of character faction, to show only account-bound items of enemy faction characters, or to completely ignore all their items.",
 		},
 	},
 }
