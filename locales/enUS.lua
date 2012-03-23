@@ -121,6 +121,7 @@ Available config options:
 			title = "Imhothar's Bags Configuration",
 			showTooltips = "Show slash commands",
 			appearanceSection = "Appearance",
+			behaviorSection = "Behavior",
 			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
 			packGroups = "Choose whether multiple small groups should be packed into one line where possible instead of creating a new line for every single group. The former may result in inconsistent group sorting but can drastically decrease the size of the item windows.",
 			itemButtonSkin = "Choose how item buttons should be rendered. The left option requires more resources than the right one but looks better. If you play with a very low UI scale the right button skin might look better. Note that changes to this option require a /reloadui before becoming effective.",
