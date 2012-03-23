@@ -26,6 +26,7 @@ local function newCharacter()
 	return {
 		-- List only locations we care about
 		bank = ItemMatrix.New(),
+		currency = CurrencyMatrix.New(),
 		equipment = ItemMatrix.New(),
 		inventory = ItemMatrix.New(),
 		mail = MailMatrix.New(),
@@ -33,16 +34,6 @@ local function newCharacter()
 		
 		version = Addon.toc.Version,
 	}
-end
-
-local function mergeSlotChanges(slots)
-	for slot, item in pairs(slots) do
-		local container, bag, index = Utility.Item.Slot.Parse(slot)
-		local matrix = playerItems[container]
-		if(matrix) then
-			matrix:MergeSlot(slot, item, bag, index)
-		end
-	end
 end
 
 local function variablesLoaded(addonIdentifier)
@@ -55,6 +46,7 @@ local function variablesLoaded(addonIdentifier)
 	playerItems = _G.ImhoBags_PlayerItemMatrix or newCharacter()
 	
 	playerItems.bank		= ItemMatrix.ApplyMetaTable(playerItems.bank)
+	playerItems.currency	= CurrencyMatrix.ApplyMetaTable(playerItems.currency)
 	playerItems.equipment	= ItemMatrix.ApplyMetaTable(playerItems.equipment)
 	playerItems.inventory	= ItemMatrix.ApplyMetaTable(playerItems.inventory)
 	playerItems.mail		= MailMatrix.ApplyMetaTable(playerItems.mail)
@@ -76,6 +68,7 @@ local function prepareTables()
 	for k, v in pairs(playerFactionItems) do
 		if(type(v) == "table") then
 			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
+			v.currency	= CurrencyMatrix.ApplyMetaTable(v.currency)
 			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
 			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
 			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
@@ -85,6 +78,7 @@ local function prepareTables()
 	for k, v in pairs(enemyFactionItems) do
 		if(type(v) == "table") then
 			v.bank		= ItemMatrix.ApplyMetaTable(v.bank)
+			v.currency	= CurrencyMatrix.ApplyMetaTable(v.currency)
 			v.equipment	= ItemMatrix.ApplyMetaTable(v.equipment)
 			v.inventory	= ItemMatrix.ApplyMetaTable(v.inventory)
 			v.mail		= MailMatrix.ApplyMetaTable(v.mail)
@@ -115,6 +109,16 @@ local function interactionChanged(interaction, state)
 	end
 end
 
+local function mergeSlotChanges(slots)
+	for slot, item in pairs(slots) do
+		local container, bag, index = Utility.Item.Slot.Parse(slot)
+		local matrix = playerItems[container]
+		if(matrix) then
+			matrix:MergeSlot(slot, item, bag, index)
+		end
+	end
+end
+
 local function mailsChanged(mails)
 	for mail, info in pairs(mails) do
 		if(info == "detail") then
@@ -139,6 +143,12 @@ local function mailsChanged(mails)
 ]]
 end
 
+local function currencyChanged(currencies)
+	for k, v in pairs(currencies) do
+		playerItems.currency:MergeCurrency(k, v)
+	end
+end
+
 local function init()
 	prepareTables()
 end
@@ -148,7 +158,7 @@ end
 
 --[[
 Get the matrix for the given character's location matrix
-location: "inventory", "bank", "equipped", "mail", "wardrobe"
+location: "inventory", "bank", "equipped", "mail", "wardrobe", "currency"
 return: matrix, enemy
 	matrix: The matrix table for the character and location
 	enemy: True if the matrix belongs to the enemy faction
@@ -200,7 +210,7 @@ end
 --[[
 Return a table containing the counts of the given item type for each character:
 result = {
-	[#] = { name, inventory, bank, mail, equipment, wardrobe }
+	[#] = { name, inventory, bank, mail, equipment, wardrobe, currency }
 }
 The table is sorted by character name.
 ]]
@@ -216,6 +226,7 @@ function ItemDB.GetItemCounts(itemType)
 				data.mail:GetItemCount(t),
 				data.equipment:GetItemCount(t),
 				data.wardrobe:GetItemCount(t),
+				data.currency:GetItemCount(t),
 			}
 		end
 	end
@@ -230,6 +241,7 @@ function ItemDB.GetItemCounts(itemType)
 						data.mail:GetItemCount(t),
 						data.equipment:GetItemCount(t),
 						data.wardrobe:GetItemCount(t),
+						data.currency:GetItemCount(t),
 					}
 				end
 			end
@@ -242,6 +254,7 @@ function ItemDB.GetItemCounts(itemType)
 		playerItems.mail:GetItemCount(t),
 		playerItems.equipment:GetItemCount(t),
 		playerItems.wardrobe:GetItemCount(t),
+		playerItems.currency:GetItemCount(t),
 	}
 	sort(result, function(a, b) return a[1] < b[1] end)
 	return result
@@ -263,8 +276,9 @@ function ItemDB.GetAllItemTypes()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
 		if(char ~= PlayerName and type(data) == "table") then
-			data.inventory:GetAllItemTypes(result)
 			data.bank:GetAllItemTypes(result)
+			data.currency:GetAllItemTypes(result)
+			data.inventory:GetAllItemTypes(result)
 			data.mail:GetAllItemTypes(result)
 			data.equipment:GetAllItemTypes(result)
 			data.wardrobe:GetAllItemTypes(result)
@@ -274,16 +288,18 @@ function ItemDB.GetAllItemTypes()
 		local accountBoundOnly = Config.showEnemyFaction == "account"
 		for char, data in pairs(enemyFactionItems) do
 			if(type(data) == "table") then
-				data.inventory:GetAllItemTypes(result, accountBoundOnly)
 				data.bank:GetAllItemTypes(result, accountBoundOnly)
+				data.currency:GetAllItemTypes(result, accountBoundOnly)
+				data.inventory:GetAllItemTypes(result, accountBoundOnly)
 				data.mail:GetAllItemTypes(result, accountBoundOnly)
 				data.equipment:GetAllItemTypes(result, accountBoundOnly)
 				data.wardrobe:GetAllItemTypes(result, accountBoundOnly)
 			end
 		end
 	end
-	playerItems.inventory:GetAllItemTypes(result)
 	playerItems.bank:GetAllItemTypes(result)
+	playerItems.currency:GetAllItemTypes(result)
+	playerItems.inventory:GetAllItemTypes(result)
 	playerItems.mail:GetAllItemTypes(result)
 	playerItems.equipment:GetAllItemTypes(result)
 	playerItems.wardrobe:GetAllItemTypes(result)
@@ -339,6 +355,7 @@ end
 
 _G.table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
 _G.table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
+_G.table.insert(Event.Currency, { currencyChanged, Addon.identifier, "ItemDB_currencyChanged" })
 _G.table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
 _G.table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
 _G.table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })

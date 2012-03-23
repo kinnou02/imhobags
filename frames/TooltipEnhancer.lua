@@ -100,6 +100,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 				L.TooltipEnhancer.mail, v[4],
 				L.TooltipEnhancer.equipment, v[5],
 				L.TooltipEnhancer.wardrobe, v[6]) .. "\n"
+				-- Do not display currency as separate category as currency items cannot be in any other container
 		end
 	end
 	if(chars > 1) then
