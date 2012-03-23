@@ -214,7 +214,7 @@ function MailMatrix.GetUnsortedMails(matrix, character)
 	return matrix.mails
 end
 
-local matrixMetaTable = {
+matrixMetaTable = {
 	__index = {
 		GetAllItemTypes = MailMatrix.GetAllItemTypes,
 		GetItemCount = MailMatrix.GetItemCount,
