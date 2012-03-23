@@ -33,27 +33,42 @@ local function centerWindow(window)
 	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor((screenWidth - window:GetWidth()) / 2), floor((screenHeight - window:GetHeight()) / 2))
 end
 
-local function init()
-	-- Create the ordinary item windows.
-	-- Their creation must be delayed until after Inspect.Unit.Detail("player") is available.
-	for k, v in pairs(defaultItemWindows) do
-		local info = _G.ImhoBags_WindowInfo[k] or { }
-		if(info.condensed == nil) then
-			info.condensed = true
-		end
-		
-		local title = L.Ux.WindowTitle[v[1]]
-		local window = Ux[v[3]].New(title, "player", v[1], info.condensed, v[2])
+local function createItemWindow(name, character)
+	local data = defaultItemWindows[name]
+	local info = _G.ImhoBags_WindowInfo[name] or { }
+	
+	local title = L.Ux.WindowTitle[data[1]]
+	local window = Ux[data[3]].New(title, character, data[1], data[2])
 
-		if(info and info.x and info.y) then
-			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor(info.x), floor(info.y))
-			window:SetWidth(info.width)
-		else
-			centerWindow(window)
-		end
-		Ux[k] = window
+	if(info and info.x and info.y) then
+		window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor(info.x), floor(info.y))
+		window:SetWidth(info.width)
+	else
+		centerWindow(window)
 	end
+	Ux[name] = window
+	return window
+end
 
+local function init()
+	-- Hook the native opening events
+	for k, v in pairs(defaultItemWindows) do
+		local native = v[2]
+		if(native) then
+			-- This will not work if other addons try to do the same
+			function native.Event:Loaded()
+				if(Config.autoOpen) then
+					if(self:GetLoaded()) then
+						Ux.ShowItemWindow("player", v[1])
+					else
+						Ux.HideItemWindow("player", v[1])
+					end
+					log("TODO", "disable native frame(s)")
+				end
+			end
+		end
+	end
+	
 	-- Load the search window's position
 	local info = _G.ImhoBags_WindowInfo.SearchWindow
 	if(info) then
@@ -97,15 +112,44 @@ _G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
 -- Public methods
 -- ============================================================================
 
-function Ux.ToggleItemWindow(char, location)
+function Ux.ToggleItemWindow(character, location)
 	for k, v in pairs(defaultItemWindows) do
 		if(v[1] == location) then
 			local window = Ux[k]
-			if(window:GetVisible()) then
-				window:SetVisible(false)
+			if(not window) then
+				Ux.ShowItemWindow(character, location)
 			else
-				window:SetCharacter(char, location)
-				window:SetVisible(true)
+				if(window:GetVisible() and window.character == character) then
+					Ux.HideItemWindow(character, location)
+				else
+					Ux.ShowItemWindow(character, location)
+				end
+			end
+			break
+		end
+	end
+end
+
+function Ux.ShowItemWindow(character, location)
+	for k, v in pairs(defaultItemWindows) do
+		if(v[1] == location) then
+			local window = Ux[k]
+			if(not window) then
+				window = createItemWindow(k, character)
+			end
+			window:SetCharacter(character, location)
+			window:SetVisible(true)
+			break
+		end
+	end
+end
+
+function Ux.HideItemWindow(character, location)
+	for k, v in pairs(defaultItemWindows) do
+		if(v[1] == location) then
+			local window = Ux[k]
+			if(window) then
+				window:SetVisible(false)
 			end
 			break
 		end
