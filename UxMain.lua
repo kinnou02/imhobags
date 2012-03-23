@@ -92,12 +92,14 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 	end
 	for k, v in pairs(defaultItemWindows) do
 		local window = Ux[k]
-		_G.ImhoBags_WindowInfo[k] = {
-			x = window:GetLeft(),
-			y = window:GetTop(),
-			width = window:GetWidth(),
-			condensed = window.condensed,
-		}
+		if(window) then
+			_G.ImhoBags_WindowInfo[k] = {
+				x = window:GetLeft(),
+				y = window:GetTop(),
+				width = window:GetWidth(),
+				condensed = window.condensed,
+			}
+		end
 	end
 	_G.ImhoBags_WindowInfo.SearchWindow = {
 		x = Ux.SearchWindow:GetLeft(),
