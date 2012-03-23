@@ -79,7 +79,7 @@ local function update()
 	local offset = floor(scrollbar:GetPosition())
 	for i = 1, #buttons do
 		local button = buttons[i]
-		local index = k + offset
+		local index = i + offset
 		if(index > #display) then
 			button:SetVisible(false)
 		else
@@ -97,7 +97,7 @@ local function applySearchFilter()
 	local pattern = filter.text:GetText()
 	if(pattern == "" or pattern == L.Ux.search) then
 		for i = 1, #items do
-			display[k] = items[i]
+			display[i] = items[i]
 		end
 	else
 		-- Make a case-insensitive search pattern
