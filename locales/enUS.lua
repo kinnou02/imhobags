@@ -95,6 +95,9 @@ Available config options:
 * showEmptySlots yes/no
 	Controls whether the number of empty bag slots is displayed above
 	the Trion bags bar.
+* condensed yes/no
+	Controls whether multiple full stacks of the same item are condensed
+	into one button to save screen space.
 ]],
 	},
 	

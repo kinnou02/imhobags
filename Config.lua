@@ -7,6 +7,7 @@ local defaults = {
 	itemButtonSkin = "pretty",
 	packGroups = true,
 	showEmptySlots = true,
+	condensed = true,
 }
 
 -- Contains valid values for string/int
