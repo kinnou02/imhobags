@@ -11,7 +11,7 @@ Ux.RiftWindowCloseButton = { }
 function Ux.RiftWindowCloseButton.New(parent, closeTarget)
 	local btn = UICreateFrame("RiftButton", "", parent)
 	btn:SetSkin("close")
-	btn:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -8, 15)
+	btn:SetPoint("TOPRIGHT", parent:GetBorder(), "TOPRIGHT", -8, 16)
 	if(type(closeTarget) == "function") then
 		btn.Event.LeftPress = closeTarget
 	else
