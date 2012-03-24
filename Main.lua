@@ -16,6 +16,7 @@ local Utility = Utility
 setfenv(1, private)
 
 print("Looking for French, Korean and Russian translators and reviewers.")
+print("Try out the new configuration window with /imhobags config.")
 
 if(Addon.toc.debug) then
 	log = print
