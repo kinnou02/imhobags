@@ -42,6 +42,9 @@ local function newCharacter()
 end
 
 local function checkForCompatibleItemDB(character, name)
+	if(not character) then
+		return nil
+	end
 	local major, minor = strmatch(character.version or "0.1", "(%d+)%.(%d+)")
 	if(tonumber(major) < lowestCompatibleItemDBMajor or tonumber(minor) < lowestCompatibleItemDBMinor) then
 		print("Deleting incompatible item database for: " .. name, character.version)
