@@ -23,9 +23,9 @@ private.L = {
 		-- Used for the collapsible group with sellable items
 		sellable = "Junk",
 		-- Special case for collectibles (e.g. artifacts)
-		["misc collectible"] = "Collectible",
+		["misc collectible"] = "Collectibles",
 		-- Special case for costumes
-		["armor costume"] = "Costume",
+		["armor costume"] = "Costumes",
 		-- Special case for lootable container items
 		lootable = "Lootable",
 		-- Designators for equipped wardrobe sets
@@ -33,6 +33,7 @@ private.L = {
 		wardrobeSet2 = "Wardrobe Set 2",
 		wardrobeSet3 = "Wardrobe Set 3",
 		wardrobeSet4 = "Wardrobe Set 4",
+		wardrobeSet5 = "Wardrobe Set 5",
 	},
 	
 	-- The shortcuts used in the tooltip overview
