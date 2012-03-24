@@ -50,10 +50,12 @@ function Utils.FixItemType(itemType)
 		components[i] = strsub(components[i], -16)
 	end
 	local itemType2 = "I" .. tconcat(components, ",")
+--@debug@
 	if(itemType ~= itemType2) then
 		log("Broken item type: ", InspectItemDetail(itemType2).name)
 		log(itemType)
 		log(itemType2)
 	end
+--@end-debug@
 	return itemType2
 end
