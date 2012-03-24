@@ -35,7 +35,7 @@ local function newCharacter()
 		equipment = ItemMatrix.New(),
 		inventory = ItemMatrix.New(),
 		mail = MailMatrix.New(),
-		wardrobe = ItemMatrix.New(),
+		wardrobe = WardrobeMatrix.New(),
 		
 		version = Addon.toc.Version,
 	}
@@ -52,7 +52,7 @@ local function checkForCompatibleItemDB(character, name)
 		character.equipment	= ItemMatrix.ApplyMetaTable(character.equipment)
 		character.inventory	= ItemMatrix.ApplyMetaTable(character.inventory)
 		character.mail		= MailMatrix.ApplyMetaTable(character.mail)
-		character.wardrobe	= ItemMatrix.ApplyMetaTable(character.wardrobe)
+		character.wardrobe	= WardrobeMatrix.ApplyMetaTable(character.wardrobe)
 		
 		character.version = Addon.toc.Version
 		return character

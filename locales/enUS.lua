@@ -24,8 +24,15 @@ private.L = {
 		sellable = "Junk",
 		-- Special case for collectibles (e.g. artifacts)
 		["misc collectible"] = "Collectible",
+		-- Special case for costumes
+		["armor costume"] = "Costume",
 		-- Special case for lootable container items
 		lootable = "Lootable",
+		-- Designators for equipped wardrobe sets
+		wardrobeSet1 = "Wardrobe Set 1",
+		wardrobeSet2 = "Wardrobe Set 2",
+		wardrobeSet3 = "Wardrobe Set 3",
+		wardrobeSet4 = "Wardrobe Set 4",
 	},
 	
 	-- The shortcuts used in the tooltip overview

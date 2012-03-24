@@ -37,6 +37,7 @@ RunOnStartup = {
 	"CurrencyMatrix.lua",
 	"ItemMatrix.lua",
 	"MailMatrix.lua",
+	"WardrobeMatrix.lua",
 	"Sort.Default.lua",
 	
 	"UxMain.lua",
