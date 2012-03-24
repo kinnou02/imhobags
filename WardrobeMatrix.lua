@@ -1,14 +1,12 @@
 local Addon, private = ...
 
 -- Builtins
-local next = next
 local pairs = pairs
 local pcall = pcall
 local setmetatable = setmetatable
 
 -- Globals
 local InspectItemDetail = Inspect.Item.Detail
-local InspectTimeReal = Inspect.Time.Real
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 setfenv(1, private)
