@@ -156,15 +156,11 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 	
 	-- Now add the new item
 	if(item) then
-		if(bag == "bag") then
-			matrix.bags[index] = item.type
-		else
-			matrix.slots[slot] = item.type
-			if(matrix.items[item.type] == nil) then
-				matrix.items[item.type] = { }
-			end
-			matrix.items[item.type][slot] = item.stack or 1
+		matrix.slots[slot] = item.type
+		if(matrix.items[item.type] == nil) then
+			matrix.items[item.type] = { }
 		end
+		matrix.items[item.type][slot] = item.stack or 1
 	end
 	matrix.lastUpdate = InspectTimeReal() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	log("update", bag, slot, item and item.name, matrix.lastUpdate)

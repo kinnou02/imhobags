@@ -9,6 +9,7 @@ ignore:
   - textures/border.pspimage
   - textures/overlay.pspimage
   - textures/highlight.pspimage
+  - textures/ConfigWindow/showEnemyFaction.pspimage
 
 enable-nolib-creation: yes
 

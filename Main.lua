@@ -13,9 +13,13 @@ local Inspect = Inspect
 local UI = UI
 local Utility = Utility
 
-setfenv(1, private)
+local lang = Inspect.System.Language()
+if(lang == "Korean" or lang == "French" or lang == "Russian") then
+	print("Looking for French, Korean and Russian translators and reviewers!")
+end
+print("Try out the new configuration window with /imhobags config")
 
-print("Looking for French, Korean and Russian translators and reviewers.")
+setfenv(1, private)
 
 if(Addon.toc.debug) then
 	log = print

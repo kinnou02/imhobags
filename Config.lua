@@ -8,6 +8,7 @@ local defaults = {
 	packGroups = true,
 	showEmptySlots = true,
 	condensed = true,
+	enhanceTooltips = true,
 }
 
 -- Contains valid values for string/int

@@ -35,13 +35,16 @@ local function newCharacter()
 		equipment = ItemMatrix.New(),
 		inventory = ItemMatrix.New(),
 		mail = MailMatrix.New(),
-		wardrobe = ItemMatrix.New(),
+		wardrobe = WardrobeMatrix.New(),
 		
 		version = Addon.toc.Version,
 	}
 end
 
 local function checkForCompatibleItemDB(character, name)
+	if(not character) then
+		return nil
+	end
 	local major, minor = strmatch(character.version or "0.1", "(%d+)%.(%d+)")
 	if(tonumber(major) < lowestCompatibleItemDBMajor or tonumber(minor) < lowestCompatibleItemDBMinor) then
 		print("Deleting incompatible item database for: " .. name, character.version)
@@ -52,7 +55,7 @@ local function checkForCompatibleItemDB(character, name)
 		character.equipment	= ItemMatrix.ApplyMetaTable(character.equipment)
 		character.inventory	= ItemMatrix.ApplyMetaTable(character.inventory)
 		character.mail		= MailMatrix.ApplyMetaTable(character.mail)
-		character.wardrobe	= ItemMatrix.ApplyMetaTable(character.wardrobe)
+		character.wardrobe	= WardrobeMatrix.ApplyMetaTable(character.wardrobe)
 		
 		character.version = Addon.toc.Version
 		return character
