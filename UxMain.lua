@@ -16,6 +16,8 @@ local defaultItemWindows =  {
 	BankItemWindow = { "bank", UI.Native.Bank, "ItemWindow" },
 	MailItemWindow = { "mail", nil, "MailWindow" },
 	CurrencyItemWindow = { "currency", nil, "CurrencyWindow" },
+	EquipmentItemWindow = { "equipment", nil, "EquipmentWindow" },
+	WardrobeItemWindow = { "wardrobe", nil, "EquipmentWindow" },
 }
 
 setfenv(1, private)

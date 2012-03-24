@@ -55,6 +55,7 @@ RunOnStartup = {
 	"frames/ConfigWindow.lua",
 	"frames/CurrencyWindow.lua",
 	"frames/EmptySlotIndicator.lua",
+	"frames/EquipmentWindow.lua",
 	"frames/ItemWindowBase.lua",
 	"frames/ItemWindow.lua",
 	"frames/MailWindow.lua",

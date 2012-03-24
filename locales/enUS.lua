@@ -126,6 +126,8 @@ Available config options:
 			currency = "Currencies",
 			search = "Search Database",
 			mail = "Mailbox",
+			equipment = "Equipped",
+			wardrobe = "Wardrobe",
 		},
 		search = "<Enter search text>",
 		cashOnDelivery = "Cash on Delivery",
