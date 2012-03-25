@@ -1,5 +1,9 @@
 local Addon, private = ...
 
+-- Builtins
+local pairs = pairs
+
+-- Globals
 local Command = Command
 local Inspect = Inspect
 local Utility = Utility
@@ -10,16 +14,35 @@ ItemHandler = { }
 -- Private methods
 -- ============================================================================
 
-local function moveToBank(slot)
-	if(Ux.BankItemWindow:isAvailable() and #Ux.BankItemWindow.empty > 0) then
-		Command.Item.Move(slot, Ux.BankItemWindow.empty[1])
+local function findTargetSlot(location, stack, max, type)
+	local matrix = ItemDB.GetItemMatrix("player", location)
+	for slot, count in pairs(matrix.items[type] or { }) do
+		if(count + stack <= max) then
+			return slot
+		end
+	end
+	return nil
+end
+
+local function moveToLocation(window, slot)
+	if(window:isAvailable()) then
+		-- Find a slot where the item fits
+		local item = Inspect.Item.Detail(slot)
+		local target = findTargetSlot(window.location, item.stack or 1, item.stackMax or 1, item.type)
+		if(target) then
+			Command.Item.Move(slot, target)
+		elseif(#window.empty > 0) then
+			Command.Item.Move(slot, window.empty[1])
+		end
 	end
 end
 
+local function moveToBank(slot)
+	moveToLocation(Ux.BankItemWindow, slot)
+end
+
 local function moveToInventory(slot)
-	if(Ux.BackpackItemWindow:isAvailable() and #Ux.BackpackItemWindow.empty > 0) then
-		Command.Item.Move(slot, Ux.BackpackItemWindow.empty[1])
-	end
+	moveToLocation(Ux.BackpackItemWindow, slot)
 end
 
 -- Public methods
