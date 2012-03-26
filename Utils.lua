@@ -1,8 +1,12 @@
 local Addon, private = ...
 
 -- Builtins
+local debug = debug
 local floor = math.floor
 local format = string.format
+local pcall = pcall
+local print = print
+local strlen = string.len
 local strsplit = string.split
 local strsub = string.sub
 local tconcat = table.concat
@@ -47,15 +51,22 @@ function Utils.FixItemType(itemType)
 	-- Temporary fix for invalid item types
 	local components = strsplit(itemType, ",")
 	for i = 1, #components do
-		components[i] = strsub(components[i], -16)
+		local c = components[i]
+		if(strlen(c) == 24) then
+			components[i] = strsub(components[i], -16)
+		end
 	end
-	local itemType2 = "I" .. tconcat(components, ",")
---@debug@
+--	log(debug.traceback())
+	local itemType2 = tconcat(components, ",")
 	if(itemType ~= itemType2) then
-		log("Broken item type: ", InspectItemDetail(itemType2).name)
+		local s, i = pcall(InspectItemDetail, itemType2)
 		log(itemType)
 		log(itemType2)
+		if(not s) then
+			print("Error in item processing: ", itemType)
+		else
+			log("Item error: ", i.name)
+		end
 	end
---@end-debug@
 	return itemType2
 end

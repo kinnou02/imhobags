@@ -51,7 +51,7 @@ end
 local function leftDown(self)
 	self.moved = false
 	self:SetDepressed(true)
-	if(self.available) then
+	if(self.available and not Inspect.Cursor()) then
 		self.pickingUp = self.item.id
 	end
 end
@@ -59,11 +59,11 @@ end
 local function leftUp(self)
 	local cursor, held = Inspect.Cursor()
 	self:SetDepressed(false)
-	if(self.moved and cursor == "item" and self.available) then
-		Command.Item.Move(held, self.slots[1])
-	elseif(self.pickingUp) then
+	if(self.pickingUp) then
 --		Command.Cursor(self.pickingUp)
 --		self.pickingUp = nil
+	elseif(cursor == "item" and self.available) then
+		Command.Item.Move(held, self.slots[1])
 	end
 	self.moved = false
 	self.commandTarget = nil
