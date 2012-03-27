@@ -234,6 +234,30 @@ local function currencyChanged(currencies)
 	end
 end
 
+local function guildChanged()
+	if(not PlayerGuild) then
+		if(playerItems.guild) then
+			-- Delete the guild if no other character is a member
+			local used = false
+			for char, data in pairs(playerFactionItems) do
+				if(data.guild == playerItems.guild) then
+					used = true
+					break
+				end
+			end
+			if(not used) then
+				playerFactionGuildItems[playerItems.guild] = nil
+			end
+			playerGuildItems = newGuild()
+			playerItems.guild = nil
+		end
+	else
+		playerItems.guild = PlayerGuild
+		playerGuildItems = playerFactionGuildItems[PlayerGuild] or newGuild()
+		playerFactionGuildItems[PlayerGuild] = playerGuildItems
+	end
+end
+
 local function init()
 	prepareTables()
 end
@@ -242,7 +266,7 @@ end
 -- ============================================================================
 
 --[[
-Get the matrix for the given character's location matrix
+Get the matrix for the given character's location
 location: "inventory", "bank", "equipped", "mail", "wardrobe", "currency"
 return: matrix, enemy
 	matrix: The matrix table for the character and location

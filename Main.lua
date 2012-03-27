@@ -29,7 +29,7 @@ end
 
 -- Always available
 PlayerName = ""
-PlayerGuild = ""
+PlayerGuild = false
 PlayerFaction = ""
 EnemyFaction = ""
 PlayerShard = Inspect.Shard().name
@@ -41,6 +41,8 @@ Trigger = { }
 Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Init")
 -- The Config event is fired whenever a cvonfig option has changed: (name, value)
 Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Config")
+-- Triggered when the player's guild has changed (but not on startup)
+Trigger.Guild, ImhoEvent.Guild = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Guild")
 
 local unitAvailableEntry
 local function unitAvailable(units)
@@ -59,5 +61,17 @@ local function unitAvailable(units)
 	end
 end
 
+local function guildChanged(units)
+	for unit, guild in pairs(units) do
+		if(unit == "player") then
+			PlayerGuild = guild
+			Trigger.Guild()
+			return
+		end
+	end
+end
+
 unitAvailableEntry = { unitAvailable, Addon.identifier, "Main_unitAvailable" }
 Event.Unit.Available[#Event.Unit.Available + 1] = unitAvailableEntry
+
+Event.Unit.Details.Guild[#Event.Unit.Details.Guild + 1] = { guildChanged, Addon.identifier, "Main_guildChanged" }
