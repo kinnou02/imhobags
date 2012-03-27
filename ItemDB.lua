@@ -285,6 +285,35 @@ function ItemDB.GetItemMatrix(character, location)
 	return (items and items[location]) or ItemMatrix.New(), enemy
 end
 
+--[[
+Get the matrix for the given guilds's vault
+vault: The vault index
+return: matrix, enemy
+	matrix: The matrix table for the guild vault
+	enemy: True if the matrix belongs to the enemy faction
+]]
+function ItemDB.GetGuildMatrix(guild, vault)
+	local items, enemy = playerFactionGuildItems[guild], false
+	if(not items and Config.showEnemyFaction ~= "no") then
+		items, enemy = enemyFactionGuildItems[guild], true
+	end
+	return (items and items[vault]) or ItemMatrix.New(), enemy
+end
+
+--[[
+Get information about a guild's vaults
+return: info, enemy
+	info: The vault information
+	enemy: True if the matrix belongs to the enemy faction
+]]
+function ItemDB.GetGuildVaults(guild)
+	local info = playerFactionGuildItems[guild], false
+	if(not info and Config.showEnemyFaction ~= "no") then
+		info, enemy = enemyFactionGuildItems[guild], true
+	end
+	return info and info.vaults, enemy
+end
+
 -- Return an array of all characters on the current shard and faction for which item data is available
 function ItemDB.GetAvailableCharacters()
 	local result = { }
@@ -297,6 +326,21 @@ function ItemDB.GetAvailableCharacters()
 		end
 	end
 	result[#result + 1] = PlayerName
+	sort(result)
+	return result
+end
+
+-- Return an array of all guilds on the current shard and faction for which item data is available
+function ItemDB.GetAvailableGuilds()
+	local result = { }
+	for guild, data in pairs(playerFactionGuildItems) do
+		result[#result + 1] = guild
+	end
+	if(Config.showEnemyFaction ~= "no") then
+		for guild, data in pairs(enemyFactionGuildItems) do
+			result[#result + 1] = guild
+		end
+	end
 	sort(result)
 	return result
 end
@@ -505,3 +549,4 @@ _G.table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB
 _G.table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
 
 _G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })
+_G.table.insert(ImhoEvent.Guild, { guildChanged, Addon.identifier, "ItemDB_guildChanged" })
