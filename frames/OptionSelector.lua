@@ -6,7 +6,7 @@ local UICreateFrame = UI.CreateFrame
 
 setfenv(1, private)
 Ux = Ux or { }
-Ux.CharSelector = { }
+Ux.OptionSelector = { }
 
 local borderWidth = 2
 
@@ -55,20 +55,20 @@ local function getButton(self, i)
 	end
 end
 
-local function updateMenu(self)
-	local chars = ItemDB.GetAvailableCharacters()
+local function updateMenu(self, options)
+	options = options()
 	
 	local width, height = 0, 0
-	for i = 1, #chars do
+	for i = 1, #options do
 		local btn = getButton(self, i)
-		btn.label:SetText(chars[i])
+		btn.label:SetText(options[i])
 		btn:SetVisible(true)
 		btn:SetHeight(btn.label:GetFullHeight())
 		
 		height = height + btn:GetHeight()
 		width = width + btn.label:GetFullWidth()
 	end
-	for i = #chars + 1, #self.menu.buttons do
+	for i = #options + 1, #self.menu.buttons do
 		self.menu.buttons[i]:SetVisible(false)
 	end
 	self.menu:SetWidth(max(width, self:GetWidth()))
@@ -78,8 +78,8 @@ end
 -- Public methods
 -- ============================================================================
 
-function Ux.CharSelector.New(parent, current, callback)
-	local self = Ux.IconButton.New(parent, [[Data/\UI\ability_icons\combat_survival.dds]])
+function Ux.OptionSelector.New(parent, icon, options, callback)
+	local self = Ux.IconButton.New(parent, icon)
 	self.callback = callback
 	
 	self.LeftPress = showMenu
@@ -98,13 +98,11 @@ function Ux.CharSelector.New(parent, current, callback)
 	
 	menu.buttons = { }
 	
-	updateMenu(self)
+	updateMenu(self, options)
 	
 	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(name)
-		if(name == "showEnemyFaction") then
-			updateMenu(self)
-		end
-	end, Addon.identifier, "Ux.CharSelector_updateMenu" }
+		updateMenu(self, options)
+	end, Addon.identifier, "Ux.OptionSelector_updateMenu" }
 	
 	return self
 end
