@@ -29,6 +29,7 @@ end
 
 -- Always available
 PlayerName = ""
+PlayerGuild = ""
 PlayerFaction = ""
 EnemyFaction = ""
 PlayerShard = Inspect.Shard().name
@@ -47,6 +48,7 @@ local function unitAvailable(units)
 		if(v == "player") then
 			local player = Inspect.Unit.Detail("player")
 			PlayerName = player.name
+			PlayerGuild = player.guild
 			PlayerFaction = player.faction
 			EnemyFaction = (PlayerFaction == "defiant" and "guardian") or "defiant"
 			Trigger.Init()

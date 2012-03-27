@@ -16,8 +16,14 @@ local Utility = Utility
 
 -- Locals
 local playerItems
+local playerGuildItems
+
 local playerFactionItems
 local enemyFactionItems
+
+local playerFactionGuildItems
+local enemyFactionGuildItems
+
 local lowestCompatibleItemDBMajor = 0
 local lowestCompatibleItemDBMinor = 9
 
@@ -36,6 +42,14 @@ local function newCharacter()
 		inventory = ItemMatrix.New(),
 		mail = MailMatrix.New(),
 		wardrobe = WardrobeMatrix.New(),
+		
+		version = Addon.toc.Version,
+	}
+end
+
+local function newGuild()
+	return {
+		vaults = 0,
 		
 		version = Addon.toc.Version,
 	}
@@ -62,6 +76,23 @@ local function checkForCompatibleItemDB(character, name)
 	end
 end
 
+local function checkForCompatibleGuildDB(guild, name)
+	if(not guild) then
+		return nil
+	end
+	local major, minor = strmatch(guild.version or "0.1", "(%d+)%.(%d+)")
+	if(tonumber(major) < lowestCompatibleItemDBMajor or tonumber(minor) < lowestCompatibleItemDBMinor) then
+		print("Deleting incompatible item database for: " .. name, guild.version)
+		return nil
+	else
+		for i = 1, guild.vaults do
+			guild[i] = ItemMatrix.ApplyMetaTable(guild[i])
+		end
+		guild.version = Addon.toc.Version
+		return guild
+	end
+end
+
 local function variablesLoaded(addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
@@ -79,6 +110,11 @@ local function prepareTables()
 	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or { }
 	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionItems
 	
+	playerFactionGuildItems = _G["ImhoBags_GuildMatrix_" .. PlayerFaction] or { }
+	_G["ImhoBags_GuildMatrix_" .. PlayerFaction] = playerFactionGuildItems
+	enemyFactionGuildItems = _G["ImhoBags_GuildMatrix_" .. EnemyFaction] or { }
+	_G["ImhoBags_GuildMatrix_" .. EnemyFaction] = enemyFactionGuildItems
+	
 	-- Apply the metatable to all item matrices on the current shard
 	for k, v in pairs(playerFactionItems) do
 		if(type(v) == "table") then
@@ -90,8 +126,28 @@ local function prepareTables()
 			enemyFactionItems[k] = checkForCompatibleItemDB(v, k)
 		end
 	end
+	
+	-- Apply the metatable to all item matrices on the current shard
+	for k, v in pairs(playerFactionGuildItems) do
+		if(type(v) == "table") then
+			playerFactionGuildItems[k] = checkForCompatibleGuildDB(v, k)
+		end
+	end
+	for k, v in pairs(enemyFactionGuildItems) do
+		if(type(v) == "table") then
+			enemyFactionGuildItems[k] = checkForCompatibleGuildDB(v, k)
+		end
+	end
+
 	-- Delete the player from the shard DB to save space and other computations
 	playerFactionItems[PlayerName] = nil
+	playerItems.guild = PlayerGuild
+	if(PlayerGuild) then
+		playerFactionGuildItems[PlayerGuild] = playerFactionGuildItems[PlayerGuild] or newGuild()
+		playerGuildItems = playerFactionGuildItems[PlayerGuild]
+	else
+		playerFactionGuildItems = newGuild()
+	end
 end
 
 local function saveVariables(addonIdentifier)
@@ -109,6 +165,14 @@ local function saveVariables(addonIdentifier)
 	playerItems.wardrobe.lastUpdate = -1
 	_G["ImhoBags_ItemMatrix_" .. PlayerFaction][PlayerName] = playerItems
 	_G.ImhoBags_PlayerItemMatrix = playerItems
+	
+	if(PlayerGuild) then
+		for i = 1, playerGuildItems.vaults do
+			if(playerGuildItems[i]) then
+				playerGuildItems[i].lastUpdate = -1
+			end
+		end
+	end
 end
 
 local function interactionChanged(interaction, state)
@@ -120,9 +184,19 @@ end
 local function mergeSlotChanges(slots)
 	for slot, item in pairs(slots) do
 		local container, bag, index = Utility.Item.Slot.Parse(slot)
-		local matrix = playerItems[container]
-		if(matrix) then
-			matrix:MergeSlot(slot, item, bag, index)
+		if(container == "guild") then
+			if(not playerGuildItems[bag]) then
+				playerGuildItems[bag] = ItemMatrix.New()
+				if(bag > playerGuildItems.vaults) then
+					playerGuildItems.vaults = bag
+				end
+			end
+			playerGuildItems[bag]:MergeSlot(slot, item, bag, index)
+		else
+			local matrix = playerItems[container]
+			if(matrix) then
+				matrix:MergeSlot(slot, item, bag, index)
+			end
 		end
 	end
 end
