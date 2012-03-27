@@ -110,6 +110,9 @@ local function prepareTables()
 	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or { }
 	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionItems
 	
+	playerFactionItems.version = nil -- From older versions
+	enemyFactionItems.version = nil
+
 	playerFactionGuildItems = _G["ImhoBags_GuildMatrix_" .. PlayerFaction] or { }
 	_G["ImhoBags_GuildMatrix_" .. PlayerFaction] = playerFactionGuildItems
 	enemyFactionGuildItems = _G["ImhoBags_GuildMatrix_" .. EnemyFaction] or { }
@@ -262,15 +265,11 @@ end
 function ItemDB.GetAvailableCharacters()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
-		if(type(data) == "table") then
-			result[#result + 1] = char
-		end
+		result[#result + 1] = char
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		for char, data in pairs(enemyFactionItems) do
-			if(type(data) == "table") then
-				result[#result + 1] = char
-			end
+			result[#result + 1] = char
 		end
 	end
 	result[#result + 1] = PlayerName
@@ -299,32 +298,28 @@ function ItemDB.GetItemCounts(itemType)
 	local result = { }
 	local t = itemType.type
 	for char, data in pairs(playerFactionItems) do
-		if(type(data) == "table") then
-			result[#result + 1] = {
-				char,
-				data.inventory:GetItemCount(t),
-				data.bank:GetItemCount(t),
-				data.mail:GetItemCount(t),
-				data.equipment:GetItemCount(t),
-				data.wardrobe:GetItemCount(t),
-				data.currency:GetItemCount(t),
-			}
-		end
+		result[#result + 1] = {
+			char,
+			data.inventory:GetItemCount(t),
+			data.bank:GetItemCount(t),
+			data.mail:GetItemCount(t),
+			data.equipment:GetItemCount(t),
+			data.wardrobe:GetItemCount(t),
+			data.currency:GetItemCount(t),
+		}
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
 			for char, data in pairs(enemyFactionItems) do
-				if(type(data) == "table") then
-					result[#result + 1] = {
-						char,
-						data.inventory:GetItemCount(t),
-						data.bank:GetItemCount(t),
-						data.mail:GetItemCount(t),
-						data.equipment:GetItemCount(t),
-						data.wardrobe:GetItemCount(t),
-						data.currency:GetItemCount(t),
-					}
-				end
+				result[#result + 1] = {
+					char,
+					data.inventory:GetItemCount(t),
+					data.bank:GetItemCount(t),
+					data.mail:GetItemCount(t),
+					data.equipment:GetItemCount(t),
+					data.wardrobe:GetItemCount(t),
+					data.currency:GetItemCount(t),
+				}
 			end
 		end
 	end
@@ -356,25 +351,23 @@ end
 function ItemDB.GetAllItemTypes()
 	local result = { }
 	for char, data in pairs(playerFactionItems) do
-		if(type(data) == "table") then
-			data.bank:GetAllItemTypes(result)
-			data.currency:GetAllItemTypes(result)
-			data.inventory:GetAllItemTypes(result)
-			data.mail:GetAllItemTypes(result)
-			data.equipment:GetAllItemTypes(result)
-			data.wardrobe:GetAllItemTypes(result)
+		data.bank:GetAllItemTypes(result)
+		data.currency:GetAllItemTypes(result)
+		data.inventory:GetAllItemTypes(result)
+		data.mail:GetAllItemTypes(result)
+		data.equipment:GetAllItemTypes(result)
+		data.wardrobe:GetAllItemTypes(result)
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		local accountBoundOnly = Config.showEnemyFaction == "account"
 		for char, data in pairs(enemyFactionItems) do
-			if(type(data) == "table") then
-				data.bank:GetAllItemTypes(result, accountBoundOnly)
-				data.currency:GetAllItemTypes(result, accountBoundOnly)
-				data.inventory:GetAllItemTypes(result, accountBoundOnly)
-				data.mail:GetAllItemTypes(result, accountBoundOnly)
-				data.equipment:GetAllItemTypes(result, accountBoundOnly)
-				data.wardrobe:GetAllItemTypes(result, accountBoundOnly)
+			data.bank:GetAllItemTypes(result, accountBoundOnly)
+			data.currency:GetAllItemTypes(result, accountBoundOnly)
+			data.inventory:GetAllItemTypes(result, accountBoundOnly)
+			data.mail:GetAllItemTypes(result, accountBoundOnly)
+			data.equipment:GetAllItemTypes(result, accountBoundOnly)
+			data.wardrobe:GetAllItemTypes(result, accountBoundOnly)
 			end
 		end
 	end
