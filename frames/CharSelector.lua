@@ -15,7 +15,7 @@ local borderWidth = 2
 
 local function showMenu(self)
 	self.menu:SetVisible(true)
-	self.menu:SetWidth(max(self:GetWidth(), self.menu.contentWidth))
+	self.menu:SetWidth(max(self:GetWidth(), self.menu.contentWidth) + 10)
 end
 
 local function getButton(self, i)
@@ -48,7 +48,6 @@ local function getButton(self, i)
 		function btn.Event.LeftDown()
 			btn:SetBackgroundColor(1, 1, 1, 0)
 			self.menu:SetVisible(false)
-			self:SetText(label:GetText())
 			self.callback(label:GetText())
 		end
 		self.menu.buttons[#self.menu.buttons + 1] = btn
@@ -80,16 +79,15 @@ end
 -- ============================================================================
 
 function Ux.CharSelector.New(parent, current, callback)
-	local frame = UICreateFrame("RiftButton", "", parent)
-	frame:SetText(current)
-	frame.callback = callback
+	local self = Ux.IconButton.New(parent, [[Data/\UI\ability_icons\combat_survival.dds]])
+	self.callback = callback
 	
-	frame.Event.LeftPress = showMenu
+	self.LeftPress = showMenu
 	
 	local menu = UICreateFrame("Frame", "", parent)
 	menu:SetLayer(100)
-	frame.menu = menu
-	menu:SetPoint("CENTER", frame, "CENTER")
+	self.menu = menu
+	menu:SetPoint("CENTER", self, "CENTER")
 	menu:SetBackgroundColor(0.6, 0.6, 0.6)
 	menu.contentWidth = 0
 	menu:SetVisible(false)
@@ -100,13 +98,13 @@ function Ux.CharSelector.New(parent, current, callback)
 	
 	menu.buttons = { }
 	
-	updateMenu(frame)
+	updateMenu(self)
 	
 	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(name)
 		if(name == "showEnemyFaction") then
-			updateMenu(frame)
+			updateMenu(self)
 		end
 	end, Addon.identifier, "Ux.CharSelector_updateMenu" }
 	
-	return frame
+	return self
 end
