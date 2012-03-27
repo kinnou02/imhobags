@@ -53,6 +53,17 @@ local function buildLine(character, total, ...)
 	return formatn(L.TooltipEnhancer.line, character, total, detail)
 end
 
+local function buildGuildLine(guild, total)
+	local detail = ""
+	for i = 2, #guild do
+		local count = guild[i]
+		if(count > 0) then
+			detail = detail .. format("(Vault %i: %i)", i - 1, count)
+		end
+	end
+	return formatn(L.TooltipEnhancer.line, guild[1], total, detail)
+end
+
 local function sum(character)
 	local result = 0
 	for i = 2, #character do
@@ -86,7 +97,9 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		return
 	end
 
-	local counts = ItemDB.GetItemCounts(Inspect.Item.Detail(Utils.FixItemType(itemType)))
+	itemType = Inspect.Item.Detail(Utils.FixItemType(itemType))
+	local counts = ItemDB.GetItemCounts(itemType)
+	local guildCounts = ItemDB.GetGuildItemCounts(itemType)
 	
 	local tooltip = ""
 	local total = 0
@@ -106,11 +119,21 @@ local function tooltipTargetChanged(ttype, shown, buff)
 				-- Do not display currency as separate category as currency items cannot be in any other container
 		end
 	end
-	if(chars > 1) then
+	local guilds = 0
+	for i = 1, #guildCounts do
+		local v = guildCounts[i]
+		local guildTotal = sum(v)
+		total = total + guildTotal
+		if(guildTotal > 0) then
+			chars = chars + 1
+			tooltip = tooltip .. buildGuildLine(v, guildTotal) .. "\n"
+		end
+	end
+	if(chars > 1 or guilds > 1) then
 		tooltip = tooltip .. format(L.TooltipEnhancer.total, total)
 	end
 
-	if(chars > 0) then
+	if(chars > 0 or guilds > 0) then
 		showTooltip(tooltip)
 	end
 end
