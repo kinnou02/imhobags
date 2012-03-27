@@ -74,4 +74,4 @@ end
 unitAvailableEntry = { unitAvailable, Addon.identifier, "Main_unitAvailable" }
 Event.Unit.Available[#Event.Unit.Available + 1] = unitAvailableEntry
 
-Event.Unit.Details.Guild[#Event.Unit.Details.Guild + 1] = { guildChanged, Addon.identifier, "Main_guildChanged" }
+Event.Unit.Detail.Guild[#Event.Unit.Detail.Guild + 1] = { guildChanged, Addon.identifier, "Main_guildChanged" }
