@@ -336,6 +336,39 @@ function ItemDB.GetItemCounts(itemType)
 	return result
 end
 
+function ItemDB.GetGuildItemCounts(itemType)
+	local result = { }
+	local t = itemType.type
+	for guild, data in pairs(playerFactionGuildItems) do
+		local temp = { guild }
+		for i = 1, data.vaults do
+			if(data[i]) then
+				temp[#temp + 1] = data[i]:GetItemCount(t)
+			else
+				temp[#temp + 1] = 0
+			end
+		end
+		result[#result + 1] = temp
+	end
+	if(Config.showEnemyFaction ~= "no") then
+		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
+			for guild, data in pairs(enemyFactionGuildItems) do
+				local temp = { guild }
+				for i = 1, data.vaults do
+					if(data[i]) then
+						temp[#temp + 1] = data[i]:GetItemCount(t)
+					else
+						temp[#temp + 1] = 0
+					end
+				end
+				result[#result + 1] = temp
+			end
+		end
+	end
+	sort(result, function(a, b) return a[1] < b[1] end)
+	return result
+end
+
 function ItemDB.CharacterExists(name)
 	if(name == "player" or name == PlayerName) then
 		return true
@@ -357,6 +390,12 @@ function ItemDB.GetAllItemTypes()
 		data.mail:GetAllItemTypes(result)
 		data.equipment:GetAllItemTypes(result)
 		data.wardrobe:GetAllItemTypes(result)
+	end
+	for guild, data in pairs(playerFactionGuildItems) do
+		for i = 1, data.vaults do
+			if(data[i]) then
+				data[i]:GetAllItemTypes(result)
+			end
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
@@ -368,6 +407,12 @@ function ItemDB.GetAllItemTypes()
 			data.mail:GetAllItemTypes(result, accountBoundOnly)
 			data.equipment:GetAllItemTypes(result, accountBoundOnly)
 			data.wardrobe:GetAllItemTypes(result, accountBoundOnly)
+		end
+		for guild, data in pairs(enemyFactionGuildItems) do
+			for i = 1, data.vaults do
+				if(data[i]) then
+					data[i]:GetAllItemTypes(result, accountBoundOnly)
+				end
 			end
 		end
 	end
