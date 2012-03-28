@@ -540,6 +540,43 @@ function ItemDB.GetGroupedItems(items, group)
 	return groups, keys
 end
 
+--[[
+If given the name of a guild returns the guild, otherwise tries to
+find the guild belonging to the given character
+]]
+function ItemDB.FindGuild(name)
+	if(name == "player") then
+		return playerItems.guild
+	end
+	-- Check guilds first
+	for guild, data in pairs(playerFactionGuildItems) do
+		if(guild == name) then
+			return guild
+		end
+	end
+	if(Config.showEnemyFaction ~= "no") then
+		for guild, data in pairs(enemyFactionGuildItems) do
+			if(guild == name) then
+				return guild
+			end
+		end
+	end
+	-- Now find matching characters
+	for char, data in pairs(playerFactionItems) do
+		if(char == name) then
+			return data.guild
+		end
+	end
+	if(Config.showEnemyFaction ~= "no") then
+		for char, data in pairs(enemyFactionItems) do
+			if(char == name) then
+				return data.guild
+			end
+		end
+	end
+	return nil
+end
+
 _G.table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "ItemDB_variablesLoaded" })
 _G.table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
 _G.table.insert(Event.Currency, { currencyChanged, Addon.identifier, "ItemDB_currencyChanged" })

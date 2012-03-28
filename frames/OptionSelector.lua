@@ -15,7 +15,7 @@ local borderWidth = 2
 
 local function showMenu(self)
 	self.menu:SetVisible(true)
-	self.menu:SetWidth(max(self:GetWidth(), self.menu.contentWidth) + 10)
+	self.menu:SetWidth(max(self:GetWidth(), self.menu:GetWidth()))
 end
 
 local function getButton(self, i)
@@ -55,8 +55,8 @@ local function getButton(self, i)
 	end
 end
 
-local function updateMenu(self, options)
-	options = options()
+local function updateMenu(self)
+	local options = self.options()
 	
 	local width, height = 0, 0
 	for i = 1, #options do
@@ -71,7 +71,7 @@ local function updateMenu(self, options)
 	for i = #options + 1, #self.menu.buttons do
 		self.menu.buttons[i]:SetVisible(false)
 	end
-	self.menu:SetWidth(max(width, self:GetWidth()))
+	self.menu:SetWidth(max(width + 10, self:GetWidth()))
 	self.menu:SetHeight(height + 2 * borderWidth)
 end
 
@@ -81,15 +81,16 @@ end
 function Ux.OptionSelector.New(parent, icon, options, callback)
 	local self = Ux.IconButton.New(parent, icon)
 	self.callback = callback
+	self.options = options
 	
 	self.LeftPress = showMenu
+	self.UpdateMenu = updateMenu
 	
 	local menu = UICreateFrame("Frame", "", parent)
 	menu:SetLayer(100)
 	self.menu = menu
 	menu:SetPoint("CENTER", self, "CENTER")
 	menu:SetBackgroundColor(0.6, 0.6, 0.6)
-	menu.contentWidth = 0
 	menu:SetVisible(false)
 	menu.background = UICreateFrame("Frame", "", menu)
 	menu.background:SetPoint("TOPLEFT", menu, "TOPLEFT", borderWidth + 1, borderWidth + 1)
@@ -98,7 +99,7 @@ function Ux.OptionSelector.New(parent, icon, options, callback)
 	
 	menu.buttons = { }
 	
-	updateMenu(self, options)
+	updateMenu(self)
 	
 	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(name)
 		updateMenu(self, options)

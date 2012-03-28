@@ -56,6 +56,7 @@ RunOnStartup = {
 	"windows/CurrencyWindow.lua",
 	"windows/EmptySlotIndicator.lua",
 	"windows/EquipmentWindow.lua",
+	"windows/GuildWindow.lua",
 	"windows/ItemWindowBase.lua",
 	"windows/ItemWindow.lua",
 	"windows/MailWindow.lua",

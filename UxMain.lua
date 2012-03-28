@@ -14,9 +14,10 @@ local UIParent = UIParent
 local defaultItemWindows =  {
 	BackpackItemWindow = { "inventory", UI.Native.BagInventory1, "ItemWindow" },
 	BankItemWindow = { "bank", UI.Native.Bank, "ItemWindow" },
-	MailItemWindow = { "mail", nil, "MailWindow" },
 	CurrencyItemWindow = { "currency", nil, "CurrencyWindow" },
 	EquipmentItemWindow = { "equipment", nil, "EquipmentWindow" },
+	GuildItemWindow = { "guildbank", nil, "GuildWindow" },
+	MailItemWindow = { "mail", nil, "MailWindow" },
 	WardrobeItemWindow = { "wardrobe", nil, "EquipmentWindow" },
 }
 
@@ -142,21 +143,40 @@ function Ux.ToggleItemWindow(character, location)
 	end
 end
 
+function Ux.ToggleGuildWindow(character)
+	for k, v in pairs(defaultItemWindows) do
+		if(v[1] == "guildbank") then
+			local window = Ux[k]
+			if(not window) then
+				Ux.ShowItemWindow(ItemDB.FindGuild(character) or "<none>", "guildbank")
+			else
+				if(window:GetVisible() and window.character == character) then
+					Ux.HideItemWindow("guildbank")
+				else
+					Ux.ShowItemWindow(ItemDB.FindGuild(character) or "<none>", "guildbank")
+				end
+			end
+			break
+		end
+	end
+end
+
 function Ux.ShowItemWindow(character, location)
 	for k, v in pairs(defaultItemWindows) do
 		if(v[1] == location) then
 			local window = Ux[k]
 			if(not window) then
 				window = createItemWindow(k, character)
+			else
+				window:SetCharacter(character, location)
 			end
-			window:SetCharacter(character, location)
 			window:SetVisible(true)
 			break
 		end
 	end
 end
 
-function Ux.HideItemWindow(character, location)
+function Ux.HideItemWindow(location)
 	for k, v in pairs(defaultItemWindows) do
 		if(v[1] == location) then
 			local window = Ux[k]
