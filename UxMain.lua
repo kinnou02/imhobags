@@ -65,7 +65,7 @@ local function init()
 					if(self:GetLoaded()) then
 						Ux.ShowItemWindow("player", v[1])
 					else
-						Ux.HideItemWindow("player", v[1])
+						Ux.HideItemWindow(v[1])
 					end
 					log("TODO", "disable native frame(s)")
 				end
