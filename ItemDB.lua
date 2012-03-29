@@ -149,7 +149,7 @@ local function prepareTables()
 		playerFactionGuildItems[PlayerGuild] = playerFactionGuildItems[PlayerGuild] or newGuild()
 		playerGuildItems = playerFactionGuildItems[PlayerGuild]
 	else
-		playerFactionGuildItems = newGuild()
+		playerGuildItems = newGuild()
 	end
 end
 
