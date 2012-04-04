@@ -15,7 +15,7 @@ local Utility = Utility
 
 local lang = Inspect.System.Language()
 if(lang == "Korean" or lang == "French" or lang == "Russian") then
-	print("Looking for French, Korean and Russian translators and reviewers!")
+	print("Looking for " .. lang .. " translators and reviewers!")
 end
 print("Try out the new configuration window with /imhobags config")
 
