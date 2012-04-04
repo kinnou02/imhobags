@@ -13,11 +13,6 @@ local borderWidth = 2
 -- Private methods
 -- ============================================================================
 
-local function showMenu(self)
-	self.menu:SetVisible(true)
-	self.menu:SetWidth(max(self:GetWidth(), self.menu:GetWidth()))
-end
-
 local function getButton(self, i)
 	if(self.menu.buttons[i]) then
 		return self.menu.buttons[i]
@@ -73,6 +68,16 @@ local function updateMenu(self)
 	end
 	self.menu:SetWidth(max(width + 10, self:GetWidth()))
 	self.menu:SetHeight(height + 2 * borderWidth)
+end
+
+local function showMenu(self)
+	if(self.menu:GetVisible()) then
+		self.menu:SetVisible(false)
+	else
+		updateMenu(self)
+		self.menu:SetVisible(true)
+		self.menu:SetWidth(max(self:GetWidth(), self.menu:GetWidth()))
+	end
 end
 
 -- Public methods
