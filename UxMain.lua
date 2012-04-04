@@ -16,7 +16,7 @@ local defaultItemWindows =  {
 	BankItemWindow = { "bank", UI.Native.Bank, "ItemWindow" },
 	CurrencyItemWindow = { "currency", nil, "CurrencyWindow" },
 	EquipmentItemWindow = { "equipment", nil, "EquipmentWindow" },
-	GuildItemWindow = { "guildbank", nil, "GuildWindow" },
+	GuildItemWindow = { "guildbank", UI.Native.BankGuild, "GuildWindow" },
 	MailItemWindow = { "mail", nil, "MailWindow" },
 	WardrobeItemWindow = { "wardrobe", nil, "EquipmentWindow" },
 }
