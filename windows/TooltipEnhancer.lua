@@ -58,7 +58,7 @@ local function buildGuildLine(guild, total)
 	for i = 2, #guild do
 		local count = guild[i]
 		if(count > 0) then
-			detail = detail .. format("(Vault %i: %i)", i - 1, count)
+			detail = detail .. format("(%s %i)", format(L.Ux.guildVault, i - 1), count)
 		end
 	end
 	return formatn(L.TooltipEnhancer.line, guild[1], total, detail)
