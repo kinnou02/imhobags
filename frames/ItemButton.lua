@@ -28,6 +28,7 @@ local skinFactory
 local function mouseMove(self)
 	self.moved = true
 	self:ShowTooltip()
+	self:ShowHighlight()
 	if(self.pickingUp) then
 		Command.Cursor(self.pickingUp)
 		self.pickingUp = nil
@@ -104,6 +105,7 @@ local function ItemButton_SetItem(self, item, slots, stack, available)
 	self:SetStack(stack)
 	self:SetSlots(not self.readonly and #slots or slots)
 	self:SetRarity(item.rarity)
+	self:SetBound(item.bound)
 end
 
 local function ItemButton_Dispose(self)

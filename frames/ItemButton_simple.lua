@@ -13,6 +13,11 @@ Ux.ItemButton_simple = { }
 -- Private methods
 -- ============================================================================
 
+local highlight = UICreateFrame("Texture", "", Ux.Context)
+highlight:SetTexture("ImhoBags", "textures/ItemButton/highlight.png")
+highlight:SetVisible(false)
+highlight:SetLayer(3)
+
 -- Public methods
 -- ============================================================================
 
@@ -21,6 +26,15 @@ local function ItemButton_simple_SetFiltered(self, filtered)
 end
 
 local function ItemButton_simple_SetHighlighted(self, highlighted)
+	highlight:SetVisible(highlighted)
+	if(highlighted) then
+		highlight:SetParent(self)
+		highlight:SetAllPoints(self)
+	end
+end
+
+local function ItemButton_simple_ShowHighlight(self)
+	highlight:SetVisible(true)
 end
 
 local function ItemButton_simple_SetRarity(self, rarity)
@@ -60,6 +74,10 @@ local function ItemButton_simple_SetDepressed(self, depressed)
 	end
 end
 
+local function ItemButton_simple_SetBound(self, bound)
+	self.bound:SetVisible(bound == true)
+end
+
 function Ux.ItemButton_simple.New(parent)
 	local self = UICreateFrame("Frame", "ImhoBags_ItemButton", parent)
 	
@@ -96,13 +114,23 @@ function Ux.ItemButton_simple.New(parent)
 	self.slotsText:SetFontSize(11)
 	self.slotsText:SetFontColor(0.8, 0.8, 0.8)
 	
+	self.bound = UICreateFrame("Texture", "", self)
+	self.bound:SetPoint("TOPRIGHT", self.icon, "TOPRIGHT")
+	self.bound:SetTexture("Rift", [[Data/\UI\ability_icons\soulbind.dds]])
+	self.bound:SetWidth(self.icon:GetWidth() / 3)
+	self.bound:SetHeight(self.bound:GetWidth())
+	self.bound:SetAlpha(0.8)
+	self.bound:SetLayer(self.icon:GetLayer() + 1)
+
 	self.SetHighlighted = ItemButton_simple_SetHighlighted
+	self.ShowHighlight = ItemButton_simple_ShowHighlight
 	self.SetFiltered = ItemButton_simple_SetFiltered
 	self.SetRarity = ItemButton_simple_SetRarity
 	self.SetStack = ItemButton_simple_SetStack
 	self.SetSlots = ItemButton_simple_SetSlots
 	self.SetIcon = ItemButton_simple_SetIcon
 	self.SetDepressed = ItemButton_simple_SetDepressed
+	self.SetBound = ItemButton_simple_SetBound
 	
 	self:SetStack(0)
 	self:SetSlots(0)
