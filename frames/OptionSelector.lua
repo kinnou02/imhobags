@@ -58,10 +58,10 @@ local function updateMenu(self)
 		local btn = getButton(self, i)
 		btn.label:SetText(options[i])
 		btn:SetVisible(true)
-		btn:SetHeight(btn.label:GetFullHeight())
+		btn:SetHeight(btn.label:GetHeight())
 		
 		height = height + btn:GetHeight()
-		width = width + btn.label:GetFullWidth()
+		width = max(width, btn.label:GetWidth())
 	end
 	for i = #options + 1, #self.menu.buttons do
 		self.menu.buttons[i]:SetVisible(false)
