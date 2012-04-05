@@ -132,6 +132,7 @@ Available config options:
 		},
 		search = "<Enter search text>",
 		cashOnDelivery = "Cash on Delivery",
+		guildVault = "Vault %i",
 		
 		-- All text for the configuration window goes here
 		ConfigWindow = {

@@ -6,17 +6,12 @@ local UICreateFrame = UI.CreateFrame
 
 setfenv(1, private)
 Ux = Ux or { }
-Ux.CharSelector = { }
+Ux.OptionSelector = { }
 
 local borderWidth = 2
 
 -- Private methods
 -- ============================================================================
-
-local function showMenu(self)
-	self.menu:SetVisible(true)
-	self.menu:SetWidth(max(self:GetWidth(), self.menu.contentWidth))
-end
 
 local function getButton(self, i)
 	if(self.menu.buttons[i]) then
@@ -48,7 +43,6 @@ local function getButton(self, i)
 		function btn.Event.LeftDown()
 			btn:SetBackgroundColor(1, 1, 1, 0)
 			self.menu:SetVisible(false)
-			self:SetText(label:GetText())
 			self.callback(label:GetText())
 		end
 		self.menu.buttons[#self.menu.buttons + 1] = btn
@@ -57,41 +51,51 @@ local function getButton(self, i)
 end
 
 local function updateMenu(self)
-	local chars = ItemDB.GetAvailableCharacters()
+	local options = self.options()
 	
 	local width, height = 0, 0
-	for i = 1, #chars do
+	for i = 1, #options do
 		local btn = getButton(self, i)
-		btn.label:SetText(chars[i])
+		btn.label:SetText(options[i])
 		btn:SetVisible(true)
 		btn:SetHeight(btn.label:GetFullHeight())
 		
 		height = height + btn:GetHeight()
 		width = width + btn.label:GetFullWidth()
 	end
-	for i = #chars + 1, #self.menu.buttons do
+	for i = #options + 1, #self.menu.buttons do
 		self.menu.buttons[i]:SetVisible(false)
 	end
-	self.menu:SetWidth(max(width, self:GetWidth()))
+	self.menu:SetWidth(max(width + 10, self:GetWidth()))
 	self.menu:SetHeight(height + 2 * borderWidth)
+end
+
+local function showMenu(self)
+	if(self.menu:GetVisible()) then
+		self.menu:SetVisible(false)
+	else
+		updateMenu(self)
+		self.menu:SetVisible(true)
+		self.menu:SetWidth(max(self:GetWidth(), self.menu:GetWidth()))
+	end
 end
 
 -- Public methods
 -- ============================================================================
 
-function Ux.CharSelector.New(parent, current, callback)
-	local frame = UICreateFrame("RiftButton", "", parent)
-	frame:SetText(current)
-	frame.callback = callback
+function Ux.OptionSelector.New(parent, icon, options, callback)
+	local self = Ux.IconButton.New(parent, icon)
+	self.callback = callback
+	self.options = options
 	
-	frame.Event.LeftPress = showMenu
+	self.LeftPress = showMenu
+	self.UpdateMenu = updateMenu
 	
 	local menu = UICreateFrame("Frame", "", parent)
 	menu:SetLayer(100)
-	frame.menu = menu
-	menu:SetPoint("CENTER", frame, "CENTER")
+	self.menu = menu
+	menu:SetPoint("CENTER", self, "CENTER")
 	menu:SetBackgroundColor(0.6, 0.6, 0.6)
-	menu.contentWidth = 0
 	menu:SetVisible(false)
 	menu.background = UICreateFrame("Frame", "", menu)
 	menu.background:SetPoint("TOPLEFT", menu, "TOPLEFT", borderWidth + 1, borderWidth + 1)
@@ -100,13 +104,11 @@ function Ux.CharSelector.New(parent, current, callback)
 	
 	menu.buttons = { }
 	
-	updateMenu(frame)
+	updateMenu(self)
 	
 	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(name)
-		if(name == "showEnemyFaction") then
-			updateMenu(frame)
-		end
-	end, Addon.identifier, "Ux.CharSelector_updateMenu" }
+		updateMenu(self, options)
+	end, Addon.identifier, "Ux.OptionSelector_updateMenu" }
 	
-	return frame
+	return self
 end

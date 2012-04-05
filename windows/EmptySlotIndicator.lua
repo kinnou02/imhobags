@@ -1,5 +1,7 @@
 local Addon, private = ...
 
+-- Builtins
+local ceil = math.ceil
 local tostring = tostring
 
 -- Globals
@@ -28,10 +30,10 @@ local function adjustPosition()
 	local actualWidth = UI.Native.Bag:GetWidth()
 	local factor = actualWidth / normalWidth
 	
-	Ux.EmptySlotIndicator:SetWidth(29 * factor)
-	Ux.EmptySlotIndicator:SetHeight(29 * factor)
-	Ux.EmptySlotIndicator.label:SetFontSize(18 * factor)
-	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", 71 * factor, 28 * factor)
+	Ux.EmptySlotIndicator:SetWidth(ceil(29 * factor))
+	Ux.EmptySlotIndicator:SetHeight(ceil(29 * factor))
+	Ux.EmptySlotIndicator.label:SetFontSize(ceil(18 * factor))
+	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", ceil(71 * factor), ceil(28 * factor))
 end
 
 -- Create a little window over the native bags frame showing the number of empty bags

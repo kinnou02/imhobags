@@ -15,7 +15,7 @@ local Utility = Utility
 
 local lang = Inspect.System.Language()
 if(lang == "Korean" or lang == "French" or lang == "Russian") then
-	print("Looking for French, Korean and Russian translators and reviewers!")
+	print("Looking for " .. lang .. " translators and reviewers!")
 end
 print("Try out the new configuration window with /imhobags config")
 
@@ -29,6 +29,7 @@ end
 
 -- Always available
 PlayerName = ""
+PlayerGuild = false
 PlayerFaction = ""
 EnemyFaction = ""
 PlayerShard = Inspect.Shard().name
@@ -40,6 +41,8 @@ Trigger = { }
 Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Init")
 -- The Config event is fired whenever a cvonfig option has changed: (name, value)
 Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Config")
+-- Triggered when the player's guild has changed (but not on startup)
+Trigger.Guild, ImhoEvent.Guild = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Guild")
 
 local unitAvailableEntry
 local function unitAvailable(units)
@@ -47,6 +50,7 @@ local function unitAvailable(units)
 		if(v == "player") then
 			local player = Inspect.Unit.Detail("player")
 			PlayerName = player.name
+			PlayerGuild = player.guild
 			PlayerFaction = player.faction
 			EnemyFaction = (PlayerFaction == "defiant" and "guardian") or "defiant"
 			Trigger.Init()
@@ -57,5 +61,17 @@ local function unitAvailable(units)
 	end
 end
 
+local function guildChanged(units)
+	for unit, guild in pairs(units) do
+		if(unit == "player") then
+			PlayerGuild = guild
+			Trigger.Guild()
+			return
+		end
+	end
+end
+
 unitAvailableEntry = { unitAvailable, Addon.identifier, "Main_unitAvailable" }
 Event.Unit.Available[#Event.Unit.Available + 1] = unitAvailableEntry
+
+Event.Unit.Detail.Guild[#Event.Unit.Detail.Guild + 1] = { guildChanged, Addon.identifier, "Main_guildChanged" }
