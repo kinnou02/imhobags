@@ -132,6 +132,11 @@ function Ux.ItemButton_simple.New(parent)
 	self.SetDepressed = ItemButton_simple_SetDepressed
 	self.SetBound = ItemButton_simple_SetBound
 	
+	function self.Event:Size()
+		self.bound:SetWidth(self.icon:GetWidth() / 3)
+		self.bound:SetHeight(self.bound:GetWidth())
+	end
+	
 	self:SetStack(0)
 	self:SetSlots(0)
 	
