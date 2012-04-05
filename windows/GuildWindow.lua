@@ -136,8 +136,8 @@ local function GuildWindow_SetCharacter(self, character, location)
 end
 
 -- character translates to guild and location to vault index
-function Ux.GuildWindow.New(title, character, location)
-	local self = Ux.ItemWindow.New(title or "", character, location)
+function Ux.GuildWindow.New(title, character, location, itemSize)
+	local self = Ux.ItemWindow.New(title or "", character, location, itemSize)
 	
 	self.charSelector:SetIcon(PlayerFaction == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]])
 	self.guildButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])

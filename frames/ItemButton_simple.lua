@@ -81,8 +81,8 @@ end
 function Ux.ItemButton_simple.New(parent)
 	local self = UICreateFrame("Frame", "ImhoBags_ItemButton", parent)
 	
-	self:SetWidth(Ux.ItemButtonSize)
-	self:SetHeight(Ux.ItemButtonSize)
+	self:SetWidth(Ux.ItemButtonSizeDefault)
+	self:SetHeight(Ux.ItemButtonSizeDefault)
 	
 	self.backdrop = UICreateFrame("Frame", "", self)
 	self.backdrop:SetBackgroundColor(0.0, 0.0, 0.0)
