@@ -80,6 +80,13 @@ local function getVaultButton(self, i)
 		btn.label:SetFontColor(unpack(vaultLabelColor))
 		btn.label:SetPoint("LEFTCENTER", btn, "LEFTCENTER", 15, 0)
 		self.vaultButtons[i] = btn
+		function btn.Event.LeftDown()
+			self.vault = i
+			self.getItemFailed = 0
+			self.matrix, self.enemy = ItemDB.GetGuildMatrix(self.character, self.vault)
+			self.lastUpdate = -1
+			self:setCharacter()
+		end
 		return btn
 	end
 end
@@ -123,7 +130,7 @@ local function GuildWindow_SetCharacter(self, character, location)
 		self.matrix, self.enemy = ItemDB.GetGuildMatrix(character, self.vault)
 		self.character = character
 		self.location = location
-		self.lastUpdate = -2
+		self.lastUpdate = -1
 		self:setCharacter()
 	end
 end
