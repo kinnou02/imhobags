@@ -41,7 +41,7 @@ Trigger = { }
 Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Init")
 -- The Config event is fired whenever a cvonfig option has changed: (name, value)
 Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Config")
--- Triggered when the player's guild has changed (but not on startup)
+-- Triggered when the player's guild has changed (but not on startup): (old, new)
 Trigger.Guild, ImhoEvent.Guild = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Guild")
 
 local unitAvailableEntry
@@ -64,8 +64,9 @@ end
 local function guildChanged(units)
 	for unit, guild in pairs(units) do
 		if(unit == "player") then
+			local old = PlayerGuild
 			PlayerGuild = guild
-			Trigger.Guild()
+			Trigger.Guild(old, guild)
 			return
 		end
 	end
