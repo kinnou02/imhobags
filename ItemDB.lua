@@ -249,6 +249,12 @@ local function guildChanged()
 			end
 			if(not used) then
 				playerFactionGuildItems[playerItems.guild] = nil
+			else
+				for i = 1, playerGuildItems.vaults do
+					if(playerGuildItems[i]) then
+						playerGuildItems[i].lastUpdate = -1
+					end
+				end
 			end
 			playerGuildItems = newGuild()
 			playerItems.guild = nil
