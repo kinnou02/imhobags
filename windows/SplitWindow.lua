@@ -92,8 +92,8 @@ function slider.Event.SliderChange()
 	stack:SetText(tostring(floor(slider:GetPosition())))
 end
 
-function stack.Event.KeyDown(stack, button)
-	if string.byte(button) == 13 then
+function stack.Event.KeyType(stack, typed)
+	if(typed == "\r" or typed == "\n") then
 		stack:SetKeyFocus(false)
 		ok.Event.LeftPress()
 	end
