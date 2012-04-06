@@ -1,6 +1,7 @@
 local Addon, private = ...
 
 local max = math.max
+local type = type
 
 local UICreateFrame = UI.CreateFrame
 
@@ -51,17 +52,22 @@ local function getButton(self, i)
 end
 
 local function updateMenu(self)
-	local options = self.options()
+	local options
+	if(type(self.options) == "function") then
+		options = self.options()
+	else
+		options = self.options
+	end
 	
 	local width, height = 0, 0
 	for i = 1, #options do
 		local btn = getButton(self, i)
 		btn.label:SetText(options[i])
 		btn:SetVisible(true)
-		btn:SetHeight(btn.label:GetFullHeight())
+		btn:SetHeight(btn.label:GetHeight())
 		
 		height = height + btn:GetHeight()
-		width = width + btn.label:GetFullWidth()
+		width = max(width, btn.label:GetWidth())
 	end
 	for i = #options + 1, #self.menu.buttons do
 		self.menu.buttons[i]:SetVisible(false)

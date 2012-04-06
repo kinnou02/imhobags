@@ -4,6 +4,7 @@ local Addon, private = ...
 local _G = _G
 local pairs = pairs
 local print = print
+local setmetatable = setmetatable
 local sort = table.sort
 local strmatch = string.match
 local tonumber = tonumber
@@ -18,11 +19,11 @@ local Utility = Utility
 local playerItems
 local playerGuildItems
 
-local playerFactionItems
-local enemyFactionItems
+local playerFactionCharacters
+local enemyFactionCharacters
 
-local playerFactionGuildItems
-local enemyFactionGuildItems
+local playerFactionGuilds
+local enemyFactionGuilds
 
 local lowestCompatibleItemDBMajor = 0
 local lowestCompatibleItemDBMinor = 9
@@ -50,6 +51,7 @@ end
 local function newGuild()
 	return {
 		vaults = 0,
+		name = "<none>",
 		
 		version = Addon.toc.Version,
 	}
@@ -101,56 +103,62 @@ local function variablesLoaded(addonIdentifier)
 	-- That's why we need a separate "character"-stored table with
 	-- readily available data after a /reloadui
 	playerItems = checkForCompatibleItemDB(_G.ImhoBags_PlayerItemMatrix, "player") or newCharacter()
+	playerItems.guild = nil
 end
 
 local function prepareTables()
 	-- Ensure our data table exists
-	playerFactionItems = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or { }
-	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = playerFactionItems
-	enemyFactionItems = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or { }
-	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionItems
+	playerFactionCharacters = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or { }
+	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = playerFactionCharacters
+	enemyFactionCharacters = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or { }
+	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionCharacters
 	
-	playerFactionItems.version = nil -- From older versions
-	enemyFactionItems.version = nil
+	playerFactionCharacters.version = nil -- From older versions
+	enemyFactionCharacters.version = nil
 
-	playerFactionGuildItems = _G["ImhoBags_GuildMatrix_" .. PlayerFaction] or { }
-	_G["ImhoBags_GuildMatrix_" .. PlayerFaction] = playerFactionGuildItems
-	enemyFactionGuildItems = _G["ImhoBags_GuildMatrix_" .. EnemyFaction] or { }
-	_G["ImhoBags_GuildMatrix_" .. EnemyFaction] = enemyFactionGuildItems
+	playerFactionGuilds = _G["ImhoBags_GuildMatrix_" .. PlayerFaction] or { }
+	_G["ImhoBags_GuildMatrix_" .. PlayerFaction] = playerFactionGuilds
+	enemyFactionGuilds = _G["ImhoBags_GuildMatrix_" .. EnemyFaction] or { }
+	_G["ImhoBags_GuildMatrix_" .. EnemyFaction] = enemyFactionGuilds
 	
 	-- Apply the metatable to all item matrices on the current shard
-	for k, v in pairs(playerFactionItems) do
+	for k, v in pairs(playerFactionCharacters) do
 		if(type(v) == "table") then
-			playerFactionItems[k] = checkForCompatibleItemDB(v, k)
+			playerFactionCharacters[k] = checkForCompatibleItemDB(v, k)
 		end
 	end
-	for k, v in pairs(enemyFactionItems) do
+	for k, v in pairs(enemyFactionCharacters) do
 		if(type(v) == "table") then
-			enemyFactionItems[k] = checkForCompatibleItemDB(v, k)
+			enemyFactionCharacters[k] = checkForCompatibleItemDB(v, k)
 		end
 	end
 	
 	-- Apply the metatable to all item matrices on the current shard
-	for k, v in pairs(playerFactionGuildItems) do
+	for k, v in pairs(playerFactionGuilds) do
 		if(type(v) == "table") then
-			playerFactionGuildItems[k] = checkForCompatibleGuildDB(v, k)
+			playerFactionGuilds[k] = checkForCompatibleGuildDB(v, k)
 		end
 	end
-	for k, v in pairs(enemyFactionGuildItems) do
+	for k, v in pairs(enemyFactionGuilds) do
 		if(type(v) == "table") then
-			enemyFactionGuildItems[k] = checkForCompatibleGuildDB(v, k)
+			enemyFactionGuilds[k] = checkForCompatibleGuildDB(v, k)
 		end
 	end
 
 	-- Delete the player from the shard DB to save space and other computations
-	playerFactionItems[PlayerName] = nil
-	playerItems.guild = PlayerGuild
+	playerFactionCharacters[PlayerName] = nil
+	-- Find the player's guild
 	if(PlayerGuild) then
-		playerFactionGuildItems[PlayerGuild] = playerFactionGuildItems[PlayerGuild] or newGuild()
-		playerGuildItems = playerFactionGuildItems[PlayerGuild]
+		playerGuildItems = playerFactionGuilds[PlayerGuild] or newGuild()
+		playerGuildItems.name = PlayerGuild
+		playerFactionGuilds[PlayerGuild] = playerGuildItems
+		playerItems.guild = playerGuildItems
 	else
 		playerGuildItems = newGuild()
 	end
+	
+	-- Make the guild table values weak so we don't need to clean it up all the time
+	setmetatable(playerFactionGuilds, { __mode = "v" })
 end
 
 local function saveVariables(addonIdentifier)
@@ -169,7 +177,7 @@ local function saveVariables(addonIdentifier)
 	_G["ImhoBags_ItemMatrix_" .. PlayerFaction][PlayerName] = playerItems
 	_G.ImhoBags_PlayerItemMatrix = playerItems
 	
-	if(PlayerGuild) then
+	if(playerItems.guild) then
 		for i = 1, playerGuildItems.vaults do
 			if(playerGuildItems[i]) then
 				playerGuildItems[i].lastUpdate = -1
@@ -236,27 +244,21 @@ local function currencyChanged(currencies)
 	end
 end
 
-local function guildChanged()
-	if(not PlayerGuild) then
-		if(playerItems.guild) then
-			-- Delete the guild if no other character is a member
-			local used = false
-			for char, data in pairs(playerFactionItems) do
-				if(data.guild == playerItems.guild) then
-					used = true
-					break
-				end
+local function guildChanged(old, new)
+	if(old) then
+		for i = 1, playerGuildItems.vaults do
+			if(playerGuildItems[i]) then
+				playerGuildItems[i].lastUpdate = -1
 			end
-			if(not used) then
-				playerFactionGuildItems[playerItems.guild] = nil
-			end
-			playerGuildItems = newGuild()
-			playerItems.guild = nil
 		end
+	end
+	if(new) then
+		playerGuildItems = playerFactionGuilds[new] or newGuild()
+		playerFactionGuilds[new] = playerGuildItems
+		playerItems.guild = playerGuildItems
 	else
-		playerItems.guild = PlayerGuild
-		playerGuildItems = playerFactionGuildItems[PlayerGuild] or newGuild()
-		playerFactionGuildItems[PlayerGuild] = playerGuildItems
+		playerGuildItems = newGuild()
+		playerItems.guild = nil
 	end
 end
 
@@ -279,9 +281,9 @@ function ItemDB.GetItemMatrix(character, location)
 	if(character == "player" or PlayerName == character) then
 		items, enemy = playerItems, false
 	else
-		items, enemy = playerFactionItems[character], false
+		items, enemy = playerFactionCharacters[character], false
 		if(not items and Config.showEnemyFaction ~= "no") then
-			items, enemy = enemyFactionItems[character], true
+			items, enemy = enemyFactionCharacters[character], true
 		end
 	end
 	return (items and items[location]) or ItemMatrix.New(), enemy
@@ -295,9 +297,9 @@ return: matrix, enemy
 	enemy: True if the matrix belongs to the enemy faction
 ]]
 function ItemDB.GetGuildMatrix(guild, vault)
-	local items, enemy = playerFactionGuildItems[guild], false
+	local items, enemy = playerFactionGuilds[guild], false
 	if(not items and Config.showEnemyFaction ~= "no") then
-		items, enemy = enemyFactionGuildItems[guild], true
+		items, enemy = enemyFactionGuilds[guild], true
 	end
 	return (items and items[vault]) or ItemMatrix.New(), enemy
 end
@@ -309,9 +311,9 @@ return: info, enemy
 	enemy: True if the matrix belongs to the enemy faction
 ]]
 function ItemDB.GetGuildVaults(guild)
-	local info = playerFactionGuildItems[guild], false
+	local info = playerFactionGuilds[guild], false
 	if(not info and Config.showEnemyFaction ~= "no") then
-		info, enemy = enemyFactionGuildItems[guild], true
+		info, enemy = enemyFactionGuilds[guild], true
 	end
 	return info and info.vaults, enemy
 end
@@ -319,11 +321,11 @@ end
 -- Return an array of all characters on the current shard and faction for which item data is available
 function ItemDB.GetAvailableCharacters()
 	local result = { }
-	for char, data in pairs(playerFactionItems) do
+	for char, data in pairs(playerFactionCharacters) do
 		result[#result + 1] = char
 	end
 	if(Config.showEnemyFaction ~= "no") then
-		for char, data in pairs(enemyFactionItems) do
+		for char, data in pairs(enemyFactionCharacters) do
 			result[#result + 1] = char
 		end
 	end
@@ -335,11 +337,11 @@ end
 -- Return an array of all guilds on the current shard and faction for which item data is available
 function ItemDB.GetAvailableGuilds()
 	local result = { }
-	for guild, data in pairs(playerFactionGuildItems) do
+	for guild, data in pairs(playerFactionGuilds) do
 		result[#result + 1] = guild
 	end
 	if(Config.showEnemyFaction ~= "no") then
-		for guild, data in pairs(enemyFactionGuildItems) do
+		for guild, data in pairs(enemyFactionGuilds) do
 			result[#result + 1] = guild
 		end
 	end
@@ -367,7 +369,7 @@ The table is sorted by character name.
 function ItemDB.GetItemCounts(itemType)
 	local result = { }
 	local t = itemType.type
-	for char, data in pairs(playerFactionItems) do
+	for char, data in pairs(playerFactionCharacters) do
 		result[#result + 1] = {
 			char,
 			data.inventory:GetItemCount(t),
@@ -380,7 +382,7 @@ function ItemDB.GetItemCounts(itemType)
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
-			for char, data in pairs(enemyFactionItems) do
+			for char, data in pairs(enemyFactionCharacters) do
 				result[#result + 1] = {
 					char,
 					data.inventory:GetItemCount(t),
@@ -409,7 +411,7 @@ end
 function ItemDB.GetGuildItemCounts(itemType)
 	local result = { }
 	local t = itemType.type
-	for guild, data in pairs(playerFactionGuildItems) do
+	for guild, data in pairs(playerFactionGuilds) do
 		local temp = { guild }
 		for i = 1, data.vaults do
 			if(data[i]) then
@@ -422,7 +424,7 @@ function ItemDB.GetGuildItemCounts(itemType)
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		if(Config.showEnemyFaction == "yes" or itemType.bind == "account") then
-			for guild, data in pairs(enemyFactionGuildItems) do
+			for guild, data in pairs(enemyFactionGuilds) do
 				local temp = { guild }
 				for i = 1, data.vaults do
 					if(data[i]) then
@@ -444,16 +446,16 @@ function ItemDB.CharacterExists(name)
 		return true
 	end
 	if(Config.showEnemyFaction ~= "no") then
-		return (playerFactionItems[name] or enemyFactionItems) ~= nil
+		return (playerFactionCharacters[name] or enemyFactionCharacters) ~= nil
 	else
-		return playerFactionItems[name] ~= nil
+		return playerFactionCharacters[name] ~= nil
 	end
 end
 
 -- Return a table with all stored item types where the key is the type and the value is true
 function ItemDB.GetAllItemTypes()
 	local result = { }
-	for char, data in pairs(playerFactionItems) do
+	for char, data in pairs(playerFactionCharacters) do
 		data.bank:GetAllItemTypes(result)
 		data.currency:GetAllItemTypes(result)
 		data.inventory:GetAllItemTypes(result)
@@ -461,7 +463,7 @@ function ItemDB.GetAllItemTypes()
 		data.equipment:GetAllItemTypes(result)
 		data.wardrobe:GetAllItemTypes(result)
 	end
-	for guild, data in pairs(playerFactionGuildItems) do
+	for guild, data in pairs(playerFactionGuilds) do
 		for i = 1, data.vaults do
 			if(data[i]) then
 				data[i]:GetAllItemTypes(result)
@@ -470,7 +472,7 @@ function ItemDB.GetAllItemTypes()
 	end
 	if(Config.showEnemyFaction ~= "no") then
 		local accountBoundOnly = Config.showEnemyFaction == "account"
-		for char, data in pairs(enemyFactionItems) do
+		for char, data in pairs(enemyFactionCharacters) do
 			data.bank:GetAllItemTypes(result, accountBoundOnly)
 			data.currency:GetAllItemTypes(result, accountBoundOnly)
 			data.inventory:GetAllItemTypes(result, accountBoundOnly)
@@ -478,7 +480,7 @@ function ItemDB.GetAllItemTypes()
 			data.equipment:GetAllItemTypes(result, accountBoundOnly)
 			data.wardrobe:GetAllItemTypes(result, accountBoundOnly)
 		end
-		for guild, data in pairs(enemyFactionGuildItems) do
+		for guild, data in pairs(enemyFactionGuilds) do
 			for i = 1, data.vaults do
 				if(data[i]) then
 					data[i]:GetAllItemTypes(result, accountBoundOnly)
@@ -548,31 +550,31 @@ find the guild belonging to the given character
 ]]
 function ItemDB.FindGuild(name)
 	if(name == "player") then
-		return playerItems.guild
+		return playerItems.guild and playerItems.guild.name
 	end
 	-- Check guilds first
-	for guild, data in pairs(playerFactionGuildItems) do
+	for guild, data in pairs(playerFactionGuilds) do
 		if(guild == name) then
 			return guild
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
-		for guild, data in pairs(enemyFactionGuildItems) do
+		for guild, data in pairs(enemyFactionGuilds) do
 			if(guild == name) then
 				return guild
 			end
 		end
 	end
 	-- Now find matching characters
-	for char, data in pairs(playerFactionItems) do
+	for char, data in pairs(playerFactionCharacters) do
 		if(char == name) then
-			return data.guild
+			return data.guild and data.guild.name
 		end
 	end
 	if(Config.showEnemyFaction ~= "no") then
-		for char, data in pairs(enemyFactionItems) do
+		for char, data in pairs(enemyFactionCharacters) do
 			if(char == name) then
-				return data.guild
+				return data.guild and data.guild.name
 			end
 		end
 	end

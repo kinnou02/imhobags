@@ -9,6 +9,7 @@ local defaults = {
 	showEmptySlots = true,
 	condensed = true,
 	enhanceTooltips = true,
+	showBoundIcon = true,
 }
 
 -- Contains valid values for string/int
