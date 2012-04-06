@@ -138,7 +138,8 @@ Available config options:
 		ConfigWindow = {
 			title = "Configuration for Imhothar's Bags",
 			showTooltips = "Show slash commands",
-			appearanceSection = "Appearance",
+			appearance1Section = "Appearance I",
+			appearance2Section = "Appearance II",
 			behaviorSection = "Behavior",
 			extrasSection = "Extras",
 			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
@@ -148,6 +149,7 @@ Available config options:
 			showEnemyFaction = "Choose how items of enemy faction characters are treated. The options are to show all items regardless of character faction, to show only account-bound items of enemy faction characters, or to completely ignore all their items.",
 			enhanceTooltips = "Choose whether you want item tooltips to be extended with additional information showing you which of your characters already own the displayed item.",
 			showEmptySlots = "Choose whether you want a counter displayed on top of your bags bar showing how many empty item slots remain in your backpack.",
+			showBoundIcon = "Display a small indicator over the icons of soul- and account-bound items.",
 		},
 	},
 }
