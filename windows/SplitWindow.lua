@@ -110,6 +110,7 @@ end
 
 function ok.Event.LeftPress()
 	Command.Item.Split(item.id, tonumber(stack:GetText()))
+	Command.Tooltip(nil)
 	self:SetVisible(false)
 end
 
