@@ -130,7 +130,7 @@ function self:ShowForItem(id)
 	local mouse = Inspect.Mouse()
 	self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", mouse.x - 120, mouse.y - 179)
 	
-	stackMax:SetText("/" .. (item.stack - 1))
+	stackMax:SetText("/" .. item.stack)
 	stack:SetText("1")
 	
 	icon:SetIcon(item.icon)
