@@ -22,7 +22,7 @@ local rarityColors = {
 	epic =			{   0.676,   0.281,    0.98 },
 	quest =			{     1.0,     1.0,     0.0 },
 	relic =			{     1.0,     0.5,     0.0 },
-	transcendent =	{     1.0,     0.5,     0.0 }, -- WTF?
+	transcendent =	{     1.0,     0.0,     0.0 },
 }
 
 setfenv(1, private)
