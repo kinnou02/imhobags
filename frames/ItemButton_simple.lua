@@ -4,7 +4,12 @@ local tostring = tostring
 
 local UICreateFrame = UI.CreateFrame
 
-local iconSize = 46
+local stackFontSizes = {
+	[30] = 10,
+	[40] = 12,
+	[50] = 14,
+	[60] = 16,
+}
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -43,20 +48,22 @@ end
 
 local function ItemButton_simple_SetStack(self, stack)
 	self.stackText:SetText(tostring(stack))
-	self.stackBack:SetWidth(self.stackText:GetFullWidth())
 	self.stackBack:SetVisible(stack > 1)
-	if(stack >= 100000) then
-		self.stackText:SetFontSize(12)
-		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 3)
-	else
-		self.stackText:SetFontSize(14)
-		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 5)
+	local fontSize = stackFontSizes[self:GetWidth()] or 14
+	self.stackText:SetFontSize(fontSize)
+	self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 4)
+	
+	local tw = self.stackText:GetWidth()
+	local iw = self.icon:GetWidth()
+	if(tw > iw) then
+		self.stackText:SetFontSize(fontSize * iw / tw)
 	end
+	self.stackBack:SetWidth(self.stackText:GetWidth())
 end
 
 local function ItemButton_simple_SetSlots(self, slots)
 	self.slotsText:SetText(tostring(slots))
-	self.slotsBack:SetWidth(self.slotsText:GetFullWidth())
+	self.slotsBack:SetWidth(self.slotsText:GetWidth())
 	self.slotsBack:SetVisible(slots > 1)
 end
 
@@ -111,7 +118,7 @@ function Ux.ItemButton_simple.New(parent)
 	
 	self.slotsText = UICreateFrame("Text", "", self.slotsBack)
 	self.slotsText:SetPoint("BOTTOMRIGHT", self.slotsBack, "BOTTOMRIGHT", 0, 3)
-	self.slotsText:SetFontSize(11)
+	self.slotsText:SetFontSize(10)
 	self.slotsText:SetFontColor(0.8, 0.8, 0.8)
 	
 	self.bound = UICreateFrame("Texture", "", self)
@@ -133,8 +140,13 @@ function Ux.ItemButton_simple.New(parent)
 	self.SetBound = ItemButton_simple_SetBound
 	
 	function self.Event:Size()
+		local width = self:GetWidth()
 		self.bound:SetWidth(self.icon:GetWidth() / 3)
 		self.bound:SetHeight(self.bound:GetWidth())
+		local fontSize = stackFontSizes[width] or 14
+		self.stackBack:SetHeight(fontSize)
+		self.stackText:SetFontSize(fontSize)
+		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 4)
 	end
 	
 	self:SetStack(0)
