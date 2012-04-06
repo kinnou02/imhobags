@@ -137,7 +137,7 @@ function Ux.ToggleItemWindow(character, location)
 				Ux.ShowItemWindow(character, location)
 			else
 				if(window:GetVisible() and window.character == character) then
-					Ux.HideItemWindow(character, location)
+					Ux.HideItemWindow(location)
 				else
 					Ux.ShowItemWindow(character, location)
 				end
