@@ -122,7 +122,7 @@ function Ux.ItemButton_simple.New(parent)
 	self.slotsText:SetFontColor(0.8, 0.8, 0.8)
 	
 	self.bound = UICreateFrame("Texture", "", self)
-	self.bound:SetPoint("TOPLEFT", self.icon, "TOPLEFT")
+	self.bound:SetPoint("TOPRIGHT", self.icon, "TOPRIGHT")
 	self.bound:SetTexture("Rift", [[Data/\UI\ability_icons\soulbind.dds]])
 	self.bound:SetWidth(self.icon:GetWidth() / 3)
 	self.bound:SetHeight(self.bound:GetWidth())
