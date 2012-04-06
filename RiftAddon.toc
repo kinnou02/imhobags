@@ -62,6 +62,7 @@ RunOnStartup = {
 	"windows/MailWindow.lua",
 	"windows/TooltipEnhancer.lua",
 	"windows/SearchWindow.lua",
+	"windows/SplitWindow.lua",
 	
 	"SlashCmd.lua",
 }
