@@ -315,7 +315,7 @@ function ItemDB.GetGuildVaults(guild)
 	if(not info and Config.showEnemyFaction ~= "no") then
 		info, enemy = enemyFactionGuilds[guild], true
 	end
-	return 3, false--info and info.vaults, enemy
+	return info and info.vaults, enemy
 end
 
 -- Return an array of all characters on the current shard and faction for which item data is available
