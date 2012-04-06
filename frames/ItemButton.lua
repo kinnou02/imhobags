@@ -104,7 +104,7 @@ local function ItemButton_SetItem(self, item, slots, stack, available)
 	self:SetStack(stack)
 	self:SetSlots(not self.readonly and #slots or slots)
 	self:SetRarity(item.rarity)
-	self:SetBound(item.bound)
+	self:SetBound(Config.showBoundIcon and item.bound)
 end
 
 local function ItemButton_Dispose(self)
