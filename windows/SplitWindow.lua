@@ -33,7 +33,7 @@ self:SetWidth(235)
 self:SetHeight(210)
 self:SetTexture("ImhoBags", "textures/SplitWindow.png")
 self:SetPoint("TOPLEFT", UIParent, "CENTER")
---self:SetVisible(false)
+self:SetVisible(false)
 
 local close = UICreateFrame("RiftButton", "", self)
 close:SetSkin("close")
