@@ -140,10 +140,9 @@ function Ux.ItemButton_simple.New(parent)
 	self.SetBound = ItemButton_simple_SetBound
 	
 	function self.Event:Size()
-		local width = self:GetWidth()
 		self.bound:SetWidth(self.icon:GetWidth() / 3)
 		self.bound:SetHeight(self.bound:GetWidth())
-		local fontSize = stackFontSizes[width] or 14
+		local fontSize = stackFontSizes[self:GetWidth()] or 14
 		self.stackBack:SetHeight(fontSize)
 		self.stackText:SetFontSize(fontSize)
 		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 4)
