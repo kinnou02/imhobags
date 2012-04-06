@@ -52,6 +52,8 @@ icon:SetBound(false)
 local name = UICreateFrame("Text", "", self)
 name:SetFontSize(14)
 name:SetPoint("TOPLEFT", self, "TOPLEFT", 82, 47)
+name:SetWidth(130)
+name:SetWordwrap(true)
 
 local stackMax = UICreateFrame("Text", "", self)
 stackMax:SetFontSize(14)
