@@ -140,6 +140,7 @@ function Ux.GuildWindow.New(title, character, location, itemSize)
 	local self = Ux.ItemWindow.New(title or "", character, location, itemSize)
 	
 	self.charSelector:SetIcon(PlayerFaction == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]])
+	self.charSelector:SetTooltip(L.Ux.Tooltip.guild)
 	self.guildButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
 	function self.guildButton.LeftPress()
 		Ux.ToggleItemWindow(self.charSelector:GetText(), "inventory")
