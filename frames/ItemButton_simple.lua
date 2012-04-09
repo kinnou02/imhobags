@@ -1,7 +1,14 @@
 local Addon, private = ...
 
+-- Builtins
 local tostring = tostring
+local type = type
 
+-- Globals
+local Inspect = Inspect
+local UIParent = UIParent
+
+-- Locals
 local UICreateFrame = UI.CreateFrame
 
 local stackFontSizes = {
@@ -22,6 +29,11 @@ local highlight = UICreateFrame("Texture", "", Ux.Context)
 highlight:SetTexture("ImhoBags", "textures/ItemButton/highlight.png")
 highlight:SetVisible(false)
 highlight:SetLayer(3)
+
+local tooltip = UICreateFrame("Text", "", Ux.TooltipContext)
+tooltip:SetBackgroundColor(0, 0, 0, 0.75)
+tooltip:SetText("")
+tooltip:SetVisible(false)
 
 -- Public methods
 -- ============================================================================
@@ -85,6 +97,38 @@ local function ItemButton_simple_SetBound(self, bound)
 	self.bound:SetVisible(bound == true)
 end
 
+local function ItemButton_simple_SetTooltip(self, tooltip)
+	self.tooltip = tooltip
+end
+
+local function ItemButton_simple_ShowTooltip(self)
+	if(self.tooltip) then
+		tooltip:SetText(self.tooltip)
+		local mouse = Inspect.Mouse()
+		local width, height = tooltip:GetWidth(), tooltip:GetHeight()
+		local screenWidth, screenHeight = UIParent:GetWidth(), UIParent:GetHeight()
+		local anchor
+		if(mouse.y <= height) then
+			anchor = "TOP"
+			if(mouse.x < width) then
+				anchor = anchor .. "LEFT"
+				mouse.x = mouse.x + 20
+			else
+				anchor = anchor .. "RIGHT"
+			end
+		else
+			anchor = "BOTTOM" .. ((mouse.x + width > screenWidth) and "RIGHT" or "LEFT")
+		end
+		tooltip:ClearAll()
+		tooltip:SetPoint(anchor, UIParent, "TOPLEFT", mouse.x, mouse.y)
+		tooltip:SetVisible(true)
+	end
+end
+
+local function ItemButton_simple_HideTooltip(self)
+	tooltip:SetVisible(false)
+end
+
 function Ux.ItemButton_simple.New(parent)
 	local self = UICreateFrame("Frame", "ImhoBags_ItemButton", parent)
 	
@@ -138,6 +182,9 @@ function Ux.ItemButton_simple.New(parent)
 	self.SetIcon = ItemButton_simple_SetIcon
 	self.SetDepressed = ItemButton_simple_SetDepressed
 	self.SetBound = ItemButton_simple_SetBound
+	self.SetTooltip = ItemButton_simple_SetTooltip
+	self.ShowTooltip = ItemButton_simple_ShowTooltip
+	self.HideTooltip = ItemButton_simple_HideTooltip
 	
 	function self.Event:Size()
 		self.bound:SetWidth(self.icon:GetWidth() / 3)
