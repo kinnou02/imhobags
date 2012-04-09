@@ -66,7 +66,7 @@ local function getVaultButton(self, i)
 		return self.vaultButtons[i]
 	else
 		local btn = UICreateFrame("Texture", "", self.vaultsBack)
-		btn:SetTexture("ImhoBags", "textures/button.png")
+--		btn:SetTexture("ImhoBags", "textures/button.png")
 		btn:SetWidth(163)
 		btn:SetHeight(25)
 		if(i > 1) then
@@ -74,7 +74,8 @@ local function getVaultButton(self, i)
 		else
 			btn:SetPoint("TOPLEFT", self.vaultsBack, "TOPLEFT", 0, 0)
 		end
-		btn.label = UICreateFrame("Text", "", btn)
+		btn.label = UICreateFrame("Text", "", self)
+		btn.label:SetLayer(btn:GetLayer() + 1)
 --		btn.label:SetBackgroundColor(1, 0, 0)
 		btn.label:SetFontSize(vaultFontSize)
 		btn.label:SetFontColor(unpack(vaultLabelColor))
@@ -96,7 +97,7 @@ local function updateVaultButtons(self)
 	for i = 1, vaults do
 		local btn = getVaultButton(self, i)
 		btn:SetVisible(true)
---		btn:SetTexture("ImhoBags", i == self.vault and "textures/button hot.png" or "textures/button.png")
+		btn:SetTexture("ImhoBags", i == self.vault and "textures/button hot.png" or "textures/button.png")
 		btn.label:SetText(format(L.Ux.guildVault, i))
 	end
 	for i = vaults + 1, #self.vaultButtons do
