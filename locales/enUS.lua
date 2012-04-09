@@ -134,9 +134,9 @@ Available config options:
 		},
 		Tooltip = {
 			character = "Character",
+			config = "Configuration",
 			guild = "Guild",
 			guildvault = "Guild Vault",
-			config = "Configuration",
 			size = "Size",
 			sorting = "Sorting",
 		},
