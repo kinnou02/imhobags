@@ -66,16 +66,18 @@ local function ItemButton_simple_SetStack(self, stack)
 		self.stackText:SetText(tostring(stack))
 		self.stackBack:SetVisible(stack > 1)
 	end
-	local fontSize = stackFontSizes[self:GetWidth()] or 14
-	self.stackText:SetFontSize(fontSize)
-	self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 4)
-	
-	local tw = self.stackText:GetWidth()
-	local iw = self.icon:GetWidth()
-	if(tw > iw) then
-		self.stackText:SetFontSize(fontSize * iw / tw)
+	if(self.stackBack:GetVisible()) then
+		local fontSize = stackFontSizes[self:GetWidth()] or 14
+		self.stackText:SetFontSize(fontSize)
+		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 4)
+		
+		local tw = self.stackText:GetWidth()
+		local iw = self.icon:GetWidth()
+		if(tw > iw) then
+			self.stackText:SetFontSize(fontSize * iw / tw)
+		end
+		self.stackBack:SetWidth(self.stackText:GetWidth())
 	end
-	self.stackBack:SetWidth(self.stackText:GetWidth())
 end
 
 local function ItemButton_simple_SetSlots(self, slots)
