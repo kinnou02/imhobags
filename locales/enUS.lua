@@ -24,6 +24,8 @@ private.L = {
 		sellable = "Junk",
 		-- Special case for collectibles (e.g. artifacts)
 		["misc collectible"] = "Collectibles",
+		["misc mount"] = "Collectibles",
+		["misc pet"] = "Collectibles",
 		-- Special case for costumes
 		["armor costume"] = "Costumes",
 		-- Special case for lootable container items
@@ -129,6 +131,16 @@ Available config options:
 			mail = "Mailbox",
 			equipment = "Equipped",
 			wardrobe = "Wardrobe",
+			guild = "Guild Vault",
+			config = "Configuration",
+		},
+		Tooltip = {
+			character = "Character",
+			config = "Configuration",
+			guild = "Guild",
+			guildvault = "Guild Vault",
+			size = "Size",
+			sorting = "Sorting",
 		},
 		search = "<Enter search text>",
 		cashOnDelivery = "Cash on Delivery",

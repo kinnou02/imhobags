@@ -206,3 +206,11 @@ function Ux.ToggleConfigWindow()
 		Ux.ConfigWindow:SetVisible(not Ux.ConfigWindow:GetVisible())
 	end
 end
+
+function Ux.ToggleMenuWindow()
+	if(type(Ux.MenuWindow) == "function") then
+		Ux.MenuWindow()
+	else
+		Ux.MenuWindow:SetVisible(not Ux.MenuWindow:GetVisible())
+	end
+end

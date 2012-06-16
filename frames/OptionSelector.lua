@@ -89,8 +89,8 @@ end
 -- Public methods
 -- ============================================================================
 
-function Ux.OptionSelector.New(parent, icon, options, callback)
-	local self = Ux.IconButton.New(parent, icon)
+function Ux.OptionSelector.New(parent, icon, tooltip, options, callback, size)
+	local self = Ux.IconButton.New(parent, icon, tooltip, size)
 	self.callback = callback
 	self.options = options
 	

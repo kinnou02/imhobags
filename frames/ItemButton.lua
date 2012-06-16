@@ -93,18 +93,22 @@ end
 -- ============================================================================
 
 local function ItemButton_SetItem(self, item, slots, stack, available)
-	self.item = item
-	self.slots = slots
-	self.stack = stack
-	
 	self.readonly = type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
 	
-	self:SetIcon(item.icon)
+	if(not self.item or self.item.icon ~= item.icon) then
+		self:SetIcon(item.icon)
+	end
+	if(not self.item or self.item.rarity ~= item.rarity) then
+		self:SetRarity(item.rarity)
+	end
 	self:SetStack(stack)
 	self:SetSlots(not self.readonly and #slots or slots)
-	self:SetRarity(item.rarity)
 	self:SetBound(Config.showBoundIcon and item.bound)
+
+	self.item = item
+	self.slots = slots
+	self.stack = stack
 end
 
 local function ItemButton_Dispose(self)
