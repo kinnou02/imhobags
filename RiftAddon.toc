@@ -33,7 +33,6 @@ RunOnStartup = {
 	
 	"Group.Default.lua",
 	"ItemDB.lua",
-	"ItemHandler.lua",
 	"CurrencyMatrix.lua",
 	"ItemMatrix.lua",
 	"MailMatrix.lua",
