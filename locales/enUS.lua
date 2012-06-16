@@ -24,6 +24,8 @@ private.L = {
 		sellable = "Junk",
 		-- Special case for collectibles (e.g. artifacts)
 		["misc collectible"] = "Collectibles",
+		["misc mount"] = "Collectibles",
+		["misc pet"] = "Collectibles",
 		-- Special case for costumes
 		["armor costume"] = "Costumes",
 		-- Special case for lootable container items
