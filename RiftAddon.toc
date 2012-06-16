@@ -60,6 +60,7 @@ RunOnStartup = {
 	"windows/ItemWindowBase.lua",
 	"windows/ItemWindow.lua",
 	"windows/MailWindow.lua",
+	"windows/MenuWindow.lua",
 	"windows/TooltipEnhancer.lua",
 	"windows/SearchWindow.lua",
 	"windows/SplitWindow.lua",
