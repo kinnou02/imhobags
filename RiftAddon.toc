@@ -8,7 +8,7 @@ Website = "http://www.curse.com/addons/rift/imhobags"
 Email = "imhothar@freenet.de"
 
 Version = "0.10beta"
-Environment = "1.7"
+Environment = "1.8"
 
 --@no-lib-strip@
 Embed = {
