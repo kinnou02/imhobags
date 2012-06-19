@@ -1,18 +1,16 @@
 FEATURES:
-* Basic support for guilds and guild vault items.
-	* Guild items can be viewed for all guilds any of your characters is a member of.
-	* Guild items are included in the tooltip summary.
-	* Information about guild vaults as well as guild money or logs cannot be retrieved currently .
-* The size of item buttons can now be changed for each window.
-	* Valid sizes are 30, 40, 50 (RIFT default) and 60. Other sizes may be added later.
-* A small icon is now displayed over soul- and account-bound items.
-	* This can be disabled in the config window.
+* Added a new menu to access all inventory locations from
+	a centeral location without the need to memorize all slash commands.
+* The command to open this menu is /imhobags menu
+	Put the command into a macro to have a convenient menu
+	popup whenever you click the macro button.
+* The items in each group can now be sorted either by name, icon or rarity.
+	Sorting items by icon may result in items of similar type to be arranged
+	together, for example all cloth items followed by all wood, followed
+	by all herbs and so on. I suggest experimenting which sort option suites
+	you best.
 CHANGES:
-* The character selector is now an icon button to save space.
 FIXES:
-* Various layotu issues were fixed.
-* Currency counts > 99999 are displayed correctly now.
-* A big bunch of redundant texture frames was removed for pretty item buttons.
 ISSUES:
 * The mail database is cleared everytime the Trion mail window is opened.
 * Item tooltips may show up in the top-left corner of the screen.
