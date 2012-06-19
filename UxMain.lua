@@ -41,17 +41,22 @@ local function createItemWindow(name, character)
 	local data = defaultItemWindows[name]
 	local info = _G.ImhoBags_WindowInfo[name] or { }
 	
+	local x, y
+	local sorting = "name"
+	if(info) then
+		x, y = info.x, info.y
+		sorting = info.sorting or sorting
+	end
+	
 	local itemSize = info and info.itemSize or Ux.ItemButtonSizeDefault
 	local title = L.Ux.WindowTitle[data[1]]
-	local window = Ux[data[3]].New(title, character, data[1], itemSize)
+	local window = Ux[data[3]].New(title, character, data[1], itemSize, sorting)
 
-	if(info) then
-		if(info.x and info.y) then
-			window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor(info.x), floor(info.y))
-			window:SetWidth(info.width)
-		else
-			centerWindow(window)
-		end
+	if(x and y) then
+		window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor(info.x), floor(info.y))
+		window:SetWidth(info.width)
+	else
+		centerWindow(window)
 	end
 	Ux[name] = window
 	return window
@@ -105,6 +110,7 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 				width = window:GetWidth(),
 				condensed = window.condensed,
 				itemSize = window.itemSize,
+				sorting = window.sort,
 			}
 		end
 	end
