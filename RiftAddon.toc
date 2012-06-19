@@ -4,8 +4,8 @@ NameShort = "Imho's Bags"
 Description = "Provides overview and search windows for your inventory as well as inspection of offline characters."
 
 Author = "Imhothar"
-Website = ""
-Email = "none"
+Website = "http://www.curse.com/addons/rift/imhobags"
+Email = "imhothar@freenet.de"
 
 Version = "0.10beta"
 Environment = "1.7"
