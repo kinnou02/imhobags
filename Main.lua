@@ -17,7 +17,8 @@ local lang = Inspect.System.Language()
 if(lang == "Korean" or lang == "French" or lang == "Russian") then
 	print("Looking for " .. lang .. " translators and reviewers!")
 end
-print("Try out the new configuration window with /imhobags config")
+print("Try out the new popup menu with /imhobags menu")
+print("Works great as a macro button for accessing all your inventories without clumsy slash commands.")
 
 setfenv(1, private)
 
