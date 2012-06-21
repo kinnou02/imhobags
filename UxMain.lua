@@ -88,6 +88,9 @@ local function init()
 	else
 		centerWindow(Ux.SearchWindow)
 	end
+	
+	-- Other windows
+	Ux.MoneySummaryWindow()
 end
 
 local function Ux_savedVariablesLoadEnd(addonIdentifier)
