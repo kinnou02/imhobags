@@ -139,7 +139,11 @@ end
 
 local function MoneySummaryWindow_ShowAtCursor(self)
 	if(not self:GetVisible()) then
-		fillCharacterFrames(self, sortOutCharacters(ItemDB.GetCharactersCoin()))
+		local names, coins, playerTotal, enemyTotal = sortOutCharacters(ItemDB.GetCharactersCoin())
+		if(#names == 1) then
+			return
+		end
+		fillCharacterFrames(self, names, coins, playerTotal, enemyTotal)
 	end
 	
 	-- Position at cursor
