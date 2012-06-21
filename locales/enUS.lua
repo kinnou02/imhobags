@@ -145,6 +145,8 @@ Available config options:
 		search = "<Enter search text>",
 		cashOnDelivery = "Cash on Delivery",
 		guildVault = "Vault %i",
+		defiant = "Defiant",
+		guardian = "Guardian",
 		
 		SortOption = {
 			name = "Name",
