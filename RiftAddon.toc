@@ -4,11 +4,11 @@ NameShort = "Imho's Bags"
 Description = "Provides overview and search windows for your inventory as well as inspection of offline characters."
 
 Author = "Imhothar"
-Website = ""
-Email = "none"
+Website = "http://www.curse.com/addons/rift/imhobags"
+Email = "imhothar@freenet.de"
 
 Version = "0.10beta"
-Environment = "1.7"
+Environment = "1.8"
 
 --@no-lib-strip@
 Embed = {
@@ -60,9 +60,9 @@ RunOnStartup = {
 	"windows/ItemWindow.lua",
 	"windows/MailWindow.lua",
 	"windows/MenuWindow.lua",
+	"windows/MoneySummaryWindow.lua",
 	"windows/TooltipEnhancer.lua",
 	"windows/SearchWindow.lua",
-	"windows/SplitWindow.lua",
 	
 	"SlashCmd.lua",
 }

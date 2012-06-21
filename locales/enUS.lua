@@ -146,6 +146,12 @@ Available config options:
 		cashOnDelivery = "Cash on Delivery",
 		guildVault = "Vault %i",
 		
+		SortOption = {
+			name = "Name",
+			icon = "Icon",
+			rarity = "Rarity",
+		},
+		
 		-- All text for the configuration window goes here
 		ConfigWindow = {
 			title = "Configuration for Imhothar's Bags",
