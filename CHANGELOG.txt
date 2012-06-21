@@ -9,6 +9,8 @@ FEATURES:
 	together, for example all cloth items followed by all wood, followed
 	by all herbs and so on. I suggest experimenting which sort option suites
 	you best.
+* Hovering your mouse over a money display in a item window shows
+	a summary of all the money you have on the current shard.
 CHANGES:
 * Mounts and Pets are now grouped under collectibles like artifacts.
 FIXES:
