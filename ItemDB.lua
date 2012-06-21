@@ -318,6 +318,23 @@ function ItemDB.GetGuildVaults(guild)
 	return info and info.vaults, enemy
 end
 
+function ItemDB.GetCharactersCoin()
+	local result = {
+		guardian = { },
+		defiant = { }
+	}
+	local tbl = result[PlayerFaction]
+	tbl[PlayerName] = playerItems.currency.items.coin or 0
+	for char, data in pairs(playerFactionCharacters) do
+		tbl[char] = data.currency.items.coin or 0
+	end
+	local tbl = result[EnemyFaction]
+	for char, data in pairs(enemyFactionCharacters) do
+		tbl[char] = data.currency.items.coin or 0
+	end
+	return result
+end
+
 -- Return an array of all characters on the current shard and faction for which item data is available
 function ItemDB.GetAvailableCharacters()
 	local result = { }
