@@ -144,7 +144,7 @@ function Ux.GuildWindow.New(title, character, location, itemSize, sorting)
 	self.charSelector:SetTooltip(L.Ux.Tooltip.guild)
 	self.guildButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
 	function self.guildButton.LeftPress()
-		Ux.ToggleItemWindow(self.charSelector:GetText(), "inventory")
+		Ux.ToggleItemWindow(self.character, "inventory")
 	end
 	
 	self.coinFrame:SetVisible(false)
