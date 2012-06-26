@@ -20,6 +20,9 @@ end
 print("Try out the new popup menu with /imhobags menu")
 print("Works great as a macro button for accessing all your inventories without clumsy slash commands.")
 
+-- Make this global available everywhere
+private.dump = dump
+
 setfenv(1, private)
 
 if(Addon.toc.debug) then
