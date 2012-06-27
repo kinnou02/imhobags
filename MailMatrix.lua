@@ -110,7 +110,6 @@ function MailMatrix.MergeMail(matrix, mail)
 		for i = 1, #mail.attachments do
 			local item = InspectItemDetail(mail.attachments[i])
 			if(item.type) then -- Is nil for money
-				item.type = Utils.FixItemType(item.type)
 				attachments[item.type] = (attachments[item.type] or 0) + (item.stack or 1)
 			else
 				coin = item.coin

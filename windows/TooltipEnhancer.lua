@@ -97,7 +97,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		return
 	end
 
-	itemType = Inspect.Item.Detail(Utils.FixItemType(itemType))
+	itemType = Inspect.Item.Detail(itemType)
 	local counts = ItemDB.GetItemCounts(itemType)
 	local guildCounts = ItemDB.GetGuildItemCounts(itemType)
 	
