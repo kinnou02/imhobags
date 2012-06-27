@@ -108,6 +108,7 @@ end
 local function ItemButton_SetItem(self, item, slots, stack, available)
 	self.readonly = type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
+	self:SetAvailable(available)
 	
 	if(not self.item or self.item.icon ~= item.icon) then
 		self:SetIcon(item.icon)

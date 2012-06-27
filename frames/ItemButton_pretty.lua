@@ -42,8 +42,6 @@ local function ItemButton_pretty_SetDepressed(self, depressed)
 end
 
 function Ux.ItemButton_pretty.New(parent)
-	Command.System.Watchdog.Quiet()
-	
 	local self = Ux.ItemButton_simple.New(parent)
 	
 	self.backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", 1, 1)
