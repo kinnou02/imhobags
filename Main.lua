@@ -52,7 +52,7 @@ local function unitAvailable(units)
 			local player = Inspect.Unit.Detail("player")
 			PlayerName = player.name
 			PlayerGuild = player.guild
-			PlayerFaction = player.faction
+			PlayerFaction = player.alliance
 			EnemyFaction = (PlayerFaction == "defiant" and "guardian") or "defiant"
 			Trigger.Init()
 			
