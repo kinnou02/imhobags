@@ -1,7 +1,13 @@
 local Addon, private = ...
 
+-- Bulitins
+local ipairs = ipairs
+
+-- Globals
+local Command = Command
 local UICreateFrame = UI.CreateFrame
 
+-- Locals
 local iconSize = 48
 
 setfenv(1, private)
@@ -10,6 +16,13 @@ Ux.ItemButton_pretty = { }
 
 -- Private methods
 -- ============================================================================
+
+-- preload external textures
+for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendent", "uncommon" }) do
+	local tex = UICreateFrame("Texture", "", Ux.Context)
+	tex:SetTexture("ImhoBags", "textures/ItemButton/common.png")
+	tex:SetVisible(false)
+end
 
 -- Public methods
 -- ============================================================================
@@ -29,6 +42,8 @@ local function ItemButton_pretty_SetDepressed(self, depressed)
 end
 
 function Ux.ItemButton_pretty.New(parent)
+	Command.System.Watchdog.Quiet()
+	
 	local self = Ux.ItemButton_simple.New(parent)
 	
 	self.backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", 1, 1)
