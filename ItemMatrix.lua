@@ -127,7 +127,9 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 	if(item) then
 		item = InspectItemDetail(slot)
 		-- Make sure only working types land in the DB
-		item.type = Utils.FixItemType(item.type)
+		if(item) then
+			item.type = Utils.FixItemType(item.type)
+		end
 	end
 	
 	-- Bags are special
