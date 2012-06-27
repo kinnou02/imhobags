@@ -28,7 +28,7 @@ end
 -- ============================================================================
 
 local function ItemButton_pretty_SetRarity(self, rarity)
-	self.border:SetTexture("ImhoBags", "textures/ItemButton/" .. (rarity or "common") .. ".png")
+	self.border:SetTextureAsync("ImhoBags", "textures/ItemButton/" .. (rarity or "common") .. ".png")
 end
 
 local function ItemButton_pretty_SetDepressed(self, depressed)

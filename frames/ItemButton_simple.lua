@@ -87,7 +87,7 @@ local function ItemButton_simple_SetSlots(self, slots)
 end
 
 local function ItemButton_simple_SetIcon(self, icon)
-	self.icon:SetTexture("Rift", icon)
+	self.icon:SetTextureAsync("Rift", icon)
 end
 
 local function ItemButton_simple_SetDepressed(self, depressed)

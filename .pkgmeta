@@ -16,3 +16,5 @@ enable-nolib-creation: yes
 externals:
   libs/LibString:
     url: git://git.curseforge.net/rift/libstring/mainline.git
+  libs/LibAsyncTextures:
+    url: git://git.curseforge.net/rift/lib-async-textures/mainline.git

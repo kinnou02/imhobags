@@ -13,11 +13,13 @@ Environment = "1.8"
 --@no-lib-strip@
 Embed = {
 	["libs/LibString"] = true,
+	["libs/LibAsyncTextures"] = true,
 }
 --@end-no-lib-strip@
 
 Dependencies = {
 	LibString = { "required", "before" },
+	LibAsyncTextures = { "required", "before" },
 }
 
 RunOnStartup = {
