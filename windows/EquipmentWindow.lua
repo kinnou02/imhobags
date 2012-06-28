@@ -82,7 +82,6 @@ function Ux.EquipmentWindow.New(title, character, location, itemSize, sorting)
 	self.item_Update = self.Update
 	self.Update = update
 	
-	self.leftUp = leftUp
 	self.getGroupLabel = getGroupLabel
 
 	self:SetCharacter(character, location)
