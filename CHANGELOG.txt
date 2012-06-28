@@ -20,6 +20,7 @@ FEATURES:
 	other addon authors can make use of.
 CHANGES:
 * Mounts and Pets are now grouped under collectibles like artifacts.
+* Account-bound items received a different red/blue indicator symbol.
 FIXES:
 * Some tweaks to update performance. Further improvements are still underway.
 * Many small fixes.
