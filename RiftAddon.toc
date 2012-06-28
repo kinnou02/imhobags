@@ -85,3 +85,6 @@ SavedVariables = {
 --@debug@
 debug = true
 --@end-debug@
+
+-- Indicate which version the public API has
+publicAPI = 1
