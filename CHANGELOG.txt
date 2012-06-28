@@ -1,4 +1,9 @@
 FEATURES:
+* ITEMS CAN BE USED NOW!
+	Yeah, this is big news. Thanks to additions to the API in 1.9 you
+	can now left and right click on items in ImhoBags to use/move/sell/love
+	them the same way as the default windows do. Items which you cannot interact
+	with (e.g. wrong character) are dimmed and don't react to input.
 * Added a new menu to access all inventory locations from
 	a centeral location without the need to memorize all slash commands.
 * The command to open this menu is /imhobags menu
@@ -11,10 +16,13 @@ FEATURES:
 	you best.
 * Hovering your mouse over a money display in a item window shows
 	a summary of all the money you have on the current shard.
+* There is now a public API in the "ImhoBags" global table with events
+	other addon authors can make use of.
 CHANGES:
 * Mounts and Pets are now grouped under collectibles like artifacts.
 FIXES:
 * Some tweaks to update performance. Further improvements are still underway.
+* Many small fixes.
 ISSUES:
 * The mail database is cleared everytime the Trion mail window is opened.
 * Item tooltips may show up in the top-left corner of the screen.
