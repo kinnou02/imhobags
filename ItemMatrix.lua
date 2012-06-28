@@ -126,8 +126,6 @@ Also available as instance metamethod.
 function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 	if(item) then
 		item = InspectItemDetail(slot)
-		-- Make sure only working types land in the DB
-		item.type = Utils.FixItemType(item.type)
 	end
 	
 	-- Bags are special
@@ -213,7 +211,6 @@ end
 -- Get the amount of items in this matrix of the given item type (including bags).
 -- Also available as instance metamethod.
 function ItemMatrix.GetItemCount(matrix, itemType)
-	itemType = Utils.FixItemType(itemType)
 	local result = 0
 	for i = 1, #matrix.bags do
 		if(matrix.bags[i] == itemType) then

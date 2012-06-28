@@ -46,27 +46,3 @@ function Utils.FormatCoin(coin)
 		return format(coinFormat3, s)
 	end
 end
-
-function Utils.FixItemType(itemType)
-	-- Temporary fix for invalid item types
-	local components = strsplit(itemType, ",")
-	for i = 1, #components do
-		local c = components[i]
-		if(strlen(c) == 24) then
-			components[i] = strsub(components[i], -16)
-		end
-	end
---	log(debug.traceback())
-	local itemType2 = tconcat(components, ",")
-	if(itemType ~= itemType2) then
-		local s, i = pcall(InspectItemDetail, itemType2)
-		log(itemType)
-		log(itemType2)
-		if(not s) then
-			print("Error in item processing: ", itemType)
-		else
-			log("Item error: ", i.name)
-		end
-	end
-	return itemType2
-end

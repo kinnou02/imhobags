@@ -7,17 +7,19 @@ Author = "Imhothar"
 Website = "http://www.curse.com/addons/rift/imhobags"
 Email = "imhothar@freenet.de"
 
-Version = "0.10beta"
-Environment = "1.8"
+Version = "0.11beta"
+Environment = "1.9"
 
 --@no-lib-strip@
 Embed = {
 	["libs/LibString"] = true,
+	["libs/LibAsyncTextures"] = true,
 }
 --@end-no-lib-strip@
 
 Dependencies = {
 	LibString = { "required", "before" },
+	LibAsyncTextures = { "required", "before" },
 }
 
 RunOnStartup = {
@@ -33,7 +35,6 @@ RunOnStartup = {
 	
 	"Group.Default.lua",
 	"ItemDB.lua",
-	"ItemHandler.lua",
 	"CurrencyMatrix.lua",
 	"ItemMatrix.lua",
 	"MailMatrix.lua",

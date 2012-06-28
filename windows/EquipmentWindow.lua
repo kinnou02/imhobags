@@ -50,9 +50,6 @@ local function getGroupLabel(self, name)
 	return label, self.itemSize, self.itemSize
 end
 
-local function leftUp(self)
-end
-
 local function update(self)
 	self:item_Update()
 	self:SetTitle(format("%s: %s", self.character == "player" and PlayerName or self.character, self.title))

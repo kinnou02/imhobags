@@ -14,6 +14,7 @@ local tonumber = tonumber
 local type = type
 
 -- Globals
+local Command = Command
 local Event = Event
 local Inspect = Inspect
 local UI = UI
@@ -44,12 +45,7 @@ end
 local function isAvailable(self)
 	-- Non-player characters always report a number as empty slots.
 	-- Whereas the player gets a list of all empty slot ids
---@debug@
 	return type(self.empty) == "table" and self.interaction
---@end-debug@
---[===[@non-debug@
-	return false
---@end-non-debug@]===]
 end
 
 local function getItems(self)
@@ -76,6 +72,8 @@ local function closeButton_LeftPress(self)
 end
 
 local function systemUpdateBegin(self)
+	Command.System.Watchdog.Quiet()
+	
 	-- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	local now = Inspect.Time.Real()
 	if(self.matrix.lastUpdate >= self.lastUpdate) then
@@ -199,7 +197,7 @@ local function getButton(self, content, index)
 end
 
 -- return x, y, sell, slots
-local function renderItems(self, items, left, x, y, width, dx, dy, spacing, content, notLocked, buttons)
+local function renderItems(self, items, left, x, y, width, dx, dy, spacing, content, available, buttons)
 	local sell = 0
 	local slots = 0
 	local previous = false
@@ -227,7 +225,7 @@ local function renderItems(self, items, left, x, y, width, dx, dy, spacing, cont
 			button.previous = previous
 		end
 		previous = button
-		button:SetItem(item.type, item.slots, item.stack, notLocked)
+		button:SetItem(item.type, item.slots, item.stack, available)
 		sell = sell + item.stack * (item.type.sell or 0)
 		if(type(item.slots) == "table") then
 			slots = slots + #item.slots
@@ -314,16 +312,6 @@ local function ItemWindowBase_Update(self)
 	end
 
 	self:setItemsContentHeight(y + dy + bottom)
-
-	-- Display lock item and dim frame if item commands are not allowed
-	if(available) then
---		self:SetAlpha(1.0)
-		self.readonlyLock:SetVisible(false)
-	else
---		self:SetAlpha(0.75)
-		self.readonlyLock:SetVisible(true)
-	end
-	
 	self:applySearchFilter()
 end
 
@@ -332,6 +320,8 @@ local function ItemWindowBase_GetNumColumns(self)
 end
 
 function Ux.ItemWindowBase.New(title, character, location, itemSize)
+	Command.System.Watchdog.Quiet()
+	
 	local context = UI.CreateContext(Addon.identifier)
 	local self = UI.CreateFrame("RiftWindow", "ImhoBags_ItemWindow_"..location, context)
 
@@ -351,14 +341,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 			self:SetCharacter(char, self.location)
 		end)
 	self.charSelector:SetPoint("TOPLEFT", self:GetContent(), "TOPLEFT",Ux.ItemWindowPadding, -2)
-	
-	-- Readonly indicator
-	self.readonlyLock = UI.CreateFrame("Texture", "", self.charSelector)
-	self.readonlyLock:SetPoint("BOTTOMRIGHT", self.charSelector, "BOTTOMRIGHT", 3, 2)
-	self.readonlyLock:SetWidth(20)
-	self.readonlyLock:SetHeight(20)
-	self.readonlyLock:SetLayer(10)
-	self.readonlyLock:SetTexture(Addon.identifier, "textures/lock_silver.png")
 	
 	-- Tool buttons
 	self.bankButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)

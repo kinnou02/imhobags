@@ -87,7 +87,7 @@ local function ItemButton_simple_SetSlots(self, slots)
 end
 
 local function ItemButton_simple_SetIcon(self, icon)
-	self.icon:SetTexture("Rift", icon)
+	self.icon:SetTextureAsync("Rift", icon)
 end
 
 local function ItemButton_simple_SetDepressed(self, depressed)
@@ -106,6 +106,10 @@ end
 
 local function ItemButton_simple_SetTooltip(self, tooltip)
 	self.tooltip = tooltip
+end
+
+local function ItemButton_simple_SetAvailable(self, available)
+	self:SetAlpha(available and 1.0 or 0.5)
 end
 
 local function ItemButton_simple_ShowTooltip(self)
@@ -190,6 +194,7 @@ function Ux.ItemButton_simple.New(parent)
 	self.SetDepressed = ItemButton_simple_SetDepressed
 	self.SetBound = ItemButton_simple_SetBound
 	self.SetTooltip = ItemButton_simple_SetTooltip
+	self.SetAvailable = ItemButton_simple_SetAvailable
 	self.ShowTooltip = ItemButton_simple_ShowTooltip
 	self.HideTooltip = ItemButton_simple_HideTooltip
 	

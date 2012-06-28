@@ -18,19 +18,25 @@ Ux.ItemButton = { }
 
 Ux.ItemButtonSizeDefault = 50
 Ux.ItemButtonSizeJunk = 30
+Ux.ItemButtonDragDistance = 15
 
 -- Private methods
 -- ============================================================================
 
 local skinFactory
 
+local leftDownPoint = { x = 0, y = 0 }
+
 local function mouseMove(self)
-	self.moved = true
 	self:ShowTooltip()
 	self:ShowHighlight()
 	if(self.pickingUp) then
-		Command.Cursor(self.pickingUp)
-		self.pickingUp = nil
+		local mouse = Inspect.Mouse()
+		local distance = (leftDownPoint.x - mouse.x) * (leftDownPoint.x - mouse.x) + (leftDownPoint.y - mouse.y) * (leftDownPoint.y - mouse.y)
+		if(distance > Ux.ItemButtonDragDistance * Ux.ItemButtonDragDistance) then
+			Command.Item.Standard.Drag(self.pickingUp)
+			self.pickingUp = nil
+		end
 	end
 end
 
@@ -49,24 +55,32 @@ local function mouseIn(self)
 end
 
 local function leftDown(self)
-	self.moved = false
+	local mouse = Inspect.Mouse()
+	leftDownPoint.x = mouse.x
+	leftDownPoint.y = mouse.y
 	self:SetDepressed(true)
-	if(self.available and not Inspect.Cursor()) then
-		self.pickingUp = self.item.id
+	if(self.available) then
+		if(Inspect.Cursor() == "item") then
+			Command.Item.Standard.Drop(self.slots[1])
+		elseif(not Inspect.Cursor()) then
+			self.pickingUp = self.slots[1]
+		end
 	end
 end
 
 local function leftUp(self)
-	local cursor, held = Inspect.Cursor()
 	self:SetDepressed(false)
 	if(self.pickingUp) then
---		Command.Cursor(self.pickingUp)
---		self.pickingUp = nil
-	elseif(cursor == "item" and self.available) then
-		Command.Item.Move(held, self.slots[1])
+		Command.Item.Standard.Left(self.pickingUp)
+		self.pickingUp = nil
+	elseif(Inspect.Cursor() == "item" and self.available) then
+		Command.Item.Standard.Drop(self.slots[1])
 	end
-	self.moved = false
 	self.commandTarget = nil
+end
+
+local function leftUpoutside(self)
+	self.pickingUp = nil
 end
 
 local function rightDown(self)
@@ -79,8 +93,7 @@ end
 local function rightUp(self)
 	self:SetDepressed(false)
 	if(self.commandTarget) then
-		log("TODO", "use item")
-		ItemHandler.UseItem(self.commandTarget)
+		Command.Item.Standard.Right(self.commandTarget)
 	end
 	self.commandTarget = nil
 end
@@ -95,6 +108,7 @@ end
 local function ItemButton_SetItem(self, item, slots, stack, available)
 	self.readonly = type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
+	self:SetAvailable(available)
 	
 	if(not self.item or self.item.icon ~= item.icon) then
 		self:SetIcon(item.icon)

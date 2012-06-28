@@ -215,6 +215,10 @@ local function mergeSlotChanges(slots)
 end
 
 local function mailsChanged(mails)
+	if(not Inspect.Interaction("mail")) then
+		return -- Can happen in laggy situations
+	end
+	
 	for mail, info in pairs(mails) do
 		if(info == "detail") then
 			playerItems.mail:MergeMail(Inspect.Mail.Detail(mail))

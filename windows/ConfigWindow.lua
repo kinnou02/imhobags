@@ -9,6 +9,7 @@ local tinsert = table.insert
 local unpack = unpack
 
 -- Globals
+local Command = Command
 local Inspect = Inspect
 local UICreateFrame = UI.CreateFrame
 local UIParent = UIParent
@@ -367,6 +368,8 @@ end
 -- ============================================================================
 
 function Ux.ConfigWindow()
+	Command.System.Watchdog.Quiet()
+	
 	local self = UICreateFrame("RiftWindow", "", Ux.Context)
 	self:SetTitle(L.Ux.ConfigWindow.title)
 	self:SetController("content")
