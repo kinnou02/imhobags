@@ -1,7 +1,7 @@
 local Addon, private = ...
 
 if(Addon.toc.debug) then
-	_G[Addon.identifier] = private
+	ImhoBagsDebug = private
 end
 
 local pairs = pairs
