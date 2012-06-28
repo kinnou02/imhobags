@@ -87,7 +87,7 @@ local function update()
 			local item = display[index]
 			button.text:SetText(item[1])
 			button.text:SetFontColor(Utils.RarityColor(item[2]))
-			button.icon:SetTexture("Rift", item[3])
+			button.icon:SetTextureAsync("Rift", item[3])
 			button.type = item[4]
 		end
 	end
