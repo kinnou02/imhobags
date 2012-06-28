@@ -1,5 +1,8 @@
 local Addon, private = ...
 
+-- Builtins
+local pcall = pcall
+
 -- Globals
 local Command = Command
 
@@ -16,7 +19,7 @@ function ItemHandler.Standard.Right(id)
 	}
 	Trigger.Item.Standard.Right(params)
 	if(not params.cancel) then
-		Command.Item.Standard.Right(id)
+		pcall(Command.Item.Standard.Right, id)
 	end
 	return params.cancel
 end
@@ -28,7 +31,7 @@ function ItemHandler.Standard.Left(id)
 	}
 	Trigger.Item.Standard.Left(params)
 	if(not params.cancel) then
-		Command.Item.Standard.Left(id)
+		pcall(Command.Item.Standard.Left, id)
 	end
 	return params.cancel
 end
@@ -40,7 +43,7 @@ function ItemHandler.Standard.Drag(id)
 	}
 	Trigger.Item.Standard.Drag(params)
 	if(not params.cancel) then
-		Command.Item.Standard.Drag(id)
+		pcall(Command.Item.Standard.Drag, id)
 	end
 	return params.cancel
 end
@@ -52,7 +55,7 @@ function ItemHandler.Standard.Drop(id)
 	}
 	Trigger.Item.Standard.Drop(params)
 	if(not params.cancel) then
-		Command.Item.Standard.Drop(id)
+		pcall(Command.Item.Standard.Drop, id)
 	end
 	return params.cancel
 end
