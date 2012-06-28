@@ -27,4 +27,5 @@ ISSUES:
 * The mail database is cleared everytime the Trion mail window is opened.
 * Item tooltips may show up in the top-left corner of the screen.
 * Some items may not show up in the item windows due to broken values in the API.
-* Equipped and wardrobe items cannot be draged until the character/wardrobe window has been opened at least once with the respective set.
+* Equipped and wardrobe items cannot be draged until the character/wardrobe window
+	has been opened at least once with the respective set.
