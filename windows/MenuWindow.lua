@@ -25,38 +25,38 @@ local function createDialog(self)
 	self:SetTexture("ImhoBags", "textures/dialog.png")
 
 	local topleft = UICreateFrame("Texture", "", self)
-	topleft:SetTexture("ImhoBags", "textures/dialog_tl.png")
+	topleft:SetTextureAsync("ImhoBags", "textures/dialog_tl.png")
 	topleft:SetPoint("BOTTOMRIGHT", self, "TOPLEFT")
 	
 	local topright = UICreateFrame("Texture", "", self)
-	topright:SetTexture("ImhoBags", "textures/dialog_tr.png")
+	topright:SetTextureAsync("ImhoBags", "textures/dialog_tr.png")
 	topright:SetPoint("BOTTOMLEFT", self, "TOPRIGHT")
 	
 	local bottomleft = UICreateFrame("Texture", "", self)
-	bottomleft:SetTexture("ImhoBags", "textures/dialog_bl.png")
+	bottomleft:SetTextureAsync("ImhoBags", "textures/dialog_bl.png")
 	bottomleft:SetPoint("TOPRIGHT", self, "BOTTOMLEFT")
 	
 	local bottomright = UICreateFrame("Texture", "", self)
-	bottomright:SetTexture("ImhoBags", "textures/dialog_br.png")
+	bottomright:SetTextureAsync("ImhoBags", "textures/dialog_br.png")
 	bottomright:SetPoint("TOPLEFT", self, "BOTTOMRIGHT")
 	
 	local top = UICreateFrame("Texture", "", self)
-	top:SetTexture("ImhoBags", "textures/dialog_t.png")
+	top:SetTextureAsync("ImhoBags", "textures/dialog_t.png")
 	top:SetPoint("TOPLEFT", topleft, "TOPRIGHT")
 	top:SetPoint("BOTTOMRIGHT", topright, "BOTTOMLEFT")
 	
 	local bottom = UICreateFrame("Texture", "", self)
-	bottom:SetTexture("ImhoBags", "textures/dialog_b.png")
+	bottom:SetTextureAsync("ImhoBags", "textures/dialog_b.png")
 	bottom:SetPoint("BOTTOMLEFT", bottomleft, "BOTTOMRIGHT")
 	bottom:SetPoint("TOPRIGHT", bottomright, "TOPLEFT")
 	
 	local left = UICreateFrame("Texture", "", self)
-	left:SetTexture("ImhoBags", "textures/dialog_l.png")
+	left:SetTextureAsync("ImhoBags", "textures/dialog_l.png")
 	left:SetPoint("TOPLEFT", topleft, "BOTTOMLEFT")
 	left:SetPoint("BOTTOMRIGHT", bottomleft, "TOPRIGHT")
 
 	local right = UICreateFrame("Texture", "", self)
-	right:SetTexture("ImhoBags", "textures/dialog_r.png")
+	right:SetTextureAsync("ImhoBags", "textures/dialog_r.png")
 	right:SetPoint("TOPLEFT", topright, "BOTTOMLEFT")
 	right:SetPoint("BOTTOMRIGHT", bottomright, "TOPRIGHT")
 end
