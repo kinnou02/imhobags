@@ -171,10 +171,10 @@ local function leftUp(self)
 	local cursor, held = Inspect.Cursor()
 	if(cursor and cursor == "item") then
 		if(self:isAvailable() and #self.empty > 0) then
-			Command.Item.Standard.Drop(self.empty[1])
+			ItemHandler.Standard.Drop(self.empty[1])
 		else
 			-- Ping-back the item to prevent the item destruction dialog from appearing
-			Command.Item.Standard.Drop(held)
+			ItemHandler.Standard.Drop(held)
 		end
 	end
 end

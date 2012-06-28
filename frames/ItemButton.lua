@@ -34,7 +34,7 @@ local function mouseMove(self)
 		local mouse = Inspect.Mouse()
 		local distance = (leftDownPoint.x - mouse.x) * (leftDownPoint.x - mouse.x) + (leftDownPoint.y - mouse.y) * (leftDownPoint.y - mouse.y)
 		if(distance > Ux.ItemButtonDragDistance * Ux.ItemButtonDragDistance) then
-			Command.Item.Standard.Drag(self.pickingUp)
+			ItemHandler.Standard.Drag(self.pickingUp)
 			self.pickingUp = nil
 		end
 	end
@@ -61,9 +61,9 @@ local function leftDown(self)
 	self:SetDepressed(true)
 	if(self.available) then
 		if(Inspect.Cursor() == "item") then
-			Command.Item.Standard.Drop(self.slots[1])
+			ItemHandler.Standard.Drop(self.item.id)
 		elseif(not Inspect.Cursor()) then
-			self.pickingUp = self.slots[1]
+			self.pickingUp = self.item.id
 		end
 	end
 end
@@ -71,10 +71,10 @@ end
 local function leftUp(self)
 	self:SetDepressed(false)
 	if(self.pickingUp) then
-		Command.Item.Standard.Left(self.pickingUp)
+		ItemHandler.Standard.Left(self.pickingUp)
 		self.pickingUp = nil
 	elseif(Inspect.Cursor() == "item" and self.available) then
-		Command.Item.Standard.Drop(self.slots[1])
+		ItemHandler.Standard.Drop(self.item.id)
 	end
 	self.commandTarget = nil
 end
@@ -86,14 +86,14 @@ end
 local function rightDown(self)
 	self:SetDepressed(true)
 	if(self.available) then
-		self.commandTarget = self.slots[1]
+		self.commandTarget = self.item.id
 	end
 end
 
 local function rightUp(self)
 	self:SetDepressed(false)
 	if(self.commandTarget) then
-		Command.Item.Standard.Right(self.commandTarget)
+		ItemHandler.Standard.Right(self.commandTarget)
 	end
 	self.commandTarget = nil
 end
