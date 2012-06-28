@@ -169,7 +169,7 @@ Available config options:
 			showEnemyFaction = "Choose how items of enemy faction characters are treated. The options are to show all items regardless of character faction, to show only account-bound items of enemy faction characters, or to completely ignore all their items.",
 			enhanceTooltips = "Choose whether you want item tooltips to be extended with additional information showing you which of your characters already own the displayed item.",
 			showEmptySlots = "Choose whether you want a counter displayed on top of your bags bar showing how many empty item slots remain in your backpack.",
-			showBoundIcon = "Display a small indicator over the icons of soul- and account-bound items.",
+			showBoundIcon = "Display a small indicator over the icons of soul- and account-bound items. A blue icon indicates soul-bound items, the red/blue tinted account-bound ones.",
 		},
 	},
 }

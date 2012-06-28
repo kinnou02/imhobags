@@ -118,7 +118,7 @@ local function ItemButton_SetItem(self, item, slots, stack, available)
 	end
 	self:SetStack(stack)
 	self:SetSlots(not self.readonly and #slots or slots)
-	self:SetBound(Config.showBoundIcon and item.bound)
+	self:SetBound(Config.showBoundIcon and item.bound, item.bind)
 
 	self.item = item
 	self.slots = slots

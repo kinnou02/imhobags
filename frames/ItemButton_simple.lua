@@ -100,8 +100,11 @@ local function ItemButton_simple_SetDepressed(self, depressed)
 	end
 end
 
-local function ItemButton_simple_SetBound(self, bound)
+local function ItemButton_simple_SetBound(self, bound, bind)
 	self.bound:SetVisible(bound == true)
+	if(bound) then
+		self.bound:SetTexture("Rift", bind == "account" and [[Data/\UI\ability_icons\elementalward3.dds]] or [[Data/\UI\ability_icons\soulbind.dds]])
+	end
 end
 
 local function ItemButton_simple_SetTooltip(self, tooltip)
