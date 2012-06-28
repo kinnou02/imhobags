@@ -142,7 +142,7 @@ local function ItemButton_ShowTooltip(self)
 		elseif(self.readonly) then
 			target = self.item.type
 		else
-			target = Inspect.Item.Detail(self.slots[1]).id
+			target = self.item.id
 		end
 		Command.Tooltip(target)
 		log("TODO", "position tooltip near button")
