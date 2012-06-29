@@ -107,19 +107,22 @@ local function updateVaultButtons(self)
 	self.vaultsBack:SetHeight(vaults * 25 + (vaults - 1) * 3)
 end
 
--- Public methods
+-- Protected methods
 -- ============================================================================
 
-local function GuildWindow_Update(self)
+local function update(self)
 	self.moneyFrame:SetVisible(false)
 	self.coinFrame:SetWidth(0)
-	self:base_Update()
+	self:base_update()
 	updateVaultButtons(self)
 	
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
 	self:SetTitle(format("%s: %s (+%i)", self.character, format(L.Ux.guildVault, self.vault), n))
 end
+
+-- Public methods
+-- ============================================================================
 
 local function GuildWindow_SetCharacter(self, character, location)
 	if(character == "player") then
@@ -151,7 +154,7 @@ function Ux.GuildWindow.New(title, character, location, itemSize, sorting)
 	self.charSelector.options = ItemDB.GetAvailableGuilds
 	self.charSelector:UpdateMenu()
 	
-	self.Update = GuildWindow_Update
+	self.update = update
 
 	self.setCharacter = setCharacter
 	

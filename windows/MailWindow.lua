@@ -263,13 +263,16 @@ local function contentSizeChanged(self)
 	end
 end
 
--- Public methods
+-- Protected methods
 -- ============================================================================
 
-local function MailWindow_Update(self)
-	self:base_Update()
+local function update(self)
+	self:base_update()
 	self:SetTitle(format("%s: %s", self.character == "player" and PlayerName or self.character, self.title))
 end
+
+-- Public methods
+-- ============================================================================
 
 function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	-- Sort mail by name
@@ -353,8 +356,8 @@ function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	self.applySearchFilter = applySearchFilter
 	self.base_getContentPadding = self.getContentPadding
 	self.getContentPadding = getContentPadding
-	self.base_Update = self.Update
-	self.Update = MailWindow_Update
+	self.base_update = self.update
+	self.update = update
 	self.setItemsContentHeight = setItemsContentHeight
 	self.onClose = onClose
 	self.getGroups = getGroups

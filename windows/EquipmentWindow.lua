@@ -50,8 +50,11 @@ local function getGroupLabel(self, name)
 	return label, self.itemSize, self.itemSize
 end
 
+-- Protected methods
+-- ============================================================================
+
 local function update(self)
-	self:item_Update()
+	self:item_update()
 	self:SetTitle(format("%s: %s", self.character == "player" and PlayerName or self.character, self.title))
 end
 
@@ -79,8 +82,8 @@ function Ux.EquipmentWindow.New(title, character, location, itemSize, sorting)
 	-- Disable the sort button as it doesn't make sense
 	self.sortButton:SetVisible(false)
 	
-	self.item_Update = self.Update
-	self.Update = update
+	self.item_update = self.update
+	self.update = update
 	
 	self.getGroupLabel = getGroupLabel
 

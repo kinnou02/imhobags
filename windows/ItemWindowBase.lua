@@ -2,10 +2,12 @@ local Addon, private = ...
 
 -- Builtins
 local ceil = math.ceil
+local coroutine = coroutine
 local floor = math.floor
 local format = string.format
 local max = math.max
 local min = math.min
+local mod = math.mod
 local strfind = string.find
 local strgsub = string.gsub
 local strlower = string.lower
@@ -30,6 +32,7 @@ Ux.ItemWindowCellSpacing = 2
 Ux.ItemWindowFilterHeight = 24
 Ux.ItemWindowMinWidth = 345 -- Prevents header buttons from overlapping and is lower bound for full columns
 Ux.ItemWindowMinHeight = 310 -- Title bar stats resizing below this content size
+Ux.ItemWindowUpateStep = 0.010 -- After how many seconds does the update function yield?
 
 -- Private methods
 -- ============================================================================
@@ -72,8 +75,6 @@ local function closeButton_LeftPress(self)
 end
 
 local function systemUpdateBegin(self)
-	Command.System.Watchdog.Quiet()
-	
 	-- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	local now = Inspect.Time.Real()
 	if(self.matrix.lastUpdate >= self.lastUpdate) then
@@ -92,6 +93,13 @@ local function systemUpdateBegin(self)
 		self:Update()
 		self.lastUpdate = now
 		log("update", self:GetTitle(), self.lastUpdate)
+	end
+	
+	if(self.updateCoroutine) then
+		local result = coroutine.resume(self.updateCoroutine, self, now)
+		if(coroutine.status(self.updateCoroutine) == "dead") then
+			self.updateCoroutine = nil
+		end
 	end
 end
 
@@ -196,8 +204,7 @@ local function getButton(self, content, index)
 	return self.buttons[index]
 end
 
--- return x, y, sell, slots
-local function renderItems(self, items, left, x, y, width, dx, dy, spacing, content, available, buttons)
+local function renderItems(self, items, left, x, y, width, dx, dy, spacing, content, available, buttons, endTime)
 	local sell = 0
 	local slots = 0
 	local previous = false
@@ -233,8 +240,70 @@ local function renderItems(self, items, left, x, y, width, dx, dy, spacing, cont
 			slots = slots + item.slots
 		end
 		x = x + dx + spacing
+
+		if(Inspect.Time.Real() >= endTime) then
+			log("coroutine.yield", buttons + i)
+			coroutine.yield()
+			endTime = Inspect.Time.Real() + Ux.ItemWindowUpateStep
+		end
+	
 	end
-	return x, y, sell, slots
+	
+	return x, y, sell, slots, endTime
+end
+
+local function update(self)
+	clearGroupLabels(self)
+	
+	local available = isAvailable(self)
+	local content = self.itemsContainer
+	local contentRight = content:GetRight()
+	
+	local left, top, right, bottom = self:getContentPadding()
+	local width = ceil(content:GetWidth() - left - right)
+	
+	local x, y = left, top
+	local dx, dy = self.itemSize, self.itemSize
+	local spacing = Ux.ItemWindowCellSpacing
+	local buttons = 0
+	local endTime = Inspect.Time.Real() + Ux.ItemWindowUpateStep
+
+	local label
+	for group, items in self:iterateGroups() do
+		if(not group) then
+			label:SetWidth(contentRight - label:GetLeft() - right)
+			x = left
+			y = y + dy + 2 * spacing + label:GetHeight()
+		else
+			label, dx, dy = self:getGroupLabel(group)
+			self.groupLabels[#self.groupLabels + 1] = label
+			label:SetPoint("TOPLEFT", content, "TOPLEFT", x, y)
+			
+			local x2, y2, sell, slots
+			x2, y2, sell, slots, endTime = renderItems(self, items, left, x, y + label:GetHeight() + spacing, width, dx, dy, spacing, content, available, buttons, endTime)
+			buttons = buttons + #items
+
+			-- Insert empty gap between adjacent groups
+			local w = max(x2 - x + dx + spacing, ceil(label:GetFullWidth() / (dx + spacing)) * (dx + spacing))
+			label:SetWidth(min(w, width - x))
+			y = y2 - label:GetHeight() - spacing
+			x = x + w
+
+			label:SetInfo(sell, slots)
+		end
+	end
+	if(label) then
+		label:SetWidth(contentRight - label:GetLeft() - right)
+		y = y + label:GetHeight()
+	end
+	for i = buttons + 1, #self.buttons do
+		self.buttons[i].previous = nil
+		self.buttons[i]:Dispose()
+		self.buttons[i] = nil
+	end
+
+	self:setItemsContentHeight(y + dy + bottom)
+	self:applySearchFilter()
 end
 
 local function getContentPadding(self)
@@ -264,55 +333,7 @@ local function ItemWindowBase_SetCharacter(self, character, location)
 end
 
 local function ItemWindowBase_Update(self)
-	clearGroupLabels(self)
-	
-	local available = isAvailable(self)
-	local content = self.itemsContainer
-	local contentRight = content:GetRight()
-	
-	local left, top, right, bottom = self:getContentPadding()
-	local width = ceil(content:GetWidth() - left - right)
-	
-	local x, y = left, top
-	local dx, dy = self.itemSize, self.itemSize
-	local spacing = Ux.ItemWindowCellSpacing
-	local buttons = 0
-
-	local label
-	for group, items in self:iterateGroups() do
-		if(not group) then
-			label:SetWidth(contentRight - label:GetLeft() - right)
-			x = left
-			y = y + dy + 2 * spacing + label:GetHeight()
-		else
-			label, dx, dy = self:getGroupLabel(group)
-			self.groupLabels[#self.groupLabels + 1] = label
-			label:SetPoint("TOPLEFT", content, "TOPLEFT", x, y)
-			
-			local x2, y2, sell, slots = renderItems(self, items, left, x, y + label:GetHeight() + spacing, width, dx, dy, spacing, content, available, buttons)
-			buttons = buttons + #items
-
-			-- Insert empty gap between adjacent groups
-			local w = max(x2 - x + dx + spacing, ceil(label:GetFullWidth() / (dx + spacing)) * (dx + spacing))
-			label:SetWidth(min(w, width - x))
-			y = y2 - label:GetHeight() - spacing
-			x = x + w
-
-			label:SetInfo(sell, slots)
-		end
-	end
-	if(label) then
-		label:SetWidth(contentRight - label:GetLeft() - right)
-		y = y + label:GetHeight()
-	end
-	for i = buttons + 1, #self.buttons do
-		self.buttons[i].previous = nil
-		self.buttons[i]:Dispose()
-		self.buttons[i] = nil
-	end
-
-	self:setItemsContentHeight(y + dy + bottom)
-	self:applySearchFilter()
+	self.updateCoroutine = coroutine.create(self.update)
 end
 
 local function ItemWindowBase_GetNumColumns(self)
@@ -320,8 +341,6 @@ local function ItemWindowBase_GetNumColumns(self)
 end
 
 function Ux.ItemWindowBase.New(title, character, location, itemSize)
-	Command.System.Watchdog.Quiet()
-	
 	local context = UI.CreateContext(Addon.identifier)
 	local self = UI.CreateFrame("RiftWindow", "ImhoBags_ItemWindow_"..location, context)
 
@@ -329,6 +348,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self:SetController("content")
 	self.itemsContainer = self:GetContent()
 	self.itemSize = itemSize
+	self.updateCoroutine = nil
 	
 	-- Close button
 	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
@@ -456,6 +476,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.setCharacter = nil
 	self.getGroupLabel = nil
 	self.iterateGroups = nil -- return group, items. group can be anything
+	self.update = update
 	
 	-- Public methods
 	self.SetCharacter = ItemWindowBase_SetCharacter

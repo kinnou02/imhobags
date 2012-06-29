@@ -190,17 +190,20 @@ local function configChanged(self, name, value)
 	end
 end
 
--- Public methods
+-- Protected methods
 -- ============================================================================
 
-local function ItemWindow_Update(self)
+local function update(self)
 	self.moneyFrame:SetVisible(false)
-	self:base_Update()
+	self:base_update()
 	
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
 	self:SetTitle(format("%s: %s (+%i)", self.character == "player" and PlayerName or self.character, self.title, n))
 end
+
+-- Public methods
+-- ============================================================================
 
 function Ux.ItemWindow.New(title, character, location, itemSize, sorting)
 	local self = Ux.ItemWindowBase.New(title, character, location, itemSize)
@@ -243,8 +246,8 @@ function Ux.ItemWindow.New(title, character, location, itemSize, sorting)
 	
 	self.moneyFrame = Ux.MoneyFrame.New(self)
 	
-	self.base_Update = self.Update
-	self.Update = ItemWindow_Update
+	self.base_update = self.update
+	self.update = update
 	self.base_configChanged = self.configChanged
 	self.configChanged = configChanged
 
