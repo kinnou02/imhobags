@@ -24,6 +24,7 @@ CHANGES:
 FIXES:
 * Some tweaks to update performance. Further improvements are still underway.
 * Many small fixes.
+* Fixed error spam during combat.
 ISSUES:
 * The mail database is cleared everytime the Trion mail window is opened.
 * Item tooltips may show up in the top-left corner of the screen.
