@@ -1,8 +1,15 @@
+0.12beta4
+
+FIXES:
+* Fixed out-of-date LibAsyncTextures library in package
+
+--------------------
+
 0.12beta3
 
 FIXES:
 * Fixed error spam during combat.
-* Fixed various performance warnings
+* Fixed various performance warnings.
 
 --------------------
 
