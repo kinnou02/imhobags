@@ -4,6 +4,7 @@ local Addon, private = ...
 local floor = math.floor
 local max = math.max
 local pairs = pairs
+local pcall = pcall
 local strupper = string.upper
 local tinsert = table.insert
 local unpack = unpack
@@ -11,6 +12,7 @@ local unpack = unpack
 -- Globals
 local Command = Command
 local Inspect = Inspect
+local LibAsyncTextures = LibAsyncTextures
 local UICreateFrame = UI.CreateFrame
 local UIParent = UIParent
 
@@ -30,9 +32,9 @@ slashTooltip:SetVisible(false)
 slashTooltip:SetFontSize(12)
 slashTooltip:SetBackgroundColor(0, 0, 0, 0.75)
 
-local function createHighlightedTexture(parent, path, tooltip)
+local function createHighlightedTexture(parent, path, tooltip, textureCallback)
 	local icon = UICreateFrame("Texture", "", parent)
-	icon:SetTexture("ImhoBags", path)
+	icon:SetTextureAsync("ImhoBags", path, textureCallback)
 	local highlight = UICreateFrame("Texture", "", parent)
 	highlight:SetTexture("ImhoBags", "textures/ItemButton/highlight.png")
 	highlight:SetAllPoints(icon)
@@ -198,7 +200,9 @@ local function createAppearance1Pane(self)
 	
 	local itemButtonSkin_pretty = createHighlightedTexture(backdrop, "textures/ConfigWindow/itemButtonSkin pretty.png", "/imhobags itemButtonSkin pretty")
 	itemButtonSkin_pretty:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-	local itemButtonSkin_simple = createHighlightedTexture(backdrop, "textures/ConfigWindow/itemButtonSkin simple.png", "/imhobags itemButtonSkin simple")
+	local itemButtonSkin_simple = createHighlightedTexture(backdrop, "textures/ConfigWindow/itemButtonSkin simple.png", "/imhobags itemButtonSkin simple", function(frame)
+		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
+	end)
 	itemButtonSkin_simple:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
 	backdrop:SetHeight(itemButtonSkin_simple:GetBottom() - backdrop:GetTop() + contentPadding)
 	
@@ -214,7 +218,6 @@ local function createAppearance1Pane(self)
 		end
 	end , Addon.identifier, "" })
 	
-	backdrop:SetHeight(itemButtonSkin_simple:GetBottom() - backdrop:GetTop() + contentPadding)
 	backdrop:SetVisible(false)
 	return backdrop
 end
@@ -232,7 +235,9 @@ local function createAppearance2Pane(self)
 	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
 	description:SetText(L.Ux.ConfigWindow.showBoundIcon)
 
-	local showBoundIcon = createHighlightedTexture(backdrop, "textures/ConfigWindow/showBoundIcon.png", "/imhobags showBoundIcon yes/no")
+	local showBoundIcon = createHighlightedTexture(backdrop, "textures/ConfigWindow/showBoundIcon.png", "/imhobags showBoundIcon yes/no", function(frame)
+		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
+	end)
 	showBoundIcon:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
 	
 	showBoundIcon:SetChecked(Config.showBoundIcon == true)
@@ -244,7 +249,6 @@ local function createAppearance2Pane(self)
 		end
 	end , Addon.identifier, "" })
 	
-	backdrop:SetHeight(showBoundIcon:GetBottom() - backdrop:GetTop() + contentPadding)
 	backdrop:SetVisible(false)
 	return backdrop
 end
@@ -285,7 +289,9 @@ local function createBehaviorPane(self)
 	showEnemyFaction_y:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
 	local showEnemyFaction_a = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEnemyFaction account.png", "/imhobags showEnemyFaction account")
 	showEnemyFaction_a:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
-	local showEnemyFaction_n = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEnemyFaction " .. PlayerFaction .. ".png", "/imhobags showEnemyFaction no")
+	local showEnemyFaction_n = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEnemyFaction " .. PlayerFaction .. ".png", "/imhobags showEnemyFaction no", function(frame)
+		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
+	end)
 	showEnemyFaction_n:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
 --[[	local text = UICreateFrame("Text", "", showEnemyItems_a)
 	text:SetPoint("TOPCENTER", showEnemyFaction_a, "BOTTOMCENTER", 0, -3)
@@ -309,7 +315,6 @@ local function createBehaviorPane(self)
 		end
 	end , Addon.identifier, "" })
 	
-	backdrop:SetHeight(showEnemyFaction_y:GetBottom() - backdrop:GetTop() + contentPadding)
 	backdrop:SetVisible(false)
 	return backdrop
 end
@@ -346,7 +351,9 @@ local function createExtrasPane(self)
 	description2:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT", 0, enhanceTooltips:GetHeight())
 	description2:SetText(L.Ux.ConfigWindow.showEmptySlots)
 
-	local showEmptySlots = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEmptySlots.png", "/imhobags showEmptySlots yes/no")
+	local showEmptySlots = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEmptySlots.png", "/imhobags showEmptySlots yes/no", function(frame)
+		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
+	end)
 	showEmptySlots:SetPoint("TOPCENTER", description2, "BOTTOMCENTER")
 
 	showEmptySlots:SetChecked(Config.showEmptySlots == true)
@@ -359,7 +366,6 @@ local function createExtrasPane(self)
 	end , Addon.identifier, "" })
 	
 	
-	backdrop:SetHeight(showEmptySlots:GetBottom() - backdrop:GetTop() + contentPadding)
 	backdrop:SetVisible(false)
 	return backdrop
 end
@@ -368,8 +374,6 @@ end
 -- ============================================================================
 
 function Ux.ConfigWindow()
-	Command.System.Watchdog.Quiet()
-	
 	local self = UICreateFrame("RiftWindow", "", Ux.Context)
 	self:SetTitle(L.Ux.ConfigWindow.title)
 	self:SetController("content")
@@ -405,15 +409,17 @@ function Ux.ConfigWindow()
 	self.panes.behavior = createBehaviorPane(self)
 	self.panes.extras = createExtrasPane(self)
 	
-	-- Make all backdrops have the same height
-	local height = 0
-	for k, v in pairs(self.panes) do
-		height = max(v:GetHeight(), height)
-	end
-	for k, v in pairs(self.panes) do
-		v:SetHeight(height)
-	end
-	self:SetHeight(height + contentPadding + 25)
+	-- Make all backdrops have the same height after all textures have loaded
+	LibAsyncTextures.EnqueueCallback(function()
+		local height = 0
+		for k, v in pairs(self.panes) do
+			height = max(v:GetHeight(), height)
+		end
+		for k, v in pairs(self.panes) do
+			v:SetHeight(height)
+		end
+		self:SetHeight(height + contentPadding + 25)
+	end)
 	
 	-- Pane selection buttons
 	self.buttons = { }
