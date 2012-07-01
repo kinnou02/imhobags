@@ -76,6 +76,6 @@ local function guildChanged(units)
 end
 
 unitAvailableEntry = { unitAvailable, Addon.identifier, "Main_unitAvailable" }
-Event.Unit.Available[#Event.Unit.Available + 1] = unitAvailableEntry
+Event.Unit.Availability.Full[#Event.Unit.Availability.Full + 1] = unitAvailableEntry
 
 Event.Unit.Detail.Guild[#Event.Unit.Detail.Guild + 1] = { guildChanged, Addon.identifier, "Main_guildChanged" }
