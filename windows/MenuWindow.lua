@@ -7,6 +7,7 @@ local tinsert = table.insert
 local tremove = table.remove
 
 -- Globals
+local Command = Command
 local Inspect = Inspect
 local UICreateFrame = UI.CreateFrame
 local UIParent = UIParent
@@ -289,6 +290,8 @@ local function MenuWindow_SetVisible(self, visible)
 end
 
 function Ux.MenuWindow()
+	Command.System.Watchdog.Quiet()
+	
 	local self = UICreateFrame("Texture", "Menu Window", Ux.Context)
 	createDialog(self)
 	
