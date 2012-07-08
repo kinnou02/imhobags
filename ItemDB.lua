@@ -2,11 +2,14 @@ local Addon, private = ...
 
 -- Builtins
 local _G = _G
+local assert = assert
+local coroutine = coroutine
 local pairs = pairs
 local print = print
 local setmetatable = setmetatable
 local sort = table.sort
 local strmatch = string.match
+local tremove = table.remove
 local tonumber = tonumber
 local type = type
 
@@ -27,6 +30,8 @@ local enemyFactionGuilds
 
 local lowestCompatibleItemDBMajor = 0
 local lowestCompatibleItemDBMinor = 9
+
+local maxMergeTime = 0.050
 
 setfenv(1, private)
 ItemDB = { }
@@ -186,6 +191,26 @@ local function saveVariables(addonIdentifier)
 	end
 end
 
+local jobs = { }
+local function runJobs()
+	if(#jobs > 0) then
+		local job = jobs[#jobs]
+		if(coroutine.status(job) == "dead") then
+			tremove(jobs, 1)
+		else
+			assert(coroutine.resume(job))
+		end
+	end
+end
+
+local function addJob(f, ...)
+	local job = coroutine.create(f)
+	assert(coroutine.resume(job, ...))
+	if(coroutine.status(job) ~= "dead") then
+		jobs[#jobs + 1] = job
+	end
+end
+
 local function interactionChanged(interaction, state)
 	if(interaction == "mail" and state) then
 		playerItems.mail:Purge(Inspect.Mail.List())
@@ -193,6 +218,7 @@ local function interactionChanged(interaction, state)
 end
 
 local function mergeSlotChanges(slots)
+	local yield = Inspect.Time.Real() + maxMergeTime
 	for slot, item in pairs(slots) do
 		if(item ~= "nil") then
 			local container, bag, index = Utility.Item.Slot.Parse(slot)
@@ -210,6 +236,10 @@ local function mergeSlotChanges(slots)
 					matrix:MergeSlot(slot, item, bag, index)
 				end
 			end
+		end
+		if(Inspect.Time.Real() > yield) then
+			coroutine.yield()
+			yield = Inspect.Time.Real() + maxMergeTime
 		end
 	end
 end
@@ -606,9 +636,10 @@ _G.table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.id
 _G.table.insert(Event.Addon.SavedVariables.Save.Begin, { saveVariables, Addon.identifier, "ItemDB_saveVariables" })
 _G.table.insert(Event.Currency, { currencyChanged, Addon.identifier, "ItemDB_currencyChanged" })
 _G.table.insert(Event.Interaction, { interactionChanged, Addon.identifier, "ItemDB_interactionChanged" })
-_G.table.insert(Event.Item.Slot, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
-_G.table.insert(Event.Item.Update, { mergeSlotChanges, Addon.identifier, "ItemDB_mergeSlotChanges" })
+_G.table.insert(Event.Item.Slot, { function(...) addJob(mergeSlotChanges, ...) end, Addon.identifier, "ItemDB_mergeSlotChanges" })
+_G.table.insert(Event.Item.Update, { function(...) addJob(mergeSlotChanges, ...) end, Addon.identifier, "ItemDB_mergeSlotChanges" })
 _G.table.insert(Event.Mail, { mailsChanged, Addon.identifier, "ItemDB_mailsChanged" })
+_G.table.insert(Event.System.Update.Begin, { runJobs, Addon.identifier, "ItemDB_runJobs" })
 
 _G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "ItemDB_init" })
 _G.table.insert(ImhoEvent.Guild, { guildChanged, Addon.identifier, "ItemDB_guildChanged" })
