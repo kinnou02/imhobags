@@ -1,6 +1,7 @@
 local Addon, private = ...
 
 -- Builtins
+local assert = assert
 local ceil = math.ceil
 local coroutine = coroutine
 local floor = math.floor
@@ -96,9 +97,10 @@ local function systemUpdateBegin(self)
 	end
 	
 	if(self.updateCoroutine) then
-		local result = coroutine.resume(self.updateCoroutine, self, now)
 		if(coroutine.status(self.updateCoroutine) == "dead") then
 			self.updateCoroutine = nil
+		else
+			assert(coroutine.resume(self.updateCoroutine, self, now))
 		end
 	end
 end
