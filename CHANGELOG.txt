@@ -1,3 +1,10 @@
+0.12beta5
+
+FIXES:
+* Fixed performance warnings occurring in ItemDB
+
+--------------------
+
 0.12beta4
 
 FIXES:
