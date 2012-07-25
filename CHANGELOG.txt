@@ -1,3 +1,10 @@
+0.12beta6
+
+FIXES:
+* Fixed errors occurring during Conquests
+
+--------------------
+
 0.12beta5
 
 FIXES:
