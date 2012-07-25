@@ -51,10 +51,16 @@ local unitAvailableEntry
 local function unitAvailable(units)
 	for k, v in pairs(units) do
 		if(v == "player") then
+			local defiants = {
+				eth = true,
+				bahmi = true,
+				kelari = true,
+			}
 			local player = Inspect.Unit.Detail("player")
+			
 			PlayerName = player.name
 			PlayerGuild = player.guild
-			PlayerFaction = player.alliance
+			PlayerFaction = defiants[player.race] and "defiant" or "guardian"
 			EnemyFaction = (PlayerFaction == "defiant" and "guardian") or "defiant"
 			Trigger.Init()
 			
