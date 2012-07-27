@@ -178,6 +178,8 @@ for i = 1, displayItemsCount do
 end
 
 local function updateItemList()
+	Command.System.Watchdog.Quiet()
+	
 	local itemTypes = ItemDB.GetAllItemTypes()
 	items = { }
 	display = { }
