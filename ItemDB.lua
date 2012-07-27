@@ -497,7 +497,7 @@ function ItemDB.CharacterExists(name)
 		return true
 	end
 	if(Config.showEnemyFaction ~= "no") then
-		return (playerFactionCharacters[name] or enemyFactionCharacters) ~= nil
+		return (playerFactionCharacters[name] or enemyFactionCharacters[name]) ~= nil
 	else
 		return playerFactionCharacters[name] ~= nil
 	end
