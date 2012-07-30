@@ -1,3 +1,12 @@
+0.12beta7
+
+FIXES:
+* Fixed GetUnsortedMails error
+* The character@shard syntax for the /imhobags slash command is not
+	supported and in fact never was and gives an error message now.
+
+--------------------
+
 0.12beta6
 
 FIXES:
