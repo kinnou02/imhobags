@@ -320,7 +320,7 @@ function ItemDB.GetItemMatrix(character, location)
 			items, enemy = enemyFactionCharacters[character], true
 		end
 	end
-	return (items and items[location]) or ItemMatrix.New(), enemy
+	return (items and items[location]) or (location == "mail" and MailMatrix.New() or ItemMatrix.New()), enemy
 end
 
 --[[
