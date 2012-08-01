@@ -67,7 +67,7 @@ local function checkForCompatibleItemDB(character, name)
 		return nil
 	end
 	local major, minor = strmatch(character.version or "0.1", "(%d+)%.(%d+)")
-	if(tonumber(major) < lowestCompatibleItemDBMajor or tonumber(minor) < lowestCompatibleItemDBMinor) then
+	if(tonumber(major) < lowestCompatibleItemDBMajor or (tonumber(major) == lowestCompatibleItemDBMajor and tonumber(minor) < lowestCompatibleItemDBMinor)) then
 		print("Deleting incompatible item database for: " .. name, character.version)
 		return nil
 	else
