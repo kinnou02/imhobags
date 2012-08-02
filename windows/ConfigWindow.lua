@@ -347,8 +347,8 @@ local function createExtrasPane(self)
 	-- Empty slot indication
 	local description2 = UICreateFrame("Text", "", backdrop)
 	description2:SetWordwrap(true)
-	description2:SetPoint("TOPLEFT", description, "BOTTOMLEFT", 0, enhanceTooltips:GetHeight())
-	description2:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT", 0, enhanceTooltips:GetHeight())
+	description2:SetPoint("TOPCENTER", enhanceTooltips, "BOTTOMCENTER")
+	description2:SetWidth(description:GetWidth())
 	description2:SetText(L.Ux.ConfigWindow.showEmptySlots)
 
 	local showEmptySlots = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEmptySlots.png", "/imhobags showEmptySlots yes/no", function(frame)
