@@ -1,3 +1,10 @@
+0.12beta8
+
+FIXES:
+* Next attempt at fixing the GetUnsortedMails error
+
+--------------------
+
 0.12beta7
 
 FIXES:
