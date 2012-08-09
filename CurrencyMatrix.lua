@@ -30,7 +30,7 @@ local function extractUnsortedCharacterItems(matrix)
 			-- to ask later.
 			local result, item = pcall(InspectItemDetail, itemType)
 			success = success and result
-			if(result) then
+			if(result and item) then
 				items[#items + 1] = { type = item, slots = 1, stack = amount, }
 				-- Use currency category instead of item
 				item.category = matrix.categories[itemType]

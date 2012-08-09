@@ -44,7 +44,7 @@ local function extractUnsortedCharacterItems(matrix)
 		-- to ask later.
 		local result, detail = pcall(InspectItemDetail, itemType)
 		success = success and result
-		if(result) then
+		if(result and detail) then
 			for mail, count in pairs(slots) do
 				local t = {
 					name = detail.name,
