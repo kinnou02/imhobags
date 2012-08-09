@@ -113,18 +113,18 @@ end
 
 local function prepareTables()
 	-- Ensure our data table exists
-	playerFactionCharacters = _G["ImhoBags_ItemMatrix_" .. PlayerFaction] or { }
-	_G["ImhoBags_ItemMatrix_" .. PlayerFaction] = playerFactionCharacters
-	enemyFactionCharacters = _G["ImhoBags_ItemMatrix_" .. EnemyFaction] or { }
-	_G["ImhoBags_ItemMatrix_" .. EnemyFaction] = enemyFactionCharacters
+	playerFactionCharacters = _G["ImhoBags_ItemMatrix_" .. Player.alliance] or { }
+	_G["ImhoBags_ItemMatrix_" .. Player.alliance] = playerFactionCharacters
+	enemyFactionCharacters = _G["ImhoBags_ItemMatrix_" .. Player.enemyAlliance] or { }
+	_G["ImhoBags_ItemMatrix_" .. Player.enemyAlliance] = enemyFactionCharacters
 	
 	playerFactionCharacters.version = nil -- From older versions
 	enemyFactionCharacters.version = nil
 
-	playerFactionGuilds = _G["ImhoBags_GuildMatrix_" .. PlayerFaction] or { }
-	_G["ImhoBags_GuildMatrix_" .. PlayerFaction] = playerFactionGuilds
-	enemyFactionGuilds = _G["ImhoBags_GuildMatrix_" .. EnemyFaction] or { }
-	_G["ImhoBags_GuildMatrix_" .. EnemyFaction] = enemyFactionGuilds
+	playerFactionGuilds = _G["ImhoBags_GuildMatrix_" .. Player.alliance] or { }
+	_G["ImhoBags_GuildMatrix_" .. Player.alliance] = playerFactionGuilds
+	enemyFactionGuilds = _G["ImhoBags_GuildMatrix_" .. Player.enemyAlliance] or { }
+	_G["ImhoBags_GuildMatrix_" .. Player.enemyAlliance] = enemyFactionGuilds
 	
 	-- Apply the metatable to all item matrices on the current shard
 	for k, v in pairs(playerFactionCharacters) do
@@ -151,12 +151,12 @@ local function prepareTables()
 	end
 
 	-- Delete the player from the shard DB to save space and other computations
-	playerFactionCharacters[PlayerName] = nil
+	playerFactionCharacters[Player.name] = nil
 	-- Find the player's guild
-	if(PlayerGuild) then
-		playerGuildItems = playerFactionGuilds[PlayerGuild] or newGuild()
-		playerGuildItems.name = PlayerGuild
-		playerFactionGuilds[PlayerGuild] = playerGuildItems
+	if(Player.guild) then
+		playerGuildItems = playerFactionGuilds[Player.guild] or newGuild()
+		playerGuildItems.name = Player.guild
+		playerFactionGuilds[Player.guild] = playerGuildItems
 		playerItems.guild = playerGuildItems
 	else
 		playerGuildItems = newGuild()
@@ -179,7 +179,7 @@ local function saveVariables(addonIdentifier)
 	playerItems.inventory.lastUpdate = -1
 	playerItems.mail.lastUpdate = -1
 	playerItems.wardrobe.lastUpdate = -1
-	_G["ImhoBags_ItemMatrix_" .. PlayerFaction][PlayerName] = playerItems
+	_G["ImhoBags_ItemMatrix_" .. Player.alliance][Player.name] = playerItems
 	_G.ImhoBags_PlayerItemMatrix = playerItems
 	
 	if(playerItems.guild) then
@@ -312,7 +312,7 @@ return: matrix, enemy
 ]]
 function ItemDB.GetItemMatrix(character, location)
 	local items, enemy
-	if(character == "player" or PlayerName == character) then
+	if(character == "player" or Player.name == character) then
 		items, enemy = playerItems, false
 	else
 		items, enemy = playerFactionCharacters[character], false
@@ -357,12 +357,12 @@ function ItemDB.GetCharactersCoin()
 		guardian = { },
 		defiant = { }
 	}
-	local tbl = result[PlayerFaction]
-	tbl[PlayerName] = playerItems.currency.items.coin or 0
+	local tbl = result[Player.alliance]
+	tbl[Player.name] = playerItems.currency.items.coin or 0
 	for char, data in pairs(playerFactionCharacters) do
 		tbl[char] = data.currency.items.coin or 0
 	end
-	local tbl = result[EnemyFaction]
+	local tbl = result[Player.enemyAlliance]
 	for char, data in pairs(enemyFactionCharacters) do
 		tbl[char] = data.currency.items.coin or 0
 	end
@@ -380,7 +380,7 @@ function ItemDB.GetAvailableCharacters()
 			result[#result + 1] = char
 		end
 	end
-	result[#result + 1] = PlayerName
+	result[#result + 1] = Player.name
 	sort(result)
 	return result
 end
@@ -447,7 +447,7 @@ function ItemDB.GetItemCounts(itemType)
 		end
 	end
 	result[#result + 1] = {
-		PlayerName,
+		Player.name,
 		playerItems.inventory:GetItemCount(t),
 		playerItems.bank:GetItemCount(t),
 		playerItems.mail:GetItemCount(t),
@@ -493,7 +493,7 @@ function ItemDB.GetGuildItemCounts(itemType)
 end
 
 function ItemDB.CharacterExists(name)
-	if(name == "player" or name == PlayerName) then
+	if(name == "player" or name == Player.name) then
 		return true
 	end
 	if(Config.showEnemyFaction ~= "no") then

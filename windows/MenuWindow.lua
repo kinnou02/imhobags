@@ -114,7 +114,8 @@ local function createCharacterFrame(self, name)
 		Ux.ToggleItemWindow(name, "currency")
 	end
 	
-	frame.guildButton = Ux.IconButton.New(frame, PlayerFaction == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
+	frame.guildButton = Ux.IconButton.New(frame, Player.alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or
+		[[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
 	function frame.guildButton.LeftPress()
 		self:SetVisible(false)
 		frame.guildButton.Event:MouseOut()
@@ -239,7 +240,7 @@ local function updateCharacters(self)
 	end
 	
 	for i = 1, #chars do
-		if(chars[i] == PlayerName) then
+		if(chars[i] == Player.name) then
 			tremove(chars, i)
 			break
 		end
@@ -304,7 +305,7 @@ function Ux.MenuWindow()
 		self:SetVisible(false)
 	end
 	
-	self.player = createCharacterFrame(self, PlayerName)
+	self.player = createCharacterFrame(self, Player.name)
 	
 	self.playerSeparator = UICreateFrame("Texture", "playerSeparator", self)
 	self.playerSeparator:SetTexture("ImhoBags", "textures/hr1.png")

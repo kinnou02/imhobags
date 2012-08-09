@@ -268,7 +268,7 @@ end
 
 local function update(self)
 	self:base_update()
-	self:SetTitle(format("%s: %s", self.character == "player" and PlayerName or self.character, self.title))
+	self:SetTitle(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
 end
 
 -- Public methods

@@ -126,7 +126,7 @@ end
 
 local function GuildWindow_SetCharacter(self, character, location)
 	if(character == "player") then
-		character = PlayerGuild or "<none>"
+		character = Player.guild or "<none>"
 	end
 	if(character ~= self.character or location ~= self.location) then
 		self.vault = 1
@@ -143,7 +143,7 @@ end
 function Ux.GuildWindow.New(title, character, location, itemSize, sorting)
 	local self = Ux.ItemWindow.New(title or "", character, location, itemSize, sorting)
 	
-	self.charSelector:SetIcon(PlayerFaction == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]])
+	self.charSelector:SetIcon(Player.alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]])
 	self.charSelector:SetTooltip(L.Ux.Tooltip.guild)
 	self.guildButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
 	function self.guildButton.LeftPress()

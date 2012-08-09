@@ -199,7 +199,7 @@ local function update(self)
 	
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
-	self:SetTitle(format("%s: %s (+%i)", self.character == "player" and PlayerName or self.character, self.title, n))
+	self:SetTitle(format("%s: %s (+%i)", self.character == "player" and Player.name or self.character, self.title, n))
 end
 
 -- Public methods

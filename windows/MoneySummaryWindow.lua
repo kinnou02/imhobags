@@ -31,8 +31,8 @@ local function sortOutCharacters(chars)
 	local playerTotal = 0
 	local enemyTotal = 0
 	
-	local player = chars[PlayerFaction]
-	local enemy = chars[EnemyFaction]
+	local player = chars[Player.alliance]
+	local enemy = chars[Player.enemyAlliance]
 	
 	for name, coin in pairs(player) do
 		names[#names + 1] = name
@@ -169,8 +169,8 @@ function Ux.MoneySummaryWindow()
 	
 	self.charFrames = { }
 	self.separator1 = createSeparator(self)
-	self.playerTotalFrame = createEntryFrame(self, L.Ux[PlayerFaction])
-	self.enemyTotalFrame = createEntryFrame(self.playerTotalFrame, L.Ux[EnemyFaction])
+	self.playerTotalFrame = createEntryFrame(self, L.Ux[Player.alliance])
+	self.enemyTotalFrame = createEntryFrame(self.playerTotalFrame, L.Ux[Player.enemyAlliance])
 	self.separator2 = createSeparator(self.enemyTotalFrame)
 	self.totalFrame = createEntryFrame(self.separator2, "=")
 	

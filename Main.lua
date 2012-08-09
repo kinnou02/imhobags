@@ -31,11 +31,11 @@ else
 end
 
 -- Always available
-PlayerName = ""
-PlayerGuild = false
-PlayerFaction = ""
-EnemyFaction = ""
-PlayerShard = Inspect.Shard().name
+Player = Inspect.Unit.Detail("player")
+Shard = Inspect.Shard()
+
+dump(Player)
+dump(Shard)
 
 ImhoEvent = { }
 Trigger = { }
@@ -56,12 +56,10 @@ local function unitAvailable(units)
 				bahmi = true,
 				kelari = true,
 			}
-			local player = Inspect.Unit.Detail("player")
+			Player = Inspect.Unit.Detail("player")
 			
-			PlayerName = player.name
-			PlayerGuild = player.guild
-			PlayerFaction = defiants[player.race] and "defiant" or "guardian"
-			EnemyFaction = (PlayerFaction == "defiant" and "guardian") or "defiant"
+			Player.alliance = defiants[Player.race] and "defiant" or "guardian"
+			Player.enemyAlliance = defiants[Player.race] and "guardian" or "defiant"
 			Trigger.Init()
 			
 			unitAvailableEntry[1] = function() end
@@ -73,8 +71,8 @@ end
 local function guildChanged(units)
 	for unit, guild in pairs(units) do
 		if(unit == "player") then
-			local old = PlayerGuild
-			PlayerGuild = guild
+			local old = Player.guild
+			Player.guild = guild
 			Trigger.Guild(old, guild)
 			return
 		end

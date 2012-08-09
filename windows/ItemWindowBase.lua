@@ -177,7 +177,7 @@ local function configChanged(self, name, value)
 	elseif(name == "showEnemyFaction") then
 		if(self.enemy) then
 			if(Config.showEnemyFaction == "no") then
-				self:SetCharacter(PlayerName, self.location)
+				self:SetCharacter(Player.name, self.location)
 			else
 				getItems(self)
 				self:Update()
@@ -395,7 +395,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		Ux.ToggleItemWindow(self.character, "currency")
 	end
 	
-	self.guildButton = Ux.IconButton.New(self, PlayerFaction == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
+	self.guildButton = Ux.IconButton.New(self, Player.alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
 	self.guildButton:SetPoint("TOPLEFT", self.currencyButton, "TOPRIGHT")
 	function self.guildButton.LeftPress()
 		Ux.ToggleGuildWindow(self.character)
