@@ -114,7 +114,7 @@ local function createCharacterFrame(self, name)
 		Ux.ToggleItemWindow(name, "currency")
 	end
 	
-	frame.guildButton = Ux.IconButton.New(frame, Player.alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or
+	frame.guildButton = Ux.IconButton.New(frame, ItemDB.GetCharacterAlliance(name) == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or
 		[[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
 	function frame.guildButton.LeftPress()
 		self:SetVisible(false)
