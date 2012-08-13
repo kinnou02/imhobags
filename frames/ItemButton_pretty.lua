@@ -30,17 +30,14 @@ local rarityTextureMap = {
 -- preload external textures
 for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendant", "uncommon" }) do
 	local tex = UICreateFrame("Texture", "", Ux.Context)
---	tex:SetTexture("ImhoBags", "textures/ItemButton/common.png")
 	tex:SetTexture("Rift", rarityTextureMap[v])
 	tex:SetVisible(false)
---	log(tex:GetWidth(), tex:GetHeight())
 end
 
 -- Public methods
 -- ============================================================================
 
 local function ItemButton_pretty_SetRarity(self, rarity)
---	self.border:SetTextureAsync("ImhoBags", "textures/ItemButton/" .. (rarity or "common") .. ".png")
 	self.border:SetTextureAsync("Rift", rarityTextureMap[rarity or "common"])
 end
 
@@ -61,7 +58,6 @@ function Ux.ItemButton_pretty.New(parent)
 	self.backdrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, -1)
 	
 	self.border = UICreateFrame("Texture", "", self)
---	self.border:SetPoint("CENTER", self, "CENTER")
 	self.border:SetPoint("TOPLEFT", self, -0.14, -0.14)
 	self.border:SetPoint("BOTTOMRIGHT", self, 1.14, 1.14)
 	self.border:SetLayer(4)
