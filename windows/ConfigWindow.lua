@@ -391,10 +391,10 @@ function Ux.ConfigWindow()
 	self.heading:SetFontColor(unpack(headingColor))
 	self.heading:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft + 15, 0)
 	self.underline = UICreateFrame("Texture", "", self)
-	self.underline:SetTexture("ImhoBags", "textures/hr1.png")
-	self.underline:SetWidth(350)
+	self.underline:SetTexture("Rift", "quest_description_short_frame.png.dds")
 	self.underline:SetHeight(self.underline:GetTextureHeight())
-	self.underline:SetPoint("TOPLEFT", self.heading, "BOTTOMLEFT", -30, -3)
+	self.underline:SetPoint("TOPLEFT", self.heading, "BOTTOMLEFT", -15, -20)
+	self.heading:SetLayer(3)
 	self.underline:SetLayer(2)
 	
 	-- Slash tooltip checkbox
