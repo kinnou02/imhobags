@@ -291,7 +291,9 @@ local function MenuWindow_SetVisible(self, visible)
 end
 
 function Ux.MenuWindow()
-	Command.System.Watchdog.Quiet()
+	if(not Inspect.System.Secure()) then
+		Command.System.Watchdog.Quiet()
+	end
 	
 	local self = UICreateFrame("Texture", "Menu Window", Ux.Context)
 	createDialog(self)
