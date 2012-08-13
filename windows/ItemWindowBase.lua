@@ -425,19 +425,25 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.coinFrame.Event.MouseOut = function() Ux.MoneySummaryWindow:SetVisible(false) end
 	
 	-- Search filter and button
-	local searchBtn = UI.CreateFrame("Texture", "", self)
+	local searchBtn = UI.CreateFrame("Frame", "", self)
 	searchBtn:SetPoint("TOPLEFT", self.charSelector, "BOTTOMLEFT", Ux.ItemWindowPadding, 3)
 	searchBtn:SetWidth(Ux.ItemWindowFilterHeight - 1)
 	searchBtn:SetHeight(Ux.ItemWindowFilterHeight - 1)
-	searchBtn:SetTexture("ImhoBags", "textures/search.png")
-	searchBtn.Event.LeftDown = function() Ux.SearchWindow:Toggle() end
-	
-	local searchHighlight = UI.CreateFrame("Texture", "", searchBtn)
-	searchHighlight:SetAllPoints()
-	searchHighlight:SetVisible(false)
-	searchHighlight:SetTexture("ImhoBags", "textures/ItemButton/highlight.png")
-	searchBtn.Event.MouseIn = function() searchHighlight:SetVisible(true) end
-	searchBtn.Event.MouseOut = function() searchHighlight:SetVisible(false) end
+	searchBtn.Event.MouseIn = function(self) self.icon:SetTexture("Rift", "btn_search_(over).png.dds") end
+	searchBtn.Event.MouseOut = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
+	searchBtn.Event.LeftUpoutside = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
+	searchBtn.Event.LeftDown = function(self)
+		self.icon:SetTexture("Rift", "btn_search_(click).png.dds")
+	end
+	searchBtn.Event.LeftUp = function(self)
+		self.icon:SetTexture("Rift", "btn_search_(over).png.dds")
+		Ux.SearchWindow:Toggle()
+	end
+	searchBtn.icon = UI.CreateFrame("Texture", "", self)
+	searchBtn.icon:SetPoint("CENTER", searchBtn, "CENTER")
+	searchBtn.icon:SetTexture("Rift", "btn_search_(normal).png.dds")
+	searchBtn.icon:SetWidth(searchBtn.icon:GetWidth() - 12)
+	searchBtn.icon:SetHeight(searchBtn.icon:GetHeight() - 12)
 	
 	self.filter = Ux.Textfield.New(self, "RIGHT", L.Ux.search)
 	self.filter:SetPoint("TOPLEFT", searchBtn, "TOPRIGHT", 2, 0)
