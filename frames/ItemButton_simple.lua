@@ -26,7 +26,7 @@ Ux.ItemButton_simple = { }
 -- ============================================================================
 
 local highlight = UICreateFrame("Texture", "", Ux.Context)
-highlight:SetTexture("ImhoBags", "textures/ItemButton/highlight.png")
+highlight:SetTexture("Rift", "icon_border_(over)_blue.png.dds")
 highlight:SetVisible(false)
 highlight:SetLayer(3)
 
@@ -46,7 +46,8 @@ local function ItemButton_simple_SetHighlighted(self, highlighted)
 	highlight:SetVisible(highlighted)
 	if(highlighted) then
 		highlight:SetParent(self)
-		highlight:SetAllPoints(self)
+		highlight:SetPoint("TOPLEFT", self, -0.14, -0.14)
+		highlight:SetPoint("BOTTOMRIGHT", self, 1.14, 1.14)
 	end
 end
 
