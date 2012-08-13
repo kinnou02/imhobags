@@ -9,6 +9,8 @@ setfenv(1, private)
 Ux = Ux or { }
 Ux.MoneyFrame = { }
 
+local iconWidth = 18
+
 -- Private methods
 -- ============================================================================
 
@@ -23,13 +25,13 @@ local function setCoin(self, coin)
 	self.gtxt:SetText(tostring(g))
 	self.ptxt:SetText(tostring(p))
 	
-	local width = 16 + 23
+	local width = iconWidth + 23
 	
 	if(coin >= 100) then
-		width = width + 16 + 23
+		width = width + iconWidth + 23
 		self.g:SetVisible(true)
 		if(coin >= 10000) then
-			width = width + 16 + self.ptxt:GetFullWidth()
+			width = width + iconWidth + self.ptxt:GetFullWidth()
 			self.p:SetVisible(true)
 		else
 			self.p:SetVisible(false)
@@ -51,27 +53,24 @@ function Ux.MoneyFrame.New(parent, coin)
 	
 	local s = UICreateFrame("Texture", "", self)
 	s:SetPoint("TOPRIGHT", self, "TOPRIGHT")
-	s:SetWidth(16)
-	s:SetHeight(16)
-	s:SetTexture("ImhoBags", "textures/silver.png")
+	s:SetWidth(iconWidth)
+	s:SetTexture("Rift", "coins_silver.png.dds")
 	local stxt = UICreateFrame("Text", "", s)
 	stxt:SetPoint("RIGHTCENTER", s, "LEFTCENTER")
 	stxt:SetFontSize(13)
 	
 	local g = UICreateFrame("Texture", "", self)
 	g:SetPoint("TOPRIGHT", s, "TOPLEFT", -23, 0)
-	g:SetWidth(16)
-	g:SetHeight(16)
-	g:SetTexture("ImhoBags", "textures/gold.png")
+	g:SetWidth(iconWidth)
+	g:SetTexture("Rift", "coins_gold.png.dds")
 	local gtxt = UICreateFrame("Text", "", g)
 	gtxt:SetPoint("RIGHTCENTER", g, "LEFTCENTER")
 	gtxt:SetFontSize(13)
 	
 	local p = UICreateFrame("Texture", "", self)
 	p:SetPoint("TOPRIGHT", g, "TOPLEFT", -23, 0)
-	p:SetWidth(16)
-	p:SetHeight(16)
-	p:SetTexture("ImhoBags", "textures/platinum.png")
+	p:SetWidth(iconWidth)
+	p:SetTexture("Rift", "coins_platinum.png.dds")
 	local ptxt = UICreateFrame("Text", "", p)
 	ptxt:SetPoint("RIGHTCENTER", p, "LEFTCENTER")
 	ptxt:SetFontSize(13)
