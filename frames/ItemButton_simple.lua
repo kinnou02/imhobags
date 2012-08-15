@@ -26,7 +26,7 @@ Ux.ItemButton_simple = { }
 -- ============================================================================
 
 local highlight = UICreateFrame("Texture", "", Ux.Context)
-highlight:SetTexture("Rift", "icon_border_(over)_blue.png.dds")
+highlight:SetTexture("Rift", "IconSlot_Blue_Blur_Glow.png.dds")
 highlight:SetVisible(false)
 highlight:SetLayer(3)
 
