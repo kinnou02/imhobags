@@ -34,9 +34,6 @@ end
 Player = Inspect.Unit.Detail("player")
 Shard = Inspect.Shard()
 
-dump(Player)
-dump(Shard)
-
 ImhoEvent = { }
 Trigger = { }
 
