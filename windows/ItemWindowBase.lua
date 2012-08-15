@@ -352,6 +352,8 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.itemSize = itemSize
 	self.updateCoroutine = nil
 	
+	local content = self:GetContent()
+	
 	-- Close button
 	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
 	
@@ -362,7 +364,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		function(char)
 			self:SetCharacter(char, self.location)
 		end)
-	self.charSelector:SetPoint("TOPLEFT", self:GetContent(), "TOPLEFT",Ux.ItemWindowPadding, -2)
+	self.charSelector:SetPoint("TOPLEFT", content, "TOPLEFT",Ux.ItemWindowPadding, -2)
 	
 	-- Tool buttons
 	self.bankButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)
@@ -402,7 +404,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	end
 	
 	self.configButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\small_student_experiment.dds]], L.Ux.Tooltip.config)
-	self.configButton:SetPoint("TOPRIGHT", self:GetContent(), "TOPRIGHT", -Ux.ItemWindowPadding, -2)
+	self.configButton:SetPoint("TOPRIGHT", content, "TOPRIGHT", -Ux.ItemWindowPadding, -2)
 	function self.configButton.LeftPress()
 		Ux.ToggleConfigWindow()
 	end
@@ -426,9 +428,9 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	
 	-- Search filter and button
 	local searchBtn = UI.CreateFrame("Frame", "", self)
-	searchBtn:SetPoint("TOPLEFT", self.charSelector, "BOTTOMLEFT", Ux.ItemWindowPadding, 3)
-	searchBtn:SetWidth(Ux.ItemWindowFilterHeight - 1)
-	searchBtn:SetHeight(Ux.ItemWindowFilterHeight - 1)
+	searchBtn:SetPoint("BOTTOMLEFT", content, "TOPLEFT", -4, -6)
+	searchBtn:SetWidth(36)
+	searchBtn:SetHeight(36)
 	searchBtn.Event.MouseIn = function(self) self.icon:SetTexture("Rift", "btn_search_(over).png.dds") end
 	searchBtn.Event.MouseOut = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
 	searchBtn.Event.LeftUpoutside = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
@@ -442,11 +444,10 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	searchBtn.icon = UI.CreateFrame("Texture", "", self)
 	searchBtn.icon:SetPoint("CENTER", searchBtn, "CENTER")
 	searchBtn.icon:SetTexture("Rift", "btn_search_(normal).png.dds")
-	searchBtn.icon:SetWidth(searchBtn.icon:GetWidth() - 12)
-	searchBtn.icon:SetHeight(searchBtn.icon:GetHeight() - 12)
 	
 	self.filter = Ux.Textfield.New(self, "RIGHT", L.Ux.search)
-	self.filter:SetPoint("TOPLEFT", searchBtn, "TOPRIGHT", 2, 0)
+	self.filter:SetPoint("TOPLEFT", self.charSelector, "BOTTOMLEFT", Ux.ItemWindowPadding, 3)
+--	self.filter:SetPoint("TOPLEFT", searchBtn, "TOPRIGHT", 2, 0)
 	self.filter:SetPoint("BOTTOMRIGHT", self.coinFrame, "BOTTOMLEFT", -2, 2)
 	self.filter.text.Event.KeyFocusGain = function() filter_KeyFocusGain(self.filter.text, self) end
 	self.filter.text.Event.KeyFocusLoss = function() filter_KeyFocusLoss(self.filter.text, self) end
@@ -454,7 +455,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.searchString = ""
 
 	-- General initialization
-	local content = self:GetContent()
 	content.window = self
 	content.Event.MouseMove = content_MouseMove
 	content.Event.LeftDown = content_LeftDown
