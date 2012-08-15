@@ -383,7 +383,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		Ux.ToggleItemWindow(self.character, "equipment")
 	end
 
-	self.wardrobeButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\festival_hat_03.dds]], L.Ux.WindowTitle.wardrobe)
+	self.wardrobeButton = Ux.IconButton.New(self, [[wardrobe_none.dds]], L.Ux.WindowTitle.wardrobe)
 	self.wardrobeButton:SetPoint("TOPLEFT", self.equipmentButton, "TOPRIGHT")
 	function self.wardrobeButton.LeftPress()
 		Ux.ToggleItemWindow(self.character, "wardrobe")
