@@ -18,14 +18,14 @@ Ux.ItemButton_pretty = { }
 -- ============================================================================
 
 local rarityTextureMap = {
-	common =		"img://../../art/project/UI/texture/global/icons/icon_border.dds",
-	epic =			"img://../../art/project/UI/texture/global/icons/icon_border_epic.dds",
-	quest =			"img://../../art/project/UI/texture/global/icons/icon_border_quest.dds",
-	rare =			"img://../../art/project/UI/texture/global/icons/icon_border_rare.dds",
-	relic =			"img://../../art/project/UI/texture/global/icons/icon_border_relic.dds",
-	sellable =		"img://../../art/project/UI/texture/global/icons/icon_border_disabled.dds",
-	transcendant =	"img://../../art/project/UI/texture/global/icons/icon_border_relic.dds",
-	uncommon =		"img://../../art/project/UI/texture/global/icons/icon_border_uncommon.dds",
+	common =		"icon_border.dds",
+	epic =			"icon_border_epic.dds",
+	quest =			"icon_border_quest.dds",
+	rare =			"icon_border_rare.dds",
+	relic =			"icon_border_relic.dds",
+	sellable =		"icon_border_disabled.dds",
+	transcendant =	"icon_border_relic.dds",
+	uncommon =		"icon_border_uncommon.dds",
 }
 -- preload external textures
 for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendant", "uncommon" }) do
