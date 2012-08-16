@@ -387,7 +387,7 @@ end
 
 -- Return either "defiant" or "guardian" for the given character (or nil if unknown)
 function ItemDB.GetCharacterAlliance(name)
-	return (name == Player.name or playerFactionCharacters[name]) and Player.alliance or (enemyFactionCharacters[name] and Player.enemyAlliance)
+	return (name == Player.name or name == "player" or playerFactionCharacters[name]) and Player.alliance or (enemyFactionCharacters[name] and Player.enemyAlliance)
 end
 
 -- Return an array of all guilds on the current shard and faction for which item data is available
