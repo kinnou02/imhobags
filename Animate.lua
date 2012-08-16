@@ -60,6 +60,7 @@ local function insert(from, to, duration, interpolant, callback, finisher, i)
 		pendingInserts[i] = v
 	else
 		running[i] = v
+	end
 	return i
 end
 
