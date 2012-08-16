@@ -342,45 +342,23 @@ local function createSearchFilter(self)
 	hitArea:SetAllPoints(frame)
 	hitArea:SetMouseMasking("limited")
 	
-	frame.start = nil
-	frame.duration = nil
-	frame.from = nil
-	frame.to = nil
-	
-	local function animate()
-		if(frame.start) then
-			local x = Inspect.Time.Frame() - frame.start
-			if(x >= frame.duration) then
-				mask:SetWidth(frame.to)
-				frame.start = nil
-			else
-				x = x / frame.duration
-				x = 3 * x * x - 2 * x * x * x
-				mask:SetWidth(frame.from + x * (frame.to - frame.from))
-			end
-		end
+	frame.animation = 0
+	local function tick(width)
+		mask:SetWidth(width)
 	end
 	local function fadeIn()
-		if(not frame.start) then
-			frame.start = Inspect.Time.Frame()
-			frame.duration = 0.3
-			frame.from = mask:GetWidth()
-			frame.to = frame:GetWidth()
+		if(not Animate.running(frame.animation)) then
+			frame.animation = Animate.easeInOut(mask:GetWidth(), frame:GetWidth(), 0.3, tick, function() frame.animation = 0 end)
 		end
 	end
 	local function fadeOut()
-		if(not frame.start and not input:GetKeyFocus()) then
-			frame.start = Inspect.Time.Frame()
-			frame.duration = 0.3
-			frame.from = mask:GetWidth()
-			frame.to = 0
+		if(not Animate.running(frame.animation) and not input:GetKeyFocus()) then
+			frame.animation = Animate.easeInOut(mask:GetWidth(), 0, 0.3, tick, function() frame.animation = 0 end)
 		end
 	end
 	
 	hitArea.Event.MouseIn = fadeIn
 	hitArea.Event.MouseOut = fadeOut
-	
-	Event.System.Update.Begin[#Event.System.Update.Begin + 1] = { animate, Addon.identifier, "" }
 	
 	input.Event.KeyFocusGain = function() fadeIn() end
 	input.Event.KeyFocusLoss = function() fadeOut() filter_KeyFocusLoss(input, self) end
