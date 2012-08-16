@@ -33,6 +33,7 @@ RunOnStartup = {
 	"Config.lua",
 	"Utils.lua",
 	
+	"Animate.lua",
 	"Group.Default.lua",
 	"ItemDB.lua",
 	"CurrencyMatrix.lua",
