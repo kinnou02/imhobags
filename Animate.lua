@@ -11,6 +11,8 @@ local InspectTimeFrame = Inspect.Time.Frame
 local animations = { }
 local running = { }
 local dummy = function() end
+local updating = false
+local pendingInserts = { }
 
 setfenv(1, private)
 Animate = { }
@@ -27,6 +29,8 @@ local function easeInOut(t)
 end
 
 EventSystemUpdateBegin[#EventSystemUpdateBegin + 1] = { function()
+	updating = true
+	
 	local now = InspectTimeFrame()
 	for k, v in pairs(running) do
 		local dt = now - v[4]
@@ -39,13 +43,23 @@ EventSystemUpdateBegin[#EventSystemUpdateBegin + 1] = { function()
 			v[6](v[1] + t * (v[2] - v[1])) -- callback(from + t * (to - from))
 		end
 	end
+	
+	updating = false
+	for k, v in pairs(pendingInserts) do
+		running[k] = v
+		pendingInserts[k] = nil
+	end
 end, Addon.identifier, "animation runner" }
 
 local function insert(from, to, duration, interpolant, callback, finisher, i)
 	if(not i) then
 		i = #running + 1
 	end
-	running[i] = { from, to, duration, InspectTimeFrame(), interpolant, callback or dummy, finisher or dummy }
+	local v = { from, to, duration, InspectTimeFrame(), interpolant, callback or dummy, finisher or dummy }
+	if(updating) then
+		pendingInserts[i] = v
+	else
+		running[i] = v
 	return i
 end
 
