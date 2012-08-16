@@ -32,8 +32,8 @@ EventSystemUpdateBegin[#EventSystemUpdateBegin + 1] = { function()
 		local dt = now - v[4]
 		if(dt >= v[3]) then -- now - start >= duration
 			v[6](v[2])	-- callback(to)
+			running[k] = nil -- Remove before calling finisher so it can restart the animation
 			v[7]()		-- finisher()
-			running[k] = nil
 		else
 			local t = v[5](dt / v[3]) -- t = interpolant((now - start) / duration)
 			v[6](v[1] + t * (v[2] - v[1])) -- callback(from + t * (to - from))
