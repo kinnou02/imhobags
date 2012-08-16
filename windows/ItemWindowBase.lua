@@ -70,7 +70,7 @@ end
 local function closeButton_LeftPress(self)
 	local window = self:GetParent()
 	window:SetVisible(false)
-	window.filter.text:SetKeyFocus(false)
+	window.filter.input:SetKeyFocus(false)
 	window:onClose()
 	log("TODO", "close the native frame(s)")
 end
@@ -144,16 +144,10 @@ local function interactionChanged(self, interaction, state)
 	end
 end
 
-local function filter_KeyFocusGain(self, window)
-	if(self:GetText() == L.Ux.search) then
-		self:SetText("")
-	end
-end
-
 local function filter_KeyFocusLoss(self, window)
-	if(self:GetText() == "") then
-		self:SetText(L.Ux.search)
-	end
+	self:SetText("")
+	window.searchString = ""
+	window:applySearchFilter()
 end
 
 local function filter_TextfieldChange(self, window)
@@ -286,7 +280,7 @@ local function update(self)
 			buttons = buttons + #items
 
 			-- Insert empty gap between adjacent groups
-			local w = max(x2 - x + dx + spacing, ceil(label:GetFullWidth() / (dx + spacing)) * (dx + spacing))
+			local w = max(x2 - x + dx + spacing, ceil(label:GetWidth() / (dx + spacing)) * (dx + spacing))
 			label:SetWidth(min(w, width - x))
 			y = y2 - label:GetHeight() - spacing
 			x = x + w
@@ -320,6 +314,83 @@ local function setItemsContentHeight(self, height)
 	self:SetHeight(max(Ux.ItemWindowMinHeight, height))
 end
 
+local function createSearchFilter(self)
+	local frame = UI.CreateFrame("Frame", "", self)
+	frame:SetHeight(20)
+	frame:SetWidth(100)
+	
+	local mask = UI.CreateFrame("Mask", "", frame)
+	mask:SetPoint("TOPLEFT", frame, "TOPLEFT")
+	mask:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT")
+	mask:SetWidth(0)
+	
+	local background = UI.CreateFrame("Texture", "", mask)
+	background:SetTexture("Rift", "window_field.png.dds")
+	background:SetAllPoints(frame)
+
+	local icon = UI.CreateFrame("Texture", "", background)
+	icon:SetTexture("Rift", "Crafting_I6C.dds")
+	icon:SetPoint("LEFTCENTER", mask, "LEFTCENTER", 2, 0)
+	
+	local input = UI.CreateFrame("RiftTextfield", "", background)
+	input:SetPoint("LEFTCENTER", icon, "RIGHTCENTER", 0, 1)
+	input:SetPoint("RIGHTCENTER", mask, "RIGHTCENTER", 0, 1)
+	input:SetText("")
+
+	local hitArea = UI.CreateFrame("Frame", "", frame)
+	hitArea:SetLayer(10)
+	hitArea:SetAllPoints(frame)
+	hitArea:SetMouseMasking("limited")
+	
+	frame.start = nil
+	frame.duration = nil
+	frame.from = nil
+	frame.to = nil
+	
+	local function animate()
+		if(frame.start) then
+			local x = Inspect.Time.Frame() - frame.start
+			if(x >= frame.duration) then
+				mask:SetWidth(frame.to)
+				frame.start = nil
+			else
+				x = x / frame.duration
+				x = 3 * x * x - 2 * x * x * x
+				mask:SetWidth(frame.from + x * (frame.to - frame.from))
+			end
+		end
+	end
+	local function fadeIn()
+		if(not frame.start) then
+			frame.start = Inspect.Time.Frame()
+			frame.duration = 0.3
+			frame.from = mask:GetWidth()
+			frame.to = frame:GetWidth()
+		end
+	end
+	local function fadeOut()
+		if(not frame.start and not input:GetKeyFocus()) then
+			frame.start = Inspect.Time.Frame()
+			frame.duration = 0.3
+			frame.from = mask:GetWidth()
+			frame.to = 0
+		end
+	end
+	
+	hitArea.Event.MouseIn = fadeIn
+	hitArea.Event.MouseOut = fadeOut
+	
+	Event.System.Update.Begin[#Event.System.Update.Begin + 1] = { animate, Addon.identifier, "" }
+	
+	input.Event.KeyFocusGain = function() fadeIn() end
+	input.Event.KeyFocusLoss = function() fadeOut() filter_KeyFocusLoss(input, self) end
+	input.Event.TextfieldChange = function() filter_TextfieldChange(input, self) end
+
+	frame.input = input
+	frame.mask = mask
+	return frame
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -345,6 +416,7 @@ end
 function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	local context = UI.CreateContext(Addon.identifier)
 	local self = UI.CreateFrame("RiftWindow", "ImhoBags_ItemWindow_"..location, context)
+	self:SetTitle("")
 
 	self.title = title
 	self:SetController("content")
@@ -422,11 +494,12 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	
 	-- Money indicator
 	self.coinFrame = Ux.MoneyFrame.New(self)
-	self.coinFrame:SetPoint("BOTTOMRIGHT", self.configButton, "BOTTOMRIGHT", 0, Ux.ItemWindowFilterHeight)
+	self.coinFrame:SetPoint("TOPRIGHT", self:GetBorder(), "TOPRIGHT", -80, 22)
+	self.coinFrame:SetFontColor(0, 0, 0)
 	self.coinFrame.Event.MouseIn = function() Ux.MoneySummaryWindow:ShowAtCursor() end
 	self.coinFrame.Event.MouseOut = function() Ux.MoneySummaryWindow:SetVisible(false) end
 	
-	-- Search filter and button
+	-- Search button
 	local searchBtn = UI.CreateFrame("Frame", "", self)
 	searchBtn:SetPoint("BOTTOMLEFT", content, "TOPLEFT", -4, -6)
 	searchBtn:SetWidth(36)
@@ -445,15 +518,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	searchBtn.icon:SetPoint("CENTER", searchBtn, "CENTER")
 	searchBtn.icon:SetTexture("Rift", "btn_search_(normal).png.dds")
 	
-	self.filter = Ux.Textfield.New(self, "RIGHT", L.Ux.search)
-	self.filter:SetPoint("TOPLEFT", self.charSelector, "BOTTOMLEFT", Ux.ItemWindowPadding, 3)
---	self.filter:SetPoint("TOPLEFT", searchBtn, "TOPRIGHT", 2, 0)
-	self.filter:SetPoint("BOTTOMRIGHT", self.coinFrame, "BOTTOMLEFT", -2, 2)
-	self.filter.text.Event.KeyFocusGain = function() filter_KeyFocusGain(self.filter.text, self) end
-	self.filter.text.Event.KeyFocusLoss = function() filter_KeyFocusLoss(self.filter.text, self) end
-	self.filter.text.Event.TextfieldChange = function() filter_TextfieldChange(self.filter.text, self) end
-	self.searchString = ""
-
 	-- General initialization
 	content.window = self
 	content.Event.MouseMove = content_MouseMove
@@ -469,7 +533,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.buttons = { }
 	self.groupLabels = { }
 
-	self.contentOffset = self.charSelector:GetHeight() + self.filter:GetHeight() + Ux.ItemWindowPadding
+	self.contentOffset = self.charSelector:GetHeight() + Ux.ItemWindowPadding
 	
 	-- Protected (+abstract) methods
 	self.isAvailable = isAvailable
@@ -503,5 +567,24 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		self.interaction = true
 	end
 
+	-- Search filter
+	self.filter = createSearchFilter(self)
+	self.filter:SetPoint("LEFTCENTER", searchBtn, "RIGHTCENTER", 32, -4)
+	self.searchString = ""
+	
+	-- Title text
+	self.titleFrame = UI.CreateFrame("Text", "", self)
+	self.titleFrame:SetFontColor(0, 0, 0)
+	self.titleFrame:SetFontSize(18)
+	self.titleFrame:SetText("")
+	self.titleFrame:SetPoint("LEFTCENTER", self.filter.mask, "RIGHTCENTER", 5, 0)
+	self.titleFrame:SetPoint("RIGHT", self.coinFrame, "LEFT")
+
+--[[
+	local tex = UI.CreateFrame("Texture", "", self)
+	tex:SetTexture("Rift", "UISource_I18C.dds")
+	tex:SetPoint("TOPLEFT", content, "TOPLEFT", 60, -35)
+	tex:SetPoint("TOPRIGHT", content, "TOPRIGHT", -70, -35)
+]]
 	return self
 end

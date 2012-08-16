@@ -55,7 +55,7 @@ end
 
 local function update(self)
 	self:item_update()
-	self:SetTitle(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
+	self.titleFrame:SetText(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
 end
 
 -- Public methods

@@ -267,8 +267,8 @@ end
 -- ============================================================================
 
 local function update(self)
+	self.titleFrame:SetText(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
 	self:base_update()
-	self:SetTitle(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
 end
 
 -- Public methods
@@ -277,7 +277,6 @@ end
 function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	-- Sort mail by name
 	local self = Ux.ItemWindowBase.New(title, character, location, itemSize, "name")
-	self:SetTitle(self.title)
 	
 	self.mailButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
 	self.mailButton:SetTooltip(L.Ux.WindowTitle.inventory)
@@ -290,7 +289,6 @@ function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	
 	-- Hide money frame
 	self.coinFrame:SetVisible(false)
-	self.filter:SetPoint("BOTTOMRIGHT", self.coinFrame, "BOTTOMRIGHT", 0, 2)
 
 	-- Create side window with mail body text
 	self.bodyFrame = UICreateFrame("Mask", "", self)
@@ -328,7 +326,7 @@ function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	
 	-- Scrollbar
 	self.scrollbar = UICreateFrame("RiftScrollbar", "", self)
-	self.scrollbar:SetPoint("TOPRIGHT", self.filter, "BOTTOMRIGHT", -Ux.ItemWindowPadding, Ux.ItemWindowPadding)
+	self.scrollbar:SetPoint("TOPRIGHT", self:GetContent(), "TOPRIGHT", -Ux.ItemWindowPadding, self.contentOffset)
 	self.scrollbar:SetPoint("BOTTOMRIGHT", self:GetContent(), "BOTTOMRIGHT", -Ux.ItemWindowPadding, 0)
 	self.scrollbar.Event.ScrollbarChange = scrollBarChanged
 	self.scrollbar:SetLayer(10)
