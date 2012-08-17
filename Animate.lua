@@ -90,7 +90,7 @@ function Animate.start(i, from, to, duration)
 end
 
 function Animate.stop(i)
-	running[i] = nil
+	running[i or 0] = nil
 end
 
 function Animate.running(i)
