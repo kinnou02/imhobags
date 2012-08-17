@@ -44,6 +44,7 @@ local function createItem(self, i)
 	
 	local text = UICreateFrame("Text", "", item)
 	text:SetPoint("CENTER", item, "CENTER")
+	text:SetFontColor(245 / 255, 240 / 255, 198 / 255)
 
 	local clickable = UICreateFrame("Frame", "", text)
 	clickable:SetPoint("CENTER", text, "CENTER")
@@ -77,24 +78,25 @@ local function showForChars(self, chars)
 	for i = #chars + 1, #self.items do
 		self.items[i]:SetVisible(false)
 	end
+	
+	self.itemsHeight = itemSpacing / 2 + (#self.chars - 1) * (itemHeight + itemSpacing)
+	local left, top, right, bottom = self.mask:GetBounds()
+	self.visibleHeight = bottom - top - (itemHeight + itemSpacing)
 end
 
 local function makeScrollable(self, hotArea)
 	function hotArea.Event.MouseMove()
-		local itemsHeight = itemSpacing / 2 + (#self.chars - 1) * (itemHeight + itemSpacing)
-		local left, top, right, bottom = self.mask:GetBounds()
-		local visibleHeight = bottom - top - (itemHeight + itemSpacing)
-		
-		if(itemsHeight > visibleHeight) then
+		if(self.itemsHeight > self.visibleHeight) then
+			local top, bottom = self.mask:GetTop(), self.mask:GetBottom()
 			top = top + (itemHeight + itemSpacing) / 2
 			bottom = bottom - (itemHeight + itemSpacing) / 2
 			local mouse = InspectMouse()
 			
 			mouse.y = max(top, mouse.y)
 			mouse.y = min(bottom, mouse.y)
-			mouse.y = (mouse.y - top) / visibleHeight
+			mouse.y = (mouse.y - top) / self.visibleHeight
 			
-			self.scrolling:SetPoint("TOPCENTER", self.mask, "TOPCENTER", 0, floor(mouse.y * (visibleHeight - itemsHeight)))
+			self.scrolling:SetPoint("TOPCENTER", self.mask, "TOPCENTER", 0, floor(mouse.y * (self.visibleHeight - self.itemsHeight)))
 		end
 	end
 end
