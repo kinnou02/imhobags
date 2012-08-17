@@ -35,6 +35,26 @@ local contentPaddingBottom = 9
 -- Private methods
 -- ============================================================================
 
+local function fadeIn(self)
+	local function tick(width) self:SetHeight(width) end
+	
+	self:SetVisible(true)
+	Animate.stop(self.animation)
+	self.animation = Animate.easeInOut(self:GetHeight(), backgroundHeight + backgroundOffset, 0.3, tick, function()
+		self.animation = 0
+	end)
+end
+
+local function fadeOut(self)
+	local function tick(width) self:SetHeight(width) end
+	
+	Animate.stop(self.animation)
+	self.animation = Animate.easeInOut(self:GetHeight(), 0, 0.3, tick, function()
+		self.animation = 0
+		self:SetVisible(false)
+	end)
+end
+
 local function createItem(self, i)
 	local item = UICreateFrame("Texture", "", self.scrolling)
 	item:SetTexture("Rift", "dropdown_bar_(normal).png.dds")
@@ -52,7 +72,7 @@ local function createItem(self, i)
 	clickable:SetHeight(itemClickableHeight)
 
 	function clickable.Event.LeftUp()
-		self:SetVisible(false)
+		fadeOut(self)
 		self.callback(text:GetText())
 	end
 
@@ -61,7 +81,7 @@ local function createItem(self, i)
 end
 
 local function showForChars(self, chars)
-	self:SetVisible(true)
+	fadeIn(self)
 
 	sort(chars)
 	self.chars = chars
@@ -105,12 +125,12 @@ end
 -- ============================================================================
 
 local function new(_, parent, titleBar)
-	local self = UICreateFrame("Frame", "", Ux.TooltipContext)
+	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetWidth(backgroundWidth)
-	self:SetHeight(backgroundHeight + backgroundOffset)
+	self:SetHeight(0)
 	
 	local background = UICreateFrame("Texture", "", self)
-	background:SetPoint("TOPCENTER", self, "TOPCENTER", 0, backgroundOffset)
+	background:SetPoint("BOTTOMCENTER", self, "BOTTOMCENTER")
 	background:SetTexture("Rift", "dropdown_list.png.dds")
 	
 	self.mask = UICreateFrame("Mask", "", background)
@@ -134,11 +154,11 @@ local function new(_, parent, titleBar)
 			if(not titleBar:IsMouseHot()) then
 				titleBar:FadeOut()
 			end
-			self:SetVisible(false)
+			fadeOut(self)
 		end
 	else
 		function hotArea.Event.MouseOut()
-			self:SetVisible(false)
+			fadeOut(self)
 		end
 	end
 	
@@ -147,6 +167,8 @@ local function new(_, parent, titleBar)
 	end
 	
 	self.ShowForChars = showForChars
+	self.FadeIn = fadeIn
+	self.FadeOut = fadeOut
 	return self
 end
 

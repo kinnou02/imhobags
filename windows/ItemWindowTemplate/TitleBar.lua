@@ -53,6 +53,9 @@ local function createFadeAnimation(self)
 				hotArea.animation = 0
 				self.hidden:SetVisible(false)
 			end)
+			for frame in pairs(hotArea.extern) do
+				frame:FadeOut()
+			end
 		end
 	end
 	local function isMouseHot(self)
@@ -139,7 +142,7 @@ local function createPlayerDropdown(self)
 	self:HotArea(self.charSelector, true)
 	
 	function self:ShowCharSelector(chars) self.charSelector:ShowForChars(chars) end
-	function self:HideCharSelector() self.charSelector:SetVisible(false) end
+	function self:HideCharSelector() self.charSelector:FadeOut() end
 	function self:SetCharSelectionCallback(callback) self.charSelector:SetCallback(callback) end
 end
 
@@ -160,7 +163,7 @@ local function createButtons(self)
 	player:SetWidth(20)
 	player.Event.LeftUp = function()
 		if(self.charSelector:GetVisible()) then
-			self.charSelector:SetVisible(false)
+			self.charSelector:FadeOut()
 		else
 			self.playerButtonCallback()
 		end
