@@ -402,18 +402,9 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	-- Close button
 	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
 	
-	-- Char selector
-	self.charSelector = Ux.OptionSelector.New(self, [[Data/\UI\ability_icons\combat_survival.dds]],
-		L.Ux.Tooltip.character,
-		ItemDB.GetAvailableCharacters,
-		function(char)
-			self:SetCharacter(char, self.location)
-		end)
-	self.charSelector:SetPoint("TOPLEFT", content, "TOPLEFT",Ux.ItemWindowPadding, -2)
-	
 	-- Tool buttons
 	self.bankButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)
-	self.bankButton:SetPoint("TOPLEFT", self.charSelector, "TOPRIGHT", 2 * Ux.ItemWindowPadding, 0)
+	self.bankButton:SetPoint("TOPLEFT", content, "TOPLEFT",Ux.ItemWindowPadding, -2)
 	function self.bankButton.LeftPress()
 		Ux.ToggleItemWindow(self.character, "bank")
 	end
@@ -448,12 +439,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		Ux.ToggleGuildWindow(self.character)
 	end
 	
-	self.configButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\small_student_experiment.dds]], L.Ux.Tooltip.config)
-	self.configButton:SetPoint("TOPRIGHT", content, "TOPRIGHT", -Ux.ItemWindowPadding, -2)
-	function self.configButton.LeftPress()
-		Ux.ToggleConfigWindow()
-	end
-	
 	self.sizeButton = Ux.OptionSelector.New(self, [[Data/\UI\ability_icons\warden-healing_flood_a.dds]],
 		L.Ux.Tooltip.size,
 		{ "30", "40", "50", "60" },
@@ -462,7 +447,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 			self.sizeButton:SetStack(self.itemSize)
 			self:Update()
 		end)
-	self.sizeButton:SetPoint("TOPRIGHT", self.configButton, "TOPLEFT", -Ux.ItemWindowPadding, 0)
+	self.sizeButton:SetPoint("TOPRIGHT", content, "TOPRIGHT", -Ux.ItemWindowPadding, -2)
 	self.sizeButton:SetStack(itemSize)
 	
 	-- Money indicator
@@ -473,23 +458,25 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.coinFrame.Event.MouseOut = function() Ux.MoneySummaryWindow:SetVisible(false) end
 	
 	-- Search button
-	local searchBtn = UI.CreateFrame("Frame", "", self)
-	searchBtn:SetPoint("BOTTOMLEFT", content, "TOPLEFT", -4, -6)
-	searchBtn:SetWidth(36)
-	searchBtn:SetHeight(36)
-	searchBtn.Event.MouseIn = function(self) self.icon:SetTexture("Rift", "btn_search_(over).png.dds") end
-	searchBtn.Event.MouseOut = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
-	searchBtn.Event.LeftUpoutside = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
-	searchBtn.Event.LeftDown = function(self)
-		self.icon:SetTexture("Rift", "btn_search_(click).png.dds")
+	local helpBtn = UI.CreateFrame("Frame", "", self)
+	helpBtn:SetPoint("BOTTOMLEFT", content, "TOPLEFT", -4, -6)
+	helpBtn:SetWidth(36)
+	helpBtn:SetHeight(36)
+	helpBtn.Event.MouseIn = function(self) self.icon:SetTexture("Rift", "AATree_I3A.dds") end
+	helpBtn.Event.MouseOut = function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end
+	helpBtn.Event.LeftUpoutside = function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end
+	helpBtn.Event.LeftDown = function(self)
+		self.icon:SetTexture("Rift", "AATree_I3F.dds")
 	end
-	searchBtn.Event.LeftUp = function(self)
-		self.icon:SetTexture("Rift", "btn_search_(over).png.dds")
-		Ux.SearchWindow:Toggle()
+	helpBtn.Event.LeftUp = function(self)
+		self.icon:SetTexture("Rift", "AATree_I3A.dds")
+		Ux.ToggleConfigWindow()
 	end
-	searchBtn.icon = UI.CreateFrame("Texture", "", self)
-	searchBtn.icon:SetPoint("CENTER", searchBtn, "CENTER")
-	searchBtn.icon:SetTexture("Rift", "btn_search_(normal).png.dds")
+	helpBtn.icon = UI.CreateFrame("Texture", "", self)
+	helpBtn.icon:SetPoint("CENTER", helpBtn, "CENTER")
+	helpBtn.icon:SetWidth(38)
+	helpBtn.icon:SetHeight(38)
+	helpBtn.icon:SetTexture("Rift", "AATree_I38.dds")
 	
 	-- General initialization
 	content.window = self
@@ -506,7 +493,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.buttons = { }
 	self.groupLabels = { }
 
-	self.contentOffset = self.charSelector:GetHeight() + Ux.ItemWindowPadding
+	self.contentOffset = self.bankButton:GetHeight() + Ux.ItemWindowPadding
 	
 	-- Protected (+abstract) methods
 	self.isAvailable = isAvailable
@@ -541,10 +528,13 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	end
 
 	-- Title bar
-	self.titleBar = Ux.TitleBar(self)
+	self.titleBar = Ux.ItemWindowTemplate.TitleBar(self)
 	self.titleBar:ClearPoint("RIGHT")
 	self.titleBar:SetPoint("RIGHT", self.coinFrame, "LEFT")
 	self.titleBar:SetFilterCallback(function(...) filter_TextfieldChange(self, ...) end)
+	self.titleBar:SetPlayerButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
+	self.titleBar:SetCharSelectionCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)
+
 
 	return self
 end

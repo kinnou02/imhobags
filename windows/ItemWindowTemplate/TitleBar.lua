@@ -11,7 +11,8 @@ local UICreateFrame = UI.CreateFrame
 -- Locals
 local metatable = { }
 
-private.Ux.TitleBar = setmetatable({ }, metatable)
+private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
+private.Ux.ItemWindowTemplate.TitleBar = setmetatable({ }, metatable)
 
 setfenv(1, private)
 
@@ -54,16 +55,9 @@ local function createFadeAnimation(self)
 			end)
 		end
 	end
-	
-	hotArea.Event.MouseIn = fadeIn
-	hotArea.Event.MouseOut = fadeOut
-	
-	self.Freeze = freeze
-	self.FadeIn = fadeIn
-	self.FadeOut = fadeOut
-	self.FadeOutIfOutside = function(self)
+	local function isMouseHot(self)
 		local function test(f, x, y)
-			left, top, right, bottom = f:GetBounds()
+			local left, top, right, bottom = f:GetBounds()
 			return not f:GetVisible() or x < left or x > right or y < top or y > bottom
 		end
 		local mouse = InspectMouse()
@@ -71,10 +65,22 @@ local function createFadeAnimation(self)
 		for k, v in pairs(hotArea.extern) do
 			outside = outside and test(k, mouse.x, mouse.y)
 		end
-		if(outside) then
+		return not outside
+	end
+	local function fadeOutIfOutside(self)
+		if(not isMouseHot(self)) then
 			fadeOut()
 		end
 	end
+	
+	hotArea.Event.MouseIn = fadeIn
+	hotArea.Event.MouseOut = fadeOutIfOutside
+	
+	self.Freeze = freeze
+	self.FadeIn = fadeIn
+	self.FadeOut = fadeOut
+	self.FadeOutIfOutside = fadeOutIfOutside
+	self.IsMouseHot = isMouseHot
 end
 
 local function createAllianceLogo(self)
@@ -123,9 +129,18 @@ local function createMainLabel(self)
 	self.mainLabel:SetText("")
 	self.mainLabel:SetPoint("LEFTCENTER", self.emptySlotsBackground, "RIGHTCENTER")
 	
-	function self:SetMainLabel(text)
-		self.mainLabel:SetText(text)
-	end
+	function self:SetMainLabel(text) self.mainLabel:SetText(text) end
+end
+
+local function createPlayerDropdown(self)
+	self.charSelector = Ux.ItemWindowTemplate.CharSelector(self, self)
+	self.charSelector:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 5, 0)
+	self.charSelector:SetVisible(false)
+	self:HotArea(self.charSelector, true)
+	
+	function self:ShowCharSelector(chars) self.charSelector:ShowForChars(chars) end
+	function self:HideCharSelector() self.charSelector:SetVisible(false) end
+	function self:SetCharSelectionCallback(callback) self.charSelector:SetCallback(callback) end
 end
 
 local function createButtons(self)
@@ -143,19 +158,34 @@ local function createButtons(self)
 	player:SetPoint("LEFTCENTER", background, "LEFTCENTER", 3, -1)
 	player:SetHeight(20)
 	player:SetWidth(20)
-	
-	local guild = UICreateFrame("Texture", "", background)
-	guild:SetTexture("Rift", "icon_menu_guild.png.dds")
-	guild:SetPoint("LEFTCENTER", player, "RIGHTCENTER")
-	guild:SetHeight(24)
-	guild:SetWidth(24)
+	player.Event.LeftUp = function()
+		if(self.charSelector:GetVisible()) then
+			self.charSelector:SetVisible(false)
+		else
+			self.playerButtonCallback()
+		end
+	end
+	createPlayerDropdown(self)
 	
 	local search = UICreateFrame("Texture", "", background)
 	search:SetTexture("Rift", "icon_menu_LFP.png.dds")
-	search:SetPoint("LEFTCENTER", guild, "RIGHTCENTER")
+	search:SetPoint("LEFTCENTER", player, "RIGHTCENTER")
 	search:SetHeight(24)
 	search:SetWidth(24)
 	search.Event.LeftUp = function() Ux.SearchWindow:Toggle() end
+	
+	function self:SetPlayerButtonCallback(callback) self.playerButtonCallback = callback end
+	function self:SetPlayerButtonSkin(skin)
+		if(skin == "player") then
+			player:SetTexture("Rift", "icon_menu_charpanel.png.dds")
+			player:SetHeight(20)
+			player:SetWidth(20)
+		elseif(skin == "guild") then
+			player:SetTexture("Rift", "icon_menu_guild.png.dds")
+			player:SetHeight(24)
+			player:SetWidth(24)
+		end
+	end
 	
 	self.buttonsBox = background
 end
@@ -211,11 +241,6 @@ local function new(_, parent)
 	visible:SetPoint("TOPRIGHT", self, "TOPRIGHT")
 	visible:SetPoint("BOTTOMLEFT", hidden, "TOPLEFT")
 	visible:SetPoint("BOTTOMRIGHT", hidden, "TOPRIGHT")
-	
---@debug@
---	hidden:SetBackgroundColor(0, 0, 1, 0.5)
---	visible:SetBackgroundColor(1, 0, 0, 0.5)
---@end-debug@
 	
 	self.hidden = hidden
 	self.visible = visible
