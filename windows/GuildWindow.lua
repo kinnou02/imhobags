@@ -113,7 +113,8 @@ end
 local function update(self)
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
-	self.titleFrame:SetText(format("%s: %s (+%i)", self.character, format(L.Ux.guildVault, self.vault), n))
+	self.titleBar:SetEmptySlots(n)
+	self.titleBar:SetMainLabel(format("%s: %s", self.character, format(L.Ux.guildVault, self.vault)))
 	
 	self.moneyFrame:SetVisible(false)
 	self.coinFrame:SetWidth(0)

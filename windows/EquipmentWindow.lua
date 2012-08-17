@@ -55,7 +55,8 @@ end
 
 local function update(self)
 	self:item_update()
-	self.titleFrame:SetText(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
+	self.titleBar:SetEmptySlots(nil)
+	self.titleBar:SetMainLabel(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
 end
 
 -- Public methods

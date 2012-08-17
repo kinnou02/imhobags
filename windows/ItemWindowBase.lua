@@ -144,15 +144,9 @@ local function interactionChanged(self, interaction, state)
 	end
 end
 
-local function filter_KeyFocusLoss(self, window)
-	self:SetText("")
-	window.searchString = ""
-	window:applySearchFilter()
-end
-
-local function filter_TextfieldChange(self, window)
+local function filter_TextfieldChange(window, filterText)
 	-- Build a case-insensitive search pattern
-	window.searchString = strgsub(self:GetText(), "%a", function(ch)
+	window.searchString = strgsub(filterText, "%a", function(ch)
 		return format("[%s%s]", strlower(ch), strupper(ch))
 	end)
 
@@ -329,8 +323,9 @@ local function createSearchFilter(self)
 	background:SetAllPoints(frame)
 
 	local icon = UI.CreateFrame("Texture", "", background)
-	icon:SetTexture("Rift", "Crafting_I6C.dds")
-	icon:SetPoint("LEFTCENTER", mask, "LEFTCENTER", 2, 0)
+	icon:SetTexture("Rift", "filter_icon.png.dds")
+--	icon:SetTexture("Rift", "icon_menu_LFP.png.dds")
+	icon:SetPoint("LEFTCENTER", mask, "LEFTCENTER", 4, 0)
 	
 	local input = UI.CreateFrame("RiftTextfield", "", background)
 	input:SetPoint("LEFTCENTER", icon, "RIGHTCENTER", 0, 1)
@@ -347,14 +342,12 @@ local function createSearchFilter(self)
 		mask:SetWidth(width)
 	end
 	local function fadeIn()
-		if(not Animate.running(frame.animation)) then
-			frame.animation = Animate.easeInOut(mask:GetWidth(), frame:GetWidth(), 0.3, tick, function() frame.animation = 0 end)
-		end
+		Animate.stop(frame.animation)
+		frame.animation = Animate.easeInOut(mask:GetWidth(), frame:GetWidth(), 0.3, tick, function() frame.animation = 0 end)
 	end
 	local function fadeOut()
-		if(not Animate.running(frame.animation) and not input:GetKeyFocus()) then
-			frame.animation = Animate.easeInOut(mask:GetWidth(), 0, 0.3, tick, function() frame.animation = 0 end)
-		end
+		Animate.stop(frame.animation)
+		frame.animation = Animate.easeInOut(mask:GetWidth(), 0, 0.3, tick, function() frame.animation = 0 end)
 	end
 	
 	hitArea.Event.MouseIn = fadeIn
@@ -363,7 +356,7 @@ local function createSearchFilter(self)
 	input.Event.KeyFocusGain = function() fadeIn() end
 	input.Event.KeyFocusLoss = function() fadeOut() filter_KeyFocusLoss(input, self) end
 	input.Event.TextfieldChange = function() filter_TextfieldChange(input, self) end
-
+	
 	frame.input = input
 	frame.mask = mask
 	return frame
@@ -380,6 +373,7 @@ local function ItemWindowBase_SetCharacter(self, character, location)
 		self.location = location
 		self.lastUpdate = -2
 		self:setCharacter()
+		self.titleBar:SetAlliance(ItemDB.GetCharacterAlliance(character))
 	end
 end
 
@@ -401,6 +395,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.itemsContainer = self:GetContent()
 	self.itemSize = itemSize
 	self.updateCoroutine = nil
+	self.searchString = ""
 	
 	local content = self:GetContent()
 	
@@ -545,24 +540,11 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		self.interaction = true
 	end
 
-	-- Search filter
-	self.filter = createSearchFilter(self)
-	self.filter:SetPoint("LEFTCENTER", searchBtn, "RIGHTCENTER", 32, -4)
-	self.searchString = ""
-	
-	-- Title text
-	self.titleFrame = UI.CreateFrame("Text", "", self)
-	self.titleFrame:SetFontColor(0, 0, 0)
-	self.titleFrame:SetFontSize(18)
-	self.titleFrame:SetText("")
-	self.titleFrame:SetPoint("LEFTCENTER", self.filter.mask, "RIGHTCENTER", 5, 0)
-	self.titleFrame:SetPoint("RIGHT", self.coinFrame, "LEFT")
+	-- Title bar
+	self.titleBar = Ux.TitleBar(self)
+	self.titleBar:ClearPoint("RIGHT")
+	self.titleBar:SetPoint("RIGHT", self.coinFrame, "LEFT")
+	self.titleBar:SetFilterCallback(function(...) filter_TextfieldChange(self, ...) end)
 
---[[
-	local tex = UI.CreateFrame("Texture", "", self)
-	tex:SetTexture("Rift", "UISource_I18C.dds")
-	tex:SetPoint("TOPLEFT", content, "TOPLEFT", 60, -35)
-	tex:SetPoint("TOPRIGHT", content, "TOPRIGHT", -70, -35)
-]]
 	return self
 end

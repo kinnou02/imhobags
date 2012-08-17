@@ -5,6 +5,7 @@ local floor = math.floor
 local format = string.format
 local max = math.max
 local sort = table.sort
+local tostring = tostring
 local type = type
 
 -- Globals
@@ -195,7 +196,8 @@ end
 local function update(self)
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
-	self.titleFrame:SetText(format("%s: %s (+%i)", self.character == "player" and Player.name or self.character, self.title, n))
+	self.titleBar:SetEmptySlots(n)
+	self.titleBar:SetMainLabel(format("%s", self.character == "player" and Player.name or self.character, self.title))
 	self.moneyFrame:SetVisible(false)
 	
 	self:base_update()
