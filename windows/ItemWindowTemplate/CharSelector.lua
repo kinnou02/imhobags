@@ -60,7 +60,7 @@ local function createItem(self, i)
 	item:SetTexture("Rift", "dropdown_bar_(normal).png.dds")
 	item:SetWidth(itemWidth)
 	item:SetHeight(itemHeight)
-	item:SetPoint("TOPCENTER", self.scrolling, "TOPCENTER", 0, itemSpacing + (i - 1) * (itemHeight + itemSpacing))
+	item:SetPoint("TOPCENTER", self.scrolling, "TOPCENTER", 0, itemSpacing / 2 + (i - 1) * (itemHeight + itemSpacing))
 	
 	local text = UICreateFrame("Text", "", item)
 	text:SetPoint("CENTER", item, "CENTER")
