@@ -40,7 +40,7 @@ local function fadeIn(self)
 	
 	self:SetVisible(true)
 	Animate.stop(self.animation)
-	self.animation = Animate.easeInOut(self:GetHeight(), backgroundHeight + backgroundOffset, 0.3, tick, function()
+	self.animation = Animate.easeInOut(self:GetHeight(), backgroundHeight, 0.3, tick, function()
 		self.animation = 0
 	end)
 end
@@ -60,7 +60,7 @@ local function createItem(self, i)
 	item:SetTexture("Rift", "dropdown_bar_(normal).png.dds")
 	item:SetWidth(itemWidth)
 	item:SetHeight(itemHeight)
-	item:SetPoint("TOPCENTER", self.scrolling, "TOPCENTER", 0, backgroundOffset + itemSpacing + (i - 1) * (itemHeight + itemSpacing))
+	item:SetPoint("TOPCENTER", self.scrolling, "TOPCENTER", 0, itemSpacing + (i - 1) * (itemHeight + itemSpacing))
 	
 	local text = UICreateFrame("Text", "", item)
 	text:SetPoint("CENTER", item, "CENTER")

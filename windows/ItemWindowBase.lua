@@ -70,7 +70,7 @@ end
 local function closeButton_LeftPress(self)
 	local window = self:GetParent()
 	window:SetVisible(false)
-	window.filter.input:SetKeyFocus(false)
+	window.titleBar:ClearKeyFocus()
 	window:onClose()
 	log("TODO", "close the native frame(s)")
 end
@@ -439,17 +439,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		Ux.ToggleGuildWindow(self.character)
 	end
 	
-	self.sizeButton = Ux.OptionSelector.New(self, [[Data/\UI\ability_icons\warden-healing_flood_a.dds]],
-		L.Ux.Tooltip.size,
-		{ "30", "40", "50", "60" },
-		function(size)
-			self.itemSize = tonumber(size)
-			self.sizeButton:SetStack(self.itemSize)
-			self:Update()
-		end)
-	self.sizeButton:SetPoint("TOPRIGHT", content, "TOPRIGHT", -Ux.ItemWindowPadding, -2)
-	self.sizeButton:SetStack(itemSize)
-	
 	-- Money indicator
 	self.coinFrame = Ux.MoneyFrame.New(self)
 	self.coinFrame:SetPoint("TOPRIGHT", self:GetBorder(), "TOPRIGHT", -80, 22)
@@ -533,8 +522,9 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.titleBar:SetPoint("RIGHT", self.coinFrame, "LEFT")
 	self.titleBar:SetFilterCallback(function(...) filter_TextfieldChange(self, ...) end)
 	self.titleBar:SetPlayerButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
-	self.titleBar:SetCharSelectionCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)
-
+	self.titleBar:SetCharSelectorCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)
+	self.titleBar:SetSizSelectorCallback(function(n) self.itemSize = n self:Update() end)
+	self.titleBar:SetSizSelectorValue(self.itemSize)
 
 	return self
 end

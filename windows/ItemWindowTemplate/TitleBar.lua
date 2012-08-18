@@ -10,6 +10,8 @@ local UICreateFrame = UI.CreateFrame
 
 -- Locals
 local metatable = { }
+local filterBoxLeft = 24
+local filterBoxWidth = 100
 
 private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
 private.Ux.ItemWindowTemplate.TitleBar = setmetatable({ }, metatable)
@@ -39,7 +41,7 @@ local function createFadeAnimation(self)
 		if(not hotArea.freeze) then
 			Animate.stop(hotArea.animation)
 			self.hidden:SetVisible(true)
-			hotArea.animation = Animate.easeInOut(self.hidden:GetHeight(), self:GetHeight(), 0.3, tick, function()
+			hotArea.animation = Animate.easeInOut(self.hidden:GetHeight(), self:GetHeight() - 4, 0.3, tick, function()
 				hotArea.animation = 0
 				self.visible:SetVisible(false)
 			end)
@@ -135,7 +137,7 @@ local function createMainLabel(self)
 	function self:SetMainLabel(text) self.mainLabel:SetText(text) end
 end
 
-local function createPlayerDropdown(self)
+local function createCharSelector(self)
 	self.charSelector = Ux.ItemWindowTemplate.CharSelector(self, self)
 	self.charSelector:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 5, 0)
 	self.charSelector:SetVisible(false)
@@ -143,7 +145,17 @@ local function createPlayerDropdown(self)
 	
 	function self:ShowCharSelector(chars) self.charSelector:ShowForChars(chars) end
 	function self:HideCharSelector() self.charSelector:FadeOut() end
-	function self:SetCharSelectionCallback(callback) self.charSelector:SetCallback(callback) end
+	function self:SetCharSelectorCallback(callback) self.charSelector:SetCallback(callback) end
+end
+
+local function createSizeSelector(self)
+	self.sizeSelector = Ux.ItemWindowTemplate.SizeSelector(self, self)
+	self.sizeSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 55, 0)
+	self.sizeSelector:SetVisible(false)
+	self:HotArea(self.sizeSelector, true)
+		
+	function self:SetSizSelectorCallback(callback) self.sizeSelector:SetCallback(callback) end
+	function self:SetSizSelectorValue(n) self.sizeSelector:SetValue(n) end
 end
 
 local function createButtons(self)
@@ -168,14 +180,23 @@ local function createButtons(self)
 			self.playerButtonCallback()
 		end
 	end
-	createPlayerDropdown(self)
+	createCharSelector(self)
 	
-	local search = UICreateFrame("Texture", "", background)
-	search:SetTexture("Rift", "icon_menu_LFP.png.dds")
-	search:SetPoint("LEFTCENTER", player, "RIGHTCENTER")
-	search:SetHeight(24)
-	search:SetWidth(24)
-	search.Event.LeftUp = function() Ux.SearchWindow:Toggle() end
+	local sort = UICreateFrame("Texture", "", background)
+	sort:SetTexture("ImhoBags", "textures/icon_menu_sort.png")
+	sort:SetPoint("LEFTCENTER", background, "LEFTCENTER", filterBoxLeft + filterBoxWidth, -1)
+	
+	local size = UICreateFrame("Texture", "", background)
+	size:SetTexture("ImhoBags", "textures/icon_menu_size.png")
+	size:SetPoint("LEFTCENTER", sort, "RIGHTCENTER", -6, 0)
+	size.Event.LeftUp = function()
+		if(self.sizeSelector:GetVisible()) then
+			self.sizeSelector:FadeOut()
+		else
+			self.sizeSelector:FadeIn()
+		end
+	end
+	createSizeSelector(self)
 	
 	function self:SetPlayerButtonCallback(callback) self.playerButtonCallback = callback end
 	function self:SetPlayerButtonSkin(skin)
@@ -196,18 +217,25 @@ end
 local function createSearchFilter(self)
 	local background = UICreateFrame("Texture", "", self.hidden)
 	background:SetTexture("Rift", "window_field.png.dds")
-	background:SetPoint("LEFTCENTER", self.buttonsBox, "RIGHTCENTER")
-	background:SetWidth(130)
+	background:SetPoint("TOPLEFT", self.hidden, "TOPLEFT", filterBoxLeft, 0)
+	background:SetWidth(filterBoxWidth)
 	background:SetHeight(20)
 
 	local icon = UICreateFrame("Texture", "", background)
-	icon:SetTexture("Rift", "filter_icon.png.dds")
-	icon:SetPoint("RIGHTCENTER", background, "RIGHTCENTER", -4, 0)
+	icon:SetTexture("Rift", "icon_menu_LFP.png.dds")
+	icon:SetPoint("RIGHTCENTER", background, "RIGHTCENTER", -4, -1)
+	icon:SetWidth(26)
+	icon:SetHeight(26)
+	icon.Event.LeftUp = function() Ux.SearchWindow:Toggle() end
 	
 	local input = UICreateFrame("RiftTextfield", "", background)
 	input:SetPoint("LEFTCENTER", background, "LEFTCENTER", 4, 1)
 	input:SetPoint("RIGHTCENTER", icon, "LEFTCENTER", 0, 1)
 	input:SetText("")
+	
+	function self:ClearKeyFocus()
+		input:SetKeyFocus(false)
+	end
 	
 	function self:SetFilterCallback(callback) input.callback = callback end
 
@@ -230,18 +258,18 @@ local function new(_, parent)
 	local border = parent:GetBorder()
 	
 	local self = UICreateFrame("Frame", "", border)
-	self:SetPoint("TOPLEFT", border, "TOPLEFT", 80, 20)
-	self:SetPoint("TOPRIGHT", border, "TOPRIGHT", -80, 20)
-	self:SetHeight(20)
+	self:SetPoint("TOPLEFT", border, "TOPLEFT", 80, 18)
+	self:SetPoint("TOPRIGHT", border, "TOPRIGHT", -80, 18)
+	self:SetHeight(24)
 	
 	local hidden = UICreateFrame("Mask", "", self)
-	hidden:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT")
-	hidden:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT")
+	hidden:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, -2)
+	hidden:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, -2)
 	hidden:SetHeight(0)
 	
 	local visible = UICreateFrame("Mask", "", self)
-	visible:SetPoint("TOPLEFT", self, "TOPLEFT")
-	visible:SetPoint("TOPRIGHT", self, "TOPRIGHT")
+	visible:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 2)
+	visible:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 2)
 	visible:SetPoint("BOTTOMLEFT", hidden, "TOPLEFT")
 	visible:SetPoint("BOTTOMRIGHT", hidden, "TOPRIGHT")
 	

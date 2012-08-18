@@ -243,7 +243,7 @@ function Ux.ItemWindow.New(title, character, location, itemSize, sorting)
 			sortItems(self)
 			self:Update()
 		end, 15)
-	self.sortButton:SetPoint("TOPRIGHT", self.sizeButton, "TOPLEFT", -Ux.ItemWindowPadding, 0)
+	self.sortButton:SetPoint("TOPRIGHT", self:GetContent(), "TOPRIGHT", -Ux.ItemWindowPadding, -2)
 	
 	self.moneyFrame = Ux.MoneyFrame.New(self)
 	

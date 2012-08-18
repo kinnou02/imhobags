@@ -57,6 +57,7 @@ RunOnStartup = {
 	"frames/Textfield.lua",
 	
 	"windows/ItemWindowTemplate/CharSelector.lua",
+	"windows/ItemWindowTemplate/SizeSelector.lua",
 	"windows/ItemWindowTemplate/TitleBar.lua",
 	"windows/ConfigWindow.lua",
 	"windows/CurrencyWindow.lua",
