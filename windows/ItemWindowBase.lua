@@ -521,10 +521,10 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.titleBar:ClearPoint("RIGHT")
 	self.titleBar:SetPoint("RIGHT", self.coinFrame, "LEFT")
 	self.titleBar:SetFilterCallback(function(...) filter_TextfieldChange(self, ...) end)
-	self.titleBar:SetPlayerButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
+	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
 	self.titleBar:SetCharSelectorCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)
-	self.titleBar:SetSizSelectorCallback(function(n) self.itemSize = n self:Update() end)
-	self.titleBar:SetSizSelectorValue(self.itemSize)
+	self.titleBar:SetSizeSelectorCallback(function(n) self.itemSize = n self:Update() end)
+	self.titleBar:SetSizeSelectorValue(self.itemSize)
 
 	return self
 end

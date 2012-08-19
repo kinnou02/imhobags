@@ -217,34 +217,20 @@ function Ux.ItemWindow.New(title, character, location, itemSize, sorting)
 		end
 	end
 	
-	local sortTranslations = {
-		[L.Ux.SortOption.name] = "name",
-		[L.Ux.SortOption.rarity] = "rarity",
-		[L.Ux.SortOption.icon] = "icon"
-	}
 	local sortAlgorithms = {
 		name = Sort.Default.ByItemName,
 		icon = Sort.Default.ByItemIcon,
 		rarity = Sort.Default.ByItemRarity,
 	}
-	local displayedOptions = {
-		L.Ux.SortOption.name,
-		L.Ux.SortOption.rarity,
-		L.Ux.SortOption.icon,
-	}
-	sort(displayedOptions)
-	
-	self.sortButton = Ux.OptionSelector.New(self, [[Data/\UI\ability_icons\elementalres2b.dds]],
-		L.Ux.Tooltip.sorting,
-		displayedOptions,
-		function(sortName)
-			self.sort = sortTranslations[sortName]
+	self.titleBar:SetSortSelectorCallback(function(sort)
+			self.sort = sort
 			self.sortFunc = sortAlgorithms[self.sort]
+			self.titleBar:SetSortSelectorValue(sort)
 			sortItems(self)
 			self:Update()
-		end, 15)
-	self.sortButton:SetPoint("TOPRIGHT", self:GetContent(), "TOPRIGHT", -Ux.ItemWindowPadding, -2)
-	
+		end)
+	self.titleBar:SetSortSelectorValue(sorting)
+
 	self.moneyFrame = Ux.MoneyFrame.New(self)
 	
 	self.base_update = self.update
