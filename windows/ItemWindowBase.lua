@@ -510,7 +510,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	end
 
 	-- Title bar
-	self.titleBar = Ux.ItemWindowTemplate.TitleBar(self)
+	self.titleBar = Ux.ItemWindowTemplate.TitleBar(self, location)
 	self.titleBar:SetFilterCallback(function(...) filter_TextfieldChange(self, ...) end)
 	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
 	self.titleBar:SetCharSelectorCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)

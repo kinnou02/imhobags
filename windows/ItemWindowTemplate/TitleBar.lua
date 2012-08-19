@@ -1,6 +1,7 @@
 local Addon, private = ...
 
 -- Builtins
+local ipairs = ipairs
 local max = math.max
 local pairs = pairs
 local tostring = tostring
@@ -15,7 +16,7 @@ local filterBoxLeft = 24
 local filterBoxWidth = 100
 local rightPanelMinWidth = 40
 local rightHiddenMinWidth = 20
-local rightHiddenMaxWidth = 150
+local rightHiddenMaxWidth = 6 * 20
 
 private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
 private.Ux.ItemWindowTemplate.TitleBar = setmetatable({ }, metatable)
@@ -104,14 +105,16 @@ local function createFadeAnimationRight(self)
 	
 	hotArea.animation = 0
 	
-	local function tick(width) 
-		self.rightHidden:SetWidth(width)
-		self.rightPanel:SetWidth(max(rightPanelMinWidth, width))
+	local function tick(values) 
+		self.rightHidden:SetWidth(values[1])
+		self.rightPanel:SetWidth(max(rightPanelMinWidth, values[1]))
+		self.rightHiddenButtonsOffsetCurrent = values[2]
+		self.locationButtons[1]:SetPoint("LEFTCENTER", self.rightHidden, "LEFTCENTER", values[2], 0)
 	end
 	local function fadeIn()
 		if(not self.frozen) then
 			Animate.stop(hotArea.animation)
-			hotArea.animation = Animate.easeInOut(self.rightHidden:GetWidth(), rightHiddenMaxWidth, 0.3, tick, function()
+			hotArea.animation = Animate.easeInOut({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMaxWidth, 0 }, 0.3, tick, function()
 				hotArea.animation = 0
 			end)
 		end
@@ -119,7 +122,7 @@ local function createFadeAnimationRight(self)
 	local function fadeOut()
 		if(not hotArea.frozen) then
 			Animate.stop(hotArea.animation)
-			hotArea.animation = Animate.easeInOut(self.rightHidden:GetWidth(), rightHiddenMinWidth, 0.3, tick, function()
+			hotArea.animation = Animate.easeInOut({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMinWidth, self.rightHiddenButtonsOffset }, 0.3, tick, function()
 				hotArea.animation = 0
 			end)
 		end
@@ -311,10 +314,42 @@ local function createEmptySlotIndicator(self)
 	end
 end
 
+local function createLocationButtons(self, location)
+	local textures = {
+		"inventory",	"ImhoBags",	"textures/icon_menu_inventory.png",	28, 28, -1, 0,
+		"bank",			"ImhoBags",	"textures/icon_menu_bank.png",		28, 28, 2, 2,
+		"mail",			"ImhoBags",	"textures/icon_menu_mail.png",		29, 29, 1, 1,
+		"equipment",	"Rift",		"icon_menu_raid.png.dds",			22, 22, 0, 0,
+		"currency",		"ImhoBags",	"textures/icon_menu_gold.png",		24, 24, 0, 0,
+		"guildbank",	"Rift",		"icon_menu_guild.png.dds",			26, 26, -1, 0,
+	}
+	local offsets = {
+		inventory = 0,
+		bank = -20,
+		mail = -40,
+		equipment = -60,
+		currency = -80,
+		guildbank = -100,
+	}
+	self.rightHiddenButtonsOffset = offsets[location]
+	self.rightHiddenButtonsOffsetCurrent = self.rightHiddenButtonsOffset
+	local prev = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, textures[2], textures[3], textures[4], textures[5], textures[6], textures[7], function() end)
+	prev:SetPoint("LEFTCENTER", self.rightHidden, "LEFTCENTER", self.rightHiddenButtonsOffset, 0)
+	self.locationButtons = { prev }
+	for i = 1, 5 do
+		local j = i * 7
+		local btn = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, textures[j+2], textures[j+3], textures[j+4], textures[j+5], textures[j+6], textures[j+7], function() end)
+		btn:SetPoint("LEFTCENTER", prev, "RIGHTCENTER")
+		prev = btn
+		self.locationButtons[#self.locationButtons + 1] = btn
+	end
+	
+end
+
 -- Public methods
 -- ============================================================================
 
-function metatable.__call(_, parent)
+function metatable.__call(_, parent, location)
 	local border = parent:GetBorder()
 	
 	local self = UICreateFrame("Frame", "", border)
@@ -335,6 +370,10 @@ function metatable.__call(_, parent)
 	rightHidden:SetPoint("BOTTOMRIGHT", rightPanel, "BOTTOMRIGHT")
 	rightHidden:SetWidth(rightHiddenMinWidth)
 	
+	self.rightHidden = rightHidden
+	self.rightPanel = rightPanel
+	createLocationButtons(self, location)
+
 	-- Left panel
 	local leftHidden = UICreateFrame("Mask", "", self)
 	leftHidden:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, -2)
@@ -346,15 +385,13 @@ function metatable.__call(_, parent)
 	leftPanel:SetPoint("BOTTOMLEFT", leftHidden, "TOPLEFT")
 	leftPanel:SetPoint("RIGHT", rightPanel, "LEFT")
 	
-	if(Addon.toc.debug) then
+	if(not Addon.toc.debug) then
 		leftPanel:SetBackgroundColor(1, 0, 0, 0.5)
 		leftHidden:SetBackgroundColor(0, 0, 1, 0.5)
 		rightPanel:SetBackgroundColor(0, 0, 0, 0.5)
 		rightHidden:SetBackgroundColor(0, 1, 0, 0.5)
 	end
 
-	self.rightHidden = rightHidden
-	self.rightPanel = rightPanel
 	self.leftHidden = leftHidden
 	self.leftPanel = leftPanel
 	
