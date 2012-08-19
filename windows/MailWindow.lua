@@ -288,9 +288,6 @@ function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	local left, top, right, bottom = self:getContentPadding()
 	local borderLeft, borderTop, borderRight, borderBottom = self:GetTrimDimensions()
 	
-	-- Hide money frame
-	self.coinFrame:SetVisible(false)
-
 	-- Create side window with mail body text
 	self.bodyFrame = UICreateFrame("Mask", "", self)
 	self.bodyFrame:SetPoint("TOPLEFT", self, "TOPRIGHT", borderRight - 6, top)

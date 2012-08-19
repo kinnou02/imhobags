@@ -439,13 +439,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 		Ux.ToggleGuildWindow(self.character)
 	end
 	
-	-- Money indicator
-	self.coinFrame = Ux.MoneyFrame.New(self)
-	self.coinFrame:SetPoint("TOPRIGHT", self:GetBorder(), "TOPRIGHT", -80, 22)
-	self.coinFrame:SetFontColor(0, 0, 0)
-	self.coinFrame.Event.MouseIn = function() Ux.MoneySummaryWindow:ShowAtCursor() end
-	self.coinFrame.Event.MouseOut = function() Ux.MoneySummaryWindow:SetVisible(false) end
-	
 	-- Search button
 	local helpBtn = UI.CreateFrame("Frame", "", self)
 	helpBtn:SetPoint("BOTTOMLEFT", content, "TOPLEFT", -4, -6)
@@ -518,8 +511,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 
 	-- Title bar
 	self.titleBar = Ux.ItemWindowTemplate.TitleBar(self)
-	self.titleBar:ClearPoint("RIGHT")
-	self.titleBar:SetPoint("RIGHT", self.coinFrame, "LEFT")
 	self.titleBar:SetFilterCallback(function(...) filter_TextfieldChange(self, ...) end)
 	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
 	self.titleBar:SetCharSelectorCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)

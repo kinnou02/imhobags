@@ -1,6 +1,7 @@
 local Addon, private = ...
 
 -- Builtins
+local max = math.max
 local pairs = pairs
 local tostring = tostring
 
@@ -117,9 +118,10 @@ local function createEmptySlotIndicator(self)
 	
 	function self:SetEmptySlots(n)
 		if(n) then
-			self.emptySlotsBackground:SetWidth(24)
 			self.emptySlotsIndicator:SetVisible(true)
-			self.emptySlotsIndicator:SetText(tostring(n))
+			self.emptySlotsIndicator:SetText(tostring(n*10))
+			n = self.emptySlotsIndicator:GetWidth()
+			self.emptySlotsBackground:SetWidth(n > 24 and (n + 5) or 24)
 		else
 			self.emptySlotsBackground:SetWidth(0)
 			self.emptySlotsIndicator:SetVisible(false)
@@ -138,9 +140,9 @@ local function createMainLabel(self)
 end
 
 local function hideAllMenus(self)
-	self.charSelector:FadeOut()
-	self.sizeSelector:FadeOut()
-	self.sortSelector:FadeOut()
+	for i = 1, #self.fadeOutFrames do
+		self.fadeOutFrames[i]:FadeOut()
+	end
 end
 
 local function createCharButton(self)
@@ -165,6 +167,7 @@ local function createCharButton(self)
 	self.charSelector:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 5, 0)
 	self.charSelector:SetVisible(false)
 	self:HotArea(self.charSelector, true)
+	self.fadeOutFrames[#self.fadeOutFrames + 1] = self.charSelector
 	
 	function self:ShowCharSelector(chars)
 		hideAllMenus(self)
@@ -174,10 +177,28 @@ local function createCharButton(self)
 	function self:SetCharSelectorCallback(callback) self.charSelector:SetCallback(callback) end
 end
 
+local function createGoldButton(self)
+	self.goldButton = Ux.ItemWindowTemplate.TitleBarButton(self.hidden, "ImhoBags", "textures/icon_menu_gold.png", 24, 24, 0, 1, function()
+		if(self.coinSummary:GetVisible()) then
+			self.coinSummary:FadeOut()
+		else
+			hideAllMenus(self)
+			self.coinSummary:FadeIn()
+		end
+	end)
+	self.goldButton:SetPoint("TOPLEFT", self.charButton, "TOPRIGHT")
+
+	self.coinSummary = Ux.ItemWindowTemplate.CoinSummary(self, self)
+	self.coinSummary:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 15, 0)
+	self.coinSummary:SetVisible(false)
+	self:HotArea(self.coinSummary, true)
+	self.fadeOutFrames[#self.fadeOutFrames + 1] = self.coinSummary
+end
+
 local function createSearchFilter(self)
 	local background = UICreateFrame("Texture", "", self.hidden)
 	background:SetTexture("Rift", "window_field.png.dds")
-	background:SetPoint("TOPLEFT", self.charButton, "TOPRIGHT", 0, 0)
+	background:SetPoint("TOPLEFT", self.goldButton, "TOPRIGHT", 0, 0)
 	background:SetWidth(filterBoxWidth)
 	background:SetHeight(20)
 
@@ -222,6 +243,7 @@ local function createSizeButton(self)
 	self.sizeSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 35, 0)
 	self.sizeSelector:SetVisible(false)
 	self:HotArea(self.sizeSelector, true)
+	self.fadeOutFrames[#self.fadeOutFrames + 1] = self.sizeSelector
 		
 	function self:SetSizeSelectorCallback(callback) self.sizeSelector:SetCallback(callback) end
 	function self:SetSizeSelectorValue(n) self.sizeSelector:SetValue(n) end
@@ -243,6 +265,7 @@ local function createSortButton(self)
 	self.sortSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 35, 0)
 	self.sortSelector:SetVisible(false)
 	self:HotArea(self.sortSelector, true)
+	self.fadeOutFrames[#self.fadeOutFrames + 1] = self.sortSelector
 		
 	function self:SetSortSelectorCallback(callback) self.sortButton:SetVisible(callback ~= nil) self.sortSelector:SetCallback(callback) end
 	function self:SetSortSelectorValue(n) self.sortSelector:SetValue(n) end
@@ -273,6 +296,8 @@ function metatable.__call(_, parent)
 	self.hidden = hidden
 	self.visible = visible
 	
+	self.fadeOutFrames = { }
+	
 	-- Visible panel
 	createFadeAnimation(self)
 	createAllianceLogo(self)
@@ -281,6 +306,7 @@ function metatable.__call(_, parent)
 	
 	-- Hidden panel
 	createCharButton(self)
+	createGoldButton(self)
 	createSearchFilter(self)
 	createSizeButton(self)
 	createSortButton(self)

@@ -116,8 +116,7 @@ local function update(self)
 	self.titleBar:SetEmptySlots(n)
 	self.titleBar:SetMainLabel(format("%s: %s", self.character, format(L.Ux.guildVault, self.vault)))
 	
-	self.moneyFrame:SetVisible(false)
-	self.coinFrame:SetWidth(0)
+	self.sellableCoinFrame:SetVisible(false)
 	self:base_update()
 	updateVaultButtons(self)
 end
@@ -149,7 +148,6 @@ function Ux.GuildWindow.New(title, character, location, itemSize, sorting)
 		Ux.ToggleItemWindow(self.character, "inventory")
 	end
 	
-	self.coinFrame:SetVisible(false)
 	self.titleBar:SetCharButtonSkin("guild")
 	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableGuilds()) end)
 	

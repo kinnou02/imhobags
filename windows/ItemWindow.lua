@@ -39,10 +39,10 @@ local function getGroupLabel(self, name)
 		function label.SetInfo(label, sell, slots)
 			if(label.text:GetText() == L.CategoryName.sellable) then
 				label.text:SetText(format("%s (%i)", L.CategoryName.sellable, slots))
-				self.moneyFrame:SetPoint("RIGHTCENTER", label, "RIGHTCENTER", -2, 0)
-				self.moneyFrame:SetCoin(sell)
-				self.moneyFrame:SetVisible(true)
-				self.moneyFrame:SetParent(label)
+				self.sellableCoinFrame:SetPoint("RIGHTCENTER", label, "RIGHTCENTER", -2, 0)
+				self.sellableCoinFrame:SetCoin(sell)
+				self.sellableCoinFrame:SetVisible(true)
+				self.sellableCoinFrame:SetParent(label)
 			end
 		end
 	else
@@ -75,7 +75,6 @@ local function getGroups(self)
 	self.groups, self.groupKeys = ItemDB.GetGroupedItems(self.items, self.groupFunc)
 	sortGroups(self)
 	sortItems(self)
-	self.coinFrame:SetCoin(self.coinMatrix.items.coin or 0)
 end
 
 local dummytext = UICreateFrame("Text", "", Ux.Context)
@@ -198,7 +197,7 @@ local function update(self)
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
 	self.titleBar:SetEmptySlots(n)
 	self.titleBar:SetMainLabel(format("%s", self.character == "player" and Player.name or self.character, self.title))
-	self.moneyFrame:SetVisible(false)
+	self.sellableCoinFrame:SetVisible(false)
 	
 	self:base_update()
 end
@@ -231,7 +230,7 @@ function Ux.ItemWindow.New(title, character, location, itemSize, sorting)
 		end)
 	self.titleBar:SetSortSelectorValue(sorting)
 
-	self.moneyFrame = Ux.MoneyFrame.New(self)
+	self.sellableCoinFrame = Ux.MoneyFrame.New(self)
 	
 	self.base_update = self.update
 	self.update = update

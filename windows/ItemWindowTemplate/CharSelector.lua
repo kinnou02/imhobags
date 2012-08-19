@@ -14,12 +14,6 @@ local UICreateFrame = UI.CreateFrame
 -- Locals
 local metatable = { }
 
-private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
-private.Ux.ItemWindowTemplate.CharSelector = setmetatable({ }, metatable)
-
-setfenv(1, private)
-
-local backgroundOffset = 3
 local backgroundWidth = 128
 local backgroundHeight = 128
 
@@ -33,6 +27,11 @@ local contentPaddingLeft = 7
 local contentPaddingBottom = 9
 
 local textColor = { 245 / 255, 240 / 255, 198 / 255 }
+
+private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
+private.Ux.ItemWindowTemplate.CharSelector = setmetatable({ }, metatable)
+
+setfenv(1, private)
 
 -- Private methods
 -- ============================================================================
