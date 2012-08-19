@@ -2,6 +2,7 @@ local Addon, private = ...
 
 -- Builtins
 local pairs = pairs
+local type = type
 
 -- Globals
 local EventSystemUpdateBegin = Event.System.Update.Begin
@@ -38,6 +39,13 @@ EventSystemUpdateBegin[#EventSystemUpdateBegin + 1] = { function()
 			v[6](v[2])	-- callback(to)
 			running[k] = nil -- Remove before calling finisher so it can restart the animation
 			v[7]()		-- finisher()
+		elseif(type(v[1]) == "table") then
+			local t = v[5](dt / v[3]) -- t = interpolant((now - start) / duration)
+			local result = { }
+			for k in pairs(v[1]) do
+				result[k] = v[1][k] + t * (v[2][k] - v[1][k]) -- from + t * (to - from)
+			end
+			v[6](result) -- callback(result)
 		else
 			local t = v[5](dt / v[3]) -- t = interpolant((now - start) / duration)
 			v[6](v[1] + t * (v[2] - v[1])) -- callback(from + t * (to - from))
