@@ -32,28 +32,10 @@ local contentPaddingTop = 1
 local contentPaddingLeft = 7
 local contentPaddingBottom = 9
 
+local textColor = { 245 / 255, 240 / 255, 198 / 255 }
+
 -- Private methods
 -- ============================================================================
-
-local function fadeIn(self)
-	local function tick(width) self:SetHeight(width) end
-	
-	self:SetVisible(true)
-	Animate.stop(self.animation)
-	self.animation = Animate.easeInOut(self:GetHeight(), backgroundHeight, 0.3, tick, function()
-		self.animation = 0
-	end)
-end
-
-local function fadeOut(self)
-	local function tick(width) self:SetHeight(width) end
-	
-	Animate.stop(self.animation)
-	self.animation = Animate.easeInOut(self:GetHeight(), 0, 0.3, tick, function()
-		self.animation = 0
-		self:SetVisible(false)
-	end)
-end
 
 local function createItem(self, i)
 	local item = UICreateFrame("Texture", "", self.scrolling)
@@ -64,7 +46,7 @@ local function createItem(self, i)
 	
 	local text = UICreateFrame("Text", "", item)
 	text:SetPoint("CENTER", item, "CENTER")
-	text:SetFontColor(245 / 255, 240 / 255, 198 / 255)
+	text:SetFontColor(textColor[1], textColor[2], textColor[3])
 
 	local clickable = UICreateFrame("Frame", "", text)
 	clickable:SetPoint("CENTER", text, "CENTER")
@@ -72,7 +54,7 @@ local function createItem(self, i)
 	clickable:SetHeight(itemClickableHeight)
 
 	function clickable.Event.LeftUp()
-		fadeOut(self)
+		self:FadeOut()
 		self.callback(text:GetText())
 	end
 
@@ -81,7 +63,7 @@ local function createItem(self, i)
 end
 
 local function showForChars(self, chars)
-	fadeIn(self)
+	self:FadeIn()
 
 	sort(chars)
 	self.chars = chars
@@ -124,7 +106,7 @@ end
 -- Public methods
 -- ============================================================================
 
-local function new(_, parent, titleBar)
+function metatable.__call(_, parent, titleBar)
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetWidth(backgroundWidth)
 	self:SetHeight(0)
@@ -140,36 +122,15 @@ local function new(_, parent, titleBar)
 	self.scrolling = UICreateFrame("Frame", "", self.mask)
 	self.scrolling:SetPoint("TOPCENTER", self.mask, "TOPCENTER")
 	
-	local hotArea = UICreateFrame("Frame", "", self)
-	hotArea:SetLayer(100)
-	hotArea:SetAllPoints(self)
-	hotArea:SetMouseMasking("limited")
-	
 	self.chars = { }
 	self.items = { }
-	makeScrollable(self, hotArea)
-	
-	if(titleBar) then
-		function hotArea.Event.MouseOut()
-			if(not titleBar:IsMouseHot()) then
-				titleBar:FadeOut()
-			end
-			fadeOut(self)
-		end
-	else
-		function hotArea.Event.MouseOut()
-			fadeOut(self)
-		end
-	end
 	
 	function self:SetCallback(callback)
 		self.callback = callback
 	end
 	
+	makeScrollable(self, Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, backgroundHeight))
+
 	self.ShowForChars = showForChars
-	self.FadeIn = fadeIn
-	self.FadeOut = fadeOut
 	return self
 end
-
-metatable.__call = new

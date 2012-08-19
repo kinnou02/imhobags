@@ -150,8 +150,8 @@ function Ux.GuildWindow.New(title, character, location, itemSize, sorting)
 	end
 	
 	self.coinFrame:SetVisible(false)
-	self.titleBar:SetPlayerButtonSkin("guild")
-	self.titleBar:SetPlayerButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableGuilds()) end)
+	self.titleBar:SetCharButtonSkin("guild")
+	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableGuilds()) end)
 	
 	self.update = update
 

@@ -137,100 +137,56 @@ local function createMainLabel(self)
 	function self:SetMainLabel(text) self.mainLabel:SetText(text) end
 end
 
-local function createCharSelector(self)
+local function hideAllMenus(self)
+	self.charSelector:FadeOut()
+	self.sizeSelector:FadeOut()
+	self.sortSelector:FadeOut()
+end
+
+local function createCharButton(self)
+	self.charButton = Ux.ItemWindowTemplate.TitleBarButton(self.hidden, "Rift", "icon_menu_charpanel.png.dds", 20, 20, 0, 0, function()
+		if(self.charSelector:GetVisible()) then
+			self.charSelector:FadeOut()
+		else
+			self.charButtonCallback()
+		end
+	end)
+	self.charButton:SetPoint("TOPLEFT", self.hidden, "TOPLEFT", 0, -1)
+	function self:SetCharButtonCallback(callback) self.charButtonCallback = callback end
+	function self:SetCharButtonSkin(skin)
+		if(skin == "player") then
+			self.charButton:SetTexture("Rift", "icon_menu_charpanel.png.dds", 20, 20)
+		elseif(skin == "guild") then
+			self.charButton:SetTexture("Rift", "icon_menu_guild.png.dds", 24, 24)
+		end
+	end
+
 	self.charSelector = Ux.ItemWindowTemplate.CharSelector(self, self)
 	self.charSelector:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 5, 0)
 	self.charSelector:SetVisible(false)
 	self:HotArea(self.charSelector, true)
 	
-	function self:ShowCharSelector(chars) self.charSelector:ShowForChars(chars) end
+	function self:ShowCharSelector(chars)
+		hideAllMenus(self)
+		self.charSelector:ShowForChars(chars)
+	end
 	function self:HideCharSelector() self.charSelector:FadeOut() end
 	function self:SetCharSelectorCallback(callback) self.charSelector:SetCallback(callback) end
-end
-
-local function createSizeSelector(self)
-	self.sizeSelector = Ux.ItemWindowTemplate.SizeSelector(self, self)
-	self.sizeSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 55, 0)
-	self.sizeSelector:SetVisible(false)
-	self:HotArea(self.sizeSelector, true)
-		
-	function self:SetSizSelectorCallback(callback) self.sizeSelector:SetCallback(callback) end
-	function self:SetSizSelectorValue(n) self.sizeSelector:SetValue(n) end
-end
-
-local function createButtons(self)
-	local background = UICreateFrame("Frame", "", self.hidden)
---	background:SetTexture("Rift", "window_field.png.dds")
-	background:SetPoint("TOPLEFT", self.hidden, "TOPLEFT")
-	background:SetHeight(20)
-	background:SetWidth(74)
-	
-	local highlight = UICreateFrame("Texture", "", background)
-	highlight:SetTexture("Rift", "SoulTree_I9.dds")
-	
-	local player = UICreateFrame("Texture", "", background)
-	player:SetTexture("Rift", "icon_menu_charpanel.png.dds")
-	player:SetPoint("LEFTCENTER", background, "LEFTCENTER", 3, -1)
-	player:SetHeight(20)
-	player:SetWidth(20)
-	player.Event.LeftUp = function()
-		if(self.charSelector:GetVisible()) then
-			self.charSelector:FadeOut()
-		else
-			self.playerButtonCallback()
-		end
-	end
-	createCharSelector(self)
-	
-	local sort = UICreateFrame("Texture", "", background)
-	sort:SetTexture("ImhoBags", "textures/icon_menu_sort.png")
-	sort:SetPoint("LEFTCENTER", background, "LEFTCENTER", filterBoxLeft + filterBoxWidth, -1)
-	
-	local size = UICreateFrame("Texture", "", background)
-	size:SetTexture("ImhoBags", "textures/icon_menu_size.png")
-	size:SetPoint("LEFTCENTER", sort, "RIGHTCENTER", -6, 0)
-	size.Event.LeftUp = function()
-		if(self.sizeSelector:GetVisible()) then
-			self.sizeSelector:FadeOut()
-		else
-			self.sizeSelector:FadeIn()
-		end
-	end
-	createSizeSelector(self)
-	
-	function self:SetPlayerButtonCallback(callback) self.playerButtonCallback = callback end
-	function self:SetPlayerButtonSkin(skin)
-		if(skin == "player") then
-			player:SetTexture("Rift", "icon_menu_charpanel.png.dds")
-			player:SetHeight(20)
-			player:SetWidth(20)
-		elseif(skin == "guild") then
-			player:SetTexture("Rift", "icon_menu_guild.png.dds")
-			player:SetHeight(24)
-			player:SetWidth(24)
-		end
-	end
-	
-	self.buttonsBox = background
 end
 
 local function createSearchFilter(self)
 	local background = UICreateFrame("Texture", "", self.hidden)
 	background:SetTexture("Rift", "window_field.png.dds")
-	background:SetPoint("TOPLEFT", self.hidden, "TOPLEFT", filterBoxLeft, 0)
+	background:SetPoint("TOPLEFT", self.charButton, "TOPRIGHT", 0, 0)
 	background:SetWidth(filterBoxWidth)
 	background:SetHeight(20)
 
-	local icon = UICreateFrame("Texture", "", background)
-	icon:SetTexture("Rift", "icon_menu_LFP.png.dds")
-	icon:SetPoint("RIGHTCENTER", background, "RIGHTCENTER", -4, -1)
-	icon:SetWidth(26)
-	icon:SetHeight(26)
-	icon.Event.LeftUp = function() Ux.SearchWindow:Toggle() end
+	local button = Ux.ItemWindowTemplate.TitleBarButton(background, "Rift", "icon_menu_LFP.png.dds", 26, 26, 0, 1, function() Ux.SearchWindow:Toggle() end)
+	button:SetPoint("RIGHTCENTER", background, "RIGHTCENTER", -4, -1)
 	
 	local input = UICreateFrame("RiftTextfield", "", background)
 	input:SetPoint("LEFTCENTER", background, "LEFTCENTER", 4, 1)
-	input:SetPoint("RIGHTCENTER", icon, "LEFTCENTER", 0, 1)
+	input:SetPoint("RIGHTCENTER", button, "LEFTCENTER", 0, 1)
 	input:SetText("")
 	
 	function self:ClearKeyFocus()
@@ -251,10 +207,51 @@ local function createSearchFilter(self)
 	self.filterBox = background
 end
 
+local function createSizeButton(self)
+	self.sizeButton = Ux.ItemWindowTemplate.TitleBarButton(self.hidden, "ImhoBags", "textures/icon_menu_size.png", nil, nil, 0, 0, function()
+		if(self.sizeSelector:GetVisible()) then
+			self.sizeSelector:FadeOut()
+		else
+			hideAllMenus(self)
+			self.sizeSelector:FadeIn()
+		end
+	end)
+	self.sizeButton:SetPoint("LEFTCENTER", self.filterBox, "RIGHTCENTER", 5, 0)
+
+	self.sizeSelector = Ux.ItemWindowTemplate.SizeSelector(self, self)
+	self.sizeSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 35, 0)
+	self.sizeSelector:SetVisible(false)
+	self:HotArea(self.sizeSelector, true)
+		
+	function self:SetSizeSelectorCallback(callback) self.sizeSelector:SetCallback(callback) end
+	function self:SetSizeSelectorValue(n) self.sizeSelector:SetValue(n) end
+end
+
+local function createSortButton(self)
+	self.sortButton = Ux.ItemWindowTemplate.TitleBarButton(self.hidden, "ImhoBags", "textures/icon_menu_sort.png", nil, nil, 0, 0, function()
+		if(self.sortSelector:GetVisible()) then
+			self.sortSelector:FadeOut()
+		else
+			hideAllMenus(self)
+			self.sortSelector:FadeIn()
+		end
+	end)
+	self.sortButton:SetPoint("LEFTCENTER", self.sizeButton, "RIGHTCENTER", 5, 0)
+	self.sortButton:SetVisible(false)
+
+	self.sortSelector = Ux.ItemWindowTemplate.SortSelector(self, self)
+	self.sortSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 35, 0)
+	self.sortSelector:SetVisible(false)
+	self:HotArea(self.sortSelector, true)
+		
+	function self:SetSortSelectorCallback(callback) self.sortButton:SetVisible(callback ~= nil) self.sortSelector:SetCallback(callback) end
+	function self:SetSortSelectorValue(n) self.sortSelector:SetValue(n) end
+end
+
 -- Public methods
 -- ============================================================================
 
-local function new(_, parent)
+function metatable.__call(_, parent)
 	local border = parent:GetBorder()
 	
 	local self = UICreateFrame("Frame", "", border)
@@ -283,10 +280,10 @@ local function new(_, parent)
 	createMainLabel(self)
 	
 	-- Hidden panel
-	createButtons(self)
+	createCharButton(self)
 	createSearchFilter(self)
+	createSizeButton(self)
+	createSortButton(self)
 	
 	return self
 end
-
-metatable.__call = new

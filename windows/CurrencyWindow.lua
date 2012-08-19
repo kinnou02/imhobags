@@ -23,7 +23,7 @@ function Ux.CurrencyWindow.New(title, character, location, itemSize, sorting)
 	end
 	
 	-- Disable the sort button as it doesn't make sense
-	self.sortButton:SetVisible(false)
+	self.titleBar:SetSortSelectorCallback(nil)
 
 	self.groupFunc = Group.Default.GetCurrencyGroup
 	
