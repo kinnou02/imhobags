@@ -11,17 +11,14 @@ local InspectMouse = Inspect.Mouse
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
-local metatable = { }
 local filterBoxLeft = 24
 local filterBoxWidth = 100
 local rightPanelMinWidth = 40
 local rightHiddenMinWidth = 20
 local rightHiddenMaxWidth = 6 * 20
 
-private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
-private.Ux.ItemWindowTemplate.TitleBar = setmetatable({ }, metatable)
-
 setfenv(1, private)
+Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 
 -- Private methods
 -- ============================================================================
@@ -281,7 +278,7 @@ local function createSortButton(self)
 	self.sortButton:SetVisible(false)
 
 	self.sortSelector = Ux.ItemWindowTemplate.SortSelector(self, self)
-	self.sortSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 35, 0)
+	self.sortSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 55, 0)
 	self.sortSelector:SetVisible(false)
 	self:HotArea(self.sortSelector, true)
 	self.fadeOutMenus[#self.fadeOutMenus + 1] = self.sortSelector
@@ -350,7 +347,7 @@ end
 -- Public methods
 -- ============================================================================
 
-function metatable.__call(_, parent, location)
+function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	local border = parent:GetBorder()
 	
 	local self = UICreateFrame("Frame", "", border)

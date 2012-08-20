@@ -3,19 +3,10 @@ local Addon, private = ...
 -- Builtins
 
 -- Globals
-local InspectMouse = Inspect.Mouse
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
-local metatable = { }
-
-private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
-private.Ux.ItemWindowTemplate.SortSelector = setmetatable({ }, metatable)
-
-setfenv(1, private)
-
 local backgroundOffset = 3
-local backgroundWidth = 160
 local backgroundHeight = 32
 
 local contentPaddingLeft = 7
@@ -23,13 +14,16 @@ local contentPaddingBottom = 9
 
 local textColor = { 245 / 255, 240 / 255, 198 / 255 }
 
+setfenv(1, private)
+Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
+
 -- Private methods
 -- ============================================================================
 
 -- Public methods
 -- ============================================================================
 
-function metatable.__call(_, parent, titleBar)
+function Ux.ItemWindowTemplate.SortSelector(parent, titleBar)
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetHeight(0)
 	

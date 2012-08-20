@@ -4,14 +4,11 @@ local Addon, private = ...
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
-local metatable = { }
 local width = 20
 local height = 20
 
-private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
-private.Ux.ItemWindowTemplate.TitleBarButton = setmetatable({ }, metatable)
-
 setfenv(1, private)
+Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 
 -- Private methods
 -- ============================================================================
@@ -19,10 +16,10 @@ setfenv(1, private)
 -- Public methods
 -- ============================================================================
 
-function metatable.__call(_, parent, source, texture, dx, dy, offsetx, offsety, callback)
+function Ux.ItemWindowTemplate.TitleBarButton(parent, source, texture, dx, dy, offsetx, offsety, callback)
 	local self = UICreateFrame("Frame", "", parent)
-	self:SetHeight(20)
-	self:SetWidth(20)
+	self:SetWidth(width)
+	self:SetHeight(height)
 	self:SetMouseMasking("limited")
 	self.Event.LeftUp = callback
 	

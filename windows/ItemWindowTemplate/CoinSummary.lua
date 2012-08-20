@@ -11,7 +11,6 @@ local InspectCurrencyDetail = Inspect.Currency.Detail
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
-local metatable = { }
 local characterNames = { }
 local characterCoins = { }
 local playerAllianceCoinTotal = 0
@@ -24,10 +23,8 @@ local contentPaddingLeft = 14
 
 local textColor = { 245 / 255, 240 / 255, 198 / 255 }
 
-private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
-private.Ux.ItemWindowTemplate.CoinSummary = setmetatable({ }, metatable)
-
 setfenv(1, private)
+Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 
 -- Private methods
 -- ============================================================================
@@ -129,7 +126,7 @@ end
 -- ============================================================================
 
 
-function metatable.__call(_, parent, titleBar)
+function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar)
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetHeight(0)
 	

@@ -4,22 +4,17 @@ local Addon, private = ...
 local tostring = tostring
 
 -- Globals
-local InspectMouse = Inspect.Mouse
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
-local metatable = { }
-
-private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
-private.Ux.ItemWindowTemplate.SizeSelector = setmetatable({ }, metatable)
-
-setfenv(1, private)
-
 local backgroundOffset = 3
 local backgroundWidth = 160
 local backgroundHeight = 32
 
 local textColor = { 245 / 255, 240 / 255, 198 / 255 }
+
+setfenv(1, private)
+Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 
 -- Private methods
 -- ============================================================================
@@ -27,7 +22,7 @@ local textColor = { 245 / 255, 240 / 255, 198 / 255 }
 -- Public methods
 -- ============================================================================
 
-function metatable.__call(_, parent, titleBar)
+function Ux.ItemWindowTemplate.SizeSelector(parent, titleBar)
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetWidth(backgroundWidth)
 	self:SetHeight(0)

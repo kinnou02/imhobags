@@ -12,8 +12,6 @@ local InspectMouse = Inspect.Mouse
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
-local metatable = { }
-
 local backgroundWidth = 128
 local backgroundHeight = 128
 
@@ -28,10 +26,8 @@ local contentPaddingBottom = 9
 
 local textColor = { 245 / 255, 240 / 255, 198 / 255 }
 
-private.Ux.ItemWindowTemplate = private.Ux.ItemWindowTemplate or { }
-private.Ux.ItemWindowTemplate.CharSelector = setmetatable({ }, metatable)
-
 setfenv(1, private)
+Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 
 -- Private methods
 -- ============================================================================
@@ -105,7 +101,7 @@ end
 -- Public methods
 -- ============================================================================
 
-function metatable.__call(_, parent, titleBar)
+function Ux.ItemWindowTemplate.CharSelector(parent, titleBar)
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetWidth(backgroundWidth)
 	self:SetHeight(0)

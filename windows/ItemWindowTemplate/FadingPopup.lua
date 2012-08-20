@@ -3,7 +3,6 @@ local Addon, private = ...
 -- Builtins
 
 -- Globals
-local InspectMouse = Inspect.Mouse
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
