@@ -315,7 +315,7 @@ local function createEmptySlotIndicator(self)
 end
 
 local function createLocationButtons(self, location)
-	local textures = {
+	local locations = {
 		"inventory",	"ImhoBags",	"textures/icon_menu_inventory.png",	28, 28, -1, 0,
 		"bank",			"ImhoBags",	"textures/icon_menu_bank.png",		28, 28, 2, 2,
 		"mail",			"ImhoBags",	"textures/icon_menu_mail.png",		29, 29, 1, 1,
@@ -333,17 +333,18 @@ local function createLocationButtons(self, location)
 	}
 	self.rightHiddenButtonsOffset = offsets[location]
 	self.rightHiddenButtonsOffsetCurrent = self.rightHiddenButtonsOffset
-	local prev = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, textures[2], textures[3], textures[4], textures[5], textures[6], textures[7], function() end)
+	local prev = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, locations[2], locations[3], locations[4], locations[5], locations[6], locations[7], function() self.locationCallback(locations[1]) end)
 	prev:SetPoint("LEFTCENTER", self.rightHidden, "LEFTCENTER", self.rightHiddenButtonsOffset, 0)
 	self.locationButtons = { prev }
 	for i = 1, 5 do
 		local j = i * 7
-		local btn = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, textures[j+2], textures[j+3], textures[j+4], textures[j+5], textures[j+6], textures[j+7], function() end)
+		local btn = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, locations[j+2], locations[j+3], locations[j+4], locations[j+5], locations[j+6], locations[j+7], function() self.locationCallback(locations[j+1]) end)
 		btn:SetPoint("LEFTCENTER", prev, "RIGHTCENTER")
 		prev = btn
 		self.locationButtons[#self.locationButtons + 1] = btn
 	end
 	
+	function self:SetLocationCallback(callback) self.locationCallback = callback end
 end
 
 -- Public methods

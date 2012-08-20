@@ -402,43 +402,6 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	-- Close button
 	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
 	
-	-- Tool buttons
-	self.bankButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)
-	self.bankButton:SetPoint("TOPLEFT", content, "TOPLEFT",Ux.ItemWindowPadding, -2)
-	function self.bankButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "bank")
-	end
-
-	self.mailButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\collection_of_love_letters.dds]], L.Ux.WindowTitle.mail)
-	self.mailButton:SetPoint("TOPLEFT", self.bankButton, "TOPRIGHT")
-	function self.mailButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "mail")
-	end
-
-	self.equipmentButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\1h_sword_065b.dds]], L.Ux.WindowTitle.equipment)
-	self.equipmentButton:SetPoint("TOPLEFT", self.mailButton, "TOPRIGHT")
-	function self.equipmentButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "equipment")
-	end
-
-	self.wardrobeButton = Ux.IconButton.New(self, [[wardrobe_none.dds]], L.Ux.WindowTitle.wardrobe)
-	self.wardrobeButton:SetPoint("TOPLEFT", self.equipmentButton, "TOPRIGHT")
-	function self.wardrobeButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "wardrobe")
-	end
-
-	self.currencyButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\loot_gold_coins.dds]], L.Ux.WindowTitle.currency)
-	self.currencyButton:SetPoint("TOPLEFT", self.wardrobeButton, "TOPRIGHT")
-	function self.currencyButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "currency")
-	end
-	
-	self.guildButton = Ux.IconButton.New(self, Player.alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
-	self.guildButton:SetPoint("TOPLEFT", self.currencyButton, "TOPRIGHT")
-	function self.guildButton.LeftPress()
-		Ux.ToggleGuildWindow(self.character)
-	end
-	
 	-- Search button
 	local helpBtn = UI.CreateFrame("Frame", "", self)
 	helpBtn:SetPoint("BOTTOMLEFT", content, "TOPLEFT", -4, -6)
@@ -475,7 +438,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.buttons = { }
 	self.groupLabels = { }
 
-	self.contentOffset = self.bankButton:GetHeight() + Ux.ItemWindowPadding
+	self.contentOffset = 0
 	
 	-- Protected (+abstract) methods
 	self.isAvailable = isAvailable
@@ -516,6 +479,13 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.titleBar:SetCharSelectorCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)
 	self.titleBar:SetSizeSelectorCallback(function(n) self.itemSize = n self:Update() end)
 	self.titleBar:SetSizeSelectorValue(self.itemSize)
+	self.titleBar:SetLocationCallback(function(loc)
+		if(loc == "guildbank") then
+			Ux.ToggleGuildWindow(self.character)
+		else
+			Ux.ToggleItemWindow(self.character, loc)
+		end
+	end)
 
 	return self
 end

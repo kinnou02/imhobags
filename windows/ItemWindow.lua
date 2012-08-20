@@ -208,14 +208,6 @@ end
 function Ux.ItemWindow.New(title, character, location, itemSize, sorting)
 	local self = Ux.ItemWindowBase.New(title, character, location, itemSize)
 
-	if(location == "bank") then
-		self.bankButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
-		self.bankButton:SetTooltip(L.Ux.WindowTitle.inventory)
-		function self.bankButton.LeftPress()
-			Ux.ToggleItemWindow(self.character, "inventory")
-		end
-	end
-	
 	local sortAlgorithms = {
 		name = Sort.Default.ByItemName,
 		icon = Sort.Default.ByItemIcon,

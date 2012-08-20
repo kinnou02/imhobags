@@ -143,11 +143,6 @@ end
 function Ux.GuildWindow.New(title, character, location, itemSize, sorting)
 	local self = Ux.ItemWindow.New(title or "", character, location, itemSize, sorting)
 	
-	self.guildButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
-	function self.guildButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "inventory")
-	end
-	
 	self.titleBar:SetCharButtonSkin("guild")
 	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableGuilds()) end)
 	

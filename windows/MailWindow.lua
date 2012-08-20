@@ -279,12 +279,6 @@ function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	-- Sort mail by name
 	local self = Ux.ItemWindowBase.New(title, character, location, itemSize, "name")
 	
-	self.mailButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
-	self.mailButton:SetTooltip(L.Ux.WindowTitle.inventory)
-	function self.mailButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "inventory")
-	end
-	
 	local left, top, right, bottom = self:getContentPadding()
 	local borderLeft, borderTop, borderRight, borderBottom = self:GetTrimDimensions()
 	
