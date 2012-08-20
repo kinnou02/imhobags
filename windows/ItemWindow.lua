@@ -196,7 +196,7 @@ local function update(self)
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
 	self.titleBar:SetEmptySlots(n)
-	self.titleBar:SetMainLabel(format("%s", self.character == "player" and Player.name or self.character, self.title))
+	self.titleBar:SetMainLabel(self.character == "player" and Player.name or self.character)
 	self.sellableCoinFrame:SetVisible(false)
 	
 	self:base_update()
