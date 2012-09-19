@@ -89,14 +89,14 @@ local function getGroupLabel(self, mail)
 		label:SetVisible(true)
 		label:SetParent(self.itemsContainer)
 	end
+	label:ClearHeight()
 	label:SetText(format("\t%s: %s", mail[2].from, mail[2].subject))
 	if(mail[2].cod) then
 		label.cod:SetVisible(true)
 		label.codMoney:SetCoin(mail[2].cod)
-		label:SetHeight(label:GetFullHeight() + label.cod:GetFullHeight())
+		label:SetHeight(label:GetHeight() + label.cod:GetHeight())
 	else
 		label.cod:SetVisible(false)
-		label:SetHeight(label:GetFullHeight())
 	end
 	label.body = mail[2].body
 	if(label.body and label.body ~= "") then

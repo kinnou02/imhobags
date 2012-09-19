@@ -45,8 +45,8 @@ local function getGroupLabel(self, name)
 		label:SetVisible(true)
 		label:SetParent(self.itemsContainer)
 	end
+	label:ClearHeight()
 	label:SetText(name)
-	label:SetHeight(label:GetFullHeight())
 	return label, self.itemSize, self.itemSize
 end
 

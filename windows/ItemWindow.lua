@@ -122,7 +122,7 @@ local function getPackedIndices(self)
 	for i = 1, n do
 		local items = self.groups[i]
 		dummytext:SetText(self.groupKeys[items])
-		local line = line(dummytext:GetFullWidth(), self:columnsWidth(#items))
+		local line = line(dummytext:GetWidth(), self:columnsWidth(#items))
 		line[#line + 1] = i
 	end
 	
