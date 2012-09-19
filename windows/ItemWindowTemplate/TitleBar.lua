@@ -301,7 +301,7 @@ local function createEmptySlotIndicator(self)
 	function self:SetEmptySlots(n)
 		if(n) then
 			self.emptySlotsIndicator:SetVisible(true)
-			self.emptySlotsIndicator:SetText(tostring(n*10))
+			self.emptySlotsIndicator:SetText(tostring(n))
 			n = self.emptySlotsIndicator:GetWidth()
 			self.emptySlotsBackground:SetWidth(n > 24 and (n + 5) or 24)
 		else
