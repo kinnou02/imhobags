@@ -1,87 +1,18 @@
-0.12beta8
-
-FIXES:
-* Next attempt at fixing the GetUnsortedMails error
-
---------------------
-
-0.12beta7
-
-FIXES:
-* Fixed GetUnsortedMails error
-* The character@shard syntax for the /imhobags slash command is not
-	supported and in fact never was and gives an error message now.
-
---------------------
-
-0.12beta6
-
-FIXES:
-* Fixed errors occurring during Conquests
-
---------------------
-
-0.12beta5
-
-FIXES:
-* Fixed performance warnings occurring in ItemDB
-
---------------------
-
-0.12beta4
-
-FIXES:
-* Fixed out-of-date LibAsyncTextures library in package
-
---------------------
-
-0.12beta3
-
-FIXES:
-* Fixed error spam during combat.
-* Fixed various performance warnings.
-
---------------------
-
-0.12beta2
-
-FIXES:
-* Fixed error when consuming items.
-
---------------------
-
-0.12beta
+0.13beta
 
 FEATURES:
-* ITEMS CAN BE USED NOW!
-	Yeah, this is big news. Thanks to additions to the API in 1.9 you
-	can now left and right click on items in ImhoBags to use/move/sell/love
-	them the same way as the default windows do. Items which you cannot interact
-	with (e.g. wrong character) are dimmed and don't react to input.
-* Added a new menu to access all inventory locations from
-	a centeral location without the need to memorize all slash commands.
-* The command to open this menu is /imhobags menu
-	Put the command into a macro to have a convenient menu
-	popup whenever you click the macro button.
-* The items in each group can now be sorted either by name, icon or rarity.
-	Sorting items by icon may result in items of similar type to be arranged
-	together, for example all cloth items followed by all wood, followed
-	by all herbs and so on. I suggest experimenting which sort option suites
-	you best.
-* Hovering your mouse over a money display in a item window shows
-	a summary of all the money you have on the current shard.
-* There is now a public API in the "ImhoBags" global table with events
-	other addon authors can make use of.
 CHANGES:
-* Mounts and Pets are now grouped under collectibles like artifacts.
-* Account-bound items received a different red/blue indicator symbol.
+* Chanes were made to the top area of item windows to use less space.
+	Move your mouse ocer the title bar to get to the old options.
 FIXES:
-* Some tweaks to update performance. Further improvements are still underway.
-* Many small fixes.
-* Fixed error spam during combat.
+* Fixed error occurring when switching bags with different sizes
+* Fixed compatibility issues and deprecation errors
+* 
 ISSUES:
 * The mail database is cleared everytime the Trion mail window is opened.
 * Item tooltips may show up in the top-left corner of the screen.
 * Some items may not show up in the item windows due to broken values in the API.
 * Equipped and wardrobe items cannot be draged until the character/wardrobe window
 	has been opened at least once with the respective set.
+* Using artifacts may cause a performance warning if the Artifacts Window takes
+	too long to load.
