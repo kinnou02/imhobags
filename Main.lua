@@ -38,13 +38,13 @@ ImhoEvent = { }
 Trigger = { }
 
 -- The VariablesLoaded event signals all ImhoBags data was loaded, usually triggered before Init
-Trigger.VariablesLoaded, ImhoEvent.VariablesLoaded = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.VariablesLoaded")
+Trigger.VariablesLoaded, ImhoEvent.VariablesLoaded = Utility.Event.Create(Addon.identifier, "Private.VariablesLoaded")
 -- The Init event is postponed until the full Inspect.Unit.Detail("player") data is available
-Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Init")
+Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "Private.Init")
 -- The Config event is fired whenever a cvonfig option has changed: (name, value)
-Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Config")
+Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "Private.Config")
 -- Triggered when the player's guild has changed (but not on startup): (old, new)
-Trigger.Guild, ImhoEvent.Guild = Utility.Event.Create(Addon.identifier, "ImhoBags.Event.Guild")
+Trigger.Guild, ImhoEvent.Guild = Utility.Event.Create(Addon.identifier, "Private.Guild")
 
 local unitAvailableEntry
 local function unitAvailable(units)
