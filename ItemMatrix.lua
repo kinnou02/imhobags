@@ -124,7 +124,7 @@ Merge a slot change into the matrix.
 Also available as instance metamethod.
 ]]
 function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
-	if(item) then
+	if(item and item ~= "nil") then
 		item = InspectItemDetail(slot)
 	end
 	
@@ -141,7 +141,7 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 	-- First check if an item needs to be removed from the DB
 	-- This solves the "bag replaced in-place with content" issue
 	local type = matrix.slots[slot]
-	if(type and (not item or type ~= item.type)) then
+	if(type and (not item or item == "nil" or type ~= item.type)) then
 		if(matrix.items[type]) then
 			matrix.items[type][slot] = nil
 			-- Delete empty entries or otherwise the table will grow indefinitely
@@ -150,17 +150,21 @@ function ItemMatrix.MergeSlot(matrix, slot, item, bag, index)
 			end
 		end
 	end
-	matrix.slots[slot] = item and item.type -- Keep table entries for retrieving empty slots
-	
-	-- Now add the new item
-	if(item) then
-		matrix.slots[slot] = item.type
-		if(matrix.items[item.type] == nil) then
-			matrix.items[item.type] = { }
+	if(item == "nil") then
+		matrix.slots[slot] = nil
+	else
+		matrix.slots[slot] = item and item.type -- Keep table entries for retrieving empty slots
+		
+		-- Now add the new item
+		if(item) then
+			matrix.slots[slot] = item.type
+			if(matrix.items[item.type] == nil) then
+				matrix.items[item.type] = { }
+			end
+			matrix.items[item.type][slot] = item.stack or 1
 		end
-		matrix.items[item.type][slot] = item.stack or 1
+		matrix.lastUpdate = InspectTimeReal() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	end
-	matrix.lastUpdate = InspectTimeReal() -- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
 	log("update", bag, slot, item and item.name, matrix.lastUpdate)
 end
 

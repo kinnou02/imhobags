@@ -220,21 +220,19 @@ end
 local function mergeSlotChanges(slots)
 	local yield = Inspect.Time.Real() + maxMergeTime
 	for slot, item in pairs(slots) do
-		if(item ~= "nil") then
-			local container, bag, index = Utility.Item.Slot.Parse(slot)
-			if(container == "guild") then
-				if(not playerGuildItems[bag]) then
-					playerGuildItems[bag] = ItemMatrix.New()
-					if(bag > playerGuildItems.vaults) then
-						playerGuildItems.vaults = bag
-					end
+		local container, bag, index = Utility.Item.Slot.Parse(slot)
+		if(container == "guild") then
+			if(not playerGuildItems[bag]) then
+				playerGuildItems[bag] = ItemMatrix.New()
+				if(bag > playerGuildItems.vaults) then
+					playerGuildItems.vaults = bag
 				end
-				playerGuildItems[bag]:MergeSlot(slot, item, bag, index)
-			else
-				local matrix = playerItems[container]
-				if(matrix) then
-					matrix:MergeSlot(slot, item, bag, index)
-				end
+			end
+			playerGuildItems[bag]:MergeSlot(slot, item, bag, index)
+		else
+			local matrix = playerItems[container]
+			if(matrix) then
+				matrix:MergeSlot(slot, item, bag, index)
 			end
 		end
 		if(Inspect.Time.Real() > yield) then
