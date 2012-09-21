@@ -2,7 +2,7 @@ local Addon, private = ...
 
 -- Only the keys in this table are valid config options
 local defaults = {
-	showEnemyFaction = "account",
+	showEnemyFaction = "yes",
 	autoOpen = false,
 	itemButtonSkin = "pretty",
 	packGroups = true,

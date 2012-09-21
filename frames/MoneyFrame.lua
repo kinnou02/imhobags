@@ -31,7 +31,7 @@ local function setCoin(self, coin)
 		width = width + iconWidth + 23
 		self.g:SetVisible(true)
 		if(coin >= 10000) then
-			width = width + iconWidth + self.ptxt:GetFullWidth()
+			width = width + iconWidth + self.ptxt:GetWidth()
 			self.p:SetVisible(true)
 		else
 			self.p:SetVisible(false)
@@ -42,6 +42,12 @@ local function setCoin(self, coin)
 	end
 	
 	self:SetWidth(width)
+end
+
+local function setFontColor(self, r, g, b, a)
+	self.stxt:SetFontColor(r, g, b, a or 1.0)
+	self.gtxt:SetFontColor(r, g, b, a or 1.0)
+	self.ptxt:SetFontColor(r, g, b, a or 1.0)
 end
 
 -- Public methods
@@ -85,6 +91,8 @@ function Ux.MoneyFrame.New(parent, coin)
 	
 	self.SetCoin = setCoin
 	self:SetCoin(coin or 0)
+	
+	self.SetFontColor = setFontColor
 	
 	return self
 end

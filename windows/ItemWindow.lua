@@ -5,6 +5,7 @@ local floor = math.floor
 local format = string.format
 local max = math.max
 local sort = table.sort
+local tostring = tostring
 local type = type
 
 -- Globals
@@ -26,24 +27,22 @@ Ux.ItemWindow = { }
 local function getGroupLabel(self, name)
 	local label
 	if(#cachedLabels == 0) then
-		label = UICreateFrame("Text", "", self.itemsContainer)
-		label:SetFontSize(labelFontSize)
-		label:SetBackgroundColor(1, 1, 1, 0.1)
-		local p = UICreateFrame("Texture", "", label)
-		p:SetWidth(16)
-		p:SetHeight(16)
-		p:SetPoint("TOPRIGHT", label, "TOPRIGHT")
+		label = UICreateFrame("Texture", "", self.itemsContainer)
+		label:SetTexture("Rift", "QuestBarUp.png.dds")
+		label.text = UICreateFrame("Text", "", label)
+		label.text:SetFontSize(labelFontSize)
+		label.text:SetPoint("CENTER", label, "CENTER")
 		function label:Dispose()
 			self:SetVisible(false)
 			cachedLabels[#cachedLabels + 1] = self
 		end
 		function label.SetInfo(label, sell, slots)
-			if(label:GetText() == L.CategoryName.sellable) then
-				label:SetText(format("%s (%i)", L.CategoryName.sellable, slots))
-				self.moneyFrame:SetPoint("RIGHTCENTER", label, "RIGHTCENTER", -2, 0)
-				self.moneyFrame:SetCoin(sell)
-				self.moneyFrame:SetVisible(true)
-				self.moneyFrame:SetParent(label)
+			if(label.text:GetText() == L.CategoryName.sellable) then
+				label.text:SetText(format("%s (%i)", L.CategoryName.sellable, slots))
+				self.sellableCoinFrame:SetPoint("RIGHTCENTER", label, "RIGHTCENTER", -2, 0)
+				self.sellableCoinFrame:SetCoin(sell)
+				self.sellableCoinFrame:SetVisible(true)
+				self.sellableCoinFrame:SetParent(label)
 			end
 		end
 	else
@@ -52,8 +51,9 @@ local function getGroupLabel(self, name)
 		label:SetVisible(true)
 		label:SetParent(self.itemsContainer)
 	end
-	label:SetText(name)
-	label:SetHeight(label:GetFullHeight())
+	label.text:SetText(name)
+	label:SetHeight(label.text:GetHeight())
+	label:SetWidth(label.text:GetWidth())
 	if(name == L.CategoryName.sellable) then
 		return label, Ux.ItemButtonSizeJunk, Ux.ItemButtonSizeJunk
 	else
@@ -75,7 +75,6 @@ local function getGroups(self)
 	self.groups, self.groupKeys = ItemDB.GetGroupedItems(self.items, self.groupFunc)
 	sortGroups(self)
 	sortItems(self)
-	self.coinFrame:SetCoin(self.coinMatrix.items.coin or 0)
 end
 
 local dummytext = UICreateFrame("Text", "", Ux.Context)
@@ -123,7 +122,7 @@ local function getPackedIndices(self)
 	for i = 1, n do
 		local items = self.groups[i]
 		dummytext:SetText(self.groupKeys[items])
-		local line = line(dummytext:GetFullWidth(), self:columnsWidth(#items))
+		local line = line(dummytext:GetWidth(), self:columnsWidth(#items))
 		line[#line + 1] = i
 	end
 	
@@ -194,12 +193,13 @@ end
 -- ============================================================================
 
 local function update(self)
-	self.moneyFrame:SetVisible(false)
-	self:base_update()
-	
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
-	self:SetTitle(format("%s: %s (+%i)", self.character == "player" and Player.name or self.character, self.title, n))
+	self.titleBar:SetEmptySlots(n)
+	self.titleBar:SetMainLabel(self.character == "player" and Player.name or self.character)
+	self.sellableCoinFrame:SetVisible(false)
+	
+	self:base_update()
 end
 
 -- Public methods
@@ -207,44 +207,22 @@ end
 
 function Ux.ItemWindow.New(title, character, location, itemSize, sorting)
 	local self = Ux.ItemWindowBase.New(title, character, location, itemSize)
-	
-	if(location == "bank") then
-		self.bankButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
-		self.bankButton:SetTooltip(L.Ux.WindowTitle.inventory)
-		function self.bankButton.LeftPress()
-			Ux.ToggleItemWindow(self.character, "inventory")
-		end
-	end
-	
-	local sortTranslations = {
-		[L.Ux.SortOption.name] = "name",
-		[L.Ux.SortOption.rarity] = "rarity",
-		[L.Ux.SortOption.icon] = "icon"
-	}
+
 	local sortAlgorithms = {
 		name = Sort.Default.ByItemName,
 		icon = Sort.Default.ByItemIcon,
 		rarity = Sort.Default.ByItemRarity,
 	}
-	local displayedOptions = {
-		L.Ux.SortOption.name,
-		L.Ux.SortOption.rarity,
-		L.Ux.SortOption.icon,
-	}
-	sort(displayedOptions)
-	
-	self.sortButton = Ux.OptionSelector.New(self, [[Data/\UI\ability_icons\elementalres2b.dds]],
-		L.Ux.Tooltip.sorting,
-		displayedOptions,
-		function(sortName)
-			self.sort = sortTranslations[sortName]
+	self.titleBar:SetSortSelectorCallback(function(sort)
+			self.sort = sort
 			self.sortFunc = sortAlgorithms[self.sort]
+			self.titleBar:SetSortSelectorValue(sort)
 			sortItems(self)
 			self:Update()
-		end, 15)
-	self.sortButton:SetPoint("TOPRIGHT", self.sizeButton, "TOPLEFT", -Ux.ItemWindowPadding, 0)
-	
-	self.moneyFrame = Ux.MoneyFrame.New(self)
+		end)
+	self.titleBar:SetSortSelectorValue(sorting)
+
+	self.sellableCoinFrame = Ux.MoneyFrame.New(self)
 	
 	self.base_update = self.update
 	self.update = update

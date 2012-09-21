@@ -23,7 +23,7 @@ local function extractUnsortedPlayerItems(matrix, condensed)
 			if(type) then
 				local _, set = UtilityItemSlotParse(slot)
 				type.category = "wardrobeSet" .. set
-				items[#items + 1] = { type = InspectItemDetail(slot), slots = { slot }, stack = 1 }
+				items[#items + 1] = { type = type, slots = { slot }, stack = 1 }
 			else
 				log("item detail nil", slot)
 			end

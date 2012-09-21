@@ -45,8 +45,8 @@ local function getGroupLabel(self, name)
 		label:SetVisible(true)
 		label:SetParent(self.itemsContainer)
 	end
+	label:ClearHeight()
 	label:SetText(name)
-	label:SetHeight(label:GetFullHeight())
 	return label, self.itemSize, self.itemSize
 end
 
@@ -55,7 +55,7 @@ end
 
 local function update(self)
 	self:item_update()
-	self:SetTitle(format("%s: %s", self.character == "player" and Player.name or self.character, self.title))
+	self.titleBar:SetEmptySlots(nil)
 end
 
 -- Public methods
@@ -65,22 +65,8 @@ function Ux.EquipmentWindow.New(title, character, location, itemSize, sorting)
 	-- Sort equipment and wardrobe by icon, that will most likely keep a consistent ordering for now
 	local self = Ux.ItemWindow.New(title, character, location, itemSize, "icon")
 	
-	if(location == "equipment") then
-		self.equipmentButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
-		self.equipmentButton:SetTooltip(L.Ux.WindowTitle.inventory)
-		function self.equipmentButton.LeftPress()
-			Ux.ToggleItemWindow(self.character, "inventory")
-		end
-	elseif(location == "wardrobe") then
-		self.wardrobeButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
-		self.wardrobeButton:SetTooltip(L.Ux.WindowTitle.inventory)
-		function self.wardrobeButton.LeftPress()
-			Ux.ToggleItemWindow(self.character, "inventory")
-		end
-	end
-	
 	-- Disable the sort button as it doesn't make sense
-	self.sortButton:SetVisible(false)
+	self.titleBar:SetSortSelectorCallback(nil)
 	
 	self.item_update = self.update
 	self.update = update

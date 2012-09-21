@@ -78,7 +78,6 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		return
 	end
 	
-	log("tooltip", ttype, shown, buff)
 	if(not (ttype and shown)) then
 		return
 	end

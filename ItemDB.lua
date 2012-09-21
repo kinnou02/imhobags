@@ -220,21 +220,19 @@ end
 local function mergeSlotChanges(slots)
 	local yield = Inspect.Time.Real() + maxMergeTime
 	for slot, item in pairs(slots) do
-		if(item ~= "nil") then
-			local container, bag, index = Utility.Item.Slot.Parse(slot)
-			if(container == "guild") then
-				if(not playerGuildItems[bag]) then
-					playerGuildItems[bag] = ItemMatrix.New()
-					if(bag > playerGuildItems.vaults) then
-						playerGuildItems.vaults = bag
-					end
+		local container, bag, index = Utility.Item.Slot.Parse(slot)
+		if(container == "guild") then
+			if(not playerGuildItems[bag]) then
+				playerGuildItems[bag] = ItemMatrix.New()
+				if(bag > playerGuildItems.vaults) then
+					playerGuildItems.vaults = bag
 				end
-				playerGuildItems[bag]:MergeSlot(slot, item, bag, index)
-			else
-				local matrix = playerItems[container]
-				if(matrix) then
-					matrix:MergeSlot(slot, item, bag, index)
-				end
+			end
+			playerGuildItems[bag]:MergeSlot(slot, item, bag, index)
+		else
+			local matrix = playerItems[container]
+			if(matrix) then
+				matrix:MergeSlot(slot, item, bag, index)
 			end
 		end
 		if(Inspect.Time.Real() > yield) then
@@ -387,7 +385,7 @@ end
 
 -- Return either "defiant" or "guardian" for the given character (or nil if unknown)
 function ItemDB.GetCharacterAlliance(name)
-	return (name == Player.name or playerFactionCharacters[name]) and Player.alliance or (enemyFactionCharacters[name] and Player.enemyAlliance)
+	return (name == Player.name or name == "player" or playerFactionCharacters[name]) and Player.alliance or (enemyFactionCharacters[name] and Player.enemyAlliance)
 end
 
 -- Return an array of all guilds on the current shard and faction for which item data is available

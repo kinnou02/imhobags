@@ -111,14 +111,14 @@ end
 -- ============================================================================
 
 local function update(self)
-	self.moneyFrame:SetVisible(false)
-	self.coinFrame:SetWidth(0)
-	self:base_update()
-	updateVaultButtons(self)
-	
 	-- Show number of empty slots
 	local n = (type(self.empty) == "table" and #self.empty) or self.empty
-	self:SetTitle(format("%s: %s (+%i)", self.character, format(L.Ux.guildVault, self.vault), n))
+	self.titleBar:SetEmptySlots(n)
+	self.titleBar:SetMainLabel(format("%s: %s", self.character, format(L.Ux.guildVault, self.vault)))
+	
+	self.sellableCoinFrame:SetVisible(false)
+	self:base_update()
+	updateVaultButtons(self)
 end
 
 -- Public methods
@@ -143,16 +143,8 @@ end
 function Ux.GuildWindow.New(title, character, location, itemSize, sorting)
 	local self = Ux.ItemWindow.New(title or "", character, location, itemSize, sorting)
 	
-	self.charSelector:SetIcon(Player.alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]])
-	self.charSelector:SetTooltip(L.Ux.Tooltip.guild)
-	self.guildButton:SetIcon([[Data/\UI\item_icons\bag20.dds]])
-	function self.guildButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "inventory")
-	end
-	
-	self.coinFrame:SetVisible(false)
-	self.charSelector.options = ItemDB.GetAvailableGuilds
-	self.charSelector:UpdateMenu()
+	self.titleBar:SetCharButtonSkin("guild")
+	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableGuilds()) end)
 	
 	self.update = update
 

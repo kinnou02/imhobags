@@ -30,7 +30,6 @@ Ux.ItemWindowBase = { }
 Ux.ItemWindowColumns = 8
 Ux.ItemWindowPadding = 4
 Ux.ItemWindowCellSpacing = 2
-Ux.ItemWindowFilterHeight = 24
 Ux.ItemWindowMinWidth = 345 -- Prevents header buttons from overlapping and is lower bound for full columns
 Ux.ItemWindowMinHeight = 310 -- Title bar stats resizing below this content size
 Ux.ItemWindowUpateStep = 0.010 -- After how many seconds does the update function yield?
@@ -70,7 +69,7 @@ end
 local function closeButton_LeftPress(self)
 	local window = self:GetParent()
 	window:SetVisible(false)
-	window.filter.text:SetKeyFocus(false)
+	window.titleBar:ClearKeyFocus()
 	window:onClose()
 	log("TODO", "close the native frame(s)")
 end
@@ -144,21 +143,9 @@ local function interactionChanged(self, interaction, state)
 	end
 end
 
-local function filter_KeyFocusGain(self, window)
-	if(self:GetText() == L.Ux.search) then
-		self:SetText("")
-	end
-end
-
-local function filter_KeyFocusLoss(self, window)
-	if(self:GetText() == "") then
-		self:SetText(L.Ux.search)
-	end
-end
-
-local function filter_TextfieldChange(self, window)
+local function filter_TextfieldChange(window, filterText)
 	-- Build a case-insensitive search pattern
-	window.searchString = strgsub(self:GetText(), "%a", function(ch)
+	window.searchString = strgsub(filterText, "%a", function(ch)
 		return format("[%s%s]", strlower(ch), strupper(ch))
 	end)
 
@@ -286,7 +273,7 @@ local function update(self)
 			buttons = buttons + #items
 
 			-- Insert empty gap between adjacent groups
-			local w = max(x2 - x + dx + spacing, ceil(label:GetFullWidth() / (dx + spacing)) * (dx + spacing))
+			local w = max(x2 - x + dx + spacing, ceil(label:GetWidth() / (dx + spacing)) * (dx + spacing))
 			label:SetWidth(min(w, width - x))
 			y = y2 - label:GetHeight() - spacing
 			x = x + w
@@ -320,6 +307,60 @@ local function setItemsContentHeight(self, height)
 	self:SetHeight(max(Ux.ItemWindowMinHeight, height))
 end
 
+local function createSearchFilter(self)
+	local frame = UI.CreateFrame("Frame", "", self)
+	frame:SetHeight(20)
+	frame:SetWidth(100)
+	
+	local mask = UI.CreateFrame("Mask", "", frame)
+	mask:SetPoint("TOPLEFT", frame, "TOPLEFT")
+	mask:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT")
+	mask:SetWidth(0)
+	
+	local background = UI.CreateFrame("Texture", "", mask)
+	background:SetTexture("Rift", "window_field.png.dds")
+	background:SetAllPoints(frame)
+
+	local icon = UI.CreateFrame("Texture", "", background)
+	icon:SetTexture("Rift", "filter_icon.png.dds")
+--	icon:SetTexture("Rift", "icon_menu_LFP.png.dds")
+	icon:SetPoint("LEFTCENTER", mask, "LEFTCENTER", 4, 0)
+	
+	local input = UI.CreateFrame("RiftTextfield", "", background)
+	input:SetPoint("LEFTCENTER", icon, "RIGHTCENTER", 0, 1)
+	input:SetPoint("RIGHTCENTER", mask, "RIGHTCENTER", 0, 1)
+	input:SetText("")
+
+	local hitArea = UI.CreateFrame("Frame", "", frame)
+	hitArea:SetLayer(10)
+	hitArea:SetAllPoints(frame)
+	hitArea:SetMouseMasking("limited")
+	
+	frame.animation = 0
+	local function tick(width)
+		mask:SetWidth(width)
+	end
+	local function fadeIn()
+		Animate.stop(frame.animation)
+		frame.animation = Animate.easeInOut(mask:GetWidth(), frame:GetWidth(), 0.3, tick, function() frame.animation = 0 end)
+	end
+	local function fadeOut()
+		Animate.stop(frame.animation)
+		frame.animation = Animate.easeInOut(mask:GetWidth(), 0, 0.3, tick, function() frame.animation = 0 end)
+	end
+	
+	hitArea.Event.MouseIn = fadeIn
+	hitArea.Event.MouseOut = fadeOut
+	
+	input.Event.KeyFocusGain = function() fadeIn() end
+	input.Event.KeyFocusLoss = function() fadeOut() filter_KeyFocusLoss(input, self) end
+	input.Event.TextfieldChange = function() filter_TextfieldChange(input, self) end
+	
+	frame.input = input
+	frame.mask = mask
+	return frame
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -331,6 +372,7 @@ local function ItemWindowBase_SetCharacter(self, character, location)
 		self.location = location
 		self.lastUpdate = -2
 		self:setCharacter()
+		self.titleBar:SetAlliance(ItemDB.GetCharacterAlliance(character))
 	end
 end
 
@@ -345,116 +387,42 @@ end
 function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	local context = UI.CreateContext(Addon.identifier)
 	local self = UI.CreateFrame("RiftWindow", "ImhoBags_ItemWindow_"..location, context)
+	self:SetTitle("")
 
 	self.title = title
 	self:SetController("content")
 	self.itemsContainer = self:GetContent()
 	self.itemSize = itemSize
 	self.updateCoroutine = nil
+	self.searchString = ""
+	
+	local content = self:GetContent()
 	
 	-- Close button
 	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
 	
-	-- Char selector
-	self.charSelector = Ux.OptionSelector.New(self, [[Data/\UI\ability_icons\combat_survival.dds]],
-		L.Ux.Tooltip.character,
-		ItemDB.GetAvailableCharacters,
-		function(char)
-			self:SetCharacter(char, self.location)
-		end)
-	self.charSelector:SetPoint("TOPLEFT", self:GetContent(), "TOPLEFT",Ux.ItemWindowPadding, -2)
-	
-	-- Tool buttons
-	self.bankButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)
-	self.bankButton:SetPoint("TOPLEFT", self.charSelector, "TOPRIGHT", 2 * Ux.ItemWindowPadding, 0)
-	function self.bankButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "bank")
+	-- Search button
+	local helpBtn = UI.CreateFrame("Frame", "", self)
+	helpBtn:SetPoint("BOTTOMLEFT", content, "TOPLEFT", -4, -6)
+	helpBtn:SetWidth(36)
+	helpBtn:SetHeight(36)
+	helpBtn.Event.MouseIn = function(self) self.icon:SetTexture("Rift", "AATree_I3A.dds") end
+	helpBtn.Event.MouseOut = function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end
+	helpBtn.Event.LeftUpoutside = function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end
+	helpBtn.Event.LeftDown = function(self)
+		self.icon:SetTexture("Rift", "AATree_I3F.dds")
 	end
-
-	self.mailButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\collection_of_love_letters.dds]], L.Ux.WindowTitle.mail)
-	self.mailButton:SetPoint("TOPLEFT", self.bankButton, "TOPRIGHT")
-	function self.mailButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "mail")
-	end
-
-	self.equipmentButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\1h_sword_065b.dds]], L.Ux.WindowTitle.equipment)
-	self.equipmentButton:SetPoint("TOPLEFT", self.mailButton, "TOPRIGHT")
-	function self.equipmentButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "equipment")
-	end
-
-	self.wardrobeButton = Ux.IconButton.New(self, [[wardrobe_none.dds]], L.Ux.WindowTitle.wardrobe)
-	self.wardrobeButton:SetPoint("TOPLEFT", self.equipmentButton, "TOPRIGHT")
-	function self.wardrobeButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "wardrobe")
-	end
-
-	self.currencyButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\loot_gold_coins.dds]], L.Ux.WindowTitle.currency)
-	self.currencyButton:SetPoint("TOPLEFT", self.wardrobeButton, "TOPRIGHT")
-	function self.currencyButton.LeftPress()
-		Ux.ToggleItemWindow(self.character, "currency")
-	end
-	
-	self.guildButton = Ux.IconButton.New(self, Player.alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or [[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
-	self.guildButton:SetPoint("TOPLEFT", self.currencyButton, "TOPRIGHT")
-	function self.guildButton.LeftPress()
-		Ux.ToggleGuildWindow(self.character)
-	end
-	
-	self.configButton = Ux.IconButton.New(self, [[Data/\UI\item_icons\small_student_experiment.dds]], L.Ux.Tooltip.config)
-	self.configButton:SetPoint("TOPRIGHT", self:GetContent(), "TOPRIGHT", -Ux.ItemWindowPadding, -2)
-	function self.configButton.LeftPress()
+	helpBtn.Event.LeftUp = function(self)
+		self.icon:SetTexture("Rift", "AATree_I3A.dds")
 		Ux.ToggleConfigWindow()
 	end
+	helpBtn.icon = UI.CreateFrame("Texture", "", self)
+	helpBtn.icon:SetPoint("CENTER", helpBtn, "CENTER")
+	helpBtn.icon:SetWidth(38)
+	helpBtn.icon:SetHeight(38)
+	helpBtn.icon:SetTexture("Rift", "AATree_I38.dds")
 	
-	self.sizeButton = Ux.OptionSelector.New(self, [[Data/\UI\ability_icons\warden-healing_flood_a.dds]],
-		L.Ux.Tooltip.size,
-		{ "30", "40", "50", "60" },
-		function(size)
-			self.itemSize = tonumber(size)
-			self.sizeButton:SetStack(self.itemSize)
-			self:Update()
-		end)
-	self.sizeButton:SetPoint("TOPRIGHT", self.configButton, "TOPLEFT", -Ux.ItemWindowPadding, 0)
-	self.sizeButton:SetStack(itemSize)
-	
-	-- Money indicator
-	self.coinFrame = Ux.MoneyFrame.New(self)
-	self.coinFrame:SetPoint("BOTTOMRIGHT", self.configButton, "BOTTOMRIGHT", 0, Ux.ItemWindowFilterHeight)
-	self.coinFrame.Event.MouseIn = function() Ux.MoneySummaryWindow:ShowAtCursor() end
-	self.coinFrame.Event.MouseOut = function() Ux.MoneySummaryWindow:SetVisible(false) end
-	
-	-- Search filter and button
-	local searchBtn = UI.CreateFrame("Frame", "", self)
-	searchBtn:SetPoint("TOPLEFT", self.charSelector, "BOTTOMLEFT", Ux.ItemWindowPadding, 3)
-	searchBtn:SetWidth(Ux.ItemWindowFilterHeight - 1)
-	searchBtn:SetHeight(Ux.ItemWindowFilterHeight - 1)
-	searchBtn.Event.MouseIn = function(self) self.icon:SetTexture("Rift", "btn_search_(over).png.dds") end
-	searchBtn.Event.MouseOut = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
-	searchBtn.Event.LeftUpoutside = function(self) self.icon:SetTexture("Rift", "btn_search_(normal).png.dds") end
-	searchBtn.Event.LeftDown = function(self)
-		self.icon:SetTexture("Rift", "btn_search_(click).png.dds")
-	end
-	searchBtn.Event.LeftUp = function(self)
-		self.icon:SetTexture("Rift", "btn_search_(over).png.dds")
-		Ux.SearchWindow:Toggle()
-	end
-	searchBtn.icon = UI.CreateFrame("Texture", "", self)
-	searchBtn.icon:SetPoint("CENTER", searchBtn, "CENTER")
-	searchBtn.icon:SetTexture("Rift", "btn_search_(normal).png.dds")
-	searchBtn.icon:SetWidth(searchBtn.icon:GetWidth() - 12)
-	searchBtn.icon:SetHeight(searchBtn.icon:GetHeight() - 12)
-	
-	self.filter = Ux.Textfield.New(self, "RIGHT", L.Ux.search)
-	self.filter:SetPoint("TOPLEFT", searchBtn, "TOPRIGHT", 2, 0)
-	self.filter:SetPoint("BOTTOMRIGHT", self.coinFrame, "BOTTOMLEFT", -2, 2)
-	self.filter.text.Event.KeyFocusGain = function() filter_KeyFocusGain(self.filter.text, self) end
-	self.filter.text.Event.KeyFocusLoss = function() filter_KeyFocusLoss(self.filter.text, self) end
-	self.filter.text.Event.TextfieldChange = function() filter_TextfieldChange(self.filter.text, self) end
-	self.searchString = ""
-
 	-- General initialization
-	local content = self:GetContent()
 	content.window = self
 	content.Event.MouseMove = content_MouseMove
 	content.Event.LeftDown = content_LeftDown
@@ -469,7 +437,7 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	self.buttons = { }
 	self.groupLabels = { }
 
-	self.contentOffset = self.charSelector:GetHeight() + self.filter:GetHeight() + Ux.ItemWindowPadding
+	self.contentOffset = 0
 	
 	-- Protected (+abstract) methods
 	self.isAvailable = isAvailable
@@ -502,6 +470,21 @@ function Ux.ItemWindowBase.New(title, character, location, itemSize)
 	else
 		self.interaction = true
 	end
+
+	-- Title bar
+	self.titleBar = Ux.ItemWindowTemplate.TitleBar(self, location)
+	self.titleBar:SetFilterCallback(function(...) filter_TextfieldChange(self, ...) end)
+	self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
+	self.titleBar:SetCharSelectorCallback(function(char) self:SetCharacter(char, self.location) self.titleBar:FadeOut() end)
+	self.titleBar:SetSizeSelectorCallback(function(n) self.itemSize = n self:Update() end)
+	self.titleBar:SetSizeSelectorValue(self.itemSize)
+	self.titleBar:SetLocationCallback(function(loc)
+		if(loc == "guildbank") then
+			Ux.ToggleGuildWindow(self.character)
+		else
+			Ux.ToggleItemWindow(self.character, loc)
+		end
+	end)
 
 	return self
 end
