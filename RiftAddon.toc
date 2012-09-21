@@ -7,7 +7,7 @@ Author = "Imhothar"
 Website = "http://www.curse.com/addons/rift/imhobags"
 Email = "imhothar@freenet.de"
 
-Version = "0.13"
+Version = "0.13beta"
 Environment = "1.10"
 
 --@no-lib-strip@
