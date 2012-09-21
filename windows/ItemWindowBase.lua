@@ -30,7 +30,6 @@ Ux.ItemWindowBase = { }
 Ux.ItemWindowColumns = 8
 Ux.ItemWindowPadding = 4
 Ux.ItemWindowCellSpacing = 2
-Ux.ItemWindowFilterHeight = 24
 Ux.ItemWindowMinWidth = 345 -- Prevents header buttons from overlapping and is lower bound for full columns
 Ux.ItemWindowMinHeight = 310 -- Title bar stats resizing below this content size
 Ux.ItemWindowUpateStep = 0.010 -- After how many seconds does the update function yield?
