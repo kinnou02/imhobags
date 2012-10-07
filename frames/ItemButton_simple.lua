@@ -38,11 +38,11 @@ tooltip:SetVisible(false)
 -- Public methods
 -- ============================================================================
 
-local function ItemButton_simple_SetFiltered(self, filtered)
+local function SetFiltered(self, filtered)
 	self.icon:SetAlpha(filtered and 0.3 or 1.0)
 end
 
-local function ItemButton_simple_SetHighlighted(self, highlighted)
+local function SetHighlighted(self, highlighted)
 	highlight:SetVisible(highlighted)
 	if(highlighted) then
 		highlight:SetParent(self)
@@ -51,15 +51,15 @@ local function ItemButton_simple_SetHighlighted(self, highlighted)
 	end
 end
 
-local function ItemButton_simple_ShowHighlight(self)
+local function ShowHighlight(self)
 	highlight:SetVisible(true)
 end
 
-local function ItemButton_simple_SetRarity(self, rarity)
+local function SetRarity(self, rarity)
 	self:SetBackgroundColor(Utils.RarityColor(rarity))
 end
 
-local function ItemButton_simple_SetStack(self, stack)
+local function SetStack(self, stack)
 	if(type(stack) == "string") then
 		self.stackText:SetText(stack)
 		self.stackBack:SetVisible(stack ~= "")
@@ -81,17 +81,17 @@ local function ItemButton_simple_SetStack(self, stack)
 	end
 end
 
-local function ItemButton_simple_SetSlots(self, slots)
+local function SetSlots(self, slots)
 	self.slotsText:SetText(tostring(slots))
 	self.slotsBack:SetWidth(self.slotsText:GetWidth())
 	self.slotsBack:SetVisible(slots > 1)
 end
 
-local function ItemButton_simple_SetIcon(self, icon)
+local function SetIcon(self, icon)
 	self.icon:SetTextureAsync("Rift", icon)
 end
 
-local function ItemButton_simple_SetDepressed(self, depressed)
+local function SetDepressed(self, depressed)
 	if(depressed) then
 		self.icon:SetPoint("TOPLEFT", self.backdrop, "TOPLEFT", 2, 2)
 		self.icon:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", -2, -2)
@@ -101,22 +101,22 @@ local function ItemButton_simple_SetDepressed(self, depressed)
 	end
 end
 
-local function ItemButton_simple_SetBound(self, bound, bind)
+local function SetBound(self, bound, bind)
 	self.bound:SetVisible(bound == true)
 	if(bound) then
 		self.bound:SetTexture("Rift", bind == "account" and [[Data/\UI\ability_icons\elementalward3.dds]] or [[Data/\UI\ability_icons\soulbind.dds]])
 	end
 end
 
-local function ItemButton_simple_SetTooltip(self, tooltip)
+local function SetTooltip(self, tooltip)
 	self.tooltip = tooltip
 end
 
-local function ItemButton_simple_SetAvailable(self, available)
+local function SetAvailable(self, available)
 	self:SetAlpha(available and 1.0 or 0.5)
 end
 
-local function ItemButton_simple_ShowTooltip(self)
+local function ShowTooltip(self)
 	if(self.tooltip) then
 		tooltip:SetText(self.tooltip)
 		local mouse = Inspect.Mouse()
@@ -140,15 +140,25 @@ local function ItemButton_simple_ShowTooltip(self)
 	end
 end
 
-local function ItemButton_simple_HideTooltip(self)
+local function HideTooltip(self)
 	tooltip:SetVisible(false)
+end
+
+local function SetSize(self, size)
+	self:SetWidth(size)
+	self:SetHeight(size)
+	
+	self.gridx = -1
+	self.gridy = -1
+	
+	local fontSize = stackFontSizes[self:GetWidth()] or 14
+	self.stackBack:SetHeight(fontSize)
+	self.stackText:SetFontSize(fontSize)
+	self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 4)
 end
 
 function Ux.ItemButton_simple.New(parent)
 	local self = UICreateFrame("Frame", "ImhoBags_ItemButton", parent)
-	
-	self:SetWidth(Ux.ItemButtonSizeDefault)
-	self:SetHeight(Ux.ItemButtonSizeDefault)
 	
 	self.backdrop = UICreateFrame("Frame", "", self)
 	self.backdrop:SetBackgroundColor(0.0, 0.0, 0.0)
@@ -182,34 +192,25 @@ function Ux.ItemButton_simple.New(parent)
 	
 	self.bound = UICreateFrame("Texture", "", self)
 	self.bound:SetPoint("TOPRIGHT", self.icon, "TOPRIGHT")
+	self.bound:SetPoint("BOTTOMLEFT", self.icon, 0.66, 0.33)
 	self.bound:SetTexture("Rift", [[Data/\UI\ability_icons\soulbind.dds]])
-	self.bound:SetWidth(self.icon:GetWidth() / 3)
-	self.bound:SetHeight(self.bound:GetWidth())
 	self.bound:SetAlpha(0.8)
 	self.bound:SetLayer(self.icon:GetLayer() + 1)
 
-	self.SetHighlighted = ItemButton_simple_SetHighlighted
-	self.ShowHighlight = ItemButton_simple_ShowHighlight
-	self.SetFiltered = ItemButton_simple_SetFiltered
-	self.SetRarity = ItemButton_simple_SetRarity
-	self.SetStack = ItemButton_simple_SetStack
-	self.SetSlots = ItemButton_simple_SetSlots
-	self.SetIcon = ItemButton_simple_SetIcon
-	self.SetDepressed = ItemButton_simple_SetDepressed
-	self.SetBound = ItemButton_simple_SetBound
-	self.SetTooltip = ItemButton_simple_SetTooltip
-	self.SetAvailable = ItemButton_simple_SetAvailable
-	self.ShowTooltip = ItemButton_simple_ShowTooltip
-	self.HideTooltip = ItemButton_simple_HideTooltip
-	
-	function self.Event:Size()
-		self.bound:SetWidth(self.icon:GetWidth() / 3)
-		self.bound:SetHeight(self.bound:GetWidth())
-		local fontSize = stackFontSizes[self:GetWidth()] or 14
-		self.stackBack:SetHeight(fontSize)
-		self.stackText:SetFontSize(fontSize)
-		self.stackText:SetPoint("BOTTOMRIGHT", self.backdrop, "BOTTOMRIGHT", 0, 4)
-	end
+	self.SetHighlighted = SetHighlighted
+	self.ShowHighlight = ShowHighlight
+	self.SetFiltered = SetFiltered
+	self.SetRarity = SetRarity
+	self.SetStack = SetStack
+	self.SetSlots = SetSlots
+	self.SetIcon = SetIcon
+	self.SetDepressed = SetDepressed
+	self.SetBound = SetBound
+	self.SetTooltip = SetTooltip
+	self.SetAvailable = SetAvailable
+	self.ShowTooltip = ShowTooltip
+	self.HideTooltip = HideTooltip
+	self.SetSize = SetSize
 	
 	self:SetStack(0)
 	self:SetSlots(0)

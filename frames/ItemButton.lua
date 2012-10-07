@@ -105,7 +105,29 @@ end
 -- Public methods
 -- ============================================================================
 
-local function ItemButton_SetItem(self, item, slots, stack, available)
+local function ItemButton_MoveToGrid(self, target, x, y, spacing, duration)
+	if(self.gridTarget == target and self.gridx == x and self.gridy == y) then
+		return
+	end
+	self.gridx = x
+	self.gridy = y
+	self.gridTarget = target
+	Animate.stop(self.moveAnimation)
+	local currentx = self:GetLeft() - target:GetLeft()
+	local currenty = self:GetTop() - target:GetBottom()
+	local targetx = x * (self:GetWidth() + spacing)
+	local targety = y * (self:GetHeight() + spacing)
+	if(duration and duration > 0) then
+		self.moveAnimation = Animate.easeOut({ currentx, currenty }, { targetx, targety }, duration,
+			function(t) self:SetPoint("TOPLEFT", target, "BOTTOMLEFT", t[1], t[2]) end,
+			function() self.moveAnimation = 0 end)
+	else
+		self.moveAnimation = 0
+		self:SetPoint("TOPLEFT", target, "BOTTOMLEFT", targetx, targety)
+	end
+end
+
+local function ItemButton_SetItem(self, item, slots, stack, available, duration)
 	self.readonly = type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
 	self:SetAvailable(available)
@@ -125,9 +147,23 @@ local function ItemButton_SetItem(self, item, slots, stack, available)
 	self.stack = stack
 end
 
-local function ItemButton_Dispose(self)
-	cachedButtons[#cachedButtons + 1] = self
-	self:SetVisible(false)
+local function ItemButton_Dispose(self, duration)
+	local function dispose()
+		cachedButtons[#cachedButtons + 1] = self
+		self:SetVisible(false)
+	end
+	self.gridx = -1
+	self.gridy = -1
+	self.gridTarget = nil
+	Animate.stop(self.moveAnimation)
+	Animate.stop(self.fadeAnimation)
+	self.moveAnimation = 0
+	self.fadeAnimation = 0
+	if(duration and duration > 0) then
+		Animate.lerp(self:GetAlpha(), 0, self:GetAlpha() * duration, function(t) self:SetAlpha(t) end, dispose)
+	else
+		dispose()
+	end
 end
 
 local function ItemButton_ShowTooltip(self)
@@ -145,20 +181,25 @@ local function ItemButton_ShowTooltip(self)
 			target = self.item.id
 		end
 		Command.Tooltip(target)
-		log("TODO", "position tooltip near button")
 	end
 end
 
-function Ux.ItemButton.New(parent)
+function Ux.ItemButton.New(parent, duration)
 	local button
 	if(#cachedButtons == 0) then
 		button = skinFactory(parent)
+		button.moveAnimation = 0
+		button.fadeAnimation = 0
+		button.gridx = -1
+		button.gridy = -1
+		button.gridTarget = nil
 		
 		button:SetMouseMasking("limited")
 		
 		button.SetItem = ItemButton_SetItem
 		button.Dispose = ItemButton_Dispose
 		button.ShowTooltip = ItemButton_ShowTooltip
+		button.MoveToGrid = ItemButton_MoveToGrid
 		
 		button.Event.MouseMove = mouseMove
 		button.Event.MouseOut = mouseOut
@@ -173,6 +214,12 @@ function Ux.ItemButton.New(parent)
 		cachedButtons[#cachedButtons] = nil
 		button:SetVisible(true)
 		button:SetParent(parent)
+	end
+	if(duration and duration > 0) then
+		button:SetAlpha(0)
+		button.fadeAnimation = Animate.lerp(0, 1, duration, function(t) button:SetAlpha(t) end, function() button.fadeAnimation = 0 end)
+	else
+		button:SetAlpha(1)
 	end
 	return button
 end
