@@ -35,3 +35,9 @@ function Sort.Default.ByItemRarity(type1, type2)
 	local r2 = type2.rarity or "common"
 	return rarityOrder[r1] > rarityOrder[r2]
 end
+
+-- Sort two item types depending on their item name
+function Sort.Default.ByItemSlot(item1, item2)
+	return (item1.slot or 1) < (item2.slot or 1)
+end
+

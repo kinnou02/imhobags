@@ -61,6 +61,10 @@ RunOnStartup = {
 	"frames/RiftWindowCloseButton.lua",
 	"frames/Textfield.lua",
 	
+	"ItemContainer/Display.lua",
+	"ItemContainer/Group.lua",
+	"ItemContainer/Layouter.lua",
+	
 	"windows/ItemWindowTemplate/CharSelector.lua",
 	"windows/ItemWindowTemplate/CoinSummary.lua",
 	"windows/ItemWindowTemplate/FadingPopup.lua",
@@ -68,6 +72,7 @@ RunOnStartup = {
 	"windows/ItemWindowTemplate/SortSelector.lua",
 	"windows/ItemWindowTemplate/TitleBar.lua",
 	"windows/ItemWindowTemplate/TitleBarButton.lua",
+	"windows/ItemWindowTemplate/WindowFrame.lua",
 	"windows/ConfigWindow.lua",
 	"windows/CurrencyWindow.lua",
 	"windows/EmptySlotIndicator.lua",
@@ -85,6 +90,7 @@ RunOnStartup = {
 }
 
 SavedVariables = {
+	ImhoBags_ItemStorageCharacters = "shard",
 	ImhoBags_ItemMatrix_defiant = "shard",
 	ImhoBags_ItemMatrix_guardian = "shard",
 	ImhoBags_GuildMatrix_defiant = "shard",
