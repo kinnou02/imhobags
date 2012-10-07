@@ -98,7 +98,7 @@ local function getPackedIndices(self)
 	local columns = self:GetNumColumns()
 	local n = #self.groups
 	local width = self:columnsWidth(columns)
-	local size, spacing = self.itemSize, Ux.ItemWindowCellSpacing
+	local size, spacing = self.itemSize, Const.ItemWindowCellSpacing
 	if(self.groupKeys[self.groups[n]] == L.CategoryName.sellable) then
 		n = n - 1
 	end

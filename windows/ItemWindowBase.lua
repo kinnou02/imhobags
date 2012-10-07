@@ -27,11 +27,6 @@ setfenv(1, private)
 Ux = Ux or { }
 Ux.ItemWindowBase = { }
 
-Ux.ItemWindowColumns = 8
-Ux.ItemWindowPadding = 4
-Ux.ItemWindowCellSpacing = 2
-Ux.ItemWindowMinWidth = 345 -- Prevents header buttons from overlapping and is lower bound for full columns
-Ux.ItemWindowMinHeight = 310 -- Title bar stats resizing below this content size
 Ux.ItemWindowUpateStep = 0.010 -- After how many seconds does the update function yield?
 
 -- Private methods
@@ -107,7 +102,7 @@ end
 local function content_MouseMove(self)
 	local mouse = Inspect.Mouse()
 	if(self.sizingOffset) then
-		self.window:SetWidth(max(Ux.ItemWindowMinWidth, mouse.x - self.window:GetLeft() + self.sizingOffset))
+		self.window:SetWidth(max(Const.ItemWindowMinWidth, mouse.x - self.window:GetLeft() + self.sizingOffset))
 		self.window:Update()
 	elseif(self.mouseOffsetX) then
 		self.window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", mouse.x - self.mouseOffsetX, mouse.y - self.mouseOffsetY)
@@ -117,7 +112,7 @@ end
 local function content_LeftDown(self)
 	local mouse = Inspect.Mouse()
 	local left, top, right, bottom = self.window:GetTrimDimensions()
-	if(mouse.x > self.window:GetRight() - right - Ux.ItemWindowPadding and mouse.y > self.window:GetTop() + top) then
+	if(mouse.x > self.window:GetRight() - right - Const.ItemWindowPadding and mouse.y > self.window:GetTop() + top) then
 		self.sizingOffset = self.window:GetRight() - mouse.x
 	else
 		self.mouseOffsetX = floor(mouse.x - self.window:GetLeft())
@@ -253,7 +248,7 @@ local function update(self)
 	
 	local x, y = left, top
 	local dx, dy = self.itemSize, self.itemSize
-	local spacing = Ux.ItemWindowCellSpacing
+	local spacing = Const.ItemWindowCellSpacing
 	local buttons = 0
 	local endTime = Inspect.Time.Real() + Ux.ItemWindowUpateStep
 
@@ -296,15 +291,15 @@ local function update(self)
 end
 
 local function getContentPadding(self)
-	return Ux.ItemWindowPadding, self.contentOffset, Ux.ItemWindowPadding, Ux.ItemWindowPadding
+	return Const.ItemWindowPadding, self.contentOffset, Const.ItemWindowPadding, Const.ItemWindowPadding
 end
 
 local function columnsWidth(self, cols)
-	return cols * self.itemSize + (cols - 1) * Ux.ItemWindowCellSpacing
+	return cols * self.itemSize + (cols - 1) * Const.ItemWindowCellSpacing
 end
 
 local function setItemsContentHeight(self, height)
-	self:SetHeight(max(Ux.ItemWindowMinHeight, height))
+	self:SetHeight(max(Const.ItemWindowMinHeight, height))
 end
 
 local function createSearchFilter(self)
@@ -381,7 +376,7 @@ local function ItemWindowBase_Update(self)
 end
 
 local function ItemWindowBase_GetNumColumns(self)
-	return floor((self:GetContent():GetWidth() - 2 * Ux.ItemWindowPadding + Ux.ItemWindowCellSpacing) / (self.itemSize + Ux.ItemWindowCellSpacing))
+	return floor((self:GetContent():GetWidth() - 2 * Const.ItemWindowPadding + Const.ItemWindowCellSpacing) / (self.itemSize + Const.ItemWindowCellSpacing))
 end
 
 function Ux.ItemWindowBase.New(title, character, location, itemSize)

@@ -318,8 +318,8 @@ function Ux.MailWindow.New(title, character, location, itemSize, sorting)
 	
 	-- Scrollbar
 	self.scrollbar = UICreateFrame("RiftScrollbar", "", self)
-	self.scrollbar:SetPoint("TOPRIGHT", self:GetContent(), "TOPRIGHT", -Ux.ItemWindowPadding, self.contentOffset)
-	self.scrollbar:SetPoint("BOTTOMRIGHT", self:GetContent(), "BOTTOMRIGHT", -Ux.ItemWindowPadding, 0)
+	self.scrollbar:SetPoint("TOPRIGHT", self:GetContent(), "TOPRIGHT", -Const.ItemWindowPadding, self.contentOffset)
+	self.scrollbar:SetPoint("BOTTOMRIGHT", self:GetContent(), "BOTTOMRIGHT", -Const.ItemWindowPadding, 0)
 	self.scrollbar.Event.ScrollbarChange = scrollBarChanged
 	self.scrollbar:SetLayer(10)
 	

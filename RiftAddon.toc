@@ -29,6 +29,7 @@ RunOnStartup = {
 	"locales/koKR.lua",
 	"locales/ruRU.lua",
 	
+	"Constants.lua",
 	"Main.lua",
 	"Config.lua",
 	"Utils.lua",
