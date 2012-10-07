@@ -15,9 +15,8 @@ local Utility = Utility
 
 local lang = Inspect.System.Language()
 if(lang == "Korean" or lang == "French" or lang == "Russian") then
-	Command.Console.Display("general", true, "<font color='#FFFF00'>ImhoBags is looking for " .. lang .. " translators and reviewers!\nCheck by the official Rift forums in the 'Addon API Development' section if you'd like to help!</font>", true)
+	Command.Console.Display("general", true, "<font color='#FFFF00'>ImhoBags is looking for " .. lang .. " translators and reviewers!\nCheck by the official RIFT forums in the 'Addon API Development' section if you'd like to help!</font>", true)
 end
-Command.Console.Display("general", false, "Try out the new popup menu with <font color='#00FF00'>/imhobags menu</font> (try putting it in a macro!)", true)
 
 -- Make this global available everywhere
 private.dump = dump
