@@ -18,7 +18,7 @@ local function fadeIn(self, height)
 	
 	self:SetVisible(true)
 	Animate.stop(self.animation)
-	self.animation = Animate.easeInOut(self:GetHeight(), height, 0.3, tick, function()
+	self.animation = Animate.smoothstep(self:GetHeight(), height, 0.3, tick, function()
 		self.animation = 0
 	end)
 end
@@ -27,7 +27,7 @@ local function fadeOut(self)
 	local function tick(width) self:SetHeight(width) end
 	
 	Animate.stop(self.animation)
-	self.animation = Animate.easeInOut(self:GetHeight(), 0, 0.3, tick, function()
+	self.animation = Animate.smoothstep(self:GetHeight(), 0, 0.3, tick, function()
 		self.animation = 0
 		self:SetVisible(false)
 	end)

@@ -342,11 +342,11 @@ local function createSearchFilter(self)
 	end
 	local function fadeIn()
 		Animate.stop(frame.animation)
-		frame.animation = Animate.easeInOut(mask:GetWidth(), frame:GetWidth(), 0.3, tick, function() frame.animation = 0 end)
+		frame.animation = Animate.smoothstep(mask:GetWidth(), frame:GetWidth(), 0.3, tick, function() frame.animation = 0 end)
 	end
 	local function fadeOut()
 		Animate.stop(frame.animation)
-		frame.animation = Animate.easeInOut(mask:GetWidth(), 0, 0.3, tick, function() frame.animation = 0 end)
+		frame.animation = Animate.smoothstep(mask:GetWidth(), 0, 0.3, tick, function() frame.animation = 0 end)
 	end
 	
 	hitArea.Event.MouseIn = fadeIn

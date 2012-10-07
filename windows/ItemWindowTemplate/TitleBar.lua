@@ -51,7 +51,7 @@ local function createFadeAnimationLeft(self)
 		if(not self.frozen) then
 			Animate.stop(hotArea.animation)
 			self.leftHidden:SetVisible(true)
-			hotArea.animation = Animate.easeInOut(self.leftHidden:GetHeight(), self:GetHeight() - 4, 0.3, tick, function()
+			hotArea.animation = Animate.smoothstep(self.leftHidden:GetHeight(), self:GetHeight() - 4, 0.3, tick, function()
 				hotArea.animation = 0
 				self.leftPanel:SetVisible(false)
 			end)
@@ -61,7 +61,7 @@ local function createFadeAnimationLeft(self)
 		if(not self.frozen) then
 			Animate.stop(hotArea.animation)
 			self.leftPanel:SetVisible(true)
-			hotArea.animation = Animate.easeInOut(self.leftHidden:GetHeight(), 0, 0.3, tick, function()
+			hotArea.animation = Animate.smoothstep(self.leftHidden:GetHeight(), 0, 0.3, tick, function()
 				hotArea.animation = 0
 				self.leftHidden:SetVisible(false)
 			end)
@@ -111,7 +111,7 @@ local function createFadeAnimationRight(self)
 	local function fadeIn()
 		if(not self.frozen) then
 			Animate.stop(hotArea.animation)
-			hotArea.animation = Animate.easeInOut({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMaxWidth, 0 }, 0.3, tick, function()
+			hotArea.animation = Animate.smoothstep({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMaxWidth, 0 }, 0.3, tick, function()
 				hotArea.animation = 0
 			end)
 		end
@@ -119,7 +119,7 @@ local function createFadeAnimationRight(self)
 	local function fadeOut()
 		if(not hotArea.frozen) then
 			Animate.stop(hotArea.animation)
-			hotArea.animation = Animate.easeInOut({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMinWidth, self.rightHiddenButtonsOffset }, 0.3, tick, function()
+			hotArea.animation = Animate.smoothstep({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMinWidth, self.rightHiddenButtonsOffset }, 0.3, tick, function()
 				hotArea.animation = 0
 			end)
 		end

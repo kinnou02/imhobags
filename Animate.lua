@@ -25,8 +25,13 @@ local function lerp(t)
 	return t
 end
 
-local function easeInOut(t)
+local function smoothstep(t)
 	return 3 * t * t - 2 * t * t * t
+end
+
+local function easeOut(t)
+	t = t - 1
+	return t * t * t + 1
 end
 
 EventSystemUpdateBegin[#EventSystemUpdateBegin + 1] = { function()
@@ -77,7 +82,8 @@ end
 
 Animate.predefined = {
 	lerp = lerp,
-	easeInOut = easeInOut,
+	smoothstep = smoothstep,
+	easeOut = easeOut,
 }
 
 function Animate.add(interpolant, callback, finisher)
@@ -109,6 +115,10 @@ function Animate.lerp(from, to, duration, callback, finisher)
 	return insert(from, to, duration, lerp, callback, finisher)
 end
 
-function Animate.easeInOut(from, to, duration, callback, finisher)
-	return insert(from, to, duration, easeInOut, callback, finisher)
+function Animate.smoothstep(from, to, duration, callback, finisher)
+	return insert(from, to, duration, smoothstep, callback, finisher)
+end
+
+function Animate.easeOut(from, to, duration, callback, finisher)
+	return insert(from, to, duration, easeOut, callback, finisher)
 end
