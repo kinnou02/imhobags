@@ -34,6 +34,10 @@ RunOnStartup = {
 	"Config.lua",
 	"Utils.lua",
 	
+	"Item/Dispatcher.lua",
+	"Item/Storage.lua",
+	"Item/Type.lua",
+	
 	"Animate.lua",
 	"Group.Default.lua",
 	"ItemDB.lua",

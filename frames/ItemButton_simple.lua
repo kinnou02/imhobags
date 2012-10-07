@@ -56,7 +56,7 @@ local function ShowHighlight(self)
 end
 
 local function SetRarity(self, rarity)
-	self:SetBackgroundColor(Utils.RarityColor(rarity))
+	self:SetBackgroundColor(Item.Type.Color(rarity))
 end
 
 local function SetStack(self, stack)

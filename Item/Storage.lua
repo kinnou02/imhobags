@@ -1,0 +1,195 @@
+local Addon, private = ...
+
+-- Builtins
+local _G = _G
+local pairs = pairs
+
+-- Globals
+local Event = Event
+local InspectItemDetail = Inspect.Item.Detail
+local UtilityItemSlotParse = Utility.Item.Slot.Parse
+
+-- Locals
+local data
+local player
+
+setfenv(1, private)
+Item = Item or { }
+Item.Storage = { }
+
+-- Private methods
+-- ============================================================================
+
+local function newCharacter()
+	return {
+		info = {
+			guild = nil,
+			alliance = nil,
+		},
+		bank = {
+			bags = { },
+			slots = { },
+			counts = { },
+			totals = { },
+		},
+		currency = {
+			totals = { },
+		},
+		equipment = {
+			slots = { },
+			counts = { },
+			totals = { },
+		},
+		inventory = {
+			bags = { },
+			slots = { },
+			counts = { },
+			totals = { },
+		},
+		wardrobe = {
+			slots = { },
+			counts = { },
+			totals = { },
+		},
+	}
+end
+
+local function variablesLoaded(identifier)
+	if(identifier ~= Addon.identifier) then
+		return
+	end
+	
+	data = _G.ImhoBags_ItemStorageCharacters or { }
+	player = data[Player.name] or newCharacter()
+	data[Player.name] = player
+end
+
+local function saveVariables(identifier)
+	if(identifier ~= Addon.identifier) then
+		return
+	end
+	
+	_G.ImhoBags_ItemStorageCharacters = data
+end
+
+local function removeFromTotals(container, item, count)
+	if(item) then
+		local total = container.totals[item] and (container.totals[item] - count)
+		-- Prevent table from growing indefinitely
+		if(total and total <= 0) then
+			total = nil
+		end
+		container.totals[item] = total
+	end
+end
+
+local function mergeSlot(container, slot, item, bag, index)
+	if(item and item ~= "nil") then
+		item = InspectItemDetail(item)
+	end
+	if(bag == "bag") then
+		removeFromTotals(container, container.bags[index], 1)
+		if(item) then
+			container.bags[index] = item.type
+			container.totals[item.type] = (container.totals[item.type] or 0) + 1
+		else
+			container.bags[index] = false
+		end
+	elseif(item and item ~= "nil") then
+		removeFromTotals(container, container.slots[slot], container.counts[slot] or 0)
+
+		container.slots[slot] = item.type
+		container.counts[slot] = item.stack or 1
+		container.totals[item.type] = (container.totals[item.type] or 0) + (item.stack or 1)
+	else
+		removeFromTotals(container, container.slots[slot], container.counts[slot] or 0)
+
+		if(item) then
+			container.slots[slot] = nil
+			container.counts[slot] = nil
+		else
+			container.slots[slot] = false
+			container.counts[slot] = 0
+		end
+	end
+end
+
+local function eventItemSlot(items)
+	for slot, item in pairs(items) do
+		local container, bag, index = UtilityItemSlotParse(slot)
+		if(player[container]) then
+			mergeSlot(player[container], slot, item, bag, index)
+		else
+		end
+	end
+end
+
+local function eventItemUpdate(items)
+	for slot, item in pairs(items) do
+		local container, bag, index = UtilityItemSlotParse(slot)
+		item = InspectItemDetail(item)
+		if(player[container]) then
+			container = player[container]
+			container.totals[item.type] = container.totals[item.type] - container.counts[slot] + (item.stack or 1)
+			container.counts[slot] = item.stack or 1
+		else
+		end
+	end
+end
+
+local function eventCurrency(currencies)
+	for type, count in pairs(currencies) do
+		if(not count or count <= 0) then
+			player.currency.totals[type] = nil
+		else
+			player.currency.totals[type] = count
+		end
+	end
+end
+
+local function init()
+	player.info.guild = Player.guild
+	player.info.alliance = Player.alliance
+end
+
+-- Public methods
+-- ============================================================================
+
+function Item.Storage.GetCharacters()
+	local chars = { }
+	for name, data in pairs(data) do
+		chars[name] = data.info.alliance
+	end
+	return chars
+end
+
+Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
+	variablesLoaded,
+	Addon.identifier,
+	"Item.Storage.variablesLoaded"
+}
+Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = {
+	saveVariables,
+	Addon.identifier,
+	"Item.Storage.saveVariables"
+}
+Event.Item.Slot[#Event.Item.Slot + 1] = {
+	eventItemSlot,
+	Addon.identifier,
+	"Item.Storage.eventItemSlot"
+}
+Event.Item.Slot[#Event.Item.Slot + 1] = {
+	eventItemSlot,
+	Addon.identifier,
+	"Item.Storage.eventItemSlot"
+}
+Event.Currency[#Event.Currency + 1] = {
+	eventCurrency,
+	Addon.identifier,
+	"Item.Storage.eventCurrency"
+}
+Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = {
+	init,
+	Addon.identifier,
+	"Item.Storage.init"
+}
