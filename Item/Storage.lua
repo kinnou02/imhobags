@@ -155,12 +155,39 @@ end
 -- Public methods
 -- ============================================================================
 
-function Item.Storage.GetCharacters()
+function Item.Storage.GetCharacterAlliances()
 	local chars = { }
 	for name, data in pairs(data) do
 		chars[name] = data.info.alliance
 	end
 	return chars
+end
+
+function Item.Storage.GetCharacterCoins()
+	local chars = { }
+	for name, data in pairs(data) do
+		chars[name] = data.currency.totals.coin or 0
+	end
+	return chars
+end
+
+function Item.Storage.GetCharacterNames()
+	local chars = { }
+	for name in pairs(data) do
+		chars[#chars + 1] = name
+	end
+	return chars
+end
+
+function Item.Storage.GetCharacterItems(character, location)
+	local char = data[character]
+	if(char) then
+		local loc = char[location]
+		if(loc) then
+			return loc.totals, loc.counts, loc.slots, loc.bags
+		end
+	end
+	return { }
 end
 
 Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {

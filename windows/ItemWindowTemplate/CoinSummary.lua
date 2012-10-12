@@ -30,22 +30,23 @@ Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 -- ============================================================================
 
 ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
-	local chars = ItemDB.GetCharactersCoin()
+	local chars = Item.Storage.GetCharacterCoins()
+	local alliances = Item.Storage.GetCharacterAlliances()
 	
-	for k, v in pairs(chars[Player.alliance]) do
-		characterNames[#characterNames + 1] = k
-		if(k ~= Player.name) then
-			playerAllianceCoinTotal = playerAllianceCoinTotal + v
+	for name, coin in pairs(chars) do
+		characterNames[#characterNames + 1] = name
+		if(alliances[name] == Player.alliance) then
+			if(name ~= Player.name) then
+				playerAllianceCoinTotal = playerAllianceCoinTotal + coin
+			end
+		else
+			enemyAllianceCoinTotal = enemyAllianceCoinTotal + coin
 		end
-	end
-	for k, v in pairs(chars[Player.enemyAlliance]) do
-		characterNames[#characterNames + 1] = k
-		enemyAllianceCoinTotal = enemyAllianceCoinTotal + v
 	end
 	sort(characterNames)
 	for i = 1, #characterNames do
 		local name = characterNames[i]
-		characterCoins[i] = chars[Player.alliance][name] or chars[Player.enemyAlliance][name]
+		characterCoins[i] = chars[name]
 	end
 end, Addon.identifier, "" }
 
@@ -58,7 +59,22 @@ local function createCharEntry(parent, name, coins, y)
 	
 	local coin = Ux.MoneyFrame.New(parent)
 	coin:SetCoin(coins)
-	coin:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPaddingLeft, y)
+	coin:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPaddingLeft, y + 3)
+	coin:SetFontColor(textColor[1], textColor[2], textColor[3])
+	
+	return text, coin
+end
+
+local function createAllianceEntry(parent, allliance, coins, y)
+	local icon = UICreateFrame("Texture", "", parent)
+	icon:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPaddingLeft, y - 5)
+	icon:SetTextureAsync("Rift", allliance .. ".png.dds")
+	icon:SetWidth(40)
+	icon:SetHeight(40)
+	
+	local coin = Ux.MoneyFrame.New(parent)
+	coin:SetCoin(coins)
+	coin:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPaddingLeft, y + 0)
 	coin:SetFontColor(textColor[1], textColor[2], textColor[3])
 	
 	return text, coin
@@ -88,17 +104,17 @@ local function createCharFrames(self, background)
 	
 	y = y + createSeparator(background, y - 3):GetHeight()
 	
-	local name, coin = createCharEntry(background, L.Ux[Player.alliance], playerAllianceCoinTotal, y)
+	local name, coin = createAllianceEntry(background, Player.alliance, playerAllianceCoinTotal, y)
 	self.playerAllianceCoinFrame = coin
-	self.nameWidth = max(self.nameWidth, name:GetWidth())
-	y = y + name:GetHeight()
-	local name, coin = createCharEntry(background, L.Ux[Player.enemyAlliance], enemyAllianceCoinTotal, y)
+	self.nameWidth = max(self.nameWidth, 20)--name:GetWidth())
+	y = y + 20--name:GetHeight()
+	local name, coin = createAllianceEntry(background, Player.enemyAlliance, enemyAllianceCoinTotal, y)
 	self.enemyAllianceCoinFrame = coin
-	self.nameWidth = max(self.nameWidth, name:GetWidth())
+	self.nameWidth = max(self.nameWidth, 20)--name:GetWidth())
 	self.coinWidth = max(self.coinWidth, coin:GetWidth())
-	y = y + name:GetHeight()
+	y = y + 20--name:GetHeight()
 	
-	y = y + createSeparator(background, y - 3):GetHeight()
+	y = y + createSeparator(background, y - 3):GetHeight() - 5
 	
 	local name, coin = createCharEntry(background, " =", playerAllianceCoinTotal + enemyAllianceCoinTotal, y)
 	self.totalCoinFrame = coin
