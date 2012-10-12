@@ -401,6 +401,7 @@ function ItemContainer.Layouter(parent, config, groupFrameFactory)
 		sortFunc = nil,
 		groupFrameFactory = groupFrameFactory,
 		filter = "",
+		available = true,
 		
 		SetAvailable = SetAvailable,
 		SetButtonSize = SetButtonSize,

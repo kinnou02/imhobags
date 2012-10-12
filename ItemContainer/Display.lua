@@ -5,6 +5,7 @@ local ceil = math.ceil
 local floor = math.floor
 local format = string.format
 local min = math.min
+local next = next
 local pairs = pairs
 local pcall = pcall
 local sort = table.sort
@@ -22,6 +23,12 @@ local UICreateFrame = UI.CreateFrame
 -- Locals
 local labelFontSize = 14
 local labelHeight = 20
+local availableInteractions = {
+	bank = true,
+	mail = true,
+	guildbank = true,
+}
+
 
 setfenv(1, private)
 ItemContainer = ItemContainer or { }
@@ -33,7 +40,7 @@ ItemContainer.Display = { }
 local function inspectItemDetailTwink(self, slot, type, stack)
 	local ok, item = pcall(InspectItemDetail, type)
 	if(not (ok and item)) then
-		self.pendingItemDetail[slot] = type
+		self.pendingItemDetails[slot] = type
 		return {
 			name = "?",
 			icon = "placeholder_icon.dds",
@@ -159,6 +166,18 @@ local function eventCurrency(self, currencies)
 	end
 end
 
+local function queryPendingItemDetail(self)
+	log("queryPendingItemDetail")
+	local pendingItemDetails = self.pendingItemDetails
+	self.pendingItemDetails = { }
+	
+	for slot, type in pairs(pendingItemDetails) do
+		local id = self.slots[slot]
+		self.items[id] = inspectItemDetailTwink(self, slot, type, self.slots[slot].stack)
+		self.layouter:UpdateItem(id)
+	end
+end
+
 local function systemUpdateBegin(self)
 	if(self.needsUpdate) then
 		self.needsUpdate = false
@@ -172,6 +191,11 @@ local function systemUpdateBegin(self)
 		local height = self.layouter:UpdateLayout()
 		self:SetHeight(height)
 		self:changeCallback({ height = height })
+	end
+	local now = Inspect.Time.Frame()
+	if(now >= self.nextItemDetailQuery and (next(self.pendingItemDetails))) then
+		self.nextItemDetailQuery = now + Const.ItemDisplayQueryInterval
+		queryPendingItemDetail(self)
 	end
 	if(self.itemsChanged) then
 		self.itemsChanged = false
@@ -212,9 +236,16 @@ local function SetButtonSize(self, size)
 end
 
 local function SetCharacter(self, character)
+	self.pendingItemDetails = { }
 	if(character == "player" or character == Player.name) then
 		self.set = self.playerSet
+		if(availableInteractions[self.location]) then
+			eventInteraction(self, self.location, Inspect.Interaction(self.location))
+		else
+			self.layouter:SetAvailable(true)
+		end
 	else
+		self.layouter:SetAvailable(false)
 		local set = {
 			bags = { },
 			slots = { },
@@ -296,8 +327,8 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 			-- [id] = group
 		}
 	}
-	self.pendingItemDetail = {
-		-- [slot] = item
+	self.pendingItemDetails = {
+		-- [slot] = type
 	}
 	self.set = self.playerSet
 	self.needsUpdate = false
@@ -305,6 +336,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.itemsChanged = false
 	self.changeCallback = changeCallback
 	self.location = location
+	self.nextItemDetailQuery = 0
 	
 	self.GetNumEmptySlots = GetNumEmptySlots
 	self.SetButtonSize = SetButtonSize
@@ -315,17 +347,11 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.SetSortMethod = SetSortMethod
 	
 	self.groupFunc = Group.Default.GetLocalizedShortCategoryWithJunkAndLootable
-	self.itemDetailFunc = getItemDetailsPlayer
 	
 	self.layouter = ItemContainer.Layouter(self, config, groupLabelFactory)
 	self.layouter:SetItemSet(self.playerSet)
 	
-	local interactions = {
-		bank = true,
-		mail = true,
-		guildbank = true,
-	}
-	if(interactions[location]) then
+	if(availableInteractions[location]) then
 		Event.Interaction[#Event.Interaction + 1] = { function(...) eventInteraction(self, ...) end, Addon.identifier, "eventInteraction" }
 		eventInteraction(self, location, Inspect.Interaction(location))
 	end

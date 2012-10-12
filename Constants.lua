@@ -7,6 +7,8 @@ Const = {
 	ItemButtonDefaultSize = 50,
 	ItemButtonUnavailableAlpha = 0.5,
 	
+	ItemDisplayQueryInterval = 0.5,
+	
 	ItemWindowCellSpacing = 2,
 	ItemWindowDefaultColumns = 8, -- Starting size for new windows
 	ItemWindowDefaultLayout = "default",
