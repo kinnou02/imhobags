@@ -57,11 +57,11 @@ local function createTitleBar(self, location, config)
 		self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableGuilds()) end)
 		self.titleBar:SetCharButtonSkin("guild")
 	else
-		self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableCharacters()) end)
+		self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(Item.Storage.GetCharacterNames()) end)
 		self.titleBar:SetCharButtonSkin("player")
 	end
 	self.titleBar:SetCharSelectorCallback(function(char)
-		self:SetCharacter(char, self.location)
+		self:SetCharacter(char)
 		self.titleBar:FadeOut()
 	end)
 	self.titleBar:SetSizeSelectorCallback(function(n)
@@ -158,6 +158,15 @@ end
 -- Public methods
 -- ============================================================================
 
+local function SetCharacter(self, character)
+	local alliances = Item.Storage.GetCharacterAlliances()
+	if(alliances[character]) then
+		self.container:SetCharacter(character)
+		self.titleBar:SetAlliance(alliances[character])
+		self.titleBar:SetMainLabel(character)
+	end
+end
+
 function Ux.ItemWindowTemplate.WindowFrame(location, config)
 	local context = UI.CreateContext(Addon.identifier)
 	local self = UI.CreateFrame("RiftWindow", "WindowFrame." .. location, context)
@@ -194,6 +203,8 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config)
 	border.Event.LeftUpoutside = leftUpoutside
 
 	self.heightAnimation = 0
+	
+	self.SetCharacter = SetCharacter
 
 	self.onClose = function() self:SetVisible(false) end
 

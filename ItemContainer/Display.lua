@@ -6,6 +6,7 @@ local floor = math.floor
 local format = string.format
 local min = math.min
 local pairs = pairs
+local pcall = pcall
 local sort = table.sort
 local tostring = tostring
 local type = type
@@ -29,19 +30,19 @@ ItemContainer.Display = { }
 -- Private methods
 -- ============================================================================
 
-local function inspectItemDetailTwink(self, slot, item)
-	local detail = InspectItemDetail(item.type)
-	if(not detail) then
-		self.pendingItemDetail[slot] = item
+local function inspectItemDetailTwink(self, slot, type, stack)
+	local ok, item = pcall(InspectItemDetail, type)
+	if(not (ok and item)) then
+		self.pendingItemDetail[slot] = type
 		return {
 			name = "?",
 			icon = "placeholder_icon.dds",
-			type = item.type,
-			stack = item.stack,
+			type = type,
+			stack = stack,
 		}
 	else
-		detail.stack = item.stack
-		return detail
+		item.stack = stack
+		return item
 	end
 end
 
@@ -208,15 +209,42 @@ local function SetCharacter(self, character)
 	if(character == "player" or character == Player.name) then
 		self.set = self.playerSet
 	else
-		self.set = {
+		local set = {
 			bags = { },
 			slots = { },
 			items = { },
 			groups = { },
+			new = { },
 		}
-		
+		self.set = set
+		local totals, counts, slots, bags = Item.Storage.GetCharacterItems(character, self.location)
+		local id = 1
+		for slot, type in pairs(slots or { }) do
+			if(type) then
+				local detail = inspectItemDetailTwink(self, slot, type, counts[slot])
+				set.slots[slot] = id
+				set.items[id] = detail
+				set.groups[id] = self.groupFunc(detail)
+				id = id + 1
+			else
+				set.slots[slot] = false
+			end
+		end
+		for slot, type in pairs(bags or { }) do
+			if(type) then
+				local detail = inspectItemDetailTwink(self, slot, type, counts[slot])
+				set.bags[slot] = id
+				set.items[id] = detail
+				id = id + 1
+			else
+				set.bags[slot] = false
+			end
+		end
 	end
+	
+	self.layouter:SetItemSet(self.set)
 	self.needsUpdate = true
+	self.itemsChanged = true
 end
 
 local function SetSearchFilter(self, filter)
@@ -274,6 +302,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	
 	self.GetNumEmptySlots = GetNumEmptySlots
 	self.SetButtonSize = SetButtonSize
+	self.SetCharacter = SetCharacter
 	self.SetLayout = SetLayout
 	self.SetNeedsLayout = SetNeedsLayout
 	self.SetSearchFilter = SetSearchFilter
@@ -286,7 +315,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.layouter:SetItemSet(self.playerSet)
 	
 	if(location == "currency") then
-		Event.Currency[#Event.Currency + 1] = { function(...) log("x") eventCurrency(self, ...) end, Addon.identifier, "ItemContainer.currency.eventCurrency" }
+		Event.Currency[#Event.Currency + 1] = { function(...) eventCurrency(self, ...) end, Addon.identifier, "ItemContainer.currency.eventCurrency" }
 		eventCurrency(self, Inspect.Currency.List())
 	else
 		Item.Dispatcher.AddSlotCallback(location, function(...) eventItemSlot(self, ...) end)

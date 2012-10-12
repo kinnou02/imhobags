@@ -237,6 +237,21 @@ local function getGroupMetrics(self, groups)
 	return names, sizes, groupWidths
 end
 
+local function reset(self)
+	-- Reset everything, requires an UpdateItems call
+	for name, group in pairs(self.groups) do
+		group.frame:Dispose()
+	end
+	if(#self.junk > 0) then
+		self.junk.frame:Dispose()
+	end
+	self.itemButtons = { }
+	self.allButtons = { }
+	self.prevButtons = { }
+	self.groups = { }
+	self.junk = { }
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -314,23 +329,15 @@ local function SetLayout(self, layout)
 		self.getGroupAssociation = getGroupAssociation_onebag
 	end
 	if(layout ~= self.layout) then
-		-- Reset everything, requires an UpdateItems call
-		for name, group in pairs(self.groups) do
-			group.frame:Dispose()
-		end
-		if(#self.junk > 0) then
-			self.junk.frame:Dispose()
-		end
-		itemButtons = { }
-		allButtons = { }
-		prevButtons = { }
-		groups = { }
-		junk = { }
+		reset(self)
 	end
 	self.layout = layout
 end
 
 local function SetItemSet(self, set)
+	if(self.set ~= set) then
+		reset(self)
+	end
 	self.set = set
 end
 
