@@ -298,6 +298,10 @@ local function createEmptySlotIndicator(self)
 	self.emptySlotsIndicator:SetPoint("BOTTOMRIGHT", self.emptySlotsBackground, "BOTTOMRIGHT", -2, 0)
 	self.emptySlotsIndicator:SetFontSize(12)
 	
+	function self:SetEmptySlotsCallback(callback)
+		self.emptySlotsBackground.Event.LeftClick = callback
+	end
+	
 	function self:SetEmptySlots(n)
 		if(n) then
 			self.emptySlotsIndicator:SetVisible(true)

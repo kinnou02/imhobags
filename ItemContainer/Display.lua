@@ -232,6 +232,11 @@ local function SetButtonSize(self, size)
 	self.needsLayout = true
 end
 
+local function SetShowEmptySlots(self, showEmpty)
+	self.layouter:SetShowEmptySlots(showEmpty)
+	self.needsUpdate = true
+end
+
 local function SetCharacter(self, character)
 	self.pendingItemDetails = { }
 	if(character == "player" or character == Player.name) then
@@ -344,6 +349,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.SetLayout = SetLayout
 	self.SetNeedsLayout = SetNeedsLayout
 	self.SetSearchFilter = SetSearchFilter
+	self.SetShowEmptySlots = SetShowEmptySlots
 	self.SetSortMethod = SetSortMethod
 	
 	self.groupFunc = Group.Default.GetLocalizedShortCategoryWithJunkAndLootable

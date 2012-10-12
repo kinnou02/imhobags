@@ -78,6 +78,10 @@ local function createTitleBar(self, location, config)
 		self.titleBar:SetSortSelectorValue(sort)
 		self.container:SetSortMethod(sort)
 	end)
+	self.titleBar:SetEmptySlotsCallback(function(sort)
+		self.config.showEmptySlots = not self.config.showEmptySlots
+		self.container:SetShowEmptySlots(self.config.showEmptySlots)
+	end)
 
 	self.titleBar:SetSortSelectorValue(config.sort or Const.ItemWindowDefaultSort)
 	self.titleBar:SetSizeSelectorValue(config.itemSize or Const.ItemButtonDefaultSize)
@@ -203,6 +207,7 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config)
 	border.Event.LeftUpoutside = leftUpoutside
 
 	self.heightAnimation = 0
+	self.config = config
 	
 	self.SetCharacter = SetCharacter
 

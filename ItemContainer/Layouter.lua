@@ -40,7 +40,7 @@ local function onebagGroupFactory(parent)
 	return self
 end
 
-local function getGroupAssociation_default(set, showEmpty)
+local function getGroupAssociation_default(set, showEmptySlots)
 	local groups, junk, empty = { }, nil, { }
 	for id, group in pairs(set.groups) do
 		local items = groups[group] or { }
@@ -50,7 +50,7 @@ local function getGroupAssociation_default(set, showEmpty)
 	junk = groups[junkName] or { }
 	groups[junkName] = nil
 
-	if(showEmpty) then
+	if(showEmptySlots) then
 		for slot in pairs(set.empty) do
 			empty[#empty + 1] = slot
 		end
@@ -59,7 +59,7 @@ local function getGroupAssociation_default(set, showEmpty)
 	return groups, junk, empty
 end
 
-local function getGroupAssociation_bags(set, showEmpty)
+local function getGroupAssociation_bags(set, showEmptySlots)
 	local groups = { }
 	for slot, item in pairs(set.slots) do
 		local container, bag, index = UtilityItemSlotParse(slot)
@@ -67,7 +67,7 @@ local function getGroupAssociation_bags(set, showEmpty)
 		groups[bag] = items
 		if(item) then
 			items[#items + 1] = item
-		elseif(showEmpty) then
+		elseif(showEmptySlots) then
 			items[#items + 1] = slot
 		end
 	end
@@ -75,12 +75,12 @@ local function getGroupAssociation_bags(set, showEmpty)
 	return groups, { }, { }
 end
 
-local function getGroupAssociation_onebag(set, showEmpty)
+local function getGroupAssociation_onebag(set, showEmptySlots)
 	local items = { }
 	for slot, item in pairs(set.slots) do
 		if(item) then
 			items[#items + 1] = item
-		elseif(showEmpty) then
+		elseif(showEmptySlots) then
 			items[#items + 1] = slot
 		end
 	end
@@ -301,7 +301,7 @@ end
 -- Rebuild the item grouping and sorting information
 local function UpdateItems(self)
 	self.width = self.parent:GetWidth()
-	local groups, junk, empty = self.getGroupAssociation(self.set, self.showEmpty)
+	local groups, junk, empty = self.getGroupAssociation(self.set, self.showEmptySlots)
 	
 	setupJunk(self, junk)
 	setupEmpty(self, empty)
@@ -427,6 +427,10 @@ local function SetSortMethod(self, sort)
 	self.sortFunc = sortFuncs[sort] or sortFuncs[Const.ItemWindowDefaultSort]
 end
 
+local function SetShowEmptySlots(self, showEmptySlots)
+	self.showEmptySlots = showEmptySlots
+end
+
 function ItemContainer.Layouter(parent, config, groupFrameFactory)
 	local self = {
 		itemButtons = {
@@ -457,7 +461,7 @@ function ItemContainer.Layouter(parent, config, groupFrameFactory)
 		parent = parent,
 		set = nil,
 		sortFunc = nil,
-		showEmpty = true,--config.showEmpty,
+		showEmpty = config.showEmptySlots,
 		width = parent:GetWidth(),
 		
 		SetAvailable = SetAvailable,
@@ -466,6 +470,7 @@ function ItemContainer.Layouter(parent, config, groupFrameFactory)
 		SetLayout = SetLayout,
 		SetLocked = SetLocked,
 		SetSearchFilter = SetSearchFilter,
+		SetShowEmptySlots = SetShowEmptySlots,
 		SetSortMethod = SetSortMethod,
 		UpdateItem = UpdateItem,
 		UpdateItems = UpdateItems,
