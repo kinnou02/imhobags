@@ -229,7 +229,7 @@ local function sortItemsAndCreateButtons(self, groups, junk, empty)
 	end
 	if(#empty > 0) then
 		sort(empty, function(a, b) return self.sortFunc(self.set.items[a], self.set.items[b]) end)
-		replaceIdsWithButtons(self, empty, allButtons, itemButtons, Const.ItemWindowJunkButtonSize)
+		replaceIdsWithButtons(self, empty, allButtons, itemButtons, self.buttonSize)
 	end
 	self.itemButtons = itemButtons
 	self.prevButtons = self.allButtons
@@ -313,7 +313,7 @@ local function UpdateItems(self)
 	-- Move groups and buttons
 	local height = moveGroups(self, groups, junk, empty, Const.AnimationsDuration, arrangePacked(self, self.buttonSize, Const.ItemWindowCellSpacing, names, sizes, groupWidths, newLine))
 	if(empty.frame) then
-		empty.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, empty, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
+		empty.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, empty, self.buttonSize, Const.ItemWindowCellSpacing)
 	end
 	if(junk.frame) then
 		junk.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, junk, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
@@ -335,7 +335,7 @@ local function UpdateLayout(self)
 	-- Move groups and buttons
 	local height = moveGroups(self, self.groups, self.junk, self.empty, Const.AnimationsDuration, arrangePacked(self, self.buttonSize, Const.ItemWindowCellSpacing, names, sizes, groupWidths, newLine))
 	if(self.empty.frame) then
-		self.empty.frame:Rearrange(Const.AnimationsDuration, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
+		self.empty.frame:Rearrange(Const.AnimationsDuration, self.buttonSize, Const.ItemWindowCellSpacing)
 	end
 	if(self.junk.frame) then
 		self.junk.frame:Rearrange(Const.AnimationsDuration, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
