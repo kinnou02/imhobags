@@ -56,7 +56,11 @@ local function ShowHighlight(self)
 end
 
 local function SetRarity(self, rarity)
-	self:SetBackgroundColor(Item.Type.Color(rarity))
+	if(rarity == "empty") then
+		self:SetBackgroundColor(Item.Type.Color("sellable"))
+	else
+		self:SetBackgroundColor(Item.Type.Color(rarity))
+	end
 end
 
 local function SetStack(self, stack)

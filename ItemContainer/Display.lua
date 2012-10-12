@@ -8,6 +8,7 @@ local min = math.min
 local next = next
 local pairs = pairs
 local pcall = pcall
+local setmetatable = setmetatable
 local sort = table.sort
 local tostring = tostring
 local type = type
@@ -62,7 +63,7 @@ local function setupGroupLabel(self, display, group, items)
 		self.text:SetText(group)
 	elseif(display.layouter.layout == "bags") then
 		local info = display.set.items[display.set.bags[group]]
-		self.text:SetText(format("%s - %i/%i", info.name, #items, info.slots))
+		self.text:SetText(info.name)
 	end
 end
 
@@ -85,16 +86,20 @@ local function updateButton(self, id)
 end
 
 local function removeItem(self, set, slot, item)
-	local id = set.slots[slot]
-	if(id) then
-		set.new[id] = nil
-		set.items[id] = nil
-		set.groups[id] = nil
-	end
 	if(item == "nil") then
 		set.slots[slot] = nil
+		set.empty[slot] = nil
+		set.items[slot] = nil
 	else
 		set.slots[slot] = false
+		set.empty[slot] = true
+		set.items[slot] = {
+			-- Pick a name/icon that is sorted last
+			name = "\255",
+			icon = "\255",
+			rarity = "empty",
+			slot = slot,
+		}
 	end
 end
 
@@ -103,19 +108,14 @@ local function eventItemSlot(self, slot, item, container, bag, index)
 	
 --	log("eventItemSlot", slot, item, container, bag, index)
 	if(bag == "bag") then
-		local old = set.bags[index]
-		if(old) then
-			set.items[old] = nil
-		end
 		set.bags[index] = item
 		if(item) then
 			set.items[item] = InspectItemDetail(item)
 		end
 	elseif(item and item ~= "nil") then
-		if(not set.items[item]) then
-			set.new[item] = true
-		end
 		set.slots[slot] = item
+		set.empty[slot] = nil
+		set.items[slot] = nil
 		local detail = InspectItemDetail(item)
 		detail.slot = slot -- Add custom field for slot-sorting
 		set.items[item] = detail
@@ -139,9 +139,6 @@ local function eventItemUpdate(self, slot, item, container, bag, index)
 	
 	if(item and item ~= "nil") then
 		local details = InspectItemDetail(item)
-		if((details.stack or 1) > (set.items[item].stack or 1)) then
-			set.new[item] = true
-		end
 		set.items[item] = details
 		updateButton(self, item)
 	else
@@ -251,7 +248,6 @@ local function SetCharacter(self, character)
 			slots = { },
 			items = { },
 			groups = { },
-			new = { },
 		}
 		self.set = set
 		local totals, counts, slots, bags = Item.Storage.GetCharacterItems(character, self.location)
@@ -317,15 +313,19 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 		slots = {
 			-- [slot] = id/false
 		},
-		items = {
+		items = setmetatable({
 			-- [id] = detail
+			-- [slot] = detail
+		}, { __mode = " " }),
+		empty = {
+			-- [slot] = true
 		},
 		new = {
 			-- [id] = true
 		},
-		groups = {
+		groups = setmetatable({
 			-- [id] = group
-		}
+		}, { __mode = " " }),
 	}
 	self.pendingItemDetails = {
 		-- [slot] = type

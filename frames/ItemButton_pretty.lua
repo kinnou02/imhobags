@@ -38,7 +38,13 @@ end
 -- ============================================================================
 
 local function ItemButton_pretty_SetRarity(self, rarity)
-	self.border:SetTextureAsync("Rift", rarityTextureMap[rarity or "common"])
+	if(rarity == "empty") then
+		self.border:SetTextureAsync("Rift", "icon_empty.png.dds")
+		self.backdrop:SetBackgroundColor(0, 0, 0, 0)
+	else
+		self.border:SetTextureAsync("Rift", rarityTextureMap[rarity or "common"])
+		self.backdrop:SetBackgroundColor(0, 0, 0)
+	end
 end
 
 local function ItemButton_pretty_SetDepressed(self, depressed)

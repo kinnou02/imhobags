@@ -29,7 +29,9 @@ local leftDownPoint = { x = 0, y = 0 }
 
 local function mouseMove(self)
 	self:ShowTooltip()
-	self:ShowHighlight()
+	if(self.item or (Inspect.Cursor()) == "item") then
+		self:ShowHighlight()
+	end
 	if(self.pickingUp) then
 		local mouse = Inspect.Mouse()
 		local distance = (leftDownPoint.x - mouse.x) * (leftDownPoint.x - mouse.x) + (leftDownPoint.y - mouse.y) * (leftDownPoint.y - mouse.y)
@@ -49,9 +51,13 @@ local function mouseOut(self)
 end
 
 local function mouseIn(self)
-	self.tooltip = true
-	self:ShowTooltip()
-	self:SetHighlighted(true)
+	if(self.item or (Inspect.Cursor()) == "item") then
+		self:SetHighlighted(true)
+		if(self.item) then
+			self.tooltip = true
+			self:ShowTooltip()
+		end
+	end
 end
 
 local function leftDown(self)
@@ -61,9 +67,9 @@ local function leftDown(self)
 	self:SetDepressed(true)
 	if(self.available) then
 		if(Inspect.Cursor() == "item") then
-			ItemHandler.Standard.Drop(self.item.id)
+			ItemHandler.Standard.Drop(self.dropTarget)
 		elseif(not Inspect.Cursor()) then
-			self.pickingUp = self.item.id
+			self.pickingUp = self.dropTarget
 		end
 	end
 end
@@ -74,7 +80,7 @@ local function leftUp(self)
 		ItemHandler.Standard.Left(self.pickingUp)
 		self.pickingUp = nil
 	elseif(Inspect.Cursor() == "item" and self.available) then
-		ItemHandler.Standard.Drop(self.item.id)
+		ItemHandler.Standard.Drop(self.dropTarget)
 	end
 	self.commandTarget = nil
 end
@@ -86,7 +92,7 @@ end
 local function rightDown(self)
 	self:SetDepressed(true)
 	if(self.available) then
-		self.commandTarget = self.item.id
+		self.commandTarget = self.dropTarget
 	end
 end
 
@@ -127,23 +133,33 @@ local function ItemButton_MoveToGrid(self, target, x, y, spacing, duration)
 	end
 end
 
-local function ItemButton_SetItem(self, item, slots, stack, available, duration)
-	self.readonly = type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
+local function ItemButton_SetItem(self, item, slots, stack, available, locked)
+	local isTable = type(slots) == "table"
+	self.locked = locked or not isTable -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
 	
-	if(not self.item or self.item.icon ~= item.icon) then
-		self:SetIcon(item.icon)
+	if(not item) then
+		self:SetStack(1)
+		self:SetSlots(1)
+		self:SetBound(false, nil)
+		self:SetIcon("")
+		self:SetRarity("empty")
+		self:SetFiltered(false)
+	else
+		if(not self.item or self.item.icon ~= item.icon) then
+			self:SetIcon(item.icon)
+		end
+		if(not self.item or self.item.rarity ~= item.rarity) then
+			self:SetRarity(item.rarity)
+		end
+		self:SetStack(stack)
+		self:SetSlots(isTable and #slots or 1)
+		self:SetBound(Config.showBoundIcon and item.bound, item.bind)
 	end
-	if(not self.item or self.item.rarity ~= item.rarity) then
-		self:SetRarity(item.rarity)
-	end
-	self:SetStack(stack)
-	self:SetSlots(not self.readonly and #slots or slots)
-	self:SetBound(Config.showBoundIcon and item.bound, item.bind)
-
 	self.item = item
 	self.slots = slots
 	self.stack = stack
+	self.dropTarget = item and item.id or (isTable and slots[1] or slots)
 end
 
 local function ItemButton_Dispose(self, duration)
@@ -174,13 +190,17 @@ local function ItemButton_ShowTooltip(self)
 			Ux.TooltipEnhancer:SetText(self.item.name)
 			Ux.TooltipEnhancer:SetVisible(true)
 			Ux.TooltipEnhancer:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", mouse.x, mouse.y)
-		elseif(self.readonly) then
+		elseif(self.locked) then
 			target = self.item.type
 		else
-			target = self.item.id
+			target = self.dropTarget
 		end
 		Command.Tooltip(target)
 	end
+end
+
+local function SetLocked(self, locked)
+	self.locked = locked
 end
 
 function Ux.ItemButton.New(parent, available, duration)

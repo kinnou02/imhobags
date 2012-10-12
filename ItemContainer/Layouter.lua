@@ -15,6 +15,7 @@ local UICreateFrame = UI.CreateFrame
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
+local emptyName = private.L.CategoryName.empty
 local junkName = private.L.CategoryName.sellable
 local newLine = false
 
@@ -39,42 +40,52 @@ local function onebagGroupFactory(parent)
 	return self
 end
 
-local function getGroupAssociation_default(set)
-	local groups = { }
+local function getGroupAssociation_default(set, showEmpty)
+	local groups, junk, empty = { }, nil, { }
 	for id, group in pairs(set.groups) do
 		local items = groups[group] or { }
-		items[#items + 1] = id
 		groups[group] = items
+		items[#items + 1] = id
 	end
-	local junk = groups[junkName] or { }
+	junk = groups[junkName] or { }
 	groups[junkName] = nil
 
-	return groups, junk
+	if(showEmpty) then
+		for slot in pairs(set.empty) do
+			empty[#empty + 1] = slot
+		end
+	end
+
+	return groups, junk, empty
 end
 
-local function getGroupAssociation_bags(set)
+local function getGroupAssociation_bags(set, showEmpty)
 	local groups = { }
 	for slot, item in pairs(set.slots) do
 		local container, bag, index = UtilityItemSlotParse(slot)
+		local items = groups[bag] or { }
+		groups[bag] = items
 		if(item) then
-			local items = groups[bag] or { }
 			items[#items + 1] = item
-			groups[bag] = items
+		elseif(showEmpty) then
+			items[#items + 1] = slot
 		end
 	end
 	
-	return groups, { }
+	return groups, { }, { }
 end
 
-local function getGroupAssociation_onebag(set)
+local function getGroupAssociation_onebag(set, showEmpty)
 	local items = { }
 	for slot, item in pairs(set.slots) do
 		if(item) then
 			items[#items + 1] = item
+		elseif(showEmpty) then
+			items[#items + 1] = slot
 		end
 	end
 	
-	return { items }, { }
+	return { items }, { }, { }
 end
 
 local function arrangePacked(self, elementWidth, spacing, keys, sizes, minWidths, newLine)
@@ -121,7 +132,7 @@ local function arrangePacked(self, elementWidth, spacing, keys, sizes, minWidths
 	return layout, columns
 end
 
-local function moveGroups(self, groups, junk, duration, layout, sizes)
+local function moveGroups(self, groups, junk, empty, duration, layout, sizes)
 	local line, x, y = 0, 0, 0
 	local columns = floor(self.width / (self.buttonSize + Const.ItemWindowCellSpacing))
 	local height = 0
@@ -142,6 +153,12 @@ local function moveGroups(self, groups, junk, duration, layout, sizes)
 			x = x + sizes[name]
 		end
 	end
+	if(#empty > 0) then
+		empty.frame:MoveToGrid(line, 0, y, self.buttonSize, self.buttonSize, Const.ItemWindowCellSpacing, self.width, #self.empty > 0 and duration)
+		line = line + 1
+		height = height + empty.frame:GetHeight()
+		y = y + ceil(#empty / columns)
+	end
 	if(#junk > 0) then
 		self.junkCoinFrame:SetVisible(true)
 		self.junkCoinFrame:SetParent(junk.frame)
@@ -149,10 +166,11 @@ local function moveGroups(self, groups, junk, duration, layout, sizes)
 		junk.frame:MoveToGrid(line, 0, y, self.buttonSize, self.buttonSize, Const.ItemWindowCellSpacing, self.width, #self.junk > 0 and duration)
 		line = line + 1
 		height = height + junk.frame:GetHeight()
+		y = y + ceil(#junk / columns)
 	else
 		self.junkCoinFrame:SetVisible(false)
 	end
-	return height + y * (self.buttonSize + Const.ItemWindowCellSpacing) + ceil(#junk / columns) * (Const.ItemWindowJunkButtonSize + Const.ItemWindowCellSpacing)
+	return height + y * (self.buttonSize + Const.ItemWindowCellSpacing)
 end
 
 local function setupJunk(self, junk)
@@ -167,16 +185,30 @@ local function setupJunk(self, junk)
 	end
 end
 
+local function setupEmpty(self, empty)
+	if(#empty > 0 and self.layout == "default") then
+		empty.frame = self.empty.frame or ItemContainer.Group(self.parent, self.groupFrameFactory)
+		empty.frame.text:SetText(format("%s (%i)", emptyName, #empty))
+	end
+end
+
 local function replaceIdsWithButtons(self, items, allButtons, itemButtons, buttonSize)
-	-- Replace ids in-place with actual buttons
+	-- Replace ids/empty slots in-place with actual buttons
 	for i = 1, #items do
 		local item = items[i]
 		local button = self.itemButtons[item]
+		local details = self.set.items[item]
 		if(not button) then
 			button = Ux.ItemButton.New(self.parent, self.available, Const.AnimationsDuration)
 			self.itemButtons[item] = button
 			button:SetSize(buttonSize)
-			self:UpdateItem(item)
+			if(details.rarity == "empty") then
+				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
+			else
+				self:UpdateItem(item)
+			end
+		elseif(details.rarity == "empty") then
+			button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
 		end
 		items[i] = button
 		allButtons[button] = true
@@ -184,7 +216,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, butto
 	end
 end
 
-local function sortItemsAndCreateButtons(self, groups, junk)
+local function sortItemsAndCreateButtons(self, groups, junk, empty)
 	local allButtons = { }
 	local itemButtons = { }
 	for name, items in pairs(groups) do
@@ -195,12 +227,16 @@ local function sortItemsAndCreateButtons(self, groups, junk)
 		sort(junk, function(a, b) return self.sortFunc(self.set.items[a], self.set.items[b]) end)
 		replaceIdsWithButtons(self, junk, allButtons, itemButtons, Const.ItemWindowJunkButtonSize)
 	end
+	if(#empty > 0) then
+		sort(empty, function(a, b) return self.sortFunc(self.set.items[a], self.set.items[b]) end)
+		replaceIdsWithButtons(self, empty, allButtons, itemButtons, Const.ItemWindowJunkButtonSize)
+	end
 	self.itemButtons = itemButtons
 	self.prevButtons = self.allButtons
 	self.allButtons = allButtons
 end
 
-local function hideEmptyGroups(self, groups, junk)
+local function hideEmptyGroups(self, groups, junk, empty)
 	for name, group in pairs(self.groups) do
 		if(not groups[name]) then
 			group.frame:Dispose(Const.AnimationsDuration)
@@ -209,9 +245,12 @@ local function hideEmptyGroups(self, groups, junk)
 	if(#self.junk > 0 and #junk == 0) then
 		self.junk.frame:Dispose()
 	end
+	if(#self.empty > 0 and #empty == 0) then
+		self.empty.frame:Dispose()
+	end
 end
 
-local function createNewGroups(self, groups, junk)
+local function createNewGroups(self, groups)
 	local factory = self.layout == "onebag" and onebagGroupFactory or self.groupFrameFactory
 	for name, items in pairs(groups) do
 		local group = self.groups[name] and self.groups[name].frame
@@ -245,11 +284,15 @@ local function reset(self)
 	if(#self.junk > 0) then
 		self.junk.frame:Dispose()
 	end
+	if(#self.empty > 0) then
+		self.empty.frame:Dispose()
+	end
 	self.itemButtons = { }
 	self.allButtons = { }
 	self.prevButtons = { }
 	self.groups = { }
 	self.junk = { }
+	self.empty = { }
 end
 
 -- Public methods
@@ -258,16 +301,20 @@ end
 -- Rebuild the item grouping and sorting information
 local function UpdateItems(self)
 	self.width = self.parent:GetWidth()
-	local groups, junk = self.getGroupAssociation(self.set)
+	local groups, junk, empty = self.getGroupAssociation(self.set, self.showEmpty)
 	
 	setupJunk(self, junk)
-	sortItemsAndCreateButtons(self, groups, junk)
-	hideEmptyGroups(self, groups, junk)
-	createNewGroups(self, groups, junk)
+	setupEmpty(self, empty)
+	sortItemsAndCreateButtons(self, groups, junk, empty)
+	hideEmptyGroups(self, groups, junk, empty)
+	createNewGroups(self, groups)
 	local names, sizes, groupWidths = getGroupMetrics(self, groups)
 
 	-- Move groups and buttons
-	local height = moveGroups(self, groups, junk, Const.AnimationsDuration, arrangePacked(self, self.buttonSize, Const.ItemWindowCellSpacing, names, sizes, groupWidths, newLine))
+	local height = moveGroups(self, groups, junk, empty, Const.AnimationsDuration, arrangePacked(self, self.buttonSize, Const.ItemWindowCellSpacing, names, sizes, groupWidths, newLine))
+	if(empty.frame) then
+		empty.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, empty, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
+	end
 	if(junk.frame) then
 		junk.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, junk, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
 	end
@@ -276,6 +323,7 @@ local function UpdateItems(self)
 	end
 	self.groups = groups
 	self.junk = junk
+	self.empty = empty
 	return height
 end
 
@@ -285,7 +333,10 @@ local function UpdateLayout(self)
 	local names, sizes, groupWidths = getGroupMetrics(self, self.groups)
 
 	-- Move groups and buttons
-	local height = moveGroups(self, self.groups, self.junk, Const.AnimationsDuration, arrangePacked(self, self.buttonSize, Const.ItemWindowCellSpacing, names, sizes, groupWidths, newLine))
+	local height = moveGroups(self, self.groups, self.junk, self.empty, Const.AnimationsDuration, arrangePacked(self, self.buttonSize, Const.ItemWindowCellSpacing, names, sizes, groupWidths, newLine))
+	if(self.empty.frame) then
+		self.empty.frame:Rearrange(Const.AnimationsDuration, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
+	end
 	if(self.junk.frame) then
 		self.junk.frame:Rearrange(Const.AnimationsDuration, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
 	end
@@ -302,8 +353,10 @@ local function UpdateItem(self, id)
 		duration = 0
 	end
 	local item = self.set.items[id]
-	button:SetItem(item, 1, item.stack or 1, self.available, duration)
-	button:SetFiltered(strfind(button.item.name, self.filter) == nil)
+	button:SetItem(item, item.slot, item.stack or 1, self.available, duration)
+	if(button.item) then
+		button:SetFiltered(strfind(button.item.name, self.filter) == nil)
+	end
 end
 
 local function SetSearchFilter(self, filter)
@@ -391,17 +444,21 @@ function ItemContainer.Layouter(parent, config, groupFrameFactory)
 		junk = {
 			-- [frame] = group, [*] = sorted buttons
 		},
-		set = nil,
+		empty = {
+			-- [frame] = group, [*] = sorted buttons
+		},
+		available = true,
 		buttonSize = nil,
+		filter = "",
+		groupFrameFactory = groupFrameFactory,
+		height = 0,
 		junkCoinFrame = Ux.MoneyFrame.New(parent),
 		layout = config.layout,
 		parent = parent,
-		width = parent:GetWidth(),
-		height = 0,
+		set = nil,
 		sortFunc = nil,
-		groupFrameFactory = groupFrameFactory,
-		filter = "",
-		available = true,
+		showEmpty = true,--config.showEmpty,
+		width = parent:GetWidth(),
 		
 		SetAvailable = SetAvailable,
 		SetButtonSize = SetButtonSize,

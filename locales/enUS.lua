@@ -30,6 +30,8 @@ private.L = {
 		["armor costume"] = "Costumes",
 		-- Special case for lootable container items
 		lootable = "Lootable",
+		-- Special case for empty slots
+		empty = "Empty",
 		-- Designators for equipped wardrobe sets
 		wardrobeSet1 = "Wardrobe Set 1",
 		wardrobeSet2 = "Wardrobe Set 2",
