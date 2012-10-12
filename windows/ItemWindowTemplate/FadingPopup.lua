@@ -15,20 +15,20 @@ Ux.ItemWindowTemplate.FadingPopup = { }
 
 local function fadeIn(self, height)
 	local function tick(width) self:SetHeight(width) end
-	
+
 	self:SetVisible(true)
-	Animate.stop(self.animation)
-	self.animation = Animate.smoothstep(self:GetHeight(), height, 0.3, tick, function()
-		self.animation = 0
+	Animate.stop(self.fadingAnimation)
+	self.fadingAnimation = Animate.smoothstep(self:GetHeight(), height, 0.3, tick, function()
+		self.fadingAnimation = 0
 	end)
 end
 
 local function fadeOut(self)
 	local function tick(width) self:SetHeight(width) end
 	
-	Animate.stop(self.animation)
-	self.animation = Animate.smoothstep(self:GetHeight(), 0, 0.3, tick, function()
-		self.animation = 0
+	Animate.stop(self.fadingAnimation)
+	self.fadingAnimation = Animate.smoothstep(self:GetHeight(), 0, 0.3, tick, function()
+		self.fadingAnimation = 0
 		self:SetVisible(false)
 	end)
 end
@@ -39,19 +39,25 @@ end
 function Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(frame, titleBar, fullHeight)
 	local hotArea = UICreateFrame("Frame", "", frame)
 	hotArea:SetLayer(100)
-	hotArea:SetAllPoints(frame)
+	hotArea:SetPoint("TOPLEFT", frame, "TOPLEFT")
+	hotArea:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
+	hotArea:SetHeight(fullHeight)
 	hotArea:SetMouseMasking("limited")
 	
 	if(titleBar) then
 		function hotArea.Event.MouseOut()
-			if(not titleBar:IsMouseHot()) then
-				titleBar:FadeOut()
+			if(frame:GetHeight() > 1) then
+				if(not titleBar:IsMouseHot()) then
+					titleBar:FadeOut()
+				end
+				frame:FadeOut()
 			end
-			frame:FadeOut()
 		end
 	else
 		function hotArea.Event.MouseOut()
-			frame:FadeOut()
+			if(frame:GetHeight() > 1) then
+				frame:FadeOut()
+			end
 		end
 	end
 	
