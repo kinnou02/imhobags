@@ -104,7 +104,7 @@ end
 local function SetBound(self, bound, bind)
 	self.bound:SetVisible(bound == true)
 	if(bound) then
-		self.bound:SetTexture("Rift", bind == "account" and [[Data/\UI\ability_icons\elementalward3.dds]] or [[Data/\UI\ability_icons\soulbind.dds]])
+		self.bound:SetTexture("Rift", bind == "account" and "elementalward3.dds" or "soulbind.dds")
 	end
 end
 
