@@ -130,7 +130,6 @@ end
 local function ItemButton_SetItem(self, item, slots, stack, available, duration)
 	self.readonly = type(slots) ~= "table" -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
-	self:SetAvailable(available)
 	
 	if(not self.item or self.item.icon ~= item.icon) then
 		self:SetIcon(item.icon)
@@ -184,7 +183,7 @@ local function ItemButton_ShowTooltip(self)
 	end
 end
 
-function Ux.ItemButton.New(parent, duration)
+function Ux.ItemButton.New(parent, available, duration)
 	local button
 	if(#cachedButtons == 0) then
 		button = skinFactory(parent)
@@ -196,10 +195,11 @@ function Ux.ItemButton.New(parent, duration)
 		
 		button:SetMouseMasking("limited")
 		
-		button.SetItem = ItemButton_SetItem
 		button.Dispose = ItemButton_Dispose
-		button.ShowTooltip = ItemButton_ShowTooltip
 		button.MoveToGrid = ItemButton_MoveToGrid
+		button.SetItem = ItemButton_SetItem
+		button.SetLocked = SetLocked
+		button.ShowTooltip = ItemButton_ShowTooltip
 		
 		button.Event.MouseMove = mouseMove
 		button.Event.MouseOut = mouseOut
@@ -215,11 +215,12 @@ function Ux.ItemButton.New(parent, duration)
 		button:SetVisible(true)
 		button:SetParent(parent)
 	end
+	button.available = available
 	if(duration and duration > 0) then
 		button:SetAlpha(0)
-		button.fadeAnimation = Animate.lerp(0, 1, duration, function(t) button:SetAlpha(t) end, function() button.fadeAnimation = 0 end)
+		button.fadeAnimation = Animate.lerp(0, available and 1.0 or Const.ItemButtonUnavailableAlpha, duration, function(t) button:SetAlpha(t) end, function() button.fadeAnimation = 0 end)
 	else
-		button:SetAlpha(1)
+		button:SetAlpha(available and 1.0 or Const.ItemButtonUnavailableAlpha)
 	end
 	return button
 end

@@ -189,6 +189,12 @@ local function checkConfig(location, config)
 	return config
 end
 
+local function eventInteraction(self, interaction, state)
+	if(interaction == self.location) then
+		self.layouter:SetAvailable(state)
+	end
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -313,6 +319,16 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	
 	self.layouter = ItemContainer.Layouter(self, config, groupLabelFactory)
 	self.layouter:SetItemSet(self.playerSet)
+	
+	local interactions = {
+		bank = true,
+		mail = true,
+		guildbank = true,
+	}
+	if(interactions[location]) then
+		Event.Interaction[#Event.Interaction + 1] = { function(...) eventInteraction(self, ...) end, Addon.identifier, "eventInteraction" }
+		eventInteraction(self, location, Inspect.Interaction(location))
+	end
 	
 	if(location == "currency") then
 		Event.Currency[#Event.Currency + 1] = { function(...) eventCurrency(self, ...) end, Addon.identifier, "ItemContainer.currency.eventCurrency" }

@@ -5,6 +5,7 @@ Const = {
 	AnimationsDuration = 0.3,
 	
 	ItemButtonDefaultSize = 50,
+	ItemButtonUnavailableAlpha = 0.5,
 	
 	ItemWindowCellSpacing = 2,
 	ItemWindowDefaultColumns = 8, -- Starting size for new windows

@@ -173,7 +173,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, butto
 		local item = items[i]
 		local button = self.itemButtons[item]
 		if(not button) then
-			button = Ux.ItemButton.New(self.parent, Const.AnimationsDuration)
+			button = Ux.ItemButton.New(self.parent, self.available, Const.AnimationsDuration)
 			self.itemButtons[item] = button
 			button:SetSize(buttonSize)
 			self:UpdateItem(item)
@@ -302,7 +302,7 @@ local function UpdateItem(self, id)
 		duration = 0
 	end
 	local item = self.set.items[id]
-	button:SetItem(item, 1, item.stack or 1, true, duration)
+	button:SetItem(item, 1, item.stack or 1, self.available, duration)
 	button:SetFiltered(strfind(button.item.name, self.filter) == nil)
 end
 
@@ -339,6 +339,20 @@ local function SetItemSet(self, set)
 		reset(self)
 	end
 	self.set = set
+end
+
+local function SetLocked(self, locked)
+	self.locked = locked
+	for button in pairs(self.allButtons) do
+		button:SetLocked(locked)
+	end
+end
+
+local function SetAvailable(self, available)
+	self.available = available
+	for button in pairs(self.allButtons) do
+		button:SetAvailable(available)
+	end
 end
 
 local function SetButtonSize(self, size)
@@ -388,9 +402,11 @@ function ItemContainer.Layouter(parent, config, groupFrameFactory)
 		groupFrameFactory = groupFrameFactory,
 		filter = "",
 		
+		SetAvailable = SetAvailable,
 		SetButtonSize = SetButtonSize,
 		SetItemSet = SetItemSet,
 		SetLayout = SetLayout,
+		SetLocked = SetLocked,
 		SetSearchFilter = SetSearchFilter,
 		SetSortMethod = SetSortMethod,
 		UpdateItem = UpdateItem,
