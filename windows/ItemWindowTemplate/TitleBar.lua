@@ -138,7 +138,7 @@ local function createAllianceLogo(self)
 	function self:SetAlliance(alliance)
 		if(alliance) then
 			self.allianceIcon:SetWidth(36)
-			self.allianceIcon:SetTexture("Rift", alliance .. ".png.dds")-- == "defiant" and "MainMap_I21B.dds" or "MainMap_I221.dds")
+			self.allianceIcon:SetTextureAsync("Rift", alliance .. ".png.dds")
 		else
 			self.allianceIcon:SetWidth(0)
 		end
