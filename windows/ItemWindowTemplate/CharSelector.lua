@@ -48,7 +48,7 @@ local function createItem(self, i)
 	clickable:SetWidth(itemWidth)
 	clickable:SetHeight(itemClickableHeight)
 
-	function clickable.Event.LeftUp()
+	function clickable.Event.LeftClick()
 		self:FadeOut()
 		self.callback(text:GetText())
 	end

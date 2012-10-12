@@ -21,7 +21,7 @@ function Ux.ItemWindowTemplate.TitleBarButton(parent, source, texture, dx, dy, o
 	self:SetWidth(width)
 	self:SetHeight(height)
 	self:SetMouseMasking("limited")
-	self.Event.LeftUp = callback
+	self.Event.LeftClick = callback
 	
 	local tex = UICreateFrame("Texture", "", self)
 	tex:SetTexture(source, texture)
@@ -36,7 +36,7 @@ function Ux.ItemWindowTemplate.TitleBarButton(parent, source, texture, dx, dy, o
 		tex:SetHeight(dy or tex:GetHeight())
 	end
 	function self:SetCallback(callback)
-		self.Event.LeftUp = callback
+		self.Event.LeftClick = callback
 	end
 	return self
 end
