@@ -100,7 +100,9 @@ local function eventItemSlot(self, slot, item, container, bag, index)
 			set.items[old] = nil
 		end
 		set.bags[index] = item
-		set.items[item] = InspectItemDetail(item)
+		if(item) then
+			set.items[item] = InspectItemDetail(item)
+		end
 	elseif(item and item ~= "nil") then
 		if(not set.items[item]) then
 			set.new[item] = true
