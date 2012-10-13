@@ -369,7 +369,9 @@ local function SetSearchFilter(self, filter)
 		end
 	else
 		for button in pairs(self.allButtons) do
-			button:SetFiltered(strfind(button.item.name, filter) == nil)
+			if(button.item) then
+				button:SetFiltered(strfind(button.item.name, filter) == nil)
+			end
 		end
 	end
 	self.filter = filter
