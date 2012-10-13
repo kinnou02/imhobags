@@ -40,6 +40,6 @@ end
 
 -- Sort two item types depending on their slot
 function Sort.Default.ByItemSlot(item1, item2)
-	return (item1.slot or 1) < (item2.slot or 1)
+	return (item1.slot or "") < (item2.slot or "")
 end
 
