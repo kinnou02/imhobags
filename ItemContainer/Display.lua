@@ -142,8 +142,9 @@ local function eventItemUpdate(self, slot, item, container, bag, index)
 	end
 	
 	if(item and item ~= "nil") then
-		local details = InspectItemDetail(item)
-		set.items[item] = details
+		local detail = InspectItemDetail(item)
+		detail.slot = slot -- Add custom field for slot-sorting
+		set.items[item] = detail
 		updateButton(self, item)
 	else
 		removeItem(self, set, slot, item)
