@@ -18,7 +18,7 @@ Ux.ItemButton = { }
 
 Ux.ItemButtonSizeDefault = 50
 Ux.ItemButtonSizeJunk = 30
-Ux.ItemButtonDragDistance = 15
+Ux.ItemButtonDragDistance = 10
 
 -- Private methods
 -- ============================================================================
@@ -29,16 +29,17 @@ local leftDownPoint = { x = 0, y = 0 }
 
 local function mouseMove(self)
 	self:ShowTooltip()
-	if(self.item or (Inspect.Cursor()) == "item") then
-		self:ShowHighlight()
-	end
-	if(self.pickingUp) then
+	if(self.available and self.leftDown) then
 		local mouse = Inspect.Mouse()
 		local distance = (leftDownPoint.x - mouse.x) * (leftDownPoint.x - mouse.x) + (leftDownPoint.y - mouse.y) * (leftDownPoint.y - mouse.y)
-		if(distance > Ux.ItemButtonDragDistance * Ux.ItemButtonDragDistance) then
-			ItemHandler.Standard.Drag(self.pickingUp)
-			self.pickingUp = nil
+		if(distance >= Ux.ItemButtonDragDistance * Ux.ItemButtonDragDistance) then
+			ItemHandler.Standard.Drag(self.dropTarget)
+			self.leftDown = false
+			self:SetDepressed(false)
 		end
+	end
+	if(self.item or (Inspect.Cursor()) == "item") then
+		self:ShowHighlight()
 	end
 end
 
@@ -51,6 +52,9 @@ local function mouseOut(self)
 end
 
 local function mouseIn(self)
+	if(self.rightDown or self.leftDown) then
+		self:SetDepressed(true)
+	end
 	if(self.item or (Inspect.Cursor()) == "item") then
 		self:SetHighlighted(true)
 		if(self.item) then
@@ -61,51 +65,49 @@ local function mouseIn(self)
 end
 
 local function leftDown(self)
-	local mouse = Inspect.Mouse()
-	leftDownPoint.x = mouse.x
-	leftDownPoint.y = mouse.y
-	self:SetDepressed(true)
 	if(self.available) then
-		if(Inspect.Cursor() == "item") then
+		if(Inspect.Cursor()) then
 			ItemHandler.Standard.Drop(self.dropTarget)
-		elseif(not Inspect.Cursor()) then
-			self.pickingUp = self.dropTarget
+		elseif(self.item) then
+			self:SetDepressed(true)
+			self.leftDown = true
+			leftDownPoint = Inspect.Mouse()
 		end
 	end
 end
 
 local function leftUp(self)
-	self:SetDepressed(false)
-	if(self.pickingUp) then
-		ItemHandler.Standard.Left(self.pickingUp)
-		self.pickingUp = nil
-	elseif(Inspect.Cursor() == "item" and self.available) then
+	if(self.leftDown) then
+		ItemHandler.Standard.Left(self.dropTarget)
+	elseif(Inspect.Cursor()) then
 		ItemHandler.Standard.Drop(self.dropTarget)
 	end
-	self.commandTarget = nil
+	self.leftDown = false
+	self:SetDepressed(false)
 end
 
 local function leftUpoutside(self)
-	self.pickingUp = nil
+	self.leftDown = false
 end
 
 local function rightDown(self)
-	self:SetDepressed(true)
-	if(self.available) then
-		self.commandTarget = self.dropTarget
+	if(self.item and self.available) then
+		self:SetDepressed(true)
+		self.rightDown = true
 	end
 end
 
 local function rightUp(self)
 	self:SetDepressed(false)
-	if(self.commandTarget) then
-		ItemHandler.Standard.Right(self.commandTarget)
-	end
-	self.commandTarget = nil
+	self.rightDown = false
 end
 
 local function rightUpoutside(self)
-	self.commandTarget = nil
+	self.rightDown = false
+end
+
+local function rightClick(self)
+	ItemHandler.Standard.Right(self.dropTarget)
 end
 
 -- Public methods
@@ -226,9 +228,11 @@ function Ux.ItemButton.New(parent, available, duration)
 		button.Event.MouseIn = mouseIn
 		button.Event.LeftDown = leftDown
 		button.Event.LeftUp = leftUp
+		button.Event.LeftClick = leftClick
 		button.Event.RightDown = rightDown
 		button.Event.RightUp = rightUp
 		button.Event.RightUpoutside = rightUpoutside
+		button.Event.RightClick = rightClick
 	else
 		button = cachedButtons[#cachedButtons]
 		cachedButtons[#cachedButtons] = nil
