@@ -62,8 +62,12 @@ local function setupGroupLabel(self, display, group, items)
 	if(display.layouter.layout == "default") then
 		self.text:SetText(group)
 	elseif(display.layouter.layout == "bags") then
-		local info = display.set.items[display.set.bags[group]]
-		self.text:SetText(info.name)
+		if(group == 0) then
+			self.text:SetText(L.Ux.WindowTitle.bank)
+		else
+			local info = display.set.items[display.set.bags[group]]
+			self.text:SetText(info.name)
+		end
 	end
 end
 
