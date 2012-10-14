@@ -97,9 +97,13 @@ local function mouseMove(self)
 end
 
 local function leftDown(self)
-	local mouse = Inspect.Mouse()
-	self.mouseOffsetX = floor(mouse.x - self.window:GetLeft())
-	self.mouseOffsetY = floor(mouse.y - self.window:GetTop())
+	if(Inspect.Cursor()) then
+		self.window.container:DropCursorItem()
+	else
+		local mouse = Inspect.Mouse()
+		self.mouseOffsetX = floor(mouse.x - self.window:GetLeft())
+		self.mouseOffsetY = floor(mouse.y - self.window:GetTop())
+	end
 end
 
 local function leftUpoutside(self)
@@ -107,6 +111,9 @@ local function leftUpoutside(self)
 end
 
 local function leftUp(self)
+	if(Inspect.Cursor()) then
+		self.window.container:DropCursorItem()
+	end
 	leftUpoutside(self)
 end
 

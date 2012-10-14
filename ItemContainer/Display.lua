@@ -14,6 +14,7 @@ local tostring = tostring
 local type = type
 
 -- Globals
+local Command = Command
 local Event = Event
 local Inspect = Inspect
 local InspectCurrencyCategoryDetail = Inspect.Currency.Category.Detail
@@ -218,6 +219,7 @@ end
 local function eventInteraction(self, interaction, state)
 	if(interaction == self.location) then
 		self.layouter:SetAvailable(state)
+		self.available = state
 	end
 end
 
@@ -312,6 +314,17 @@ local function SetSortMethod(self, sort)
 	end
 end
 
+local function DropCursorItem(self)
+	if(self.set == self.playerSet and self.available) then
+		local slot = next(self.set.empty)
+		if(slot) then
+			ItemHandler.Standard.Drop(slot)
+			return
+		end
+	end
+	Command.Cursor(nil)
+end
+
 function ItemContainer.Display(parent, location, config, changeCallback)
 	local self = UICreateFrame("Frame", "ItemContainer." .. location, parent)
 	
@@ -340,6 +353,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.pendingItemDetails = {
 		-- [slot] = type
 	}
+	self.available = true
 	self.set = self.playerSet
 	self.needsUpdate = false
 	self.needsLayout = false
@@ -348,6 +362,9 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.location = location
 	self.nextItemDetailQuery = 0
 	
+	self.DropCursorItem = DropCursorItem
+	self.GetItemSize = function(self) return self.layouter.itemSize end
+	self.GetLayout = function(self) return self.layouter.layout end
 	self.GetNumEmptySlots = GetNumEmptySlots
 	self.SetButtonSize = SetButtonSize
 	self.SetCharacter = SetCharacter
