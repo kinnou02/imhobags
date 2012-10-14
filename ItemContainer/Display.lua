@@ -42,6 +42,7 @@ local function inspectItemDetailTwink(self, slot, type, stack)
 			icon = "placeholder_icon.dds",
 			type = type,
 			stack = stack,
+			slot = slot,
 		}
 	else
 		item.stack = stack
@@ -174,7 +175,7 @@ local function queryPendingItemDetail(self)
 	
 	local set = self.set
 	for slot, type in pairs(pendingItemDetails) do
-		local id = set.slots[slot]
+		local id = set.slots[slot] or set.bags[slot]
 		set.items[id] = inspectItemDetailTwink(self, slot, type, set.items[id].stack)
 		self.layouter:UpdateItem(id)
 	end
