@@ -6,6 +6,7 @@ Const = {
 	
 	ItemButtonDefaultSize = 50,
 	ItemButtonDragDistance = 10 * 10,
+	ItemButtonWarmupCache = 300,
 	ItemButtonUnavailableAlpha = 0.5,
 	
 	ItemDisplayQueryInterval = 0.5,

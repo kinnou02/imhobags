@@ -11,6 +11,7 @@ local UIParent = UIParent
 -- Frames cannot be deleted, keep a cache and only create new frames if the cache is empty
 -- Calling Dispose() on a button moves it back to the cache
 local cachedButtons = { }
+local createButton
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -106,10 +107,20 @@ local function rightClick(self)
 	ItemHandler.Standard.Right(self.dropTarget)
 end
 
+local function storageLoaded()
+	skinFactory = Ux["ItemButton_" .. Config.itemButtonSkin].New
+	-- Preload buttons to avoid the Watchdog later
+	for i = 1, Const.ItemButtonWarmupCache do
+		local button = createButton(Ux.Context)
+		button:SetVisible(false)
+		cachedButtons[#cachedButtons + 1] = button
+	end
+end
+
 -- Public methods
 -- ============================================================================
 
-local function ItemButton_MoveToGrid(self, target, x, y, spacing, duration)
+local function MoveToGrid(self, target, x, y, spacing, duration)
 	if(self.gridTarget == target and self.gridx == x and self.gridy == y) then
 		return
 	end
@@ -131,7 +142,7 @@ local function ItemButton_MoveToGrid(self, target, x, y, spacing, duration)
 	end
 end
 
-local function ItemButton_SetItem(self, item, slots, stack, available, locked)
+local function SetItem(self, item, slots, stack, available, locked)
 	local isTable = type(slots) == "table"
 	self.locked = locked or not isTable -- Reflects whether the item matrix allows manipulation
 	self.available = available -- Reflects whether the location is available to the player
@@ -160,7 +171,7 @@ local function ItemButton_SetItem(self, item, slots, stack, available, locked)
 	self.dropTarget = item and item.id or (isTable and slots[1] or slots)
 end
 
-local function ItemButton_Dispose(self, duration)
+local function Dispose(self, duration)
 	local function dispose()
 		cachedButtons[#cachedButtons + 1] = self
 		self:SetVisible(false)
@@ -179,7 +190,7 @@ local function ItemButton_Dispose(self, duration)
 	end
 end
 
-local function ItemButton_ShowTooltip(self)
+local function ShowTooltip(self)
 	if(self.tooltip) then
 		local target
 		if(not self.item.type) then
@@ -204,31 +215,7 @@ end
 function Ux.ItemButton.New(parent, available, duration)
 	local button
 	if(#cachedButtons == 0) then
-		button = skinFactory(parent)
-		button.moveAnimation = 0
-		button.fadeAnimation = 0
-		button.gridx = -1
-		button.gridy = -1
-		button.gridTarget = nil
-		
-		button:SetMouseMasking("limited")
-		
-		button.Dispose = ItemButton_Dispose
-		button.MoveToGrid = ItemButton_MoveToGrid
-		button.SetItem = ItemButton_SetItem
-		button.SetLocked = SetLocked
-		button.ShowTooltip = ItemButton_ShowTooltip
-		
-		button.Event.MouseMove = mouseMove
-		button.Event.MouseOut = mouseOut
-		button.Event.MouseIn = mouseIn
-		button.Event.LeftDown = leftDown
-		button.Event.LeftUp = leftUp
-		button.Event.LeftClick = leftClick
-		button.Event.RightDown = rightDown
-		button.Event.RightUp = rightUp
-		button.Event.RightUpoutside = rightUpoutside
-		button.Event.RightClick = rightClick
+		button = createButton(parent)
 	else
 		button = cachedButtons[#cachedButtons]
 		cachedButtons[#cachedButtons] = nil
@@ -245,4 +232,34 @@ function Ux.ItemButton.New(parent, available, duration)
 	return button
 end
 
-ImhoEvent.Init[#ImhoEvent.Init + 1] = { function() skinFactory = Ux["ItemButton_" .. Config.itemButtonSkin].New end, Addon.identifier, "" }
+createButton = function(parent)
+	local self = skinFactory(parent)
+	self.moveAnimation = 0
+	self.fadeAnimation = 0
+	self.gridx = -1
+	self.gridy = -1
+	self.gridTarget = nil
+	
+	self:SetMouseMasking("limited")
+	
+	self.Dispose = Dispose
+	self.MoveToGrid = MoveToGrid
+	self.SetItem = SetItem
+	self.SetLocked = SetLocked
+	self.ShowTooltip = ShowTooltip
+	
+	self.Event.MouseMove = mouseMove
+	self.Event.MouseOut = mouseOut
+	self.Event.MouseIn = mouseIn
+	self.Event.LeftDown = leftDown
+	self.Event.LeftUp = leftUp
+	self.Event.LeftClick = leftClick
+	self.Event.RightDown = rightDown
+	self.Event.RightUp = rightUp
+	self.Event.RightUpoutside = rightUpoutside
+	self.Event.RightClick = rightClick
+	
+	return self
+end
+
+ImhoEvent.StorageLoaded[#ImhoEvent.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "" }

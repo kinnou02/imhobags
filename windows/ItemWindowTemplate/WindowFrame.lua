@@ -65,7 +65,7 @@ local function createTitleBar(self, location, config)
 		self.titleBar:FadeOut()
 	end)
 	self.titleBar:SetSizeSelectorCallback(function(n)
-		self.container:SetButtonSize(n)
+		self.container:SetItemSize(n)
 	end)
 	self.titleBar:SetLocationCallback(function(loc)
 		if(loc == "guildbank") then
@@ -235,17 +235,22 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	self.config = config
 	
 	self.SetCharacter = SetCharacter
+	self.GetItemSize = function(self) return self.container:GetItemSize() end
+	self.GetLayout = function(self) return self.container:GetLayout() end
+	self.GetSortMethod = function(self) return self.container:GetSortMethod() end
+	self.GetGroupMethod = function(self) return self.container:GetGroupMethod() end
 
 	self.onClose = function() self:SetVisible(false) end
 
 	return self
 end
-
+--[[
 ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
 	local test = Ux.ItemWindowTemplate.WindowFrame("inventory", {
-		sort = "name",
-		layout = "default",
+		sort = "slot",
+		layout = "bags",
 		itemSize = 40,
-	})
+	}, UI.Native.BagInventory1)
 	Item.Dispatcher.RunSlot("inventory")
 end, Addon.identifier, "" }
+]]
