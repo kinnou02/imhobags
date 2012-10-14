@@ -21,8 +21,14 @@ local defaultItemWindows =  {
 	WardrobeItemWindow = { "wardrobe", nil, "EquipmentWindow" },
 }
 
+local itemWindows = {
+	{ "inventory", UI.Native.BagInventory1 },
+	{ "bank", UI.Native.Bank },
+}
+
 setfenv(1, private)
 Ux = Ux or { }
+Ux.ItemWindow = { }
 
 Ux.Context = UICreateContext(Addon.identifier)
 Ux.TooltipContext = UICreateContext(Addon.identifier)
@@ -130,10 +136,39 @@ local function Ux_savedVariablesSaveBegin(addonIdentifier)
 	end
 end
 
-_G.table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
-_G.table.insert(Event.Addon.SavedVariables.Save.Begin, { Ux_savedVariablesSaveBegin, Addon.identifier, "Ux_savedVariablesSaveBegin" })
+local function storageLoaded()
+	_G.ImhoBags_WindowInfo = _G.ImhoBags_WindowInfo or { }
+	
+	for k, v in pairs(itemWindows) do
+		Ux.ItemWindow[v[1]] = Ux.ItemWindowTemplate.WindowFrame(v[1], _G.ImhoBags_WindowInfo[v[1]] or { }, v[2])
+	end
+end
 
-_G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
+local function savedVariablesSaveBegin(identifier)
+	if(identifier ~= Addon.identifier) then
+		return
+	end
+
+	for k, v in pairs(itemWindows) do
+		local window = Ux.ItemWindow[v[1]]
+		_G.ImhoBags_WindowInfo[v[1]] = {
+			x = window:GetLeft(),
+			y = window:GetTop(),
+			width = window:GetWidth(),
+			layout = window:GetLayout(),
+			sort = window:GetSortMethod(),
+			itemSize = window:GetItemSize(),
+		}
+	end
+end
+
+_G.table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
+_G.table.insert(Event.Addon.SavedVariables.Save.Begin, { savedVariablesSaveBegin, Addon.identifier, "savedVariablesSaveBegin" })
+
+Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "storageLoaded" }
+
+
+--_G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
 
 -- Public methods
 -- ============================================================================

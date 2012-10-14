@@ -62,6 +62,8 @@ local function variablesLoaded(identifier)
 	data = _G.ImhoBags_ItemStorageCharacters or { }
 	player = data[Player.name] or newCharacter()
 	data[Player.name] = player
+	
+	Trigger.StorageLoaded()
 end
 
 local function saveVariables(identifier)

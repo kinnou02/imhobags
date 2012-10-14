@@ -37,7 +37,7 @@ ImhoEvent = { }
 Trigger = { }
 
 -- The VariablesLoaded event signals all ImhoBags data was loaded, usually triggered before Init
-Trigger.VariablesLoaded, ImhoEvent.VariablesLoaded = Utility.Event.Create(Addon.identifier, "Private.VariablesLoaded")
+Trigger.StorageLoaded, ImhoEvent.StorageLoaded = Utility.Event.Create(Addon.identifier, "Private.StorageLoaded")
 -- The Init event is postponed until the full Inspect.Unit.Detail("player") data is available
 Trigger.Init, ImhoEvent.Init = Utility.Event.Create(Addon.identifier, "Private.Init")
 -- The Config event is fired whenever a cvonfig option has changed: (name, value)

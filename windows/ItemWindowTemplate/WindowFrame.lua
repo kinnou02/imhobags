@@ -166,6 +166,22 @@ local function containerDisplayChanged(container, values)
 	end
 end
 
+local function createNativeHook(self, native)
+	if(native) then
+		function native.Event.Loaded(native)
+			if(Config.autoOpen) then
+				if(native:GetLoaded()) then
+					self:SetCharacter(Player.name)
+					self:SetVisible(true)
+				else
+					self:SetVisible(false)
+				end
+				log("TODO", "disable native frame(s)")
+			end
+		end
+	end
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -178,10 +194,11 @@ local function SetCharacter(self, character)
 	end
 end
 
-function Ux.ItemWindowTemplate.WindowFrame(location, config)
+function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	local context = UI.CreateContext(Addon.identifier)
 	local self = UI.CreateFrame("RiftWindow", "WindowFrame." .. location, context)
 	self:SetTitle("")
+	self:SetVisible(false)
 	
 	self:SetController("content")
 	self:SetWidth(max(Const.ItemWindowMinWidth, config.width or (Const.ItemWindowDefaultColumns * (Const.ItemButtonDefaultSize + Const.ItemWindowCellSpacing))))
@@ -199,6 +216,7 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config)
 	createHelpButton(self)
 	createTitleBar(self, location, config)
 	createResizeButton(self)
+	createNativeHook(self, native)
 	
 	local content = self:GetContent()
 	content.window = self

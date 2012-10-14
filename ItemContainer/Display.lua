@@ -234,8 +234,8 @@ local function GetNumEmptySlots(self)
 	return empty
 end
 
-local function SetButtonSize(self, size)
-	self.layouter:SetButtonSize(size)
+local function SetItemSize(self, size)
+	self.layouter:SetItemSize(size)
 	self.needsLayout = true
 end
 
@@ -366,8 +366,9 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.GetItemSize = function(self) return self.layouter.itemSize end
 	self.GetLayout = function(self) return self.layouter.layout end
 	self.GetNumEmptySlots = GetNumEmptySlots
-	self.SetButtonSize = SetButtonSize
+	self.GetSortMethod = function(self) return self.layouter.sort end
 	self.SetCharacter = SetCharacter
+	self.SetItemSize = SetItemSize
 	self.SetLayout = SetLayout
 	self.SetNeedsLayout = SetNeedsLayout
 	self.SetSearchFilter = SetSearchFilter

@@ -141,7 +141,6 @@ end
 -- Public methods
 -- ============================================================================
 
-
 function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar)
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetHeight(0)
@@ -158,12 +157,14 @@ function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar)
 		self.callback = callback
 	end
 	
-	createCharFrames(self, background)
-	setPlayerCoin(self, background)
+	ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
+		createCharFrames(self, background)
+		setPlayerCoin(self, background)
+		EventCurrency[#EventCurrency + 1] = { function() setPlayerCoin(self, background) end, Addon.identifier, "" }
+		Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
+	end, Addon.identifier, "" }
 
-	EventCurrency[#EventCurrency + 1] = { function() setPlayerCoin(self, background) end, Addon.identifier, "" }
 	
-	Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
 	
 	self.ShowForChars = showForChars
 	return self
