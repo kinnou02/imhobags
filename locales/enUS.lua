@@ -40,17 +40,18 @@ private.L = {
 		wardrobeSet5 = "Wardrobe Set 5",
 		-- Crafting material names
 		["crafting material cloth"] = "Cloth",
-		["crafting material component"] = "Component",
+		["crafting material component"] = "Rune Components",
 		["crafting material fish"] = "Fish",
-		["crafting material gem"] = "Gem",
-		["crafting material hide"] = "Hide",
+		["crafting material gem"] = "Gems",
+		["crafting material hide"] = "Leather",
 		["crafting material meat"] = "Meat",
 		["crafting material metal"] = "Metal",
-		["crafting material plant"] = "Plant",
+		["crafting material plant"] = "Plants",
 		["crafting material wood"] = "Wood",
 		-- Crafting ingredients names
-		["crafting ingredient reagent"] = "Reagent",
-		["crafting ingredient rift"] = "Rift",
+		["crafting ingredient reagent"] = "Reagents",
+		["crafting ingredient rift"] = "Rifts",
+		["crafting ingredient drop"] = "Drops",
 	},
 	
 	-- The shortcuts used in the tooltip overview
