@@ -16,10 +16,6 @@ setfenv(1, private)
 Ux = Ux or { }
 Ux.ItemButton = { }
 
-Ux.ItemButtonSizeDefault = 50
-Ux.ItemButtonSizeJunk = 30
-Ux.ItemButtonDragDistance = 10
-
 -- Private methods
 -- ============================================================================
 
@@ -32,7 +28,7 @@ local function mouseMove(self)
 	if(self.available and self.leftDown) then
 		local mouse = Inspect.Mouse()
 		local distance = (leftDownPoint.x - mouse.x) * (leftDownPoint.x - mouse.x) + (leftDownPoint.y - mouse.y) * (leftDownPoint.y - mouse.y)
-		if(distance >= Ux.ItemButtonDragDistance * Ux.ItemButtonDragDistance) then
+		if(distance >= Const.ItemButtonDragDistance) then
 			ItemHandler.Standard.Drag(self.dropTarget)
 			self.leftDown = false
 			self:SetDepressed(false)

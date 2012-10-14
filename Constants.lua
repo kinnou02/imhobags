@@ -5,6 +5,7 @@ Const = {
 	AnimationsDuration = 0.3,
 	
 	ItemButtonDefaultSize = 50,
+	ItemButtonDragDistance = 10 * 10,
 	ItemButtonUnavailableAlpha = 0.5,
 	
 	ItemDisplayQueryInterval = 0.5,
