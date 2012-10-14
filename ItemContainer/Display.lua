@@ -90,6 +90,16 @@ local function updateButton(self, id)
 	end
 end
 
+local function makeEmptyItemDetail(slot)
+	return {
+		-- Pick a name/icon that is sorted last
+		name = "\255",
+		icon = "\255",
+		rarity = "empty",
+		slot = slot,
+	}
+end
+
 local function removeItem(self, set, slot, item)
 	if(item == "nil") then
 		set.slots[slot] = nil
@@ -98,13 +108,7 @@ local function removeItem(self, set, slot, item)
 	else
 		set.slots[slot] = false
 		set.empty[slot] = true
-		set.items[slot] = {
-			-- Pick a name/icon that is sorted last
-			name = "\255",
-			icon = "\255",
-			rarity = "empty",
-			slot = slot,
-		}
+		set.items[slot] = makeEmptyItemDetail(slot)
 	end
 end
 
@@ -261,6 +265,7 @@ local function SetCharacter(self, character)
 			slots = { },
 			items = { },
 			groups = { },
+			empty = { },
 		}
 		self.set = set
 		local totals, counts, slots, bags = Item.Storage.GetCharacterItems(character, self.location)
@@ -274,6 +279,8 @@ local function SetCharacter(self, character)
 				id = id + 1
 			else
 				set.slots[slot] = false
+				set.empty[slot] = true
+				set.items[slot] = makeEmptyItemDetail(slot)
 			end
 		end
 		for slot, type in pairs(bags or { }) do
