@@ -25,12 +25,6 @@ local UICreateFrame = UI.CreateFrame
 -- Locals
 local labelFontSize = 14
 local labelHeight = 20
-local availableInteractions = {
-	bank = true,
-	mail = true,
-	guildbank = true,
-}
-
 
 setfenv(1, private)
 ItemContainer = ItemContainer or { }
@@ -253,8 +247,9 @@ local function SetCharacter(self, character)
 	self.pendingItemDetails = { }
 	if(character == "player" or character == Player.name) then
 		self.set = self.playerSet
-		if(availableInteractions[self.location]) then
-			eventInteraction(self, self.location, Inspect.Interaction(self.location))
+		local interaction = Inspect.Interaction()
+		if(interaction[self.location] ~= nil) then
+			eventInteraction(self, self.location, interaction[self.location])
 		else
 			self.layouter:SetAvailable(true)
 		end
@@ -388,9 +383,10 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.layouter = ItemContainer.Layouter(self, config, groupLabelFactory)
 	self.layouter:SetItemSet(self.playerSet)
 	
-	if(availableInteractions[location]) then
+	local interaction = Inspect.Interaction()
+	if(interaction[location] ~= nil) then
 		Event.Interaction[#Event.Interaction + 1] = { function(...) eventInteraction(self, ...) end, Addon.identifier, "eventInteraction" }
-		eventInteraction(self, location, Inspect.Interaction(location))
+		eventInteraction(self, location, interaction[location])
 	end
 	
 	if(location == "currency") then
