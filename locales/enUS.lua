@@ -151,7 +151,7 @@ Available config options:
 		guardian = "Guardian",
 		
 		SortOption = {
-			name = "Name",
+			name = "A..Z",
 			icon = "Icon",
 			rarity = "Rarity",
 		},

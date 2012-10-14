@@ -74,7 +74,7 @@ local function SetButtons(self, duration, alive, prealive, buttons, dx, spacing)
 	self.buttons = buttons
 end
 
-local function Dispose(self, duration)
+local function Dispose(self, duration, alive)
 	local cache = groupCache[self.factory]
 	local function dispose()
 		self:SetVisible(false)
@@ -85,8 +85,12 @@ local function Dispose(self, duration)
 	Animate.stop(self.fadeAnimation)
 	self.moveAnimation = 0
 	self.fadeAnimation = 0
+	alive = alive or { }
 	for i = 1, #self.buttons do
-		self.buttons[i]:Dispose(duration)
+		local button = self.buttons[i]
+		if(not alive[button]) then
+			button:Dispose(duration)
+		end
 	end
 	self.buttons = { }
 	if(duration and duration > 0) then

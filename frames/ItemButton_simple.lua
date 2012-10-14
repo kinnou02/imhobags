@@ -106,9 +106,9 @@ local function SetDepressed(self, depressed)
 end
 
 local function SetBound(self, bound, bind)
-	self.bound:SetVisible(bound == true)
+	self.bind:SetVisible(bound == true)
 	if(bound) then
-		self.bound:SetTexture("Rift", bind == "account" and "elementalward3.dds" or "soulbind.dds")
+		self.bind:SetTextureAsync("Rift", bind == "account" and "elementalward3.dds" or "soulbind.dds")
 	end
 end
 
@@ -149,6 +149,10 @@ local function HideTooltip(self)
 end
 
 local function SetSize(self, size)
+	if(self.size == size) then
+		return
+	end
+	self.size = size
 	self:SetWidth(size)
 	self:SetHeight(size)
 	
@@ -194,12 +198,12 @@ function Ux.ItemButton_simple.New(parent)
 	self.slotsText:SetFontSize(10)
 	self.slotsText:SetFontColor(0.8, 0.8, 0.8)
 	
-	self.bound = UICreateFrame("Texture", "", self)
-	self.bound:SetPoint("TOPRIGHT", self.icon, "TOPRIGHT")
-	self.bound:SetPoint("BOTTOMLEFT", self.icon, 0.66, 0.33)
-	self.bound:SetTexture("Rift", [[Data/\UI\ability_icons\soulbind.dds]])
-	self.bound:SetAlpha(0.8)
-	self.bound:SetLayer(self.icon:GetLayer() + 1)
+	self.bind = UICreateFrame("Texture", "", self)
+	self.bind:SetPoint("TOPRIGHT", self.icon, "TOPRIGHT")
+	self.bind:SetPoint("BOTTOMLEFT", self.icon, 0.66, 0.33)
+	self.bind:SetTexture("Rift", "soulbind.dds")
+	self.bind:SetAlpha(0.8)
+	self.bind:SetLayer(self.icon:GetLayer() + 1)
 
 	self.SetHighlighted = SetHighlighted
 	self.ShowHighlight = ShowHighlight

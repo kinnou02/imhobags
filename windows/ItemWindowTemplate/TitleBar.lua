@@ -283,8 +283,11 @@ local function createSortButton(self)
 	self:HotArea(self.sortSelector, true)
 	self.fadeOutMenus[#self.fadeOutMenus + 1] = self.sortSelector
 		
-	function self:SetSortSelectorCallback(callback) self.sortButton:SetVisible(callback ~= nil) self.sortSelector:SetCallback(callback) end
-	function self:SetSortSelectorValue(n) self.sortSelector:SetValue(n) end
+	function self:SetSortSelectorCallback(callback) self.sortButton:SetVisible(callback ~= nil) self.sortSelector:SetSortCallback(callback) end
+	function self:SetSortSelectorValue(n) self.sortSelector:SetSortValue(n) end
+		
+	function self:SetLayoutSelectorCallback(callback) self.sortButton:SetVisible(callback ~= nil) self.sortSelector:SetLayoutCallback(callback) end
+	function self:SetLayoutSelectorValue(n) self.sortSelector:SetLayoutValue(n) end
 end
 
 local function createEmptySlotIndicator(self)

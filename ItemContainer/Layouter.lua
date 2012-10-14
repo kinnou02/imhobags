@@ -88,7 +88,7 @@ local function getGroupAssociation_onebag(set, showEmptySlots)
 		end
 	end
 	
-	return { items }, { }, { }
+	return { onebag = items }, { }, { }
 end
 
 local function arrangePacked(self, elementWidth, spacing, keys, sizes, minWidths, newLine)
@@ -144,9 +144,10 @@ local function moveGroups(self, groups, junk, empty, duration, layout, sizes)
 		local name = layout[i]
 		if(name == newLine) then
 			line = line + 1
-			height = height + prevGroup:GetHeight()
 			x = 0
-			y = y + ceil(sizes[layout[i - 1]] / columns)
+			local rows = ceil(sizes[layout[i - 1]] / columns)
+			y = y + rows
+			height = height + prevGroup:GetHeight() + rows * (self.itemSize + Const.ItemWindowCellSpacing)
 		else
 			prevGroup = groups[name].frame
 			local isLast = layout[i + 1] == newLine
@@ -159,8 +160,9 @@ local function moveGroups(self, groups, junk, empty, duration, layout, sizes)
 	if(#empty > 0) then
 		empty.frame:MoveToGrid(line, 0, y, self.itemSize, self.itemSize, Const.ItemWindowCellSpacing, self.width, #self.empty > 0 and duration)
 		line = line + 1
-		height = height + empty.frame:GetHeight()
-		y = y + ceil(#empty / columns)
+		local rows = ceil(#empty / columns)
+		y = y + rows
+		height = height + empty.frame:GetHeight() + rows * (self.itemSize + Const.ItemWindowCellSpacing)
 	end
 	if(#junk > 0) then
 		self.junkCoinFrame:SetVisible(true)
@@ -168,12 +170,13 @@ local function moveGroups(self, groups, junk, empty, duration, layout, sizes)
 		self.junkCoinFrame:SetPoint("RIGHTCENTER", junk.frame, "RIGHTCENTER", -5, 0)
 		junk.frame:MoveToGrid(line, 0, y, self.itemSize, self.itemSize, Const.ItemWindowCellSpacing, self.width, #self.junk > 0 and duration)
 		line = line + 1
-		height = height + junk.frame:GetHeight()
-		y = y + ceil(#junk / columns)
+		local rows = ceil(#junk / columns)
+		y = y + rows
+		height = height + junk.frame:GetHeight() + rows * (Const.ItemWindowJunkButtonSize + Const.ItemWindowCellSpacing)
 	else
 		self.junkCoinFrame:SetVisible(false)
 	end
-	return height + y * (self.itemSize + Const.ItemWindowCellSpacing)
+	return height
 end
 
 local function setupJunk(self, junk)
@@ -204,7 +207,6 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 		if(not button) then
 			button = Ux.ItemButton.New(self.parent, self.available, Const.AnimationsDuration)
 			self.itemButtons[item] = button
-			button:SetSize(itemSize)
 			if(details.rarity == "empty") then
 				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
 			else
@@ -213,6 +215,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 		elseif(details.rarity == "empty") then
 			button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
 		end
+		button:SetSize(itemSize)
 		items[i] = button
 		allButtons[button] = true
 		itemButtons[item] = button
@@ -242,14 +245,14 @@ end
 local function hideEmptyGroups(self, groups, junk, empty)
 	for name, group in pairs(self.groups) do
 		if(not groups[name]) then
-			group.frame:Dispose(Const.AnimationsDuration)
+			group.frame:Dispose(Const.AnimationsDuration, self.allButtons)
 		end
 	end
 	if(#self.junk > 0 and #junk == 0) then
-		self.junk.frame:Dispose()
+		self.junk.frame:Dispose(0, self.allButtons)
 	end
 	if(#self.empty > 0 and #empty == 0) then
-		self.empty.frame:Dispose()
+		self.empty.frame:Dispose(0, self.allButtons)
 	end
 end
 
@@ -387,7 +390,7 @@ local function SetLayout(self, layout)
 		self.getGroupAssociation = getGroupAssociation_onebag
 	end
 	if(layout ~= self.layout) then
-		reset(self)
+--		reset(self)
 	end
 	self.layout = layout
 end
