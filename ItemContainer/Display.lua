@@ -174,9 +174,10 @@ local function queryPendingItemDetail(self)
 	local pendingItemDetails = self.pendingItemDetails
 	self.pendingItemDetails = { }
 	
+	local set = self.set
 	for slot, type in pairs(pendingItemDetails) do
-		local id = self.slots[slot]
-		self.items[id] = inspectItemDetailTwink(self, slot, type, self.slots[slot].stack)
+		local id = set.slots[slot]
+		set.items[id] = inspectItemDetailTwink(self, slot, type, set.items[id].stack)
 		self.layouter:UpdateItem(id)
 	end
 end
