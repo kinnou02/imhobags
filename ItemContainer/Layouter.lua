@@ -355,6 +355,9 @@ end
 local function UpdateItem(self, id)
 	local duration = Const.AnimationsDuration
 	local button = self.itemButtons[id]
+	if(not button) then
+		return
+	end
 	if(not button:GetVisible()) then
 		duration = 0
 	end
