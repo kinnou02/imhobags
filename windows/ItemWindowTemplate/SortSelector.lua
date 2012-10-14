@@ -37,7 +37,7 @@ function Ux.ItemWindowTemplate.SortSelector(parent, titleBar)
 	-- Layout options
 	local bags = UICreateFrame("Texture", "", sep)
 	bags:SetPoint("BOTTOMCENTER", background, "BOTTOMCENTER", 0, -5)
-	bags:SetTextureAsync("ImhoBags", "textures/icon_menu_inventory.png")
+	bags:SetTextureAsync("ImhoBags", "textures/icon_menu_bags.png")
 	
 	local default = UICreateFrame("Texture", "", sep)
 	default:SetPoint("RIGHTCENTER", bags, "LEFTCENTER", -contentPaddingLeft, 0)
@@ -79,7 +79,7 @@ function Ux.ItemWindowTemplate.SortSelector(parent, titleBar)
 	
 	local slot = UICreateFrame("Texture", "", sep)
 	slot:SetPoint("LEFTCENTER", rarity, "RIGHTCENTER", contentPaddingLeft, 0)
-	slot:SetTextureAsync("ImhoBags", "textures/icon_menu_sort_slot.png")
+	slot:SetTextureAsync("ImhoBags", "textures/icon_menu_bags.png")
 	
 	sep:SetWidth(icon:GetWidth() + name:GetWidth() + rarity:GetWidth() + slot:GetWidth() + 4 * contentPaddingLeft)
 	self:SetWidth(sep:GetWidth())

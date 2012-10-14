@@ -320,12 +320,12 @@ end
 
 local function createLocationButtons(self, location)
 	local locations = {
-		"inventory",	"ImhoBags",	"textures/icon_menu_inventory.png",	28, 28, -1, 0,
-		"bank",			"ImhoBags",	"textures/icon_menu_bank.png",		28, 28, 2, 2,
-		"mail",			"ImhoBags",	"textures/icon_menu_mail.png",		29, 29, 1, 1,
-		"equipment",	"Rift",		"icon_menu_raid.png.dds",			22, 22, 0, 0,
-		"currency",		"ImhoBags",	"textures/icon_menu_gold.png",		24, 24, 0, 0,
-		"guildbank",	"Rift",		"icon_menu_guild.png.dds",			26, 26, -1, 0,
+		"inventory",	"ImhoBags",	"textures/icon_menu_bags.png",	28, 28, -1, 0,
+		"bank",			"ImhoBags",	"textures/icon_menu_bank.png",	28, 28, 2, 2,
+		"mail",			"ImhoBags",	"textures/icon_menu_mail.png",	29, 29, 1, 1,
+		"equipment",	"Rift",		"icon_menu_raid.png.dds",		22, 22, 0, 0,
+		"currency",		"ImhoBags",	"textures/icon_menu_gold.png",	24, 24, 0, 0,
+		"guildbank",	"Rift",		"icon_menu_guild.png.dds",		26, 26, -1, 0,
 	}
 	local offsets = {
 		inventory = 0,
