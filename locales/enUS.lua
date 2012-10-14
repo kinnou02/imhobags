@@ -38,6 +38,19 @@ private.L = {
 		wardrobeSet3 = "Wardrobe Set 3",
 		wardrobeSet4 = "Wardrobe Set 4",
 		wardrobeSet5 = "Wardrobe Set 5",
+		-- Crafting material names
+		["crafting material cloth"] = "Cloth",
+		["crafting material component"] = "Component",
+		["crafting material fish"] = "Fish",
+		["crafting material gem"] = "Gem",
+		["crafting material hide"] = "Hide",
+		["crafting material meat"] = "Meat",
+		["crafting material metal"] = "Metal",
+		["crafting material plant"] = "Plant",
+		["crafting material wood"] = "Wood",
+		-- Crafting ingredients names
+		["crafting ingredient reagent"] = "Reagent",
+		["crafting ingredient rift"] = "Rift",
 	},
 	
 	-- The shortcuts used in the tooltip overview
