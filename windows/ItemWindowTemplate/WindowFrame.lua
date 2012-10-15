@@ -71,7 +71,7 @@ local function createTitleBar(self, location, config)
 		if(loc == "guildbank") then
 			Ux.ToggleGuildWindow(self.character)
 		else
-			Ux.ToggleItemWindow(self.character, loc)
+			Ux.ShowItemWindow(self.character, loc)
 		end
 	end)
 	self.titleBar:SetSortSelectorCallback(function(sort)
@@ -256,13 +256,3 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 
 	return self
 end
---[[
-ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
-	local test = Ux.ItemWindowTemplate.WindowFrame("inventory", {
-		sort = "slot",
-		layout = "bags",
-		itemSize = 40,
-	}, UI.Native.BagInventory1)
-	Item.Dispatcher.RunSlot("inventory")
-end, Addon.identifier, "" }
-]]
