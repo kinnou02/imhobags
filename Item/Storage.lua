@@ -6,6 +6,7 @@ local pairs = pairs
 
 -- Globals
 local Event = Event
+local InspectCurrencyDetail = Inspect.Currency.Detail
 local InspectItemDetail = Inspect.Item.Detail
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
@@ -34,6 +35,7 @@ local function newCharacter()
 		},
 		currency = {
 			totals = { },
+			categories = { },
 		},
 		equipment = {
 			slots = { },
@@ -143,8 +145,10 @@ local function eventCurrency(currencies)
 	for type, count in pairs(currencies) do
 		if(not count or count <= 0) then
 			player.currency.totals[type] = nil
+			player.currency.categories[type] = nil
 		else
 			player.currency.totals[type] = count
+			player.currency.categories[type] = InspectCurrencyDetail(type).category
 		end
 	end
 end
@@ -186,10 +190,10 @@ function Item.Storage.GetCharacterItems(character, location)
 	if(char) then
 		local loc = char[location]
 		if(loc) then
-			return loc.totals, loc.counts, loc.slots, loc.bags
+			return loc.totals, (loc.slots or loc.categories), loc.counts, loc.bags
 		end
 	end
-	return { }
+	return { }, { }, { }, { }
 end
 
 Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
