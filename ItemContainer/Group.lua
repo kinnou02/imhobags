@@ -110,6 +110,7 @@ function ItemContainer.Group(parent, factory, duration)
 		self = cache[#cache]
 		cache[#cache] = nil
 		self:SetVisible(true)
+		self:SetParent(parent)
 	else
 		self = factory(parent)
 		self.buttons = { }
