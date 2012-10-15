@@ -290,30 +290,39 @@ local function createSortButton(self)
 	function self:SetLayoutSelectorValue(n) self.sortSelector:SetLayoutValue(n) end
 end
 
-local function createEmptySlotIndicator(self)
-	self.emptySlotsBackground = UICreateFrame("Texture", "", self)
-	self.emptySlotsBackground:SetTexture("Rift", "icon_empty.png.dds")
-	self.emptySlotsBackground:SetWidth(24)
-	self.emptySlotsBackground:SetHeight(24)
-	self.emptySlotsBackground:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -1)
-	
-	self.emptySlotsIndicator = UICreateFrame("Text", "", self.emptySlotsBackground)
-	self.emptySlotsIndicator:SetPoint("BOTTOMRIGHT", self.emptySlotsBackground, "BOTTOMRIGHT", -2, 0)
-	self.emptySlotsIndicator:SetFontSize(12)
-	
-	function self:SetEmptySlotsCallback(callback)
-		self.emptySlotsBackground.Event.LeftClick = callback
-	end
-	
-	function self:SetEmptySlots(n)
-		if(n) then
-			self.emptySlotsIndicator:SetVisible(true)
-			self.emptySlotsIndicator:SetText(tostring(n))
-			n = self.emptySlotsIndicator:GetWidth()
-			self.emptySlotsBackground:SetWidth(n > 24 and (n + 5) or 24)
-		else
-			self.emptySlotsBackground:SetWidth(0)
-			self.emptySlotsIndicator:SetVisible(false)
+local function createEmptySlotIndicator(self, location)
+	if(location == "currency") then
+		self.emptySlotsBackground = UICreateFrame("Frame", "", self)
+		self.emptySlotsBackground:SetWidth(0)
+		self.emptySlotsBackground:SetHeight(24)
+		self.emptySlotsBackground:SetPoint("TOPRIGHT", self, "TOPRIGHT", -4, -1)
+		function self:SetEmptySlotsCallback(callback) end
+		function self:SetEmptySlots(n) end
+	else
+		self.emptySlotsBackground = UICreateFrame("Texture", "", self)
+		self.emptySlotsBackground:SetTexture("Rift", "icon_empty.png.dds")
+		self.emptySlotsBackground:SetWidth(24)
+		self.emptySlotsBackground:SetHeight(24)
+		self.emptySlotsBackground:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -1)
+		
+		self.emptySlotsIndicator = UICreateFrame("Text", "", self.emptySlotsBackground)
+		self.emptySlotsIndicator:SetPoint("BOTTOMRIGHT", self.emptySlotsBackground, "BOTTOMRIGHT", -2, 0)
+		self.emptySlotsIndicator:SetFontSize(12)
+		
+		function self:SetEmptySlotsCallback(callback)
+			self.emptySlotsBackground.Event.LeftClick = callback
+		end
+		
+		function self:SetEmptySlots(n)
+			if(n) then
+				self.emptySlotsIndicator:SetVisible(true)
+				self.emptySlotsIndicator:SetText(tostring(n))
+				n = self.emptySlotsIndicator:GetWidth()
+				self.emptySlotsBackground:SetWidth(n > 24 and (n + 5) or 24)
+			else
+				self.emptySlotsBackground:SetWidth(0)
+				self.emptySlotsIndicator:SetVisible(false)
+			end
 		end
 	end
 end
@@ -363,7 +372,7 @@ function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	self:SetHeight(24)
 	
 	-- Right panel
-	createEmptySlotIndicator(self)
+	createEmptySlotIndicator(self, location)
 	
 	local rightPanel = UICreateFrame("Mask", "", self)
 	rightPanel:SetPoint("TOPRIGHT", self.emptySlotsBackground, "TOPLEFT", 3, 3)
