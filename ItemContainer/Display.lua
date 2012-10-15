@@ -33,10 +33,10 @@ ItemContainer.Display = { }
 -- Private methods
 -- ============================================================================
 
-local function inspectDetailTwink(self, slot, type, stack, fn)
+local function inspectDetailTwink(self, slot, type, stack, fn, solver)
 	local ok, item = pcall(fn, type)
 	if(not (ok and item)) then
-		self.pendingItemDetails[slot] = type
+		self.pendingItemDetails[slot] = solver
 		return {
 			name = "?",
 			icon = "placeholder_icon.dds",
@@ -46,16 +46,32 @@ local function inspectDetailTwink(self, slot, type, stack, fn)
 		}
 	else
 		item.stack = stack
+		item.slot = slot
 		return item
 	end
 end
 
-local function inspectCurrencyDetailTwink(self, slot, type, stack)
-	return inspectDetailTwink(self, slot, type, stack, InspectCurrencyDetail)
+local function inspectItemDetailTwink(self, slot, type, stack)
+	local solver
+	solver = function()
+		local id = self.set.slots[slot] or self.set.bags[slot]
+		local detail = inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
+		self.set.items[id] = detail
+		self.set.groups[id] = self.groupFunc(detail)
+		self.layouter:UpdateItem(id)
+	end
+	return inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
 end
 
-local function inspectItemDetailTwink(self, slot, type, stack)
-	return inspectDetailTwink(self, slot, type, stack, InspectItemDetail)
+local function inspectCurrencyDetailTwink(self, slot, type, stack)
+	local solver
+	solver = function()
+		local id = self.set.slots[slot] or self.set.bags[slot]
+		local detail = inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
+		self.set.items[id] = detail
+		self.layouter:UpdateItem(id)
+	end
+	return inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
 end
 
 local function getGroupLabelMinWidth(self)
@@ -175,10 +191,10 @@ local function eventCurrency(self, currencies)
 	for id, count in pairs(currencies) do
 		-- Don't show money here
 		if(id ~= "coin" and count > 0) then
-			local detail = InspectCurrencyDetail(id)
+			local detail = InspectItemDetail(id)
 			detail.type = id
 			set.items[id] = detail
-			set.groups[id] = InspectCurrencyCategoryDetail(detail.category).name
+			set.groups[id] = InspectCurrencyCategoryDetail(InspectCurrencyDetail(id).category).name
 		end
 	end
 	if(set == self.set) then
@@ -187,15 +203,12 @@ local function eventCurrency(self, currencies)
 end
 
 local function queryPendingItemDetail(self)
-	log("queryPendingItemDetail")
 	local pendingItemDetails = self.pendingItemDetails
 	self.pendingItemDetails = { }
 	
 	local set = self.set
-	for slot, type in pairs(pendingItemDetails) do
-		local id = set.slots[slot] or set.bags[slot]
-		set.items[id] = inspectItemDetailTwink(self, slot, type, set.items[id].stack)
-		self.layouter:UpdateItem(id)
+	for slot, fn in pairs(pendingItemDetails) do
+		fn()
 	end
 end
 
@@ -217,6 +230,7 @@ local function systemUpdateBegin(self)
 	if(now >= self.nextItemDetailQuery and (next(self.pendingItemDetails))) then
 		self.nextItemDetailQuery = now + Const.ItemDisplayQueryInterval
 		queryPendingItemDetail(self)
+		self.needsUpdate = true
 	end
 	if(self.itemsChanged) then
 		self.itemsChanged = false
@@ -246,8 +260,8 @@ end
 
 local function GetNumEmptySlots(self)
 	local empty = 0
-	for k, v in pairs(self.set.slots) do
-		empty = empty + (v == false and 1 or 0)
+	for k, v in pairs(self.set.empty) do
+		empty = empty + 1
 	end
 	return empty
 end
@@ -282,7 +296,7 @@ local function SetCharacter_item(self, character)
 			empty = { },
 		}
 		self.set = set
-		local totals, counts, slots, bags = Item.Storage.GetCharacterItems(character, self.location)
+		local totals, slots, counts, bags = Item.Storage.GetCharacterItems(character, self.location)
 		local id = 1
 		for slot, type in pairs(slots or { }) do
 			if(type) then
@@ -334,14 +348,14 @@ local function SetCharacter_currency(self, character)
 			empty = { },
 		}
 		self.set = set
-		local totals = Item.Storage.GetCharacterItems(character, self.location)
+		local totals, categories = Item.Storage.GetCharacterItems(character, self.location)
 		totals.coin = nil -- Don't show coin here
 		local slot = 1
 		for type, count in pairs(totals) do
 			local detail = inspectCurrencyDetailTwink(self, slot, type, count)
 			set.slots[slot] = type
 			set.items[type] = detail
-			set.groups[type] = InspectCurrencyCategoryDetail(detail.category).name
+			set.groups[type] = InspectCurrencyCategoryDetail(categories[type]).name
 			slot = slot + 1
 		end
 	end
