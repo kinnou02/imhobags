@@ -22,8 +22,9 @@ local defaultItemWindows =  {
 }
 
 local itemWindows = {
-	{ "inventory", UI.Native.BagInventory1 },
 	{ "bank", UI.Native.Bank },
+	{ "currency", nil },
+	{ "inventory", UI.Native.BagInventory1 },
 }
 
 setfenv(1, private)
@@ -174,19 +175,11 @@ Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] 
 -- ============================================================================
 
 function Ux.ToggleItemWindow(character, location)
-	for k, v in pairs(defaultItemWindows) do
-		if(v[1] == location) then
-			local window = Ux[k]
-			if(not window) then
-				Ux.ShowItemWindow(character, location)
-			else
-				if(window:GetVisible() and window.character == character) then
-					Ux.HideItemWindow(location)
-				else
-					Ux.ShowItemWindow(character, location)
-				end
-			end
-			break
+	local window = Ux.ItemWindow[location]
+	if(window) then
+		window:SetVisible(not window:GetVisible())
+		if(window:GetVisible()) then
+			window:SetCharacter(character)
 		end
 	end
 end
@@ -210,29 +203,17 @@ function Ux.ToggleGuildWindow(character)
 end
 
 function Ux.ShowItemWindow(character, location)
-	for k, v in pairs(defaultItemWindows) do
-		if(v[1] == location) then
-			local window = Ux[k]
-			if(not window) then
-				window = createItemWindow(k, character)
-			else
-				window:SetCharacter(character, location)
-			end
-			window:SetVisible(true)
-			break
-		end
+	local window = Ux.ItemWindow[location]
+	if(window) then
+		window:SetVisible(true)
+		window:SetCharacter(character)
 	end
 end
 
 function Ux.HideItemWindow(location)
-	for k, v in pairs(defaultItemWindows) do
-		if(v[1] == location) then
-			local window = Ux[k]
-			if(window) then
-				window:SetVisible(false)
-			end
-			break
-		end
+	local window = Ux.ItemWindow[location]
+	if(window) then
+		window:SetVisible(false)
 	end
 end
 
