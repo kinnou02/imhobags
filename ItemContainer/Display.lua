@@ -117,6 +117,11 @@ local function eventItemSlot(self, slot, item, container, bag, index)
 			set.items[item] = InspectItemDetail(item)
 		end
 	elseif(item and item ~= "nil") then
+		-- Remove the item from its old slot if present
+		local old = set.items[item]
+		if(old) then
+			removeItem(self, set, old.slot, "nil") -- "nil" prevents unnecessary makeEmptyItemDetail call
+		end
 		set.slots[slot] = item
 		set.empty[slot] = nil
 		set.items[slot] = nil
@@ -125,6 +130,11 @@ local function eventItemSlot(self, slot, item, container, bag, index)
 		set.items[item] = detail
 		set.groups[item] = self.groupFunc(detail)
 	else
+		local old = set.slots[slot]
+		if(old) then
+			set.items[old] = nil
+			set.groups[old] = nil
+		end
 		removeItem(self, set, slot, item)
 	end
 
