@@ -33,8 +33,8 @@ ItemContainer.Display = { }
 -- Private methods
 -- ============================================================================
 
-local function inspectItemDetailTwink(self, slot, type, stack)
-	local ok, item = pcall(InspectItemDetail, type)
+local function inspectDetailTwink(self, slot, type, stack, fn)
+	local ok, item = pcall(fn, type)
 	if(not (ok and item)) then
 		self.pendingItemDetails[slot] = type
 		return {
@@ -48,6 +48,14 @@ local function inspectItemDetailTwink(self, slot, type, stack)
 		item.stack = stack
 		return item
 	end
+end
+
+local function inspectCurrencyDetailTwink(self, slot, type, stack)
+	return inspectDetailTwink(self, slot, type, stack, InspectCurrencyDetail)
+end
+
+local function inspectItemDetailTwink(self, slot, type, stack)
+	return inspectDetailTwink(self, slot, type, stack, InspectItemDetail)
 end
 
 local function getGroupLabelMinWidth(self)
@@ -119,7 +127,7 @@ local function eventItemSlot(self, slot, item, container, bag, index)
 	elseif(item and item ~= "nil") then
 		-- Remove the item from its old slot if present
 		local old = set.items[item]
-		if(old) then
+		if(old and old.slot) then
 			removeItem(self, set, old.slot, "nil") -- "nil" prevents unnecessary makeEmptyItemDetail call
 		end
 		set.slots[slot] = item
@@ -166,7 +174,7 @@ local function eventCurrency(self, currencies)
 	
 	for id, count in pairs(currencies) do
 		-- Don't show money here
-		if(id ~= "coin") then
+		if(id ~= "coin" and count > 0) then
 			local detail = InspectCurrencyDetail(id)
 			detail.type = id
 			set.items[id] = detail
@@ -254,7 +262,7 @@ local function SetShowEmptySlots(self, showEmpty)
 	self.needsUpdate = true
 end
 
-local function SetCharacter(self, character)
+local function SetCharacter_item(self, character)
 	self.pendingItemDetails = { }
 	if(character == "player" or character == Player.name) then
 		self.set = self.playerSet
@@ -298,6 +306,43 @@ local function SetCharacter(self, character)
 			else
 				set.bags[slot] = false
 			end
+		end
+	end
+	
+	self.layouter:SetItemSet(self.set)
+	self.needsUpdate = true
+	self.itemsChanged = true
+end
+
+local function SetCharacter_currency(self, character)
+	self.pendingItemDetails = { }
+	if(character == "player" or character == Player.name) then
+		self.set = self.playerSet
+		local interaction = Inspect.Interaction()
+		if(interaction[self.location] ~= nil) then
+			eventInteraction(self, self.location, interaction[self.location])
+		else
+			self.layouter:SetAvailable(true)
+		end
+	else
+		self.layouter:SetAvailable(false)
+		local set = {
+			bags = { },
+			slots = { },
+			items = { },
+			groups = { },
+			empty = { },
+		}
+		self.set = set
+		local totals = Item.Storage.GetCharacterItems(character, self.location)
+		totals.coin = nil -- Don't show coin here
+		local slot = 1
+		for type, count in pairs(totals) do
+			local detail = inspectCurrencyDetailTwink(self, slot, type, count)
+			set.slots[slot] = type
+			set.items[type] = detail
+			set.groups[type] = InspectCurrencyCategoryDetail(detail.category).name
+			slot = slot + 1
 		end
 	end
 	
@@ -381,7 +426,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.GetLayout = function(self) return self.layouter.layout end
 	self.GetNumEmptySlots = GetNumEmptySlots
 	self.GetSortMethod = function(self) return self.layouter.sort end
-	self.SetCharacter = SetCharacter
+	self.SetCharacter = location == "currency" and SetCharacter_currency or SetCharacter_item
 	self.SetItemSize = SetItemSize
 	self.SetLayout = SetLayout
 	self.SetNeedsLayout = SetNeedsLayout
