@@ -193,10 +193,19 @@ end
 local function SetCharacter(self, character)
 	local alliances = Item.Storage.GetCharacterAlliances()
 	if(alliances[character]) then
+		self.character = character
 		self.container:SetCharacter(character)
 		self.titleBar:SetAlliance(alliances[character])
 		self.titleBar:SetMainLabel(character)
 	end
+end
+
+local function FillConfig(self, config)
+	config.x = self:GetLeft()
+	config.y = self:GetTop()
+	config.width = self:GetWidth()
+	config.condensed = self.condensed
+	return self.container:FillConfig(config)
 end
 
 function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
@@ -238,12 +247,10 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 
 	self.heightAnimation = 0
 	self.config = config
+	self.character = Player.Name
 	
+	self.FillConfig = FillConfig
 	self.SetCharacter = SetCharacter
-	self.GetItemSize = function(self) return self.container:GetItemSize() end
-	self.GetLayout = function(self) return self.container:GetLayout() end
-	self.GetSortMethod = function(self) return self.container:GetSortMethod() end
-	self.GetGroupMethod = function(self) return self.container:GetGroupMethod() end
 
 	self.onClose = function() self:SetVisible(false) end
 

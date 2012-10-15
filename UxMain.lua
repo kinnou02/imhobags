@@ -152,14 +152,7 @@ local function savedVariablesSaveBegin(identifier)
 
 	for k, v in pairs(itemWindows) do
 		local window = Ux.ItemWindow[v[1]]
-		_G.ImhoBags_WindowInfo[v[1]] = {
-			x = window:GetLeft(),
-			y = window:GetTop(),
-			width = window:GetWidth(),
-			layout = window:GetLayout(),
-			sort = window:GetSortMethod(),
-			itemSize = window:GetItemSize(),
-		}
+		_G.ImhoBags_WindowInfo[v[1]] = window:FillConfig({ })
 	end
 end
 

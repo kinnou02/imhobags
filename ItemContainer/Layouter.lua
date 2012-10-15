@@ -439,6 +439,14 @@ local function SetSortMethod(self, sort)
 	self.sort = sort
 end
 
+local function FillConfig(self, config)
+	config.itemSize = self.itemSize
+	config.layout = self.layout
+	config.sort = self.sort
+	config.showEmptySlots = self.showEmptySlots
+	return config
+end
+
 local function SetShowEmptySlots(self, showEmptySlots)
 	self.showEmptySlots = showEmptySlots
 end
@@ -473,9 +481,10 @@ function ItemContainer.Layouter(parent, config, groupFrameFactory)
 		parent = parent,
 		set = nil,
 		sortFunc = nil,
-		showEmpty = config.showEmptySlots,
+		showEmptySlots = config.showEmptySlots,
 		width = parent:GetWidth(),
 		
+		FillConfig = FillConfig,
 		SetAvailable = SetAvailable,
 		SetItemSet = SetItemSet,
 		SetItemSize = SetItemSize,

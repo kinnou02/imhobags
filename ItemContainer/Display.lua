@@ -271,6 +271,10 @@ local function SetItemSize(self, size)
 	self.needsLayout = true
 end
 
+local function FillConfig(self, config)
+	return self.layouter:FillConfig(config)
+end
+
 local function SetShowEmptySlots(self, showEmpty)
 	self.layouter:SetShowEmptySlots(showEmpty)
 	self.needsUpdate = true
@@ -436,10 +440,8 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.nextItemDetailQuery = 0
 	
 	self.DropCursorItem = DropCursorItem
-	self.GetItemSize = function(self) return self.layouter.itemSize end
-	self.GetLayout = function(self) return self.layouter.layout end
+	self.FillConfig = FillConfig
 	self.GetNumEmptySlots = GetNumEmptySlots
-	self.GetSortMethod = function(self) return self.layouter.sort end
 	self.SetCharacter = location == "currency" and SetCharacter_currency or SetCharacter_item
 	self.SetItemSize = SetItemSize
 	self.SetLayout = SetLayout
