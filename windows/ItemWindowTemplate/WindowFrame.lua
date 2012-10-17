@@ -3,6 +3,7 @@ local Addon, private = ...
 -- Builtin
 local floor = math.floor
 local max = math.max
+local rawset = rawset
 
 -- Globals
 local Command = Command
@@ -208,6 +209,14 @@ local function FillConfig(self, config)
 	return self.container:FillConfig(config)
 end
 
+-- HACK: Inspect.Item.List("inventory") does not return all items if called too early after /reloadui
+local function SetVisible(self, visible)
+	log("RunSlot", self.location)
+	Item.Dispatcher.RunSlot(self.location)
+	rawset(self, "SetVisible", nil)
+	self:SetVisible(visible)
+end
+
 function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	local context = UI.CreateContext(Addon.identifier)
 	local self = UI.CreateFrame("RiftWindow", "WindowFrame." .. location, context)
@@ -245,13 +254,15 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	border.Event.LeftUp = leftUp
 	border.Event.LeftUpoutside = leftUpoutside
 
-	self.heightAnimation = 0
 	self.config = config
 	self.character = Player.Name
+	self.heightAnimation = 0
+	self.location = location
 	
 	self.FillConfig = FillConfig
 	self.SetCharacter = SetCharacter
-
+	self.SetVisible = SetVisible
+	
 	self.onClose = function() self:SetVisible(false) end
 
 	return self
