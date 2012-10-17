@@ -134,15 +134,21 @@ end
 local function eventItemSlot(self, slot, item, container, bag, index)
 	local set = self.playerSet
 	
---	log("eventItemSlot", slot, item, container, bag, index)
+	log("eventItemSlot", slot, item, container, bag, index)
 	if(bag == "bag") then
 		set.bags[index] = item
 		if(item) then
 			set.items[item] = InspectItemDetail(item)
 		end
 	elseif(item and item ~= "nil") then
-		-- Remove the item from its old slot if present
-		local old = set.items[item]
+		-- Remove the item which was in this slot before
+		local old = set.slots[slot]
+		if(old) then
+			set.items[old] = nil
+			set.groups[old] = nil
+		end
+		-- Remove the item from its previous slot if present
+		old = set.items[item]
 		if(old and old.slot) then
 			removeItem(self, set, old.slot, "nil") -- "nil" prevents unnecessary makeEmptyItemDetail call
 		end
