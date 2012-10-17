@@ -33,7 +33,7 @@ local function createFadeAnimationLeft(self)
 	hotArea:SetLayer(100)
 	hotArea:SetAllPoints(self.leftPanel)
 	hotArea:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 2)
-	hotArea:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, -2)
+	hotArea:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT")
 	hotArea:SetPoint("RIGHT", self.rightPanel, "LEFT")
 	hotArea:SetMouseMasking("limited")
 	
