@@ -104,7 +104,9 @@ local function rightUpoutside(self)
 end
 
 local function rightClick(self)
-	ItemHandler.Standard.Right(self.dropTarget)
+	if(self.item and self.available) then
+		ItemHandler.Standard.Right(self.dropTarget)
+	end
 end
 
 local function storageLoaded()
