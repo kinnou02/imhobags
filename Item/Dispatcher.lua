@@ -12,7 +12,6 @@ local UtilityItemSlotParse = Utility.Item.Slot.Parse
 local list = {
 --	all = function() Inspect.Item.List() end,
 	bank = function() return Inspect.Item.List(Utility.Item.Slot.Bank()) end,
-	currency = function() return Inspect.Currency.List() end,
 	equipment = function() return Inspect.Item.List(Utility.Item.Slot.Equipment()) end,
 	guild = function() return Inspect.Item.List(Utility.Item.Slot.Guild()) end,
 	inventory = function() return Inspect.Item.List(Utility.Item.Slot.Inventory()) end,
