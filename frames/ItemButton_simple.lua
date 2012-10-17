@@ -118,6 +118,7 @@ end
 
 local function SetAvailable(self, available)
 	self:SetAlpha(available and 1.0 or Const.ItemButtonUnavailableAlpha)
+	self.available = available
 end
 
 local function ShowTooltip(self)
