@@ -18,6 +18,7 @@ private.L = {
 		container = "Containers",
 		crafting = "Crafting",
 		misc = "Miscellaneous",
+		["misc quest"] = "Quest",
 		planar = "Planar",
 		weapon = "Weapons",
 		-- Used for the collapsible group with sellable items
