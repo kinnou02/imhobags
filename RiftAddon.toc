@@ -12,14 +12,16 @@ Environment = "1.10"
 
 --@no-lib-strip@
 Embed = {
-	["libs/LibString"] = true,
+	["libs/LibAnimate"] = true,
 	["libs/LibAsyncTextures"] = true,
+	["libs/LibString"] = true,
 }
 --@end-no-lib-strip@
 
 Dependencies = {
-	LibString = { "required", "before" },
+	LibAnimate = { "required", "before" },
 	LibAsyncTextures = { "required", "before" },
+	LibString = { "required", "before" },
 }
 
 RunOnStartup = {

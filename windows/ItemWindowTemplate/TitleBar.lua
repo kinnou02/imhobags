@@ -8,6 +8,7 @@ local tostring = tostring
 
 -- Globals
 local InspectMouse = Inspect.Mouse
+local LibAnimate = LibAnimate
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
@@ -42,28 +43,29 @@ local function createFadeAnimationLeft(self)
 		hotArea.extern[frame] = hot or nil
 	end
 	
-	hotArea.animation = 0
+	hotArea.animation = LibAnimate.CreateEmptyAnimation()
 	self.frozen = false
 	
 	local function tick(height) self.leftHidden:SetHeight(height) end
 	local function freeze(self, value) self.frozen = value end
 	local function fadeIn()
 		if(not self.frozen) then
-			Animate.stop(hotArea.animation)
 			self.leftHidden:SetVisible(true)
-			hotArea.animation = Animate.smoothstep(self.leftHidden:GetHeight(), self:GetHeight() - 4, 0.3, tick, function()
-				hotArea.animation = 0
+			local ratio = 1 - self.leftHidden:GetHeight() / (self:GetHeight() - 4)
+			hotArea.animation:Stop()
+			hotArea.animation = self.leftHidden:AnimateHeight(ratio * Const.AnimationsDuration, "linear", self:GetHeight() - 4, function()
 				self.leftPanel:SetVisible(false)
 			end)
 		end
 	end
 	local function fadeOut()
 		if(not self.frozen) then
-			Animate.stop(hotArea.animation)
 			self.leftPanel:SetVisible(true)
-			hotArea.animation = Animate.smoothstep(self.leftHidden:GetHeight(), 0, 0.3, tick, function()
-				hotArea.animation = 0
+			local ratio = self.leftHidden:GetHeight() / (self:GetHeight() - 4)
+			hotArea.animation:Stop()
+			hotArea.animation = self.leftHidden:AnimateHeight(ratio * Const.AnimationsDuration, "linear", 0, function()
 				self.leftHidden:SetVisible(false)
+				log("finish")
 			end)
 			for frame in pairs(hotArea.extern) do
 				frame:FadeOut()
