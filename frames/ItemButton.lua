@@ -6,12 +6,15 @@ local type = type
 -- Globals
 local Command = Command
 local Inspect = Inspect
+local LibAnimate = LibAnimate
 local UIParent = UIParent
 
 -- Frames cannot be deleted, keep a cache and only create new frames if the cache is empty
 -- Calling Dispose() on a button moves it back to the cache
 local cachedButtons = { }
 local createButton
+-- Specialized animation template for SetPoint(self, point, target, point, x, y)
+local moveAnimationTemplate = LibAnimate.CreateTemplate({ false, false, false, false, "easeOutCubic", "easeOutCubic" })
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -129,17 +132,14 @@ local function MoveToGrid(self, target, x, y, spacing, duration)
 	self.gridx = x
 	self.gridy = y
 	self.gridTarget = target
-	Animate.stop(self.moveAnimation)
+	self.moveAnimation:Stop()
 	local currentx = self:GetLeft() - target:GetLeft()
 	local currenty = self:GetTop() - target:GetBottom()
 	local targetx = x * (self:GetWidth() + spacing)
 	local targety = y * (self:GetHeight() + spacing)
 	if(duration and duration > 0) then
-		self.moveAnimation = Animate.easeOut({ currentx, currenty }, { targetx, targety }, duration,
-			function(t) self:SetPoint("TOPLEFT", target, "BOTTOMLEFT", t[1], t[2]) end,
-			function() self.moveAnimation = 0 end)
+		self.moveAnimation:Start(duration, { self, "TOPLEFT", target, "BOTTOMLEFT", currentx, currenty }, { nil, nil, nil, nil, targetx, targety })
 	else
-		self.moveAnimation = 0
 		self:SetPoint("TOPLEFT", target, "BOTTOMLEFT", targetx, targety)
 	end
 end
@@ -174,22 +174,15 @@ local function SetItem(self, item, slots, stack, available, locked)
 end
 
 local function Dispose(self, duration)
-	local function dispose()
-		cachedButtons[#cachedButtons + 1] = self
-		self:SetVisible(false)
-	end
 	self.gridx = -1
 	self.gridy = -1
 	self.gridTarget = nil
-	Animate.stop(self.moveAnimation)
-	Animate.stop(self.fadeAnimation)
-	self.moveAnimation = 0
-	self.fadeAnimation = 0
-	if(duration and duration > 0) then
-		Animate.lerp(self:GetAlpha(), 0, self:GetAlpha() * duration, function(t) self:SetAlpha(t) end, dispose)
-	else
-		dispose()
-	end
+	self.moveAnimation:Stop()
+	self.fadeAnimation:Stop()
+	self.fadeAnimation = self:AnimateAlpha(self:GetAlpha() * (duration or 0), "linear", 0, function()
+		cachedButtons[#cachedButtons + 1] = self
+		self:SetVisible(false)
+	end)
 end
 
 local function ShowTooltip(self)
@@ -225,19 +218,15 @@ function Ux.ItemButton.New(parent, available, duration)
 		button:SetParent(parent)
 	end
 	button.available = available
-	if(duration and duration > 0) then
-		button:SetAlpha(0)
-		button.fadeAnimation = Animate.lerp(0, available and 1.0 or Const.ItemButtonUnavailableAlpha, duration, function(t) button:SetAlpha(t) end, function() button.fadeAnimation = 0 end)
-	else
-		button:SetAlpha(available and 1.0 or Const.ItemButtonUnavailableAlpha)
-	end
+	button:SetAlpha(0)
+	button.fadeAnimation = button:AnimateAlpha(duration, "linear", available and 1.0 or Const.ItemButtonUnavailableAlpha)
 	return button
 end
 
 createButton = function(parent)
 	local self = skinFactory(parent)
-	self.moveAnimation = 0
-	self.fadeAnimation = 0
+	self.moveAnimation = LibAnimate.CreateAnimation(moveAnimationTemplate, self.SetPoint, Const.AnimationsDuration)
+	self.fadeAnimation = LibAnimate.CreateEmptyAnimation()
 	self.gridx = -1
 	self.gridy = -1
 	self.gridTarget = nil

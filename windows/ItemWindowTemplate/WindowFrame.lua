@@ -9,6 +9,7 @@ local rawset = rawset
 local Command = Command
 local Event = Event
 local Inspect = Inspect
+local LibAnimate = LibAnimate
 local UI = UI
 local UIParent = UIParent
 
@@ -163,9 +164,8 @@ end
 local function containerDisplayChanged(container, values)
 	local self = container:GetParent()
 	if(values.height) then
-		Animate.stop(self.heightAnimation)
-		self.heightAnimation = Animate.easeOut(self:GetHeight(), max(Const.ItemWindowMinHeight, values.height), Const.AnimationsDuration,
-			function(h) self:SetHeight(h) end, function() self.heightAnimation = 0 end)
+		self.heightAnimation:Stop()
+		self.heightAnimation = self:AnimateHeight(Const.AnimationsDuration, "easeOutCubic", max(Const.ItemWindowMinHeight, values.height))
 	end
 	if(values.empty) then
 		self.titleBar:SetEmptySlots(values.empty)
@@ -256,7 +256,7 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 
 	self.config = config
 	self.character = Player.Name
-	self.heightAnimation = 0
+	self.heightAnimation = LibAnimate.CreateEmptyAnimation()
 	self.location = location
 	
 	self.FillConfig = FillConfig

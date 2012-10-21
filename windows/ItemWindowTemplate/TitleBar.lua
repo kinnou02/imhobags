@@ -17,6 +17,8 @@ local filterBoxWidth = 100
 local rightPanelMinWidth = 40
 local rightHiddenMinWidth = 20
 local rightHiddenMaxWidth = 6 * 20
+-- Specialized animation template for (self, width, offset)
+local locationPanelAnimationTemplate = LibAnimate.CreateTemplate({ false, "smoothstep", "smoothstep" })
 
 setfenv(1, private)
 Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
@@ -46,7 +48,6 @@ local function createFadeAnimationLeft(self)
 	hotArea.animation = LibAnimate.CreateEmptyAnimation()
 	self.frozen = false
 	
-	local function tick(height) self.leftHidden:SetHeight(height) end
 	local function freeze(self, value) self.frozen = value end
 	local function fadeIn()
 		if(not self.frozen) then
@@ -65,7 +66,6 @@ local function createFadeAnimationLeft(self)
 			hotArea.animation:Stop()
 			hotArea.animation = self.leftHidden:AnimateHeight(ratio * Const.AnimationsDuration, "linear", 0, function()
 				self.leftHidden:SetVisible(false)
-				log("finish")
 			end)
 			for frame in pairs(hotArea.extern) do
 				frame:FadeOut()
@@ -96,34 +96,35 @@ local function createFadeAnimationLeft(self)
 	self.IsMouseHot = isMouseHot
 end
 
+local function locationPanelAnimationFunction(self, width, offset) 
+	self.rightHidden:SetWidth(width)
+	self.rightPanel:SetWidth(max(rightPanelMinWidth, width))
+	self.rightHiddenButtonsOffsetCurrent = offset
+	self.locationButtons[1]:SetPoint("LEFTCENTER", self.rightHidden, "LEFTCENTER", offset, 0)
+end
+
 local function createFadeAnimationRight(self)
 	local hotArea = UICreateFrame("Frame", "", self)
 	hotArea:SetLayer(100)
 	hotArea:SetAllPoints(self.rightPanel)
 	hotArea:SetMouseMasking("limited")
 	
-	hotArea.animation = 0
+	hotArea.animation = LibAnimate.CreateAnimation(locationPanelAnimationTemplate, locationPanelAnimationFunction)
 	
-	local function tick(values) 
-		self.rightHidden:SetWidth(values[1])
-		self.rightPanel:SetWidth(max(rightPanelMinWidth, values[1]))
-		self.rightHiddenButtonsOffsetCurrent = values[2]
-		self.locationButtons[1]:SetPoint("LEFTCENTER", self.rightHidden, "LEFTCENTER", values[2], 0)
-	end
 	local function fadeIn()
 		if(not self.frozen) then
-			Animate.stop(hotArea.animation)
-			hotArea.animation = Animate.smoothstep({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMaxWidth, 0 }, 0.3, tick, function()
-				hotArea.animation = 0
-			end)
+			hotArea.animation:Stop()
+			hotArea.animation:Start(Const.AnimationsDuration,
+				{ self, self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent },
+				{ nil, rightHiddenMaxWidth, 0 })
 		end
 	end
 	local function fadeOut()
 		if(not hotArea.frozen) then
-			Animate.stop(hotArea.animation)
-			hotArea.animation = Animate.smoothstep({ self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent }, { rightHiddenMinWidth, self.rightHiddenButtonsOffset }, 0.3, tick, function()
-				hotArea.animation = 0
-			end)
+			hotArea.animation:Stop()
+			hotArea.animation:Start(Const.AnimationsDuration,
+				{ self, self.rightHidden:GetWidth(), self.rightHiddenButtonsOffsetCurrent },
+				{ nil, rightHiddenMinWidth, self.rightHiddenButtonsOffset })
 		end
 	end
 

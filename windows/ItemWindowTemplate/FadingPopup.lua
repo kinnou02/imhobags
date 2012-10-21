@@ -3,6 +3,7 @@ local Addon, private = ...
 -- Builtins
 
 -- Globals
+local LibAnimate = LibAnimate
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
@@ -14,21 +15,14 @@ Ux.ItemWindowTemplate.FadingPopup = { }
 -- ============================================================================
 
 local function fadeIn(self, height)
-	local function tick(width) self:SetHeight(width) end
-
 	self:SetVisible(true)
-	Animate.stop(self.fadingAnimation)
-	self.fadingAnimation = Animate.smoothstep(self:GetHeight(), height, 0.3, tick, function()
-		self.fadingAnimation = 0
-	end)
+	self.fadingAnimation:Stop()
+	self.fadingAnimation = self:AnimateHeight(Const.AnimationsDuration, "smoothstep", height)
 end
 
 local function fadeOut(self)
-	local function tick(width) self:SetHeight(width) end
-	
-	Animate.stop(self.fadingAnimation)
-	self.fadingAnimation = Animate.smoothstep(self:GetHeight(), 0, 0.3, tick, function()
-		self.fadingAnimation = 0
+	self.fadingAnimation:Stop()
+	self.fadingAnimation = self:AnimateHeight(Const.AnimationsDuration, "smoothstep", 0, function()
 		self:SetVisible(false)
 	end)
 end
@@ -63,6 +57,7 @@ function Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(frame, titleBar, fullHei
 	
 	frame.FadeIn = function(self) fadeIn(self, fullHeight) end
 	frame.FadeOut = fadeOut
+	frame.fadingAnimation = LibAnimate.CreateEmptyAnimation()
 	
 	return hotArea
 end
