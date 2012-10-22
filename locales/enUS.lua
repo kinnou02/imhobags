@@ -33,12 +33,8 @@ private.L = {
 		lootable = "Lootable",
 		-- Special case for empty slots
 		empty = "Empty",
-		-- Designators for equipped wardrobe sets
-		wardrobeSet1 = "Wardrobe Set 1",
-		wardrobeSet2 = "Wardrobe Set 2",
-		wardrobeSet3 = "Wardrobe Set 3",
-		wardrobeSet4 = "Wardrobe Set 4",
-		wardrobeSet5 = "Wardrobe Set 5",
+		-- Designator for equipped wardrobe sets
+		wardrobe = "Wardrobe Set %i",
 		-- Crafting material names
 		["crafting material cloth"] = "Cloth",
 		["crafting material component"] = "Rune Components",
@@ -141,15 +137,16 @@ Available config options:
 	Ux = {
 		-- Titles for various windows
 		WindowTitle = {
-			inventory = "Backpack",
 			bank = "Bank",
-			currency = "Currencies",
-			search = "Search Database",
-			mail = "Mailbox",
-			equipment = "Equipped",
-			wardrobe = "Wardrobe",
-			guild = "Guild Vault",
 			config = "Configuration",
+			currency = "Currencies",
+			equipment = "Equipped",
+			guild = "Guild Vault",
+			inventory = "Backpack",
+			mail = "Mailbox",
+			quest = "Quest",
+			search = "Search Database",
+			wardrobe = "Wardrobe",
 		},
 		Tooltip = {
 			character = "Character",

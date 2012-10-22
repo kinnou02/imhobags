@@ -63,7 +63,7 @@ local function getGroupAssociation_bags(set, showEmptySlots)
 	local groups = { }
 	for slot, item in pairs(set.Slots) do
 		local container, bag, index = UtilityItemSlotParse(slot)
-		if(bag == "main") then
+		if(bag == "main" or container == "quest") then
 			bag = 0
 		end
 		local items = groups[bag] or { }
@@ -249,10 +249,10 @@ local function hideEmptyGroups(self, groups, junk, empty)
 		end
 	end
 	if(#self.junk > 0 and #junk == 0) then
-		self.junk.frame:Dispose(0, self.allButtons)
+		self.junk.frame:Dispose(Const.AnimationsDuration, self.allButtons)
 	end
 	if(#self.empty > 0 and #empty == 0) then
-		self.empty.frame:Dispose(0, self.allButtons)
+		self.empty.frame:Dispose(Const.AnimationsDuration, self.allButtons)
 	end
 end
 
