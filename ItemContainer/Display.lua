@@ -130,7 +130,7 @@ local function systemUpdateBegin(self)
 end
 
 local function checkConfig(location, config)
-	if(location == "currency") then
+	if(location == "currency" or location == "equipment") then
 		config.layout = "default"
 		if(config.sort == "slot") then
 			config.sort = "name"

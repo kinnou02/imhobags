@@ -294,7 +294,7 @@ local function createSortButton(self)
 end
 
 local function createEmptySlotIndicator(self, location)
-	if(location == "currency") then
+	if(location == "currency" or location == "equipment") then
 		self.emptySlotsBackground = UICreateFrame("Frame", "", self)
 		self.emptySlotsBackground:SetWidth(0)
 		self.emptySlotsBackground:SetHeight(24)

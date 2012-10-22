@@ -3,7 +3,6 @@ local Addon, private = ...
 -- Builtin
 local floor = math.floor
 local max = math.max
-local rawset = rawset
 
 -- Globals
 local Command = Command
@@ -213,7 +212,10 @@ end
 local function SetVisible(self, visible)
 	log("RunSlot", self.location)
 	Item.Dispatcher.RunSlot(self.location)
-	rawset(self, "SetVisible", nil)
+	if(self.location == "equipment") then
+		Item.Dispatcher.RunSlot("wardrobe")
+	end
+	self.SetVisible = nil
 	self:SetVisible(visible)
 end
 

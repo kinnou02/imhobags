@@ -86,7 +86,8 @@ local function loadStoredItems(self, location, character)
 			local detail = inspectItemDetailTwink(type, slot, counts[slot], unknown)
 			self.Slots[slot] = id
 			self.Items[id] = detail
-			self.Groups[id] = self.groupFunc(detail)
+			local container, bag, index = UtilityItemSlotParse(slot)
+			self.Groups[id] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
 			id = id + 1
 		else
 			self.Slots[slot] = false

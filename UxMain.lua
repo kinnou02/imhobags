@@ -24,6 +24,7 @@ local defaultItemWindows =  {
 local itemWindows = {
 	{ "bank", UI.Native.Bank },
 	{ "currency", nil },
+	{ "equipment", nil },
 	{ "inventory", UI.Native.BagInventory1 },
 }
 
