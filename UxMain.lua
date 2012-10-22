@@ -151,11 +151,7 @@ local function savedVariablesSaveBegin(identifier)
 end
 
 Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = { savedVariablesSaveBegin, Addon.identifier, "savedVariablesSaveBegin" }
-
 Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "storageLoaded" }
-
-
---_G.table.insert(ImhoEvent.Init, { init, Addon.identifier, "UxMain_init" })
 
 -- Public methods
 -- ============================================================================

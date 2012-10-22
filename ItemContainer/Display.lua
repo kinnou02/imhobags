@@ -108,7 +108,6 @@ local function systemUpdateBegin(self)
 		self.needsUpdate = false
 		self.needsLayout = false
 		local height = self.layouter:UpdateItems()
-		
 		self:SetHeight(height)
 		self:changeCallback({ height = height })
 	elseif(self.needsLayout) then
