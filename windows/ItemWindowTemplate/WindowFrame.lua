@@ -3,6 +3,7 @@ local Addon, private = ...
 -- Builtin
 local floor = math.floor
 local max = math.max
+local min = math.min
 
 -- Globals
 local Command = Command
@@ -187,6 +188,21 @@ local function createNativeHook(self, native)
 	end
 end
 
+local function createBackground(self)
+	local background = UI.CreateFrame("Texture", "", self)
+	background:SetPoint("CENTER", self, "CENTER")
+	background:SetTexture("Rift", Player.alliance == "defiant" and "Guild_Defiant_bg.png.dds" or "Guild_Guardian_bg.png.dds")
+	self.background = background
+	
+	local fn = function(self)
+		local size = min(self:GetWidth(), self:GetHeight())
+		self.window.background:SetWidth(size)
+		self.window.background:SetHeight(size)
+	end
+	self:GetContent().Event.Size = fn
+	fn(self:GetContent())
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -197,6 +213,7 @@ local function SetCharacter(self, character)
 		self.container:SetCharacter(character)
 		self.titleBar:SetAlliance(alliances[character])
 		self.titleBar:SetMainLabel(character)
+		self.background:SetTexture("Rift", alliances[character] == "defiant" and "Guild_Defiant_bg.png.dds" or "Guild_Guardian_bg.png.dds")
 	end
 end
 
@@ -237,12 +254,17 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	self.container:SetPoint("TOPRIGHT", self, "TOPRIGHT")
 	self.container:SetLayer(2)
 	
-	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
-	createHelpButton(self)
-	createTitleBar(self, location, config)
-	createResizeButton(self)
-	createNativeHook(self, native)
+	self.config = config
+	self.character = Player.Name
+	self.heightAnimation = LibAnimate.CreateEmptyAnimation()
+	self.location = location
 	
+	self.FillConfig = FillConfig
+	self.SetCharacter = SetCharacter
+	self.SetVisible = SetVisible
+	
+	self.onClose = function() self:SetVisible(false) end
+
 	local content = self:GetContent()
 	content.window = self
 	content.Event.MouseMove = mouseMove
@@ -256,16 +278,12 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	border.Event.LeftUp = leftUp
 	border.Event.LeftUpoutside = leftUpoutside
 
-	self.config = config
-	self.character = Player.Name
-	self.heightAnimation = LibAnimate.CreateEmptyAnimation()
-	self.location = location
+	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
+	createHelpButton(self)
+	createTitleBar(self, location, config)
+	createResizeButton(self)
+	createNativeHook(self, native)
+	createBackground(self)
 	
-	self.FillConfig = FillConfig
-	self.SetCharacter = SetCharacter
-	self.SetVisible = SetVisible
-	
-	self.onClose = function() self:SetVisible(false) end
-
 	return self
 end
