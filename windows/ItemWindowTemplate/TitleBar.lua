@@ -268,7 +268,7 @@ local function createSizeButton(self)
 	function self:SetSizeSelectorValue(n) self.sizeSelector:SetValue(n) end
 end
 
-local function createSortButton(self)
+local function createSortButton(self, location)
 	self.sortButton = Ux.ItemWindowTemplate.TitleBarButton(self.leftHidden, "ImhoBags", "textures/icon_menu_sort.png", nil, nil, 0, 0, function()
 		if(self.sortSelector:GetVisible()) then
 			self.sortSelector:FadeOut()
@@ -280,7 +280,7 @@ local function createSortButton(self)
 	self.sortButton:SetPoint("LEFTCENTER", self.sizeButton, "RIGHTCENTER", 5, 0)
 	self.sortButton:SetVisible(false)
 
-	self.sortSelector = Ux.ItemWindowTemplate.SortSelector(self, self)
+	self.sortSelector = Ux.ItemWindowTemplate.SortSelector(self, self, location ~= "quest" and location ~= "equipment")
 	self.sortSelector:SetPoint("TOPCENTER", self, "BOTTOMLEFT", filterBoxLeft + filterBoxWidth + 55, 0)
 	self.sortSelector:SetVisible(false)
 	self:HotArea(self.sortSelector, true)
@@ -428,7 +428,7 @@ function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	createGoldButton(self)
 	createSearchFilter(self)
 	createSizeButton(self)
-	createSortButton(self)
+	createSortButton(self, location)
 	
 	return self
 end

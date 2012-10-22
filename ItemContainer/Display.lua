@@ -129,11 +129,15 @@ local function systemUpdateBegin(self)
 end
 
 local function checkConfig(location, config)
-	if(location == "currency" or location == "equipment") then
+	if(location == "currency") then
 		config.layout = "default"
 		if(config.sort == "slot") then
 			config.sort = "name"
 		end
+	elseif(location == "quest") then
+		config.layout = "onebag"
+	elseif(location == "equipment") then
+		config.layout = "default"
 	end
 	return config
 end

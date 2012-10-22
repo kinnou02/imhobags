@@ -21,42 +21,45 @@ Item.Storage = { }
 -- Private methods
 -- ============================================================================
 
+local function newLocation(bags)
+	return {
+		bags = bags and { } or nil,
+		slots = { },
+		counts = { },
+		totals = { },
+	}
+end
+
 local function newCharacter()
 	return {
 		info = {
 			guild = nil,
 			alliance = nil,
 		},
-		bank = {
-			bags = { },
-			slots = { },
-			counts = { },
-			totals = { },
-		},
+		bank = newLocation(true),
 		currency = {
 			totals = { },
 			categories = { },
 		},
-		equipment = {
-			slots = { },
-			counts = { },
-			totals = { },
+		equipment = newLocation(),
+		inventory = newLocation(true),
+		quest = newLocation(),
+		wardrobe = newLocation(),
+	}
+end
+
+local function newGuild()
+	return {
+		info = {
+			coin = 0,
 		},
-		inventory = {
-			bags = { },
-			slots = { },
-			counts = { },
-			totals = { },
-		},
-		wardrobe = {
-			slots = { },
-			counts = { },
-			totals = { },
+		vault = {
+			-- [*] = newLocation()
 		},
 	}
 end
 
-local function variablesLoaded(identifier)
+local function eventAddonSavedVariablesLoadEnd(identifier)
 	if(identifier ~= Addon.identifier) then
 		return
 	end
@@ -68,7 +71,7 @@ local function variablesLoaded(identifier)
 	Trigger.StorageLoaded()
 end
 
-local function saveVariables(identifier)
+local function eventAddonSavedVariablesSaveBegin(identifier)
 	if(identifier ~= Addon.identifier) then
 		return
 	end
@@ -124,6 +127,7 @@ local function eventItemSlot(items)
 		if(player[container]) then
 			mergeSlot(player[container], slot, item, bag, index)
 		else
+			-- TODO: handle guild
 		end
 	end
 end
@@ -137,6 +141,7 @@ local function eventItemUpdate(items)
 			container.totals[item.type] = container.totals[item.type] - container.counts[slot] + (item.stack or 1)
 			container.counts[slot] = item.stack or 1
 		else
+			-- TODO: handle guild
 		end
 	end
 end
@@ -197,14 +202,14 @@ function Item.Storage.GetCharacterItems(character, location)
 end
 
 Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
-	variablesLoaded,
+	eventAddonSavedVariablesLoadEnd,
 	Addon.identifier,
-	"Item.Storage.variablesLoaded"
+	"Item.Storage.eventAddonSavedVariablesLoadEnd"
 }
 Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = {
-	saveVariables,
+	eventAddonSavedVariablesSaveBegin,
 	Addon.identifier,
-	"Item.Storage.saveVariables"
+	"Item.Storage.eventAddonSavedVariablesSaveBegin"
 }
 Event.Item.Slot[#Event.Item.Slot + 1] = {
 	eventItemSlot,

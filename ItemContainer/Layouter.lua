@@ -63,7 +63,7 @@ local function getGroupAssociation_bags(set, showEmptySlots)
 	local groups = { }
 	for slot, item in pairs(set.Slots) do
 		local container, bag, index = UtilityItemSlotParse(slot)
-		if(bag == "main" or container == "quest") then
+		if(bag == "main") then
 			bag = 0
 		end
 		local items = groups[bag] or { }

@@ -195,10 +195,10 @@ end
 function ItemContainer.ItemSet(location, character)
 	local self = {
 		Bags = {
-			-- [index] = id/false
+			-- [index] = id|false
 		},
 		Slots = {
-			-- [slot] = id/false
+			-- [slot] = id|false
 		},
 		Items = setmetatable({
 			-- [id] = detail
