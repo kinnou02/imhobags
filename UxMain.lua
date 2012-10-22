@@ -100,13 +100,6 @@ local function init()
 	Ux.MoneySummaryWindow()
 end
 
-local function Ux_savedVariablesLoadEnd(addonIdentifier)
-	if(addonIdentifier ~= Addon.identifier) then
-		return
-	end
-	_G.ImhoBags_WindowInfo = _G.ImhoBags_WindowInfo or { }
-end
-
 local function Ux_savedVariablesSaveBegin(addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
@@ -156,8 +149,7 @@ local function savedVariablesSaveBegin(identifier)
 	end
 end
 
-_G.table.insert(Event.Addon.SavedVariables.Load.End, { Ux_savedVariablesLoadEnd, Addon.identifier, "Ux_savedVariablesLoadEnd" })
-_G.table.insert(Event.Addon.SavedVariables.Save.Begin, { savedVariablesSaveBegin, Addon.identifier, "savedVariablesSaveBegin" })
+Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = { savedVariablesSaveBegin, Addon.identifier, "savedVariablesSaveBegin" }
 
 Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "storageLoaded" }
 

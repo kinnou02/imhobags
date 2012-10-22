@@ -16,8 +16,8 @@ Group.Default = { }
 -- ============================================================================
 
 -- Use the localization of the first category word of an item as group key.
-function Group.Default.GetLocalizedShortCategory(type)
-	local name = type.category or "misc"
+function Group.Default.GetLocalizedShortCategory(item)
+	local name = item.category or "misc"
 	local localized = L.CategoryName[name]
 	if(localized) then
 		return localized
@@ -39,11 +39,11 @@ end
 Use the localization of the first category word of an item as group key.
 The junk rarity is represented by its own category.
 ]]
-function Group.Default.GetLocalizedShortCategoryWithJunk(type)
-	if(type.rarity and type.rarity == "sellable") then
+function Group.Default.GetLocalizedShortCategoryWithJunk(item)
+	if(item.rarity and item.rarity == "sellable") then
 		return L.CategoryName.sellable
 	else
-		return Group.Default.GetLocalizedShortCategory(type)
+		return Group.Default.GetLocalizedShortCategory(item)
 	end
 end
 
