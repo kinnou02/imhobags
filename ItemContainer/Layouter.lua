@@ -42,7 +42,7 @@ end
 
 local function getGroupAssociation_default(set, showEmptySlots)
 	local groups, junk, empty = { }, nil, { }
-	for id, group in pairs(set.groups) do
+	for id, group in pairs(set.Groups) do
 		local items = groups[group] or { }
 		groups[group] = items
 		items[#items + 1] = id
@@ -51,7 +51,7 @@ local function getGroupAssociation_default(set, showEmptySlots)
 	groups[junkName] = nil
 
 	if(showEmptySlots) then
-		for slot in pairs(set.empty) do
+		for slot in pairs(set.Empty) do
 			empty[#empty + 1] = slot
 		end
 	end
@@ -61,7 +61,7 @@ end
 
 local function getGroupAssociation_bags(set, showEmptySlots)
 	local groups = { }
-	for slot, item in pairs(set.slots) do
+	for slot, item in pairs(set.Slots) do
 		local container, bag, index = UtilityItemSlotParse(slot)
 		if(bag == "main") then
 			bag = 0
@@ -80,7 +80,7 @@ end
 
 local function getGroupAssociation_onebag(set, showEmptySlots)
 	local items = { }
-	for slot, item in pairs(set.slots) do
+	for slot, item in pairs(set.Slots) do
 		if(item) then
 			items[#items + 1] = item
 		elseif(showEmptySlots) then
@@ -185,7 +185,7 @@ local function setupJunk(self, junk)
 		junk.frame.text:SetText(format("%s (%i)", junkName, #junk))
 		local value = 0
 		for i = 1, #junk do
-			value = value + (self.set.items[junk[i]].sell or 0) * (self.set.items[junk[i]].stack or 1)
+			value = value + (self.set.Items[junk[i]].sell or 0) * (self.set.Items[junk[i]].stack or 1)
 		end
 		self.junkCoinFrame:SetCoin(value)
 	end
@@ -203,7 +203,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 	for i = 1, #items do
 		local item = items[i]
 		local button = self.itemButtons[item]
-		local details = self.set.items[item]
+		local details = self.set.Items[item]
 		if(not button) then
 			button = Ux.ItemButton.New(self.parent, self.available, Const.AnimationsDuration)
 			self.itemButtons[item] = button
@@ -226,15 +226,15 @@ local function sortItemsAndCreateButtons(self, groups, junk, empty)
 	local allButtons = { }
 	local itemButtons = { }
 	for name, items in pairs(groups) do
-		sort(items, function(a, b) return self.sortFunc(self.set.items[a], self.set.items[b]) end)
+		sort(items, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
 		replaceIdsWithButtons(self, items, allButtons, itemButtons, self.itemSize)
 	end
 	if(#junk > 0) then
-		sort(junk, function(a, b) return self.sortFunc(self.set.items[a], self.set.items[b]) end)
+		sort(junk, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
 		replaceIdsWithButtons(self, junk, allButtons, itemButtons, Const.ItemWindowJunkButtonSize)
 	end
 	if(#empty > 0) then
-		sort(empty, function(a, b) return self.sortFunc(self.set.items[a], self.set.items[b]) end)
+		sort(empty, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
 		replaceIdsWithButtons(self, empty, allButtons, itemButtons, self.itemSize)
 	end
 	self.itemButtons = itemButtons
@@ -361,7 +361,7 @@ local function UpdateItem(self, id)
 	if(not button:GetVisible()) then
 		duration = 0
 	end
-	local item = self.set.items[id]
+	local item = self.set.Items[id]
 	button:SetItem(item, item.slot, item.stack or 1, self.available, duration)
 	if(button.item) then
 		button:SetFiltered(strfind(button.item.name, self.filter) == nil)

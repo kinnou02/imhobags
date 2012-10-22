@@ -33,47 +33,6 @@ ItemContainer.Display = { }
 -- Private methods
 -- ============================================================================
 
-local function inspectDetailTwink(self, slot, type, stack, fn, solver)
-	local ok, item = pcall(fn, type)
-	if(not (ok and item)) then
-		self.pendingItemDetails[slot] = solver
-		return {
-			name = "?",
-			icon = "placeholder_icon.dds",
-			type = type,
-			stack = stack,
-			slot = slot,
-		}
-	else
-		item.stack = stack
-		item.slot = slot
-		return item
-	end
-end
-
-local function inspectItemDetailTwink(self, slot, type, stack)
-	local solver
-	solver = function()
-		local id = self.set.slots[slot] or self.set.bags[slot]
-		local detail = inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
-		self.set.items[id] = detail
-		self.set.groups[id] = self.groupFunc(detail)
-		self.layouter:UpdateItem(id)
-	end
-	return inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
-end
-
-local function inspectCurrencyDetailTwink(self, slot, type, stack)
-	local solver
-	solver = function()
-		local id = self.set.slots[slot] or self.set.bags[slot]
-		local detail = inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
-		self.set.items[id] = detail
-		self.layouter:UpdateItem(id)
-	end
-	return inspectDetailTwink(self, slot, type, stack, InspectItemDetail, solver)
-end
-
 local function getGroupLabelMinWidth(self)
 	return self.text:GetWidth()
 end
@@ -85,7 +44,7 @@ local function setupGroupLabel(self, display, group, items)
 		if(group == 0) then
 			self.text:SetText(L.Ux.WindowTitle.bank)
 		else
-			local info = display.set.items[display.set.bags[group]]
+			local info = display.set.Items[display.set.Bags[group]]
 			self.text:SetText(info.name)
 		end
 	end
@@ -119,102 +78,28 @@ local function makeEmptyItemDetail(slot)
 	}
 end
 
-local function removeItem(self, set, slot, item)
-	if(item == "nil") then
-		set.slots[slot] = nil
-		set.empty[slot] = nil
-		set.items[slot] = nil
-	else
-		set.slots[slot] = false
-		set.empty[slot] = true
-		set.items[slot] = makeEmptyItemDetail(slot)
-	end
-end
-
 local function eventItemSlot(self, slot, item, container, bag, index)
-	local set = self.playerSet
+	self.playerSet:UpdateSlot(slot, item, container, bag, index)
 	
-	log("eventItemSlot", slot, item, container, bag, index)
-	if(bag == "bag") then
-		set.bags[index] = item
-		if(item) then
-			set.items[item] = InspectItemDetail(item)
-		end
-	elseif(item and item ~= "nil") then
-		-- Remove the item which was in this slot before
-		local old = set.slots[slot]
-		if(old) then
-			set.items[old] = nil
-			set.groups[old] = nil
-		end
-		-- Remove the item from its previous slot if present
-		old = set.items[item]
-		if(old and old.slot) then
-			removeItem(self, set, old.slot, "nil") -- "nil" prevents unnecessary makeEmptyItemDetail call
-		end
-		set.slots[slot] = item
-		set.empty[slot] = nil
-		set.items[slot] = nil
-		local detail = InspectItemDetail(item)
-		detail.slot = slot -- Add custom field for slot-sorting
-		set.items[item] = detail
-		set.groups[item] = self.groupFunc(detail)
-	else
-		local old = set.slots[slot]
-		if(old) then
-			set.items[old] = nil
-			set.groups[old] = nil
-		end
-		removeItem(self, set, slot, item)
-	end
-
-	if(set == self.set) then
+	if(self.playerSet == self.set) then
 		self.needsUpdate = true
 		self.itemsChanged = true
 	end
 end
 
 local function eventItemUpdate(self, slot, item, container, bag, index)
-	local set = self.playerSet
-	
-	if(bag == "bag") then
-		return
-	end
+	self.playerSet:UpdateItem(slot, item, container, bag, index)
 	
 	if(item and item ~= "nil") then
-		local detail = InspectItemDetail(item)
-		detail.slot = slot -- Add custom field for slot-sorting
-		set.items[item] = detail
 		updateButton(self, item)
-	else
-		removeItem(self, set, slot, item)
 	end
 end
 
 local function eventCurrency(self, currencies)
-	local set = self.playerSet
-	
-	for id, count in pairs(currencies) do
-		-- Don't show money here
-		if(id ~= "coin" and count > 0) then
-			local detail = InspectItemDetail(id)
-			detail.type = id
-			set.items[id] = detail
-			set.groups[id] = InspectCurrencyCategoryDetail(InspectCurrencyDetail(id).category).name
-		end
-	end
+	self.playerSet:UpdateCurrency(currencies)
+
 	if(set == self.set) then
 		self.needsUpdate = true
-	end
-end
-
-local function queryPendingItemDetail(self)
-	local pendingItemDetails = self.pendingItemDetails
-	self.pendingItemDetails = { }
-	
-	local set = self.set
-	for slot, fn in pairs(pendingItemDetails) do
-		fn()
 	end
 end
 
@@ -233,9 +118,9 @@ local function systemUpdateBegin(self)
 		self:changeCallback({ height = height })
 	end
 	local now = Inspect.Time.Frame()
-	if(now >= self.nextItemDetailQuery and (next(self.pendingItemDetails))) then
+	if(now >= self.nextItemDetailQuery and (next(self.unknownItemDetails))) then
 		self.nextItemDetailQuery = now + Const.ItemDisplayQueryInterval
-		queryPendingItemDetail(self)
+		self.unknownItemDetails = self.set:ResolveUnknownItems(self.unknownItemDetails)
 		self.needsUpdate = true
 	end
 	if(self.itemsChanged) then
@@ -266,7 +151,7 @@ end
 
 local function GetNumEmptySlots(self)
 	local empty = 0
-	for k, v in pairs(self.set.empty) do
+	for k, v in pairs(self.set.Empty) do
 		empty = empty + 1
 	end
 	return empty
@@ -286,8 +171,7 @@ local function SetShowEmptySlots(self, showEmpty)
 	self.needsUpdate = true
 end
 
-local function SetCharacter_item(self, character)
-	self.pendingItemDetails = { }
+local function SetCharacter(self, character)
 	if(character == "player" or character == Player.name) then
 		self.set = self.playerSet
 		local interaction = Inspect.Interaction()
@@ -296,78 +180,10 @@ local function SetCharacter_item(self, character)
 		else
 			self.layouter:SetAvailable(true)
 		end
+		self.unknownItemDetails = { }
 	else
 		self.layouter:SetAvailable(false)
-		local set = {
-			bags = { },
-			slots = { },
-			items = { },
-			groups = { },
-			empty = { },
-		}
-		self.set = set
-		local totals, slots, counts, bags = Item.Storage.GetCharacterItems(character, self.location)
-		local id = 1
-		for slot, type in pairs(slots or { }) do
-			if(type) then
-				local detail = inspectItemDetailTwink(self, slot, type, counts[slot])
-				set.slots[slot] = id
-				set.items[id] = detail
-				set.groups[id] = self.groupFunc(detail)
-				id = id + 1
-			else
-				set.slots[slot] = false
-				set.empty[slot] = true
-				set.items[slot] = makeEmptyItemDetail(slot)
-			end
-		end
-		for slot, type in pairs(bags or { }) do
-			if(type) then
-				local detail = inspectItemDetailTwink(self, slot, type, counts[slot])
-				set.bags[slot] = id
-				set.items[id] = detail
-				id = id + 1
-			else
-				set.bags[slot] = false
-			end
-		end
-	end
-	
-	self.layouter:SetItemSet(self.set)
-	self.needsUpdate = true
-	self.itemsChanged = true
-end
-
-local function SetCharacter_currency(self, character)
-	self.pendingItemDetails = { }
-	if(character == "player" or character == Player.name) then
-		self.set = self.playerSet
-		local interaction = Inspect.Interaction()
-		if(interaction[self.location] ~= nil) then
-			eventInteraction(self, self.location, interaction[self.location])
-		else
-			self.layouter:SetAvailable(true)
-		end
-	else
-		self.layouter:SetAvailable(false)
-		local set = {
-			bags = { },
-			slots = { },
-			items = { },
-			groups = { },
-			empty = { },
-		}
-		self.set = set
-		local totals, categories = Item.Storage.GetCharacterItems(character, self.location)
-		totals.coin = nil -- Don't show coin here
-		local slot = 1
-		for type, count in pairs(totals) do
-			local detail = inspectCurrencyDetailTwink(self, slot, type, count)
-			set.slots[slot] = type
-			set.items[type] = detail
-			set.groups[type] = InspectCurrencyCategoryDetail(categories[type]).name
-			slot = slot + 1
-		end
+		self.set, self.unknownItemDetails = ItemContainer.ItemSet(self.location, character)
 	end
 	
 	self.layouter:SetItemSet(self.set)
@@ -399,7 +215,7 @@ end
 
 local function DropCursorItem(self)
 	if(self.set == self.playerSet and self.available) then
-		local slot = next(self.set.empty)
+		local slot = next(self.playerSet.Empty)
 		if(slot) then
 			ItemHandler.Standard.Drop(slot)
 			return
@@ -412,28 +228,8 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	local self = UICreateFrame("Frame", "ItemContainer." .. location, parent)
 	
 	config = checkConfig(location, config)
-	self.playerSet = {
-		bags = {
-			-- [index] = id/false
-		},
-		slots = {
-			-- [slot] = id/false
-		},
-		items = setmetatable({
-			-- [id] = detail
-			-- [slot] = detail
-		}, { __mode = " " }),
-		empty = {
-			-- [slot] = true
-		},
-		new = {
-			-- [id] = true
-		},
-		groups = setmetatable({
-			-- [id] = group
-		}, { __mode = " " }),
-	}
-	self.pendingItemDetails = {
+	self.playerSet = ItemContainer.ItemSet(location)
+	self.unknownItemDetails = {
 		-- [slot] = type
 	}
 	self.available = true
@@ -448,7 +244,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.DropCursorItem = DropCursorItem
 	self.FillConfig = FillConfig
 	self.GetNumEmptySlots = GetNumEmptySlots
-	self.SetCharacter = location == "currency" and SetCharacter_currency or SetCharacter_item
+	self.SetCharacter = SetCharacter
 	self.SetItemSize = SetItemSize
 	self.SetLayout = SetLayout
 	self.SetNeedsLayout = SetNeedsLayout
@@ -473,6 +269,10 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	else
 		Item.Dispatcher.AddSlotCallback(location, function(...) eventItemSlot(self, ...) end)
 		Item.Dispatcher.AddUpdateCallback(location, function(...) eventItemUpdate(self, ...) end)
+		if(location == "equipment") then
+			Item.Dispatcher.AddSlotCallback("wardrobe", function(...) eventItemSlot(self, ...) end)
+			Item.Dispatcher.AddUpdateCallback("wardrobe", function(...) eventItemUpdate(self, ...) end)
+		end
 	end
 	Event.System.Update.Begin[#Event.System.Update.Begin + 1] = { function() systemUpdateBegin(self) end, Addon.identifier, "ItemContainer." .. location .. ".systemUpdateBegin" }
 	
