@@ -195,7 +195,7 @@ local function SetSearchFilter(self, filter)
 end
 
 local function SetLayout(self, layout)
-	if(self.location ~= "currency") then
+	if(self.location ~= "currency" and self.location ~= "equipment") then
 		self.layouter:SetLayout(layout)
 		self.needsUpdate = true
 	end
