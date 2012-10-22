@@ -120,7 +120,7 @@ local function systemUpdateBegin(self)
 	local now = Inspect.Time.Frame()
 	if(now >= self.nextItemDetailQuery and (next(self.unknownItemDetails))) then
 		self.nextItemDetailQuery = now + Const.ItemDisplayQueryInterval
-		self.unknownItemDetails = self.set:ResolveUnknownItems(self.unknownItemDetails)
+		self.unknownItemDetails = self.set:ResolveUnknownItems(self.unknownItemDetails, function(id) updateButton(self, id) end)
 		self.needsUpdate = true
 	end
 	if(self.itemsChanged) then

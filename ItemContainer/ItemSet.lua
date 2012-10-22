@@ -97,7 +97,7 @@ local function loadStoredItems(self, location, character)
 	end
 	for slot, type in pairs(bags or { }) do
 		if(type) then
-			local detail = inspectItemDetailTwink(type, slot, counts[slot], unknown)
+			local detail = inspectItemDetailTwink(type, slot, 1, unknown)
 			self.Bags[slot] = id
 			self.Items[id] = detail
 			id = id + 1
@@ -111,7 +111,7 @@ end
 -- Public methods
 -- ============================================================================
 
-function ResolveUnknownItems(self, unknownTypes)
+function ResolveUnknownItems(self, unknownTypes, callback)
 	local unknown = { }
 	for slot, type in pairs(unknownTypes) do
 		local ok, detail = pcall(InspectCurrencyDetail, type)
@@ -123,6 +123,7 @@ function ResolveUnknownItems(self, unknownTypes)
 				local container, bag, index = UtilityItemSlotParse(slot)
 				self.Groups[item] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
 			end
+			callback(self.Slots[slot])
 		else
 			unknown[slot] = type
 		end
