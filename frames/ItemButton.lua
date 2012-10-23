@@ -148,8 +148,8 @@ end
 
 local function SetItem(self, item, slots, stack, available, locked)
 	local isTable = type(slots) == "table"
-	self.locked = locked or not isTable -- Reflects whether the item matrix allows manipulation
-	self.available = available -- Reflects whether the location is available to the player
+--	self.locked = locked or not isTable -- Reflects whether the item is movable with mouse actions
+	self.available = available -- Reflects whether the item is available to the player
 	
 	if(not item) then
 		self:SetStack(1)
@@ -196,8 +196,8 @@ local function ShowTooltip(self)
 			Ux.TooltipEnhancer:SetText(self.item.name)
 			Ux.TooltipEnhancer:SetVisible(true)
 			Ux.TooltipEnhancer:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", mouse.x, mouse.y)
-		elseif(self.locked) then
-			target = self.item.type
+--		elseif(self.locked) then
+--			target = self.item.type
 		else
 			target = self.dropTarget
 		end
@@ -206,7 +206,7 @@ local function ShowTooltip(self)
 end
 
 local function SetLocked(self, locked)
-	self.locked = locked
+--	self.locked = locked
 end
 
 function Ux.ItemButton.New(parent, available, duration)
