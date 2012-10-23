@@ -216,10 +216,10 @@ Event.Item.Slot[#Event.Item.Slot + 1] = {
 	Addon.identifier,
 	"Item.Storage.eventItemSlot"
 }
-Event.Item.Slot[#Event.Item.Slot + 1] = {
-	eventItemSlot,
+Event.Item.Update[#Event.Item.Update + 1] = {
+	eventItemUpdate,
 	Addon.identifier,
-	"Item.Storage.eventItemSlot"
+	"Item.Storage.eventItemUpdate"
 }
 Event.Currency[#Event.Currency + 1] = {
 	eventCurrency,
