@@ -192,6 +192,7 @@ local function createBackground(self)
 	local background = UI.CreateFrame("Texture", "", self)
 	background:SetPoint("CENTER", self, "CENTER")
 	background:SetTexture("Rift", Player.alliance == "defiant" and "Guild_Defiant_bg.png.dds" or "Guild_Guardian_bg.png.dds")
+	background:SetAlpha(0.3)
 	self.background = background
 	
 	local fn = function(self)
@@ -213,7 +214,7 @@ local function SetCharacter(self, character)
 		self.container:SetCharacter(character)
 		self.titleBar:SetAlliance(alliances[character])
 		self.titleBar:SetMainLabel(character)
-		self.background:SetTexture("Rift", alliances[character] == "defiant" and "Guild_Defiant_bg.png.dds" or "Guild_Guardian_bg.png.dds")
+--		self.background:SetTexture("Rift", alliances[character] == "defiant" and "Guild_Defiant_bg.png.dds" or "Guild_Guardian_bg.png.dds")
 	end
 end
 
@@ -283,7 +284,7 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	createTitleBar(self, location, config)
 	createResizeButton(self)
 	createNativeHook(self, native)
-	createBackground(self)
+--	createBackground(self)
 	
 	return self
 end
