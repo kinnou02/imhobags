@@ -96,12 +96,12 @@ local function mergeSlot(container, slot, item, bag, index)
 		item = InspectItemDetail(item)
 	end
 	if(bag == "bag") then
-		removeFromTotals(container, container.bags[index], 1)
+		removeFromTotals(container, container.bags[slot], 1)
 		if(item) then
-			container.bags[index] = item.type
+			container.bags[slot] = item.type
 			container.totals[item.type] = (container.totals[item.type] or 0) + 1
 		else
-			container.bags[index] = false
+			container.bags[slot] = false
 		end
 	elseif(item and item ~= "nil") then
 		removeFromTotals(container, container.slots[slot], container.counts[slot] or 0)
