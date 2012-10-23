@@ -8,6 +8,7 @@ local pairs = pairs
 local Event = Event
 local InspectCurrencyDetail = Inspect.Currency.Detail
 local InspectItemDetail = Inspect.Item.Detail
+local InspectItemList = Inspect.Item.List
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
@@ -161,6 +162,7 @@ end
 local function init()
 	player.info.guild = Player.guild
 	player.info.alliance = Player.alliance
+	eventItemSlot(InspectItemList("si"))
 end
 
 -- Public methods
