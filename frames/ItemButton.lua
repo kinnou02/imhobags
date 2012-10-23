@@ -88,6 +88,8 @@ end
 
 local function leftUpoutside(self)
 	self.leftDown = false
+	self:SetDepressed(false)
+	self:SetHighlighted(false)
 end
 
 local function rightDown(self)
@@ -244,6 +246,7 @@ createButton = function(parent)
 	self.Event.MouseIn = mouseIn
 	self.Event.LeftDown = leftDown
 	self.Event.LeftUp = leftUp
+	self.Event.LeftUpoutside = leftUpoutside
 	self.Event.LeftClick = leftClick
 	self.Event.RightDown = rightDown
 	self.Event.RightUp = rightUp
