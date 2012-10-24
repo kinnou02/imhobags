@@ -123,7 +123,7 @@ function ResolveUnknownItems(self, unknownTypes, callback)
 			self.Items[id] = detail
 			if(self.location ~= "currency") then
 				local container, bag, index = UtilityItemSlotParse(slot)
-				self.Groups[item] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
+				self.Groups[id] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
 			end
 			callback(id)
 		else
