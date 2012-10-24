@@ -26,10 +26,10 @@ Dependencies = {
 
 RunOnStartup = {
 	"locales/deDE.lua",
-	"locales/enUS.lua",
 	"locales/frFR.lua",
 	"locales/koKR.lua",
 	"locales/ruRU.lua",
+	"locales/enUS.lua",
 	
 	"Constants.lua",
 	"Main.lua",

@@ -1,7 +1,7 @@
 local private = select(2, ...)
 
 --[===[@non-debug@
-if(Inspect.System.Language() ~= "English" ) then
+if(private.L) then
 	return
 end
 --@end-non-debug@]===]
