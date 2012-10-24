@@ -138,6 +138,10 @@ local function checkConfig(location, config)
 		config.layout = "onebag"
 	elseif(location == "equipment") then
 		config.layout = "default"
+	elseif(location == "guildbank") then
+		if(config.layout == "bags") then
+			config.layout = "default"
+		end
 	end
 	return config
 end
