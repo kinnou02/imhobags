@@ -262,8 +262,8 @@ local function createNewGroups(self, groups)
 		local group = self.groups[name] and self.groups[name].frame
 		if(not group) then
 			group = ItemContainer.Group(self.parent, factory, Const.AnimationsDuration)
-			group:Setup(self.parent, name, items)
 		end
+		group:Setup(self.parent, name, items)
 		groups[name].frame = group
 	end
 end
