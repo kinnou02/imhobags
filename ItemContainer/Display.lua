@@ -96,10 +96,13 @@ local function eventItemUpdate(self, slot, item, container, bag, index)
 end
 
 local function eventCurrency(self, currencies)
-	self.playerSet:UpdateCurrency(currencies)
 
-	if(set == self.set) then
+	if(self.playerSet == self.set) then
+		self.playerSet:UpdateCurrency(currencies, function(id) updateButton(self, id) end)
 		self.needsUpdate = true
+		self.itemsChanged = true
+	else
+		self.playerSet:UpdateCurrency(currencies, function() end)
 	end
 end
 

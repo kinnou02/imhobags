@@ -133,14 +133,16 @@ function ResolveUnknownItems(self, unknownTypes, callback)
 	return unknown
 end
 
-function UpdateCurrency(self, currencies)
+function UpdateCurrency(self, currencies, callback)
 	for id, count in pairs(currencies) do
 		-- Don't show money here
 		if(id ~= "coin" and count > 0) then
 			local detail = InspectItemDetail(id)
+			detail.stack = count
 			detail.type = id
 			self.Items[id] = detail
 			self.Groups[id] = InspectCurrencyCategoryDetail(InspectCurrencyDetail(id).category).name
+			callback(id)
 		end
 	end
 end
