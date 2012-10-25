@@ -77,9 +77,8 @@ local function loadStoredCurrency(self, character)
 	return unknown
 end
 
-local function loadStoredItems(self, location, character)
+local function populateWithStoredItems(self, totals, slots, counts, bags)
 	local unknown = { }
-	local totals, slots, counts, bags = Item.Storage.GetCharacterItems(character, location)
 	local id = 1
 	for slot, type in pairs(slots or { }) do
 		if(type) then
@@ -107,6 +106,14 @@ local function loadStoredItems(self, location, character)
 		end
 	end
 	return unknown
+end
+
+local function loadStoredItems(self, location, character)
+	return populateWithStoredItems(self, Item.Storage.GetCharacterItems(character, location))
+end
+
+local function loadStoredGuild(self, guild, vault)
+	return populateWithStoredItems(self, Item.Storage.GetGuildItems(guild, valut))
 end
 
 -- Public methods
@@ -196,7 +203,7 @@ function UpdateSlot(self, slot, item, container, bag, index)
 	end
 end
 
-function ItemContainer.ItemSet(location, character)
+function ItemContainer.ItemSet(location, character, vault)
 	local self = {
 		Bags = {
 			-- [index] = id|false
@@ -227,6 +234,8 @@ function ItemContainer.ItemSet(location, character)
 	if(character) then
 		if(location == "currency") then
 			unknown = loadStoredCurrency(self, character)
+		elseif(location == "guildbank") then
+			unknown = loadStoredGuild(self, character, vault)
 		else
 			unknown = loadStoredItems(self, location, character)
 			if(location == "equipment") then
