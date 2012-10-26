@@ -11,6 +11,9 @@ local InspectItemDetail = Inspect.Item.Detail
 local InspectItemList = Inspect.Item.List
 local InspectGuildBankCoin = Inspect.Guild.Bank.Coin
 local InspectGuildBankList = Inspect.Guild.Bank.List
+local InspectGuildRankDetail = Inspect.Guild.Rank.Detail
+local InspectGuildRosterDetail = Inspect.Guild.Roster.Detail
+local UtilityItemSlotGuild = Utility.Item.Slot.Guild
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
@@ -18,6 +21,7 @@ local charData
 local guildData
 local player
 local guild
+local guildVaultSlots = { }
 
 setfenv(1, private)
 Item = Item or { }
@@ -96,7 +100,7 @@ local function removeFromTotals(container, item, count)
 	end
 end
 
-local function mergeSlot(container, slot, item, bag, index)
+local function mergeSlotShared(container, slot, item, bag, index)
 	if(item and item ~= "nil") then
 		item = InspectItemDetail(item)
 	end
@@ -108,19 +112,40 @@ local function mergeSlot(container, slot, item, bag, index)
 		else
 			container.bags[slot] = false
 		end
+		return nil
 	elseif(item and item ~= "nil") then
 		removeFromTotals(container, container.slots[slot], container.counts[slot] or 0)
 
 		container.slots[slot] = item.type
 		container.counts[slot] = item.stack or 1
 		container.totals[item.type] = (container.totals[item.type] or 0) + (item.stack or 1)
-	else
+	end
+	return item
+end
+
+local function mergeSlot(container, slot, item, bag, index)
+	item = mergeSlotShared(container, slot, item, bag, index)
+	
+	if(item == false or item == "nil") then
 		removeFromTotals(container, container.slots[slot], container.counts[slot] or 0)
 
 		if(item) then
 			container.slots[slot] = nil
 			container.counts[slot] = nil
 		else
+			container.slots[slot] = false
+			container.counts[slot] = 0
+		end
+	end
+end
+
+local function mergeSlotGuild(container, slot, item, bag, index)
+	-- Do not remove item for "nil" arguments.
+	-- That is handled separately by rank permissions and roster membership
+	if(item ~= "nil") then
+		item = mergeSlotShared(container, slot, item, bag, index)
+		if(item == false) then
+			removeFromTotals(container, container.slots[slot], container.counts[slot] or 0)
 			container.slots[slot] = false
 			container.counts[slot] = 0
 		end
@@ -150,13 +175,25 @@ local function eventGuildBankCoin(coin)
 	guild.info.coin = coin
 end
 
+local function eventInteraction(interaction, state)
+	if(interaction == "guildbank" and state) then
+		eventGuildBankCoin(InspectGuildBankCoin())
+	end
+end
+
 local function eventItemSlot(items)
 	for slot, item in pairs(items) do
 		local container, bag, index = UtilityItemSlotParse(slot)
+		log("eventItemSlot", slot, container, item)
 		if(player[container]) then
 			mergeSlot(player[container], slot, item, bag, index)
-		elseif(container == "guildbank") then
-			mergeSlot(guild.vault[bag], slot, item, bag, index)
+		elseif(container == "guild") then
+			local vault = guildVaultSlots[bag]
+			if(not vault) then
+				vault = UtilityItemSlotGuild(bag)
+				guildVaultSlots[bag] = vault
+			end
+			mergeSlotGuild(guild.vault[vault], slot, item, bag, index)
 		end
 	end
 end
@@ -164,28 +201,51 @@ end
 local function eventItemUpdate(items)
 	for slot, item in pairs(items) do
 		local container, bag, index = UtilityItemSlotParse(slot)
+		log("eventItemUpdate", slot, container, item)
 		item = InspectItemDetail(item)
 		if(player[container]) then
 			container = player[container]
-		elseif(container == "guildbank") then
-			container = guild.vault[bag]
+		elseif(container == "guild") then
+			local vault = guildVaultSlots[bag]
+			log(vault)
+			if(not vault) then
+				vault = UtilityItemSlotGuild(bag)
+				guildVaultSlots[bag] = vault
+			end
+			container = guild.vault[vault]
 		end
-		container.totals[item.type] = container.totals[item.type] - container.counts[slot] + (item.stack or 1)
+		container.totals[item.type] = (container.totals[item.type] or 0) - (container.counts[slot] or 0) + (item.stack or 1)
 		container.counts[slot] = item.stack or 1
 	end
 end
 
-local function init()
-	player.info.guild = Player.guild
-	player.info.alliance = Player.alliance
-	eventItemSlot(InspectItemList("si"))
+local function applyGuildRank(rank)
+	local vaultAccess = InspectGuildRankDetail(rank).vaultAccess
+	
+	-- Delete item data for vaults we have no longer access to
+	for slot in pairs(guild.vault) do
+		local vault = vaultAccess[slot] or { }
+		if(not vault.access) then
+			local name = guild.vault[slot].name
+			guild.vault[slot] = newLocation()
+			guild.vault[slot].name = name
+		end
+		guild.vault[slot].access = vault.access
+		guild.vault[slot].withdrawLimit = vault.withdrawLimit
+	end
+end
 
-	guildData = _G.ImhoBags_ItemStorageGuilds or { }
-	if(Player.guild) then
-		guild = newGuild()
-	else
-		guild = guildData[Player.guild] or newGuild()
-		guildData[Player.name] = guild
+local function eventGuildRank(ranks)
+	local playerRank = InspectGuildRosterDetail(Player.name).rank
+	if(ranks[playerRank]) then
+		applyGuildRank(playerRank)
+	end
+end
+
+local function eventGuildRosterDetailRank(units)
+	local rank = units[Player.name]
+	if(rank) then
+		applyGuildRank(rank)
 	end
 end
 
@@ -206,8 +266,22 @@ local function guildChanged(old, new)
 		guild = guildData[new] or newGuild()
 		guildData[new] = guild
 		eventGuildBankChange(InspectGuildBankList())
-		eventGuildBankCoin(InspectGuildBankCoin())
+		local roster = InspectGuildRosterDetail(Player.name)
+		if(roster) then
+			applyGuildRank(roster.rank)
+		end
+	else
+		guild = newGuild()
 	end
+end
+
+local function init()
+	player.info.alliance = Player.alliance
+	eventItemSlot(InspectItemList("si"))
+
+	guildData = _G.ImhoBags_ItemStorageGuilds or { }
+	-- Catch cases where a character is removed from a guild while offline
+	guildChanged(player.info.guild, Player.guild)
 end
 
 -- Public methods
@@ -317,6 +391,21 @@ Event.Guild.Bank.Coin[#Event.Guild.Bank.Coin + 1] = {
 	eventGuildBankCoin,
 	Addon.identifier,
 	"Item.Storage.eventGuildBankCoin"
+}
+Event.Guild.Rank[#Event.Guild.Rank + 1] = {
+	eventGuildRank,
+	Addon.identifier,
+	"Item.Storage.eventGuildRank"
+}
+Event.Guild.Roster.Detail.Rank[#Event.Guild.Roster.Detail.Rank + 1] = {
+	eventGuildRosterDetailRank,
+	Addon.identifier,
+	"Item.Storage.eventGuildRosterDetailRank"
+}
+Event.Interaction[#Event.Interaction + 1] = {
+	eventInteraction,
+	Addon.identifier,
+	"Item.Storage.eventInteraction"
 }
 Event.Item.Slot[#Event.Item.Slot + 1] = {
 	eventItemSlot,
