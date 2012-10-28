@@ -253,6 +253,7 @@ local function sortItemsAndCreateButtons(self, groups, junk, empty)
 	self.prevButtons = self.allButtons
 	self.allButtons = allButtons
 	for button in pairs(self.unusedButtons) do
+		button:Dispose()
 		self.unusedButtons[button] = nil
 	end
 end
