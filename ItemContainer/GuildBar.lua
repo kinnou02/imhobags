@@ -58,9 +58,9 @@ local function setVaultNameText(self, name, slot)
 	if(access.access == "deposit") then
 		self.vaultName:SetFontColor(0.8, 0.8, 0)
 	elseif(access.access == "full") then
-		self.vaultName:SetFontColor(0, 0.8, 0)
+		self.vaultName:SetFontColor(96 / 255, 213 / 255, 1 / 255)
 	else
-		self.vaultName:SetFontColor(0.8, 0, 0)
+		self.vaultName:SetFontColor(239 / 255, 0.1, 0.1)
 	end
 end
 
