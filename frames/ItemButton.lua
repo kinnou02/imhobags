@@ -200,7 +200,7 @@ local function ShowTooltip(self)
 --		elseif(self.locked) then
 --			target = self.item.type
 		else
-			target = self.dropTarget
+			target = self.item.id or self.item.type
 		end
 		Command.Tooltip(target)
 	end
