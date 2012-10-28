@@ -6,6 +6,7 @@ local floor = math.floor
 local format = string.format
 local max = math.max
 local min = math.min
+local next = next
 local pairs = pairs
 local sort = table.sort
 local strfind = string.find
@@ -202,18 +203,31 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 	-- Replace ids/empty slots in-place with actual buttons
 	for i = 1, #items do
 		local item = items[i]
-		local button = self.itemButtons[item]
 		local details = self.set.Items[item]
-		if(not button) then
-			button = Ux.ItemButton.New(self.parent, self.available, Const.AnimationsDuration)
+		local button = next(self.unusedButtons)
+		if(button) then
+			log("reused")
+			self.unusedButtons[button] = nil
 			self.itemButtons[item] = button
 			if(details.rarity == "empty") then
 				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
 			else
 				self:UpdateItem(item)
 			end
-		elseif(details.rarity == "empty") then
-			button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
+		else
+			button = self.itemButtons[item]
+			if(not button) then
+				log("new")
+				button = Ux.ItemButton.New(self.parent, self.available, Const.AnimationsDuration)
+				self.itemButtons[item] = button
+				if(details.rarity == "empty") then
+					button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
+				else
+					self:UpdateItem(item)
+				end
+			elseif(details.rarity == "empty") then
+				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
+			end
 		end
 		button:SetSize(itemSize)
 		items[i] = button
@@ -240,6 +254,9 @@ local function sortItemsAndCreateButtons(self, groups, junk, empty)
 	self.itemButtons = itemButtons
 	self.prevButtons = self.allButtons
 	self.allButtons = allButtons
+	for button in pairs(self.unusedButtons) do
+		self.unusedButtons[button] = nil
+	end
 end
 
 local function hideEmptyGroups(self, groups, junk, empty)
@@ -285,15 +302,16 @@ end
 local function reset(self)
 	-- Reset everything, requires an UpdateItems call
 	for name, group in pairs(self.groups) do
-		group.frame:Dispose()
+		group.frame:Dispose(Const.AnimationsDuration, self.allButtons)
 	end
 	if(#self.junk > 0) then
-		self.junk.frame:Dispose()
+		self.junk.frame:Dispose(Const.AnimationsDuration, self.allButtons)
 	end
 	if(#self.empty > 0) then
-		self.empty.frame:Dispose()
+		self.empty.frame:Dispose(Const.AnimationsDuration, self.allButtons)
 	end
 	self.itemButtons = { }
+	self.unusedButtons = self.allButtons
 	self.allButtons = { }
 	self.prevButtons = { }
 	self.groups = { }
@@ -392,9 +410,6 @@ local function SetLayout(self, layout)
 	elseif(layout == "onebag") then
 		self.getGroupAssociation = getGroupAssociation_onebag
 	end
-	if(layout ~= self.layout) then
---		reset(self)
-	end
 	self.layout = layout
 end
 
@@ -457,6 +472,9 @@ function ItemContainer.Layouter(parent, config, groupFrameFactory)
 			-- [id] = button
 		},
 		allButtons = {
+			-- [button] = true
+		},
+		unusedButtons = {
 			-- [button] = true
 		},
 		prevButtons = {
