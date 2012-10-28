@@ -18,7 +18,7 @@ local UtilityItemSlotGuild = Utility.Item.Slot.Guild
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
-local index2slot = { }
+local index2slot = { [0] = "sg00" }
 local slot2index = { }
 local formats = {
 	activeVault = "vfx_ui_mob_tag_0%i_mini.png.dds",
@@ -66,7 +66,7 @@ end
 
 local function setVault(self, index)
 	for i = 1, #self.vaultButtons do
-		local slot = slot(index)
+		local slot = slot(i)
 		if(self.vaultAccess[slot]) then
 			self.vaultButtons[i]:SetTexture("Rift", format(i == index and formats.activeVault or formats.inactiveVault, i))
 		end
@@ -95,7 +95,7 @@ local function createVaultButton(parent, index)
 	function self.Event:MouseOut()
 		setVaultNameText(parent, parent.vaultButtons[parent.vault].name or "", slot(parent.vault))
 	end
-	function self.Event.LeftClick()
+	function self.Event:LeftClick()
 		setVault(parent, index)
 	end
 	
@@ -168,8 +168,23 @@ local function eventInteraction(self, interaction, status)
 	end
 end
 
+local function selectFirstAvailableVault(self)
+	for i = 1, #self.vaultButtons do
+		local slot = slot(i)
+		if(self.vaultAccess[slot]) then
+			setVault(self, i)
+			return
+		end
+	end
+	setVault(self, 0)
+end
+
 local function applyRank(self, rank)
-	setVaultAccess(self, InspectGuildRankDetail(rank).vaultAccess)
+	local access = InspectGuildRankDetail(rank).vaultAccess
+	setVaultAccess(self, access)
+	if(not access[slot(self.vault)]) then
+		selectFirstAvailableVault(self)
+	end
 end
 
 local function eventGuildBankChange(self, vaults)
@@ -259,16 +274,8 @@ local function SetGuild(self, guild)
 	else
 		setVaults(self, { })
 		setCoin(self, 0)
-		
 	end
-	for i = 1, #self.vaultButtons do
-		local slot = slot(i)
-		if(self.vaultAccess[slot]) then
-			setVault(self, i)
-			return
-		end
-	end
-	setVault(self, 0)
+	selectFirstAvailableVault(self)
 end
 
 function ItemContainer.GuildBar(parent, vaultCallback)
