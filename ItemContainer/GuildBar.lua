@@ -281,7 +281,7 @@ end
 function ItemContainer.GuildBar(parent, vaultCallback)
 	local self = UICreateFrame("Texture", "", parent)
 	self:SetTexture("Rift", "QuestBarOver.png.dds")
-	self:SetHeight(20)
+	self:SetHeight(24)
 	
 	self.vaultName = UICreateFrame("Text", "", self)
 	self.vaultName:SetPoint("LEFTCENTER", self, "LEFTCENTER")
