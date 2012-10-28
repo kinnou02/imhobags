@@ -163,25 +163,11 @@ function Ux.ToggleItemWindow(character, location)
 	if(window) then
 		window:SetVisible(not window:GetVisible())
 		if(window:GetVisible()) then
-			window:SetCharacter(character)
-		end
-	end
-end
-
-function Ux.ToggleGuildWindow(character)
-	for k, v in pairs(defaultItemWindows) do
-		if(v[1] == "guildbank") then
-			local window = Ux[k]
-			if(not window) then
-				Ux.ShowItemWindow(ItemDB.FindGuild(character) or "<none>", "guildbank")
+			if(location == "guildbank") then
+				window:SetGuild(Item.Storage.FindGuild(character))
 			else
-				if(window:GetVisible() and window.character == character) then
-					Ux.HideItemWindow("guildbank")
-				else
-					Ux.ShowItemWindow(ItemDB.FindGuild(character) or "<none>", "guildbank")
-				end
+				window:SetCharacter(character)
 			end
-			break
 		end
 	end
 end
@@ -190,7 +176,11 @@ function Ux.ShowItemWindow(character, location)
 	local window = Ux.ItemWindow[location]
 	if(window) then
 		window:SetVisible(true)
-		window:SetCharacter(character)
+		if(location == "guildbank") then
+			window:SetGuild(Item.Storage.FindGuild(character))
+		else
+			window:SetCharacter(character)
+		end
 	end
 end
 

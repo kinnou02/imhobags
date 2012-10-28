@@ -74,8 +74,8 @@ local function createTitleBar(self, location, config)
 		self.container:SetItemSize(n)
 	end)
 	self.titleBar:SetLocationCallback(function(loc)
-		if(loc == "guildbank") then
-			Ux.ToggleGuildWindow(self.character)
+		if(self.location == "guildbank") then
+			Ux.ShowItemWindow(Player.name, loc)
 		else
 			Ux.ShowItemWindow(self.character, loc)
 		end
@@ -251,6 +251,7 @@ local function SetGuild(self, guild)
 	self.container:SetGuild(guild)
 	self.titleBar:SetAlliance(Player.alliance)
 	self.titleBar:SetMainLabel(guild or "?")
+	self.guildBar:SetGuild(guild)
 end
 
 local function FillConfig(self, config)
