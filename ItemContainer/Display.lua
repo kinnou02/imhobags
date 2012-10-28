@@ -255,7 +255,7 @@ local function SetGuild(self, guild, vault)
 	if(guild == Player.guild) then
 		self.set = self.playerSet[vault or 1] or ItemContainer.ItemSet("guildbank")
 	else
-		self.set = ItemContainer.ItemSet("guildbank", guild, vault or 1)
+		self.set = ItemContainer.ItemSet("guildbank", guild or "", vault or 1)
 	end
 	self.layouter:SetItemSet(self.set)
 	self.needsUpdate = true
