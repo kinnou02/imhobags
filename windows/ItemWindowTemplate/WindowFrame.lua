@@ -56,7 +56,7 @@ local function createTitleBar(self, location, config)
 	self.titleBar:SetLayer(100)
 	self.titleBar:SetFilterCallback(function(filter) self.container:SetSearchFilter(filter) end)
 	if(location == "guildbank") then
-		self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(ItemDB.GetAvailableGuilds()) end)
+		self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(Item.Storage.GetGuildNames()) end)
 		self.titleBar:SetCharButtonSkin("guild")
 	else
 		self.titleBar:SetCharButtonCallback(function() self.titleBar:ShowCharSelector(Item.Storage.GetCharacterNames()) end)
