@@ -289,7 +289,7 @@ function ItemContainer.GuildBar(parent, vaultCallback)
 	self.vaultName.slot = "sg00"
 	
 	self.coinFrame = Ux.MoneyFrame.New(self)
-	self.coinFrame:SetPoint("RIGHTCENTER", self, "RIGHTCENTER")
+	self.coinFrame:SetPoint("RIGHTCENTER", self, "RIGHTCENTER", -5, 0)
 	
 	self.vaultButtons = { }
 	self.numVaults = 0
