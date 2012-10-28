@@ -86,7 +86,7 @@ local function createVaultButton(parent, index)
 	self:AnimateWidth(Const.AnimationsDuration, "linear", 16)
 	self.access = UICreateFrame("Texture", "", self)
 	self.access:SetAllPoints()
-	self.access:SetTexture("Rift", "vfx_ui_mob_tag_no_mini_disabled.png.dds")
+	self.access:SetTexture("Rift", "vfx_ui_mob_tag_no_mini.png.dds")
 	self.slot = slot(index)
 
 	function self.Event:MouseMove()
