@@ -2,6 +2,7 @@ local Addon, private = ...
 
 -- Builtins
 local floor = math.floor
+local next = next
 
 -- Globals
 local LibAnimate = LibAnimate
@@ -93,7 +94,7 @@ local function Dispose(self, duration, alive)
 	self.buttons = { }
 	self.fadeAnimation = self:AnimateAlpha(self:GetAlpha() * (duration or 0), "linear", 0, function()
 		self:SetVisible(false)
-		cache[#cache + 1] = self
+		cache[self] = true
 	end)
 end
 
@@ -101,14 +102,9 @@ local empty = { }
 function ItemContainer.Group(parent, factory, duration)
 	groupCache[factory] = groupCache[factory] or { }
 	
-	local self
 	local cache = groupCache[factory]
-	if(#cache > 0) then
-		self = cache[#cache]
-		cache[#cache] = nil
-		self:SetVisible(true)
-		self:SetParent(parent)
-	else
+	local self = next(cache)
+	if(not self) then
 		self = factory(parent)
 		self.buttons = { }
 		self.moveAnimation = LibAnimate.CreateAnimation(moveAnimationTemplate, moveAnimationFunction)
@@ -119,6 +115,10 @@ function ItemContainer.Group(parent, factory, duration)
 		self.Dispose = Dispose
 		self.Rearrange = Rearrange
 		self.MoveToGrid = MoveToGrid
+	else
+		cache[self] = nil
+		self:SetVisible(true)
+		self:SetParent(parent)
 	end
 	self:SetAlpha(0)
 	self.fadeAnimation = self:AnimateAlpha(duration, "linear", 1)
