@@ -6,8 +6,10 @@ local max = math.max
 local sort = table.sort
 
 -- Globals
-local EventCurrency = Event.Currency
+local Event = Event
 local InspectCurrencyDetail = Inspect.Currency.Detail
+local InspectGuildBankCoin = Inspect.Guild.Bank.Coin
+local InspectInteraction = Inspect.Interaction
 local UICreateFrame = UI.CreateFrame
 
 -- Locals
@@ -138,10 +140,78 @@ local function setPlayerCoin(self, background)
 	self:SetWidth(3 * contentPaddingLeft + self.nameWidth + width)
 end
 
+local function updateGuildList(self, guilds)
+	local names = { }
+	for name in pairs(guilds) do
+		names[#names + 1] = name
+	end
+	sort(names)
+	
+	local y = contentPaddingTop
+	self.nameWidth = 0
+	self.coinWidth = 0
+	for i = 1, #names do
+		self.guildNames[i]:SetText(names[i])
+		self.guildCoins[i]:SetCoin(guilds[names[i]])
+		self.guildNames[i]:SetVisible(true)
+		self.guildCoins[i]:SetVisible(true)
+		self.nameWidth = max(self.nameWidth, self.guildNames[i]:GetWidth())
+		self.coinWidth = max(self.coinWidth, self.guildCoins[i]:GetWidth())
+		y = y + self.guildNames[i]:GetHeight()
+	end
+	for i = #names + 1, #self.guildNames do
+		self.guildNames[i]:SetVisible(false)
+		self.guildCoins[i]:SetVisible(false)
+	end
+	self:SetWidth(3 * contentPaddingLeft + self.nameWidth + self.coinWidth)
+	
+	local bottomOffset = (8 / backgroundHeight) * y
+	self.background:SetHeight(y + bottomOffset)
+end
+
+local function createGuildFrames(self, background)
+	local count = 1 -- Reserve one for the player's guild
+	local guilds = Item.Storage.GetGuildCoins()
+	for name, coin in pairs(guilds) do
+		count = count + 1
+	end
+	
+	local y = contentPaddingTop
+	self.guildNames = { }
+	self.guildCoins = { }
+	for i = 1, count do
+		local name, coin = createCharEntry(background, "", 0, y)
+		name:SetVisible(false)
+		coin:SetVisible(false)
+		self.guildNames[i] = name
+		self.guildCoins[i] = coin
+		y = y + name:GetHeight()
+	end
+	
+	if(InspectInteraction("guildbank")) then
+		guilds[Player.guild] = InspectGuildBankCoin()
+	end
+	updateGuildList(self, guilds)
+end
+
+local function eventGuildBankCoin(self, coin)
+	local guilds = Item.Storage.GetGuildCoins()
+	guilds[Player.guild] = coin
+	updateGuildList(self, guilds)
+end
+
+local function eventInteraction(self, interaction, status)
+	if(interaction == "guildbank" and status) then
+		local guilds = Item.Storage.GetGuildCoins()
+		guilds[Player.guild] = InspectGuildBankCoin()
+		updateGuildList(self, guilds)
+	end
+end
+
 -- Public methods
 -- ============================================================================
 
-function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar)
+function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar, location)
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetHeight(0)
 	
@@ -149,23 +219,32 @@ function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar)
 	background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT")
 	background:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT")
 	background:SetTexture("Rift", "dropdown_list.png.dds")
+	self.background = background
 	
 	self.nameWidth = 0
 	self.coinWidth = 0
+	self.names = { }
+	self.coins = { }
 	
 	function self:SetCallback(callback)
 		self.callback = callback
 	end
 	
-	ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
-		createCharFrames(self, background)
-		setPlayerCoin(self, background)
-		EventCurrency[#EventCurrency + 1] = { function() setPlayerCoin(self, background) end, Addon.identifier, "" }
-		Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
-	end, Addon.identifier, "" }
+	if(location ~= "guildbank") then
+		ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
+			createCharFrames(self, background)
+			setPlayerCoin(self, background)
+			Event.Currency[#Event.Currency + 1] = { function() setPlayerCoin(self, background) end, Addon.identifier, "" }
+			Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
+		end, Addon.identifier, "" }
+	else
+		ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
+			createGuildFrames(self, background)
+			Event.Interaction[#Event.Interaction + 1] = { function(...) eventInteraction(self, ...) end, Addon.identifier, "" }
+			Event.Guild.Bank.Coin[#Event.Guild.Bank.Coin + 1] = { function(coin) eventGuildBankCoin(self, coin) end, Addon.identifier, "" }
+			Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
+		end, Addon.identifier, "" }
+	end
 
-	
-	
-	self.ShowForChars = showForChars
 	return self
 end

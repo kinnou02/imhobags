@@ -196,7 +196,7 @@ local function createCharButton(self)
 	function self:SetCharSelectorCallback(callback) self.charSelector:SetCallback(callback) end
 end
 
-local function createGoldButton(self)
+local function createGoldButton(self, location)
 	self.goldButton = Ux.ItemWindowTemplate.TitleBarButton(self.leftHidden, "ImhoBags", "textures/icon_menu_gold.png", 24, 24, 0, 1, function()
 		if(self.coinSummary:GetVisible()) then
 			self.coinSummary:FadeOut()
@@ -207,7 +207,7 @@ local function createGoldButton(self)
 	end)
 	self.goldButton:SetPoint("TOPLEFT", self.charButton, "TOPRIGHT")
 
-	self.coinSummary = Ux.ItemWindowTemplate.CoinSummary(self, self)
+	self.coinSummary = Ux.ItemWindowTemplate.CoinSummary(self, self, location)
 	self.coinSummary:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 15, 0)
 	self.coinSummary:SetVisible(false)
 	self:HotArea(self.coinSummary, true)
@@ -425,7 +425,7 @@ function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	
 	-- Left leftHidden panel
 	createCharButton(self)
-	createGoldButton(self)
+	createGoldButton(self, location)
 	createSearchFilter(self)
 	createSizeButton(self)
 	createSortButton(self, location)
