@@ -26,6 +26,7 @@ local itemWindows = {
 	{ "currency", nil },
 	{ "equipment", nil },
 	{ "inventory", UI.Native.BagInventory1 },
+	{ "guildbank", UI.Native.BankGuild},
 	{ "quest", nil },
 }
 

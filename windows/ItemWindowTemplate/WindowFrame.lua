@@ -63,7 +63,11 @@ local function createTitleBar(self, location, config)
 		self.titleBar:SetCharButtonSkin("player")
 	end
 	self.titleBar:SetCharSelectorCallback(function(char)
-		self:SetCharacter(char)
+		if(self.location == "guildbank") then
+			self:SetGuild(char)
+		else
+			self:SetCharacter(char)
+		end
 		self.titleBar:FadeOut()
 	end)
 	self.titleBar:SetSizeSelectorCallback(function(n)
@@ -165,19 +169,24 @@ local function containerDisplayChanged(container, values)
 	local self = container:GetParent()
 	if(values.height) then
 		self.heightAnimation:Stop()
-		self.heightAnimation = self:AnimateHeight(Const.AnimationsDuration, "easeOutCubic", max(Const.ItemWindowMinHeight, values.height))
+		self.heightAnimation = self:AnimateHeight(Const.AnimationsDuration, "easeOutCubic",
+			max(Const.ItemWindowMinHeight, self.containerOffset + values.height))
 	end
 	if(values.empty) then
 		self.titleBar:SetEmptySlots(values.empty)
 	end
 end
 
-local function createNativeHook(self, native)
+local function createNativeHook(self, native, location)
 	if(native) then
 		function native.Event.Loaded(native)
 			if(Config.autoOpen) then
 				if(native:GetLoaded()) then
-					self:SetCharacter(Player.name)
+					if(location == "guildbank") then
+						self:SetGuild(Player.guild)
+					else
+						self:SetCharacter(Player.name)
+					end
 					self:SetVisible(true)
 				else
 					self:SetVisible(false)
@@ -204,6 +213,25 @@ local function createBackground(self)
 	fn(self:GetContent())
 end
 
+local function guildVaultSelected(self, vault)
+	self.container:SetGuild(self.character, vault)
+end
+
+local function createGuildBar(self, location)
+	if(location == "guildbank") then
+		self.guildbar = ItemContainer.GuildBar(self, function(vault) guildVaultSelected(self, vault) end)
+		self.guildbar:SetPoint("TOPLEFT", self, "TOPLEFT", 0, -3)
+		self.guildbar:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -3)
+		self.container:SetPoint("TOPLEFT", self.guildbar, "BOTTOMLEFT")
+		self.container:SetPoint("TOPRIGHT", self.guildbar, "BOTTOMRIGHT")
+		self.containerOffset = self.guildbar:GetHeight()
+	else
+		self.container:SetPoint("TOPLEFT", self, "TOPLEFT")
+		self.container:SetPoint("TOPRIGHT", self, "TOPRIGHT")
+		self.containerOffset = 0
+	end
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -218,6 +246,13 @@ local function SetCharacter(self, character)
 	end
 end
 
+local function SetGuild(self, guild)
+	self.character = guild
+	self.container:SetGuild(guild)
+	self.titleBar:SetAlliance(nil)
+	self.titleBar:SetMainLabel(guild or "?")
+end
+
 local function FillConfig(self, config)
 	config.x = self:GetLeft()
 	config.y = self:GetTop()
@@ -228,7 +263,6 @@ end
 
 -- HACK: Inspect.Item.List("inventory") does not return all items if called too early after /reloadui
 local function SetVisible(self, visible)
-	log("RunSlot", self.location)
 	Item.Dispatcher.RunSlot(self.location)
 	if(self.location == "equipment") then
 		Item.Dispatcher.RunSlot("wardrobe")
@@ -251,8 +285,6 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
 	
 	self.container = ItemContainer.Display(self, location, config, containerDisplayChanged)
-	self.container:SetPoint("TOPLEFT", self, "TOPLEFT")
-	self.container:SetPoint("TOPRIGHT", self, "TOPRIGHT")
 	self.container:SetLayer(2)
 	
 	self.config = config
@@ -262,6 +294,7 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	
 	self.FillConfig = FillConfig
 	self.SetCharacter = SetCharacter
+	self.SetGuild = SetGuild
 	self.SetVisible = SetVisible
 	
 	self.onClose = function() self:SetVisible(false) end
@@ -283,7 +316,8 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	createHelpButton(self)
 	createTitleBar(self, location, config)
 	createResizeButton(self)
-	createNativeHook(self, native)
+	createNativeHook(self, native, location)
+	createGuildBar(self, location)
 --	createBackground(self)
 	
 	return self

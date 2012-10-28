@@ -65,6 +65,7 @@ RunOnStartup = {
 	
 	"ItemContainer/Display.lua",
 	"ItemContainer/Group.lua",
+	"ItemContainer/GuildBar.lua",
 	"ItemContainer/ItemSet.lua",
 	"ItemContainer/Layouter.lua",
 	

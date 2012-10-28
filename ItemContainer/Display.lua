@@ -19,8 +19,11 @@ local Event = Event
 local Inspect = Inspect
 local InspectCurrencyCategoryDetail = Inspect.Currency.Category.Detail
 local InspectCurrencyDetail = Inspect.Currency.Detail
+local InspectGuildBankList = Inspect.Guild.Bank.List
 local InspectItemDetail = Inspect.Item.Detail
 local UICreateFrame = UI.CreateFrame
+local UtilityItemSlotGuild = Utility.Item.Slot.Guild
+local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
 local labelFontSize = 14
@@ -35,6 +38,20 @@ ItemContainer.Display = { }
 
 local function getGroupLabelMinWidth(self)
 	return self.text:GetWidth()
+end
+
+local function showsPlayerSet(self, set)
+	set = set or self.set
+	if(set == self.playerSet) then
+		return true
+	else
+		for k, v in pairs(self.playerSet) do
+			if(v == set) then
+				return true
+			end
+		end
+	end
+	return false
 end
 
 local function setupGroupLabel(self, display, group, items)
@@ -63,7 +80,7 @@ local function groupLabelFactory(parent)
 end
 
 local function updateButton(self, id)
-	if(self.set == self.playerSet) then
+	if(showsPlayerSet(self)) then
 		self.layouter:UpdateItem(id)
 	end
 end
@@ -81,7 +98,7 @@ end
 local function eventItemSlot(self, slot, item, container, bag, index)
 	self.playerSet:UpdateSlot(slot, item, container, bag, index)
 	
-	if(self.playerSet == self.set) then
+	if(showsPlayerSet(self)) then
 		self.needsUpdate = true
 		self.itemsChanged = true
 	end
@@ -95,9 +112,35 @@ local function eventItemUpdate(self, slot, item, container, bag, index)
 	end
 end
 
-local function eventCurrency(self, currencies)
+local function eventItemSlotGuild(self, slot, item, container, bag, index)
+	local set = self.playerSet[bag]
+	if(not set) then
+		set = ItemContainer.ItemSet("guildbank")
+		self.playerSet[bag] = set
+	end
+	set:UpdateSlot(slot, item, container, bag, index)
+	
+	if(set == self.set) then
+		self.needsUpdate = true
+		self.itemsChanged = true
+	end
+end
 
-	if(self.playerSet == self.set) then
+local function eventItemUpdateGuild(self, slot, item, container, bag, index)
+	local set = self.playerSet[bag]
+	if(not set) then
+		set = ItemContainer.ItemSet("guildbank")
+		self.playerSet[bag] = set
+	end
+	set:UpdateItem(slot, item, container, bag, index)
+	
+	if(item and item ~= "nil") then
+		updateButton(self, item)
+	end
+end
+
+local function eventCurrency(self, currencies)
+	if(showsPlayerSet(self)) then
 		self.playerSet:UpdateCurrency(currencies, function(id) updateButton(self, id) end)
 		self.needsUpdate = true
 		self.itemsChanged = true
@@ -156,6 +199,13 @@ local function eventInteraction(self, interaction, state)
 	end
 end
 
+local function eventGuildBankChange(self, vaults)
+	for slot in pairs(vaults) do
+		local container, bag = UtilityItemSlotParse(slot)
+		self.playerSet[bag] = self.playerSet[bag] or ItemContainer.ItemSet("guildbank")
+	end
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -201,6 +251,17 @@ local function SetCharacter(self, character)
 	self.itemsChanged = true
 end
 
+local function SetGuild(self, guild, vault)
+	if(guild == Player.guild) then
+		self.set = self.playerSet[vault or 1] or ItemContainer.ItemSet("guildbank")
+	else
+		self.set = ItemContainer.ItemSet("guildbank", guild, vault or 1)
+	end
+	self.layouter:SetItemSet(self.set)
+	self.needsUpdate = true
+	self.itemsChanged = true
+end
+
 local function SetSearchFilter(self, filter)
 	self.layouter:SetSearchFilter(filter)
 end
@@ -224,7 +285,7 @@ local function SetSortMethod(self, sort)
 end
 
 local function DropCursorItem(self)
-	if(self.set == self.playerSet and self.available) then
+	if(showsPlayerSet(self) and self.available) then
 		local slot = next(self.playerSet.Empty)
 		if(slot) then
 			ItemHandler.Standard.Drop(slot)
@@ -238,12 +299,17 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	local self = UICreateFrame("Frame", "ItemContainer." .. location, parent)
 	
 	config = checkConfig(location, config)
-	self.playerSet = ItemContainer.ItemSet(location)
+	if(location == "guildbank") then
+		self.playerSet = { ItemContainer.ItemSet("guildbank") }
+		self.set = self.playerSet[1]
+	else
+		self.playerSet =  ItemContainer.ItemSet(location)
+		self.set = self.playerSet
+	end
 	self.unknownItemDetails = {
 		-- [slot] = type
 	}
 	self.available = true
-	self.set = self.playerSet
 	self.needsUpdate = false
 	self.needsLayout = false
 	self.itemsChanged = false
@@ -255,6 +321,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.FillConfig = FillConfig
 	self.GetNumEmptySlots = GetNumEmptySlots
 	self.SetCharacter = SetCharacter
+	self.SetGuild = SetGuild
 	self.SetItemSize = SetItemSize
 	self.SetLayout = SetLayout
 	self.SetNeedsLayout = SetNeedsLayout
@@ -276,6 +343,10 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	if(location == "currency") then
 		Event.Currency[#Event.Currency + 1] = { function(...) eventCurrency(self, ...) end, Addon.identifier, "ItemContainer.currency.eventCurrency" }
 		eventCurrency(self, Inspect.Currency.List())
+	elseif(location == "guildbank") then
+		Item.Dispatcher.AddSlotCallback("guild", function(...) eventItemSlotGuild(self, ...) end)
+		Item.Dispatcher.AddUpdateCallback("guild", function(...) eventItemUpdateGuild(self, ...) end)
+		Event.Guild.Bank.Change[#Event.Guild.Bank.Change + 1] = { function(...) eventGuildBankChange(self, ...) end, Addon.identifier, "eventGuildBankChange" }
 	else
 		Item.Dispatcher.AddSlotCallback(location, function(...) eventItemSlot(self, ...) end)
 		Item.Dispatcher.AddUpdateCallback(location, function(...) eventItemUpdate(self, ...) end)
