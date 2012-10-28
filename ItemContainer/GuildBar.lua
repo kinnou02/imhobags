@@ -96,7 +96,9 @@ local function createVaultButton(parent, index)
 		setVaultNameText(parent, parent.vaultButtons[parent.vault].name or "", slot(parent.vault))
 	end
 	function self.Event:LeftClick()
-		setVault(parent, index)
+		if(parent.vaultAccess[self.slot]) then
+			setVault(parent, index)
+		end
 	end
 	
 	return self
