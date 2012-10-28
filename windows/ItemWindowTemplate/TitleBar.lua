@@ -132,16 +132,26 @@ local function createFadeAnimationRight(self)
 	hotArea.Event.MouseOut = fadeOut
 end
 
-local function createAllianceLogo(self)
+local function createAllianceLogo(self, location)
 	self.allianceIcon = UICreateFrame("Texture", "", self.leftPanel)
-	self.allianceIcon:SetPoint("BOTTOMLEFT", self.leftPanel, "BOTTOMLEFT", 0, 14)
-	self.allianceIcon:SetWidth(36)
-	self.allianceIcon:SetHeight(36)
+	if(location == "guildbank") then
+		self.allianceIcon:SetPoint("BOTTOMLEFT", self.leftPanel, "BOTTOMLEFT", 0, 3)
+	else
+		self.allianceIcon:SetPoint("BOTTOMLEFT", self.leftPanel, "BOTTOMLEFT", 0, 0)
+	end
+	self.allianceIcon:SetWidth(22)
+	self.allianceIcon:SetHeight(22)
 	
 	function self:SetAlliance(alliance)
 		if(alliance) then
-			self.allianceIcon:SetWidth(36)
-			self.allianceIcon:SetTextureAsync("Rift", alliance .. ".png.dds")
+			if(location == "guildbank") then
+				self.allianceIcon:SetWidth(28)
+				self.allianceIcon:SetHeight(28)
+				self.allianceIcon:SetTextureAsync("Rift", "GuildLog_icon_" .. alliance .. ".png.dds")
+			else
+				self.allianceIcon:SetWidth(22)
+				self.allianceIcon:SetTextureAsync("Rift", "faction_marker_" .. alliance .. ".png.dds")
+			end
 		else
 			self.allianceIcon:SetWidth(0)
 		end
@@ -153,7 +163,7 @@ local function createMainLabel(self)
 	self.mainLabel:SetFontColor(0, 0, 0)
 	self.mainLabel:SetFontSize(18)
 	self.mainLabel:SetText("")
-	self.mainLabel:SetPoint("TOPLEFT", self.allianceIcon, "TOPLEFT", 20, -2)
+	self.mainLabel:SetPoint("LEFTCENTER", self.allianceIcon, "RIGHTCENTER", 0, 0)
 	
 	function self:SetMainLabel(text) self.mainLabel:SetText(text) end
 end
@@ -420,7 +430,7 @@ function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	createFadeAnimationRight(self)
 	
 	-- Left leftPanel panel
-	createAllianceLogo(self)
+	createAllianceLogo(self, location)
 	createMainLabel(self)
 	
 	-- Left leftHidden panel

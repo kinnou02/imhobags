@@ -249,7 +249,7 @@ end
 local function SetGuild(self, guild)
 	self.character = guild
 	self.container:SetGuild(guild)
-	self.titleBar:SetAlliance(nil)
+	self.titleBar:SetAlliance(Player.alliance)
 	self.titleBar:SetMainLabel(guild or "?")
 end
 
