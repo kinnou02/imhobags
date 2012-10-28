@@ -1,6 +1,7 @@
 local Addon, private = ...
 
 -- Builtins
+local next = next
 local type = type
 
 -- Globals
@@ -120,7 +121,7 @@ local function storageLoaded()
 	for i = 1, Const.ItemButtonWarmupCache do
 		local button = createButton(Ux.Context)
 		button:SetVisible(false)
-		cachedButtons[#cachedButtons + 1] = button
+		cachedButtons[button] = true
 	end
 end
 
@@ -182,7 +183,7 @@ local function Dispose(self, duration)
 	self.moveAnimation:Stop()
 	self.fadeAnimation:Stop()
 	self.fadeAnimation = self:AnimateAlpha(self:GetAlpha() * (duration or 0), "linear", 0, function()
-		cachedButtons[#cachedButtons + 1] = self
+		cachedButtons[self] = true
 		self:SetVisible(false)
 	end)
 end
@@ -210,12 +211,11 @@ local function SetLocked(self, locked)
 end
 
 function Ux.ItemButton.New(parent, available, duration)
-	local button
-	if(#cachedButtons == 0) then
+	local button = next(cachedButtons)
+	if(not button) then
 		button = createButton(parent)
 	else
-		button = cachedButtons[#cachedButtons]
-		cachedButtons[#cachedButtons] = nil
+		cachedButtons[button] = nil
 		button:SetVisible(true)
 		button:SetParent(parent)
 	end
