@@ -63,7 +63,7 @@ local function createTitleBar(self, location, config)
 		self.titleBar:SetCharButtonSkin("player")
 	end
 	self.titleBar:SetCharSelectorCallback(function(char)
-		if(self.location == "guildbank") then
+		if(location == "guildbank") then
 			self:SetGuild(char)
 		else
 			self:SetCharacter(char)
@@ -219,12 +219,12 @@ end
 
 local function createGuildBar(self, location)
 	if(location == "guildbank") then
-		self.guildbar = ItemContainer.GuildBar(self, function(vault) guildVaultSelected(self, vault) end)
-		self.guildbar:SetPoint("TOPLEFT", self, "TOPLEFT", 0, -3)
-		self.guildbar:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -3)
-		self.container:SetPoint("TOPLEFT", self.guildbar, "BOTTOMLEFT")
-		self.container:SetPoint("TOPRIGHT", self.guildbar, "BOTTOMRIGHT")
-		self.containerOffset = self.guildbar:GetHeight()
+		self.guildBar = ItemContainer.GuildBar(self, function(vault) guildVaultSelected(self, vault) end)
+		self.guildBar:SetPoint("TOPLEFT", self, "TOPLEFT", 0, -3)
+		self.guildBar:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -3)
+		self.container:SetPoint("TOPLEFT", self.guildBar, "BOTTOMLEFT")
+		self.container:SetPoint("TOPRIGHT", self.guildBar, "BOTTOMRIGHT")
+		self.containerOffset = self.guildBar:GetHeight()
 	else
 		self.container:SetPoint("TOPLEFT", self, "TOPLEFT")
 		self.container:SetPoint("TOPRIGHT", self, "TOPRIGHT")
@@ -251,7 +251,6 @@ local function SetGuild(self, guild)
 	self.container:SetGuild(guild)
 	self.titleBar:SetAlliance(Player.alliance)
 	self.titleBar:SetMainLabel(guild or "?")
-	self.guildBar:SetGuild(guild)
 end
 
 local function FillConfig(self, config)
