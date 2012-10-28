@@ -80,9 +80,7 @@ local function groupLabelFactory(parent)
 end
 
 local function updateButton(self, id)
-	if(showsPlayerSet(self)) then
-		self.layouter:UpdateItem(id)
-	end
+	self.layouter:UpdateItem(id)
 end
 
 local function makeEmptyItemDetail(slot)
@@ -107,7 +105,7 @@ end
 local function eventItemUpdate(self, slot, item, container, bag, index)
 	self.playerSet:UpdateItem(slot, item, container, bag, index)
 	
-	if(item and item ~= "nil") then
+	if(showsPlayerSet(self) and item and item ~= "nil") then
 		updateButton(self, item)
 	end
 end
@@ -137,7 +135,7 @@ local function eventItemUpdateGuild(self, slot, item, container, bag, index)
 	end
 	set:UpdateItem(slot, item, container, bag, index)
 	
-	if(item and item ~= "nil") then
+	if(showsPlayerSet(self) and item and item ~= "nil") then
 		updateButton(self, item)
 	end
 end

@@ -51,11 +51,11 @@ local function removeItem(self, slot, item)
 	end
 end
 
-local function inspectItemDetailTwink(type, slot, count, unknown)
+local function inspectItemDetailTwink(id, type, slot, count, unknown)
 	local ok, detail = pcall(InspectItemDetail, type)
 	if(not (ok and detail)) then
 		detail = makeUnknownItemDetail(type)
-		unknown[slot] = type
+		unknown[slot] = id
 	end
 	detail.slot = slot
 	detail.stack = count
@@ -68,7 +68,7 @@ local function loadStoredCurrency(self, character)
 	totals.coin = nil -- Don't show coin here
 	local slot = 1
 	for type, count in pairs(totals) do
-		local detail = inspectItemDetailTwink(type, slot, count, unknown)
+		local detail = inspectItemDetailTwink(type, type, slot, count, unknown)
 		self.Slots[slot] = type
 		self.Items[type] = detail
 		self.Groups[type] = InspectCurrencyCategoryDetail(categories[type]).name
@@ -82,7 +82,7 @@ local function populateWithStoredItems(self, totals, slots, counts, bags)
 	local id = 1
 	for slot, type in pairs(slots or { }) do
 		if(type) then
-			local detail = inspectItemDetailTwink(type, slot, counts[slot], unknown)
+			local detail = inspectItemDetailTwink(id, type, slot, counts[slot], unknown)
 			self.Slots[slot] = id
 			self.Items[id] = detail
 			local container, bag, index = UtilityItemSlotParse(slot)
@@ -97,7 +97,7 @@ local function populateWithStoredItems(self, totals, slots, counts, bags)
 	for slot, type in pairs(bags or { }) do
 		local container, bag, index = UtilityItemSlotParse(slot)
 		if(type) then
-			local detail = inspectItemDetailTwink(type, slot, 1, unknown)
+			local detail = inspectItemDetailTwink(id, type, slot, 1, unknown)
 			self.Bags[index] = id
 			self.Items[id] = detail
 			id = id + 1
@@ -121,8 +121,8 @@ end
 
 function ResolveUnknownItems(self, unknownTypes, callback)
 	local unknown = { }
-	for slot, type in pairs(unknownTypes) do
-		local id = self.Slots[slot]
+	for slot, id in pairs(unknownTypes) do
+		local type = self.Items[id].type
 		local ok, detail = pcall(InspectItemDetail, type)
 		if(ok and detail) then
 			detail.stack = self.Items[id].stack
@@ -134,7 +134,7 @@ function ResolveUnknownItems(self, unknownTypes, callback)
 			end
 			callback(id)
 		else
-			unknown[slot] = type
+			unknown[slot] = id
 		end
 	end
 	return unknown
