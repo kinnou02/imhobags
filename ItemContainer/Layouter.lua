@@ -206,7 +206,6 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 		local details = self.set.Items[item]
 		local button = next(self.unusedButtons)
 		if(button) then
-			log("reused")
 			self.unusedButtons[button] = nil
 			self.itemButtons[item] = button
 			if(details.rarity == "empty") then
@@ -217,7 +216,6 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 		else
 			button = self.itemButtons[item]
 			if(not button) then
-				log("new")
 				button = Ux.ItemButton.New(self.parent, self.available, Const.AnimationsDuration)
 				self.itemButtons[item] = button
 				if(details.rarity == "empty") then

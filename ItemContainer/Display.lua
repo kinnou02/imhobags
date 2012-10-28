@@ -113,6 +113,9 @@ local function eventItemUpdate(self, slot, item, container, bag, index)
 end
 
 local function eventItemSlotGuild(self, slot, item, container, bag, index)
+	if(item == "nil") then
+		return
+	end
 	local set = self.playerSet[bag]
 	if(not set) then
 		set = ItemContainer.ItemSet("guildbank")
