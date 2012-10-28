@@ -3,6 +3,7 @@ local Addon, private = ...
 -- Builtins
 local _G = _G
 local pairs = pairs
+local type = type
 
 -- Globals
 local Event = Event
@@ -406,6 +407,9 @@ end
 
 function Item.Storage.GetGuildItems(guild, vault)
 	guild = guildData[guild]
+	if(type(vault) == "number" and vault > 0) then
+		vault = UtilityItemSlotGuild(vault)
+	end
 	if(guild) then
 		vault = guild.vault[vault]
 		if(vault) then

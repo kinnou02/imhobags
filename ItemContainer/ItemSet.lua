@@ -113,7 +113,7 @@ local function loadStoredItems(self, location, character)
 end
 
 local function loadStoredGuild(self, guild, vault)
-	return populateWithStoredItems(self, Item.Storage.GetGuildItems(guild, valut))
+	return populateWithStoredItems(self, Item.Storage.GetGuildItems(guild, vault))
 end
 
 -- Public methods
