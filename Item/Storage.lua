@@ -22,6 +22,7 @@ local guildData
 local player
 local guild
 local guildVaultSlots = { }
+local hookEvents
 
 setfenv(1, private)
 Item = Item or { }
@@ -275,6 +276,29 @@ local function guildChanged(old, new)
 	end
 end
 
+local function hookGuildEvents()
+	Event.Guild.Bank.Change[#Event.Guild.Bank.Change + 1] = {
+		eventGuildBankChange,
+		Addon.identifier,
+		"Item.Storage.eventGuildBankChange"
+	}
+	Event.Guild.Bank.Coin[#Event.Guild.Bank.Coin + 1] = {
+		eventGuildBankCoin,
+		Addon.identifier,
+		"Item.Storage.eventGuildBankCoin"
+	}
+	Event.Guild.Rank[#Event.Guild.Rank + 1] = {
+		eventGuildRank,
+		Addon.identifier,
+		"Item.Storage.eventGuildRank"
+	}
+	Event.Guild.Roster.Detail.Rank[#Event.Guild.Roster.Detail.Rank + 1] = {
+		eventGuildRosterDetailRank,
+		Addon.identifier,
+		"Item.Storage.eventGuildRosterDetailRank"
+	}
+end
+
 local function init()
 	player.info.alliance = Player.alliance
 	eventItemSlot(InspectItemList("si"))
@@ -282,7 +306,49 @@ local function init()
 	guildData = _G.ImhoBags_ItemStorageGuilds or { }
 	-- Catch cases where a character is removed from a guild while offline
 	guildChanged(player.info.guild, Player.guild)
+	hookGuildEvents()
 end
+
+Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
+	eventAddonSavedVariablesLoadEnd,
+	Addon.identifier,
+	"Item.Storage.eventAddonSavedVariablesLoadEnd"
+}
+Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = {
+	eventAddonSavedVariablesSaveBegin,
+	Addon.identifier,
+	"Item.Storage.eventAddonSavedVariablesSaveBegin"
+}
+Event.Currency[#Event.Currency + 1] = {
+	eventCurrency,
+	Addon.identifier,
+	"Item.Storage.eventCurrency"
+}
+Event.Interaction[#Event.Interaction + 1] = {
+	eventInteraction,
+	Addon.identifier,
+	"Item.Storage.eventInteraction"
+}
+Event.Item.Slot[#Event.Item.Slot + 1] = {
+	eventItemSlot,
+	Addon.identifier,
+	"Item.Storage.eventItemSlot"
+}
+Event.Item.Update[#Event.Item.Update + 1] = {
+	eventItemUpdate,
+	Addon.identifier,
+	"Item.Storage.eventItemUpdate"
+}
+Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = {
+	init,
+	Addon.identifier,
+	"Item.Storage.init"
+}
+Event.ImhoBags.Private.Guild[#Event.ImhoBags.Private.Guild + 1] = {
+	guildChanged,
+	Addon.identifier,
+	"Item.Storage.guildChanged"
+}
 
 -- Public methods
 -- ============================================================================
@@ -360,70 +426,19 @@ end
 function Item.Storage.GetGuildVaults(name)
 	local vaults = { }
 	if(guildData[name]) then
-		for id, name in pairs(guildData[name].vault) do
-			vaults[id] = name
+		for slot, data in pairs(guildData[name].vault) do
+			vaults[slot] = data.name
 		end
 	end
 	return vaults
 end
 
-Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
-	eventAddonSavedVariablesLoadEnd,
-	Addon.identifier,
-	"Item.Storage.eventAddonSavedVariablesLoadEnd"
-}
-Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = {
-	eventAddonSavedVariablesSaveBegin,
-	Addon.identifier,
-	"Item.Storage.eventAddonSavedVariablesSaveBegin"
-}
-Event.Currency[#Event.Currency + 1] = {
-	eventCurrency,
-	Addon.identifier,
-	"Item.Storage.eventCurrency"
-}
-Event.Guild.Bank.Change[#Event.Guild.Bank.Change + 1] = {
-	eventGuildBankChange,
-	Addon.identifier,
-	"Item.Storage.eventGuildBankChange"
-}
-Event.Guild.Bank.Coin[#Event.Guild.Bank.Coin + 1] = {
-	eventGuildBankCoin,
-	Addon.identifier,
-	"Item.Storage.eventGuildBankCoin"
-}
-Event.Guild.Rank[#Event.Guild.Rank + 1] = {
-	eventGuildRank,
-	Addon.identifier,
-	"Item.Storage.eventGuildRank"
-}
-Event.Guild.Roster.Detail.Rank[#Event.Guild.Roster.Detail.Rank + 1] = {
-	eventGuildRosterDetailRank,
-	Addon.identifier,
-	"Item.Storage.eventGuildRosterDetailRank"
-}
-Event.Interaction[#Event.Interaction + 1] = {
-	eventInteraction,
-	Addon.identifier,
-	"Item.Storage.eventInteraction"
-}
-Event.Item.Slot[#Event.Item.Slot + 1] = {
-	eventItemSlot,
-	Addon.identifier,
-	"Item.Storage.eventItemSlot"
-}
-Event.Item.Update[#Event.Item.Update + 1] = {
-	eventItemUpdate,
-	Addon.identifier,
-	"Item.Storage.eventItemUpdate"
-}
-Event.ImhoBags.Private.Guild[#Event.ImhoBags.Private.Guild + 1] = {
-	guildChanged,
-	Addon.identifier,
-	"Item.Storage.guildChanged"
-}
-Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = {
-	init,
-	Addon.identifier,
-	"Item.Storage.init"
-}
+function Item.Storage.GetGuildVaultAccess(name)
+	local vaults = { }
+	if(guildData[name]) then
+		for slot, data in pairs(guildData[name].vault) do
+			vaults[slot] = { access = data.access, withdrawLimit = data.withdrawLimit }
+		end
+	end
+	return vaults
+end
