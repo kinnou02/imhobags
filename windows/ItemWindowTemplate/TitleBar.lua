@@ -414,7 +414,7 @@ function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	leftPanel:SetPoint("BOTTOMLEFT", leftHidden, "TOPLEFT")
 	leftPanel:SetPoint("RIGHT", rightPanel, "LEFT")
 	
-	if(not Addon.toc.debug) then
+	if(Addon.toc.debug) then
 		leftPanel:SetBackgroundColor(1, 0, 0, 0.5)
 		leftHidden:SetBackgroundColor(0, 0, 1, 0.5)
 		rightPanel:SetBackgroundColor(0, 0, 0, 0.5)
