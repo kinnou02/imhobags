@@ -17,8 +17,12 @@ if(string.find(Addon.toc.Version, "alpha")) then
 	Command.Console.Display("general", false, "<font color='#FF8000'>This is a development version of ImhoBags and not intended for release. It may be broken, have errors or not work at all. You have been warned.</font>", true)
 end
 local lang = Inspect.System.Language()
-if(lang == "Korean" or lang == "French" or lang == "Russian") then
-	Command.Console.Display("general", false, "<font color='#FFFF00'>ImhoBags is looking for " .. lang .. " translators and reviewers!\nCheck by the official RIFT forums in the 'Addon API Development' section if you'd like to help!</font>", true)
+local translators = {
+	German = true,
+	English = true,
+}
+if(not translators[lang]) then
+	Command.Console.Display("general", false, "<font color='#FFFF00'>ImhoBags is looking for " .. lang .. " translators and reviewers!\nContact Imhothar on Curse or RiftUI if you'd like to help!</font>", true)
 end
 
 -- Make this global available everywhere
