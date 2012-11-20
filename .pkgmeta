@@ -4,8 +4,10 @@ license-output: LICENSE.txt
 manual-changelog: CHANGELOG.txt
 
 ignore:
+  - ignored
   - screenshots
-  - textures/*/*.pspimage
+  - textures/*.pspimage
+  - textures/ConfigWindow/*.pspimage
   - TODO.txt
 
 enable-nolib-creation: yes
