@@ -28,6 +28,7 @@ function Group.Default.GetLocalizedShortCategory(item)
 			category = L.CategoryName[category]
 			if(not category) then
 				log("UNLOCALIZED CATEGORY: " .. name)
+				category = L.CategoryName.misc
 			end
 			shortCategoryCache[name] = category
 		end
