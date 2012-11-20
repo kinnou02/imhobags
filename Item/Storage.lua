@@ -18,8 +18,8 @@ local UtilityItemSlotGuild = Utility.Item.Slot.Guild
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
-local charData
-local guildData
+local characters
+local guilds
 local player
 local guild
 local guildVaultSlots = { }
@@ -75,20 +75,20 @@ local function eventAddonSavedVariablesLoadEnd(identifier)
 		return
 	end
 	
-	charData = _G.ImhoBags_ItemStorageCharacters or { }
-	player = charData[Player.name] or newCharacter()
-	charData[Player.name] = player
+	_G.ImhoBags_ItemStorage = _G.ImhoBags_ItemStorage or { }
+	_G.ImhoBags_ItemStorage[Shard.name] = _G.ImhoBags_ItemStorage[Shard.name] or {
+		characters = {
+		},
+		guilds = {
+		},
+	}
+	
+	characters = _G.ImhoBags_ItemStorage[Shard.name].characters
+	characters[Player.name] = characters[Player.name] or newCharacter()
+	player = characters[Player.name]
+	characters[Player.name] = player
 	
 	Trigger.StorageLoaded()
-end
-
-local function eventAddonSavedVariablesSaveBegin(identifier)
-	if(identifier ~= Addon.identifier) then
-		return
-	end
-	
-	_G.ImhoBags_ItemStorageCharacters = charData
-	_G.ImhoBags_ItemStorageGuilds = guildData
 end
 
 local function removeFromTotals(container, item, count)
@@ -255,18 +255,18 @@ local function guildChanged(old, new)
 	player.info.guild = new
 	if(old) then
 		local members = 0
-		for name, data in pairs(charData) do
+		for name, data in pairs(characters) do
 			if(data.info.guild == old) then
 				members = members + 1
 			end
 		end
 		if(members == 0) then
-			guildData[old] = nil
+			guilds[old] = nil
 		end
 	end
 	if(new) then
-		guild = guildData[new] or newGuild()
-		guildData[new] = guild
+		guild = guilds[new] or newGuild()
+		guilds[new] = guild
 		eventGuildBankChange(InspectGuildBankList())
 		local roster = InspectGuildRosterDetail(Player.name)
 		if(roster) then
@@ -304,7 +304,7 @@ local function init()
 	player.info.alliance = Player.alliance
 	eventItemSlot(InspectItemList("si"))
 
-	guildData = _G.ImhoBags_ItemStorageGuilds or { }
+	guilds = _G.ImhoBags_ItemStorage[Shard.name].guilds
 	-- Catch cases where a character is removed from a guild while offline
 	guildChanged(player.info.guild, Player.guild)
 	hookGuildEvents()
@@ -314,11 +314,6 @@ Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = 
 	eventAddonSavedVariablesLoadEnd,
 	Addon.identifier,
 	"Item.Storage.eventAddonSavedVariablesLoadEnd"
-}
-Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = {
-	eventAddonSavedVariablesSaveBegin,
-	Addon.identifier,
-	"Item.Storage.eventAddonSavedVariablesSaveBegin"
 }
 Event.Currency[#Event.Currency + 1] = {
 	eventCurrency,
@@ -355,16 +350,16 @@ Event.ImhoBags.Private.Guild[#Event.ImhoBags.Private.Guild + 1] = {
 -- ============================================================================
 
 function Item.Storage.FindGuild(name)
-	if(charData[name]) then
-		return charData[name].info.guild
+	if(characters[name]) then
+		return characters[name].info.guild
 	else
-		return guildData[name]
+		return guilds[name]
 	end
 end
 
 function Item.Storage.GetCharacterAlliances()
 	local chars = { }
-	for name, data in pairs(charData) do
+	for name, data in pairs(characters) do
 		chars[name] = data.info.alliance
 	end
 	return chars
@@ -372,14 +367,14 @@ end
 
 function Item.Storage.GetCharacterCoins()
 	local chars = { }
-	for name, data in pairs(charData) do
+	for name, data in pairs(characters) do
 		chars[name] = data.currency.totals.coin or 0
 	end
 	return chars
 end
 
 function Item.Storage.GetCharacterItems(character, location)
-	local char = charData[character]
+	local char = characters[character]
 	if(char) then
 		local loc = char[location]
 		if(loc) then
@@ -391,7 +386,7 @@ end
 
 function Item.Storage.GetCharacterNames()
 	local chars = { }
-	for name in pairs(charData) do
+	for name in pairs(characters) do
 		chars[#chars + 1] = name
 	end
 	return chars
@@ -399,14 +394,14 @@ end
 
 function Item.Storage.GetGuildCoins()
 	local coins = { }
-	for name, data in pairs(guildData) do
+	for name, data in pairs(guilds) do
 		coins[name] = data.info.coin or 0
 	end
 	return coins
 end
 
 function Item.Storage.GetGuildItems(guild, vault)
-	guild = guildData[guild]
+	guild = guilds[guild]
 	if(type(vault) == "number" and vault > 0) then
 		vault = UtilityItemSlotGuild(vault)
 	end
@@ -421,7 +416,7 @@ end
 
 function Item.Storage.GetGuildNames()
 	local guilds = { }
-	for name in pairs(guildData) do
+	for name in pairs(guilds) do
 		guilds[#guilds + 1] = name
 	end
 	return guilds
@@ -429,8 +424,8 @@ end
 
 function Item.Storage.GetGuildVaults(name)
 	local vaults = { }
-	if(guildData[name]) then
-		for slot, data in pairs(guildData[name].vault) do
+	if(guilds[name]) then
+		for slot, data in pairs(guilds[name].vault) do
 			vaults[slot] = data.name
 		end
 	end
@@ -439,8 +434,8 @@ end
 
 function Item.Storage.GetGuildVaultAccess(name)
 	local vaults = { }
-	if(guildData[name]) then
-		for slot, data in pairs(guildData[name].vault) do
+	if(guilds[name]) then
+		for slot, data in pairs(guilds[name].vault) do
 			vaults[slot] = { access = data.access, withdrawLimit = data.withdrawLimit }
 		end
 	end

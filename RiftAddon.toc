@@ -94,8 +94,7 @@ RunOnStartup = {
 }
 
 SavedVariables = {
-	ImhoBags_ItemStorageCharacters = "shard",
-	ImhoBags_ItemStorageGuilds = "shard",
+	ImhoBags_ItemStorage = "global",
 	ImhoBags_ItemMatrix_defiant = "shard",
 	ImhoBags_ItemMatrix_guardian = "shard",
 	ImhoBags_GuildMatrix_defiant = "shard",
