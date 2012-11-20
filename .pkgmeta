@@ -4,18 +4,16 @@ license-output: LICENSE.txt
 manual-changelog: CHANGELOG.txt
 
 ignore:
-  - Reference.txt
   - screenshots
-  - textures/highlight.pspimage
-  - textures/icon_menu_layout_onebag.pspimage
-  - textures/icon_menu_sort_icon.pspimage
-  - textures/ConfigWindow/showEnemyFaction.pspimage
+  - textures/*/*.pspimage
   - TODO.txt
 
 enable-nolib-creation: yes
 
 externals:
-  libs/LibString:
-    url: git://git.curseforge.net/rift/libstring/mainline.git
+  libs/LibAnimate:
+    url: git://git.curseforge.net/rift/libanimate/mainline.git
   libs/LibAsyncTextures:
     url: git://git.curseforge.net/rift/lib-async-textures/mainline.git
+  libs/LibString:
+    url: git://git.curseforge.net/rift/libstring/mainline.git
