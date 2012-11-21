@@ -15,16 +15,6 @@ Ux = Ux or { }
 -- Private methods
 -- ============================================================================
 
-local function systemUpdateBegin(self)
-	-- Inspect.Time.Frame() is not good enough and can cause multiple updates per frame
-	local now = InspectTimeReal()
-	if(self.matrix.lastUpdate >= self.lastUpdate) then
-		local items, empty, success = self.matrix:GetUnsortedItems(false)
-		self.label:SetText(tostring(#empty))
-		self.lastUpdate = now
-	end
-end
-
 local function adjustPosition()
 	local normalWidth = 275 -- Width of UI.Native.Bag at 100% scale
 	local actualWidth = UI.Native.Bag:GetWidth()
@@ -36,8 +26,13 @@ local function adjustPosition()
 	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", ceil(71 * factor), ceil(28 * factor))
 end
 
+local function showOrHideEmptySlotIndicator()
+	log(UI.Native.Bag:GetLoaded(), Config.showEmptySlots)
+	Ux.EmptySlotIndicator:SetVisible(UI.Native.Bag:GetLoaded() and Config.showEmptySlots)
+end
+
 -- Create a little window over the native bags frame showing the number of empty bags
-local function createFrame()
+local function createEmptySlotIndicator()
 	local window = UI.CreateFrame("Frame", "ImhoBags_EmptySlotIndicator", Ux.Context)
 	Ux.EmptySlotIndicator = window
 	
@@ -46,14 +41,6 @@ local function createFrame()
 	label:SetPoint("CENTER", window, "CENTER")
 	
 	window:SetBackgroundColor(0, 0, 0, 0.5)
-	
-	window.matrix = ItemDB.GetItemMatrix("player", "inventory")
-	window.character = character
-	window.location = location
-	window.lastUpdate = -2
-	
-	Event.System.Update.Begin[#Event.System.Update.Begin + 1] = { function() systemUpdateBegin(window) end, Addon.identifier, "systemUpdateBegin" }
-
 	local resizeFrame = UI.CreateFrame("Frame", "", Ux.Context)
 	resizeFrame:SetAllPoints(UI.Native.Bag)
 	resizeFrame:SetVisible(false)
@@ -70,13 +57,37 @@ end
 
 local function configChanged(name, value)
 	if(name == "showEmptySlots") then
-		Ux.EmptySlotIndicator:SetVisible(UI.Native.Bag:GetLoaded() and Config.showEmptySlots)
+		showOrHideEmptySlotIndicator()
 	end
 end
 
--- Creation of the frame must be postponed until after saved variables are loaded
-ImhoEvent.Init[#ImhoEvent.Init + 1] = { createFrame, Addon.identifier, "Ux.EmptySlotIndicator_createFrame" }
-ImhoEvent.Config[#ImhoEvent.Config + 1] = { configChanged, Addon.identifier, "Ux.EmptySlotIndicator_configChanged" }
+local function eventItemSlot()
+	local empty = Item.Storage.GetEmptySlots(Player.name, "inventory")
+	Ux.EmptySlotIndicator.label:SetText(tostring(empty))
+end
+
+Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = {
+	eventItemSlot,
+	Addon.identifier,
+	"Ux.EmptySlotIndicator_storageLoaded"
+}
+Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = {
+	showOrHideEmptySlotIndicator,
+	Addon.identifier,
+	"Ux.EmptySlotIndicator_init"
+}
+Event.ImhoBags.Private.Config[#Event.ImhoBags.Private.Config + 1] = {
+	configChanged,
+	Addon.identifier,
+	"Ux.EmptySlotIndicator_configChanged"
+}
+Event.Item.Slot[#Event.Item.Slot + 1] = {
+	eventItemSlot,
+	Addon.identifier,
+	"Ux.EmptySlotIndicator_eventItemSlot",
+}
 
 -- Public methods
 -- ============================================================================
+
+createEmptySlotIndicator()

@@ -384,6 +384,23 @@ function Item.Storage.GetCharacterItems(character, location)
 	return { }, { }, { }, { }
 end
 
+function Item.Storage.GetEmptySlots(character, location)
+	local char = characters[character]
+	if(char) then
+		local loc = char[location]
+		if(loc) then
+			local n = 0
+			for k, v in pairs(loc.slots or loc.categories) do
+				if(v == false) then
+					n = n + 1
+				end
+			end
+			return n
+		end
+	end
+	return 0
+end
+
 function Item.Storage.GetCharacterNames()
 	local chars = { }
 	for name in pairs(characters) do
