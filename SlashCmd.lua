@@ -86,7 +86,7 @@ local function slashMain(args)
 	end
 	
 	-- /imhobags char [location]
-	if(not ItemDB.CharacterExists(arg1)) then
+	if(not Item.Storage.GetCharacterAlliances()[arg1]) then
 		print("\n/imhobags " .. args)
 		print(format(L.SlashMessage.unknownChar, arg1))
 		return
