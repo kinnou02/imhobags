@@ -415,11 +415,11 @@ function Item.Storage.GetGuildItems(guild, vault)
 end
 
 function Item.Storage.GetGuildNames()
-	local guilds = { }
+	local names = { }
 	for name in pairs(guilds) do
-		guilds[#guilds + 1] = name
+		names[#names + 1] = name
 	end
-	return guilds
+	return names
 end
 
 function Item.Storage.GetGuildVaults(name)
