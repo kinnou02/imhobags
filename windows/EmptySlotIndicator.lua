@@ -44,15 +44,14 @@ local function createEmptySlotIndicator()
 	local resizeFrame = UI.CreateFrame("Frame", "", Ux.Context)
 	resizeFrame:SetAllPoints(UI.Native.Bag)
 	resizeFrame:SetVisible(false)
-	adjustPosition()
-	function resizeFrame.Event:Size()
-		adjustPosition()
+	function window.Event:Size()
+		Ux.EmptySlotIndicator.label:SetFontSize(ceil(0.6 * window:GetHeight()))
 	end
 	
-	function UI.Native.Bag.Event:Loaded()
-		window:SetVisible(self:GetLoaded() and Config.showEmptySlots)
-	end
-	window:SetVisible(UI.Native.Bag:GetLoaded() and Config.showEmptySlots)
+	window:SetPoint("TOPLEFT", UI.Native.Bag, 57 / 275, 14 / 85)
+	window:SetPoint("BOTTOMRIGHT", UI.Native.Bag, 85 / 275, 42 / 85)
+	
+	UI.Native.Bag.Event.Loaded = showOrHideEmptySlotIndicator
 end
 
 local function configChanged(name, value)
