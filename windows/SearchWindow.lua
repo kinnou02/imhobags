@@ -1,5 +1,7 @@
 local Addon, private = ...
 
+local assert = assert
+local coroutine = coroutine
 local floor = math.floor
 local format = string.format
 local pairs = pairs
@@ -11,8 +13,10 @@ local strlower = string.lower
 local strupper = string.upper
 
 local Command = Command
+local Event = Event
 local Inspect = Inspect
 local InspectItemDetail = Inspect.Item.Detail
+local InspectTimeReal = Inspect.Time.Real
 local UI = UI
 local UIParent = UIParent
 
@@ -20,6 +24,8 @@ setfenv(1, private)
 Ux = Ux or { }
 
 local displayItemsCount = 24
+local applyFilterAfterCoroutine = false
+local updater
 
 -- Private methods
 -- ============================================================================
@@ -126,7 +132,11 @@ local function applySearchFilter()
 end
 
 function filter.text.Event:TextfieldChange()
-	applySearchFilter()
+	if(updater == nil) then
+		applySearchFilter()
+	else
+		applyFilterAfterCoroutine = true
+	end
 end
 
 scrollbar = UI.CreateFrame("RiftScrollbar", "", frame)
@@ -177,10 +187,22 @@ for i = 1, displayItemsCount do
 	end
 end
 
-local function updateItemList()
-	Command.System.Watchdog.Quiet()
-	
-	local itemTypes = ItemDB.GetAllItemTypes()
+local function eventSystemUpdateBegin()
+	if(updater ~= nil) then
+		local ok, error = coroutine.resume(updater)
+		if(coroutine.status(updater) == "dead") then
+			updater = nil
+			if(applyFilterAfterCoroutine) then
+				applyFilterAfterCoroutine = false
+				applySearchFilter()
+			end
+		end
+		assert(ok, error)
+	end
+end
+
+local function updateItemList(itemTypes)
+	local now = InspectTimeReal()
 	items = { }
 	display = { }
 	for k in pairs(itemTypes) do
@@ -190,8 +212,25 @@ local function updateItemList()
 			items[#items + 1] = { n, detail.rarity, detail.icon, k }
 			display[#display + 1] = items[#items]
 		end
+		if(InspectTimeReal() - now > 0.01) then
+			coroutine.yield()
+			now = InspectTimeReal()
+		end
 	end
+	coroutine.yield()
 	sort(items, function(a, b) return a[1] < b[1] end)
+end
+
+local function updateProc()
+	local itemTypes = ItemDB.GetAllItemTypes()
+	coroutine.yield()
+	updateItemList(itemTypes)
+	coroutine.yield()
+	applySearchFilter()
+end
+
+local function update()
+	updater = coroutine.create(updateProc)
 end
 
 function content.Event:WheelBack()
@@ -202,13 +241,11 @@ function content.Event:WheelForward()
 	scrollbar:NudgeUp()
 end
 
-local function configChanged(name, value)
-	if(name == "showEnemyFaction" and frame:GetVisible()) then
-		updateItemList()
-		applySearchFilter()
-	end
-end
-ImhoEvent.Config[#ImhoEvent.Config + 1] = { configChanged, Addon.identifier, "SearchWindow_configChanged" }
+Event.System.Update.Begin[#Event.System.Update.Begin + 1] = {
+	eventSystemUpdateBegin,
+	Addon.identifier,
+	"SearchWindow_eventSystemUpdateBegin"
+}
 
 -- Public methods
 -- ============================================================================
@@ -218,8 +255,7 @@ function frame:Show()
 	filter.text:SetText("")
 	filter.text:SetKeyFocus(true)
 	
-	updateItemList()
-	applySearchFilter()
+	update()
 end
 
 function frame:Toggle()
