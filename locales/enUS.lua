@@ -17,6 +17,7 @@ private.L = {
 		consumable = "Consumables",
 		container = "Containers",
 		crafting = "Crafting",
+		dimension = "Dimension",
 		misc = "Miscellaneous",
 		["misc quest"] = "Quest",
 		planar = "Planar",
