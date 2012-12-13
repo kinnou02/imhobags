@@ -86,25 +86,11 @@ local function createCharacterFrame(self, name)
 		Ux.ToggleItemWindow(name, "bank")
 	end
 
-	frame.mailButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\collection_of_love_letters.dds]], L.Ux.WindowTitle.mail)
-	function frame.mailButton.LeftPress()
-		self:SetVisible(false)
-		frame.mailButton.Event:MouseOut()
-		Ux.ToggleItemWindow(name, "mail")
-	end
-
 	frame.equipmentButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\1h_sword_065b.dds]], L.Ux.WindowTitle.equipment)
 	function frame.equipmentButton.LeftPress()
 		self:SetVisible(false)
 		frame.equipmentButton.Event:MouseOut()
 		Ux.ToggleItemWindow(name, "equipment")
-	end
-
-	frame.wardrobeButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\festival_hat_03.dds]], L.Ux.WindowTitle.wardrobe)
-	function frame.wardrobeButton.LeftPress()
-		self:SetVisible(false)
-		frame.wardrobeButton.Event:MouseOut()
-		Ux.ToggleItemWindow(name, "wardrobe")
 	end
 
 	frame.currencyButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\loot_gold_coins.dds]], L.Ux.WindowTitle.currency)
@@ -126,7 +112,7 @@ local function createCharacterFrame(self, name)
 	frame.nameLabel:SetText(name)
 	frame.nameLabel:SetFontSize(16)
 	
-	frame:SetWidth(7 * (frame.inventoryButton:GetWidth() + spacing) + frame.nameLabel:GetWidth())
+	frame:SetWidth(5 * (frame.inventoryButton:GetWidth() + spacing) + frame.nameLabel:GetWidth())
 	frame:SetHeight(frame.inventoryButton:GetHeight())
 	
 	return frame
@@ -154,12 +140,8 @@ local function layoutCharacterFrame(self, direction)
 	self.inventoryButton:ClearPoint("RIGHTCENTER")
 	self.bankButton:ClearPoint("LEFTCENTER")
 	self.bankButton:ClearPoint("RIGHTCENTER")
-	self.mailButton:ClearPoint("LEFTCENTER")
-	self.mailButton:ClearPoint("RIGHTCENTER")
 	self.equipmentButton:ClearPoint("LEFTCENTER")
 	self.equipmentButton:ClearPoint("RIGHTCENTER")
-	self.wardrobeButton:ClearPoint("LEFTCENTER")
-	self.wardrobeButton:ClearPoint("RIGHTCENTER")
 	self.currencyButton:ClearPoint("LEFTCENTER")
 	self.currencyButton:ClearPoint("RIGHTCENTER")
 	self.guildButton:ClearPoint("LEFTCENTER")
@@ -169,10 +151,8 @@ local function layoutCharacterFrame(self, direction)
 	
 	self.inventoryButton:SetPoint(anchor1, self, anchor1)
 	self.bankButton:SetPoint(anchor1, self.inventoryButton, anchor2, spacing, 0)
-	self.mailButton:SetPoint(anchor1, self.bankButton, anchor2, spacing, 0)
-	self.equipmentButton:SetPoint(anchor1, self.mailButton, anchor2, spacing, 0)
-	self.wardrobeButton:SetPoint(anchor1, self.equipmentButton, anchor2, spacing, 0)
-	self.currencyButton:SetPoint(anchor1, self.wardrobeButton, anchor2, spacing, 0)
+	self.equipmentButton:SetPoint(anchor1, self.bankButton, anchor2, spacing, 0)
+	self.currencyButton:SetPoint(anchor1, self.equipmentButton, anchor2, spacing, 0)
 	self.guildButton:SetPoint(anchor1, self.currencyButton, anchor2, spacing, 0)
 	self.nameLabel:SetPoint(anchor1, self.guildButton, anchor2)
 end
