@@ -458,3 +458,30 @@ function Item.Storage.GetGuildVaultAccess(name)
 	end
 	return vaults
 end
+
+function Item.Storage.GetAllItemTypes()
+	local types = { }
+	
+	local function merge(location)
+		for type, count in pairs(location.totals) do
+			types[count] = (types[count] or 0) + count
+		end
+	end
+	
+	for char, data in pairs(characters) do
+		merge(data.bank)
+		merge(data.currency)
+		merge(data.equipment)
+		merge(data.inventory)
+		merge(data.quest)
+		merge(data.wardrobe)
+	end
+	
+	for guild, data in pairs(characters) do
+		for id, vault in pairs(data.vault) do
+			merge(vault)
+		end
+	end
+	types.coin = nil
+	return types
+end
