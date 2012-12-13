@@ -76,28 +76,28 @@ local function createCharacterFrame(self, name)
 	function frame.inventoryButton.LeftPress()
 		self:SetVisible(false)
 		frame.inventoryButton.Event:MouseOut()
-		Ux.ToggleItemWindow(name, "inventory")
+		Ux.ShowItemWindow(name, "inventory")
 	end
 
 	frame.bankButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)
 	function frame.bankButton.LeftPress()
 		self:SetVisible(false)
 		frame.bankButton.Event:MouseOut()
-		Ux.ToggleItemWindow(name, "bank")
+		Ux.ShowItemWindow(name, "bank")
 	end
 
 	frame.equipmentButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\1h_sword_065b.dds]], L.Ux.WindowTitle.equipment)
 	function frame.equipmentButton.LeftPress()
 		self:SetVisible(false)
 		frame.equipmentButton.Event:MouseOut()
-		Ux.ToggleItemWindow(name, "equipment")
+		Ux.ShowItemWindow(name, "equipment")
 	end
 
 	frame.currencyButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\loot_gold_coins.dds]], L.Ux.WindowTitle.currency)
 	function frame.currencyButton.LeftPress()
 		self:SetVisible(false)
 		frame.currencyButton.Event:MouseOut()
-		Ux.ToggleItemWindow(name, "currency")
+		Ux.ShowItemWindow(name, "currency")
 	end
 	
 	frame.guildButton = Ux.IconButton.New(frame, ItemDB.GetCharacterAlliance(name) == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or
@@ -105,7 +105,7 @@ local function createCharacterFrame(self, name)
 	function frame.guildButton.LeftPress()
 		self:SetVisible(false)
 		frame.guildButton.Event:MouseOut()
-		Ux.ToggleGuildWindow(name)
+		Ux.ShowItemWindow(name, "guildbank")
 	end
 	
 	frame.nameLabel = UICreateFrame("Text", "", frame)
