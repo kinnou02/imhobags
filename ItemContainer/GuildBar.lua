@@ -182,7 +182,7 @@ local function selectFirstAvailableVault(self)
 end
 
 local function applyRank(self, rank)
-	local access = InspectGuildRankDetail(rank).vaultAccess
+	local access = InspectGuildRankDetail(rank).vaultAccess or { }
 	setVaultAccess(self, access)
 	if(not access[slot(self.vault)]) then
 		selectFirstAvailableVault(self)
