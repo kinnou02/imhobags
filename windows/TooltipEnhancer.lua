@@ -4,6 +4,7 @@ local Addon, private = ...
 local concat = table.concat
 local format = string.format
 local formatn = string.formatn
+local gsub = string.gsub
 local pairs = pairs
 local select = select
 local sort = table.sort
@@ -43,39 +44,7 @@ local function showTooltip(tooltip)
 	window:SetPoint("BOTTOMRIGHT", UI.Native.Tooltip, "TOPRIGHT", -padding, verticalOffset)
 end
 
-local function buildLine(character, total, ...)
-	local detail = ""
-	if(total > select(2, ...)) then
-		for i = 1, select("#", ...), 2 do
-			local fmt, count = select(i, ...)
-			if(count > 0) then
-				detail = detail .. format(fmt, count)
-			end
-		end
-	end
-	return formatn(L.TooltipEnhancer.line, character, total, detail)
-end
-
-local function buildGuildLine(guild, total)
-	local detail = ""
-	for i = 2, #guild do
-		local count = guild[i]
-		if(count > 0) then
-			detail = detail .. format("(%s %i)", format(L.Ux.guildVault, i - 1), count)
-		end
-	end
-	return formatn(L.TooltipEnhancer.line, guild[1], total, detail)
-end
---[[
-local function sum(character)
-	local result = 0
-	for i = 2, #character do
-		result = result + character[i]
-	end
-	return result
-end
-]]
-local function sum(t)
+local function sumCharacter(t)
 	local s = 0
 	for k, v in pairs(t) do
 		s = s + v
@@ -83,22 +52,41 @@ local function sum(t)
 	return s
 end
 
-local function addDetail(count, fmt, tooltip)
-	if(count > 0) then
-		tooltip[#tooltip + 1] = format(fmt, count)
+local function sumGuild(t)
+	local s = 0
+	for i = 2, #t, 2 do
+		s = s + t[i]
 	end
+	return s
 end
 
 local function formatCharacterLine(name, data, tooltip)
-	local sum = sum(data)
+	local sum = sumCharacter(data)
+	local function replacer(location)
+		if(data[location] ~= 0) then
+			return format(L.TooltipEnhancer[location], data[location])
+		else
+			return ""
+		end
+	end
+	
 	if(sum > 0) then
-		tooltip[#tooltip + 1] = format(L.TooltipEnhancer.line, name, sum)
-		tooltip[#tooltip + 1] = " "
+		tooltip[#tooltip + 1] = format("%s: %i", name, sum)
 		if(not (sum == data.inventory or sum == data.currency)) then
-			for location, count in pairs(data) do
-				if(count > 0) then
-					tooltip[#tooltip + 1] = format(L.TooltipEnhancer[location], count)
-				end
+			tooltip[#tooltip + 1] = gsub(" |inventory|bank|equipment|wardrobe|quest|currency", "|(%l+)", replacer)
+		end
+		tooltip[#tooltip + 1] = "\n"
+	end
+	return sum
+end
+
+local function formatGuildLine(name, data, tooltip)
+	local sum = sumGuild(data)
+	if(sum > 0) then
+		tooltip[#tooltip + 1] = format("%s: %i ", name, sum)
+		for i = 1, #data, 2 do
+			if(data[i + 1] > 0) then
+				tooltip[#tooltip + 1] = format("(%s %i)", data[i], data[i + 1])
 			end
 		end
 		tooltip[#tooltip + 1] = "\n"
@@ -130,6 +118,9 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		return
 	end
 
+	local tooltip = { }
+	local total = 0
+	local lines = 0
 	local counts = Item.Storage.GetCharacterItemCounts(itemType)
 	local guildCounts = { }--ItemDB.GetGuildItemCounts(itemType)
 	local names = { }
@@ -138,23 +129,35 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	end
 	sort(names)
 	
-	local tooltip = { }
-	local total = 0
-	local chars = 0
 	for i = 1, #names do
 		local data = counts[names[i]]
 		local sum = formatCharacterLine(names[i], data, tooltip)
 		if(sum > 0) then
-			chars = chars + 1
+			lines = lines + 1
 			total = total + sum
 		end
 	end
 
-	if(chars > 1--[[ or guilds > 1]]) then
-		tooltip[#tooltip + 1] = format(L.TooltipEnhancer.total, total)
+	counts = Item.Storage.GetGuildItemCounts(itemType)
+	names = { }
+	for name in pairs(counts) do
+		names[#names + 1] = name
 	end
+	sort(names)
 
-	if(chars > 0 or guilds > 0) then
+	for i = 1, #names do
+		local data = counts[names[i]]
+		local sum = formatGuildLine(names[i], data, tooltip)
+		if(sum > 0) then
+			lines = lines + 1
+			total = total + sum
+		end
+	end
+	
+	if(lines > 0) then
+		if(lines > 1) then
+			tooltip[#tooltip + 1] = format("= %i", total)
+		end
 		showTooltip(concat(tooltip))
 	end
 end
