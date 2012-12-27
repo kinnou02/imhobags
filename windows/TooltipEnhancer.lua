@@ -1,9 +1,12 @@
 local Addon, private = ...
 
 -- Builtins
+local concat = table.concat
 local format = string.format
 local formatn = string.formatn
+local pairs = pairs
 local select = select
+local sort = table.sort
 
 -- Globals
 local Command = Command
@@ -63,13 +66,44 @@ local function buildGuildLine(guild, total)
 	end
 	return formatn(L.TooltipEnhancer.line, guild[1], total, detail)
 end
-
+--[[
 local function sum(character)
 	local result = 0
 	for i = 2, #character do
 		result = result + character[i]
 	end
 	return result
+end
+]]
+local function sum(t)
+	local s = 0
+	for k, v in pairs(t) do
+		s = s + v
+	end
+	return s
+end
+
+local function addDetail(count, fmt, tooltip)
+	if(count > 0) then
+		tooltip[#tooltip + 1] = format(fmt, count)
+	end
+end
+
+local function formatCharacterLine(name, data, tooltip)
+	local sum = sum(data)
+	if(sum > 0) then
+		tooltip[#tooltip + 1] = format(L.TooltipEnhancer.line, name, sum)
+		tooltip[#tooltip + 1] = " "
+		if(not (sum == data.inventory or sum == data.currency)) then
+			for location, count in pairs(data) do
+				if(count > 0) then
+					tooltip[#tooltip + 1] = format(L.TooltipEnhancer[location], count)
+				end
+			end
+		end
+		tooltip[#tooltip + 1] = "\n"
+	end
+	return sum
 end
 
 local function tooltipTargetChanged(ttype, shown, buff)
@@ -96,44 +130,32 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		return
 	end
 
-	itemType = Inspect.Item.Detail(itemType)
-	local counts = ItemDB.GetItemCounts(itemType)
-	local guildCounts = ItemDB.GetGuildItemCounts(itemType)
+	local counts = Item.Storage.GetCharacterItemCounts(itemType)
+	local guildCounts = { }--ItemDB.GetGuildItemCounts(itemType)
+	local names = { }
+	for name in pairs(counts) do
+		names[#names + 1] = name
+	end
+	sort(names)
 	
-	local tooltip = ""
+	local tooltip = { }
 	local total = 0
 	local chars = 0
-	for i = 1, #counts do
-		local v = counts[i]
-		local charTotal = sum(v)
-		total = total + charTotal
-		if(charTotal > 0) then
+	for i = 1, #names do
+		local data = counts[names[i]]
+		local sum = formatCharacterLine(names[i], data, tooltip)
+		if(sum > 0) then
 			chars = chars + 1
-			tooltip = tooltip .. buildLine(v[1], charTotal,
-				L.TooltipEnhancer.inventory, v[2],
-				L.TooltipEnhancer.bank, v[3],
-				L.TooltipEnhancer.mail, v[4],
-				L.TooltipEnhancer.equipment, v[5],
-				L.TooltipEnhancer.wardrobe, v[6]) .. "\n"
-				-- Do not display currency as separate category as currency items cannot be in any other container
+			total = total + sum
 		end
 	end
-	local guilds = 0
-	for i = 1, #guildCounts do
-		local v = guildCounts[i]
-		local guildTotal = sum(v)
-		total = total + guildTotal
-		if(guildTotal > 0) then
-			chars = chars + 1
-			tooltip = tooltip .. buildGuildLine(v, guildTotal) .. "\n"
-		end
-	end
-	if(chars > 1 or guilds > 1) then
-		tooltip = tooltip .. format(L.TooltipEnhancer.total, total)
+
+	if(chars > 1--[[ or guilds > 1]]) then
+		tooltip[#tooltip + 1] = format(L.TooltipEnhancer.total, total)
 	end
 
 	if(chars > 0 or guilds > 0) then
-		showTooltip(tooltip)
+		showTooltip(concat(tooltip))
 	end
 end
 

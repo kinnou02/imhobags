@@ -485,3 +485,23 @@ function Item.Storage.GetAllItemTypes()
 	types.coin = nil
 	return types
 end
+
+function Item.Storage.GetCharacterItemCounts(type)
+	local counts = { }
+	local function merge(location, name)
+		local count = location.totals[type] or 0
+		counts[name] = (counts[name] or 0) + count
+	end
+
+	for char, data in pairs(characters) do
+		counts[char] = {
+			bank		= data.bank.totals[type] or 0,
+			currency	= data.currency.totals[type] or 0,
+			equipment	= data.equipment.totals[type] or 0,
+			inventory	= data.inventory.totals[type] or 0,
+			quest		= data.quest.totals[type] or 0,
+			wardrobe	= data.wardrobe.totals[type] or 0,
+		}
+	end
+	return counts
+end
