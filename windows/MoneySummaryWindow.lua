@@ -139,7 +139,7 @@ end
 
 local function MoneySummaryWindow_ShowAtCursor(self)
 	if(not self:GetVisible()) then
-		local names, coins, playerTotal, enemyTotal = sortOutCharacters(ItemDB.GetCharactersCoin())
+		local names, coins, playerTotal, enemyTotal = sortOutCharacters(Item.Storage.GetCharacterCoins())
 		if(#names == 1) then
 			return
 		end
