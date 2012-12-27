@@ -275,7 +275,9 @@ function Ux.MenuWindow()
 		Command.System.Watchdog.Quiet()
 	end
 	
-	local self = UICreateFrame("Texture", "Menu Window", Ux.Context)
+	local context = UI.CreateContext("MenuWindow")
+	context:SetStrata("topmost")
+	local self = UICreateFrame("Texture", "Menu Window", context)
 	createDialog(self)
 	
 	self.closeButton = UICreateFrame("RiftButton", "close", self)
