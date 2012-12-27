@@ -3,12 +3,15 @@ local Addon, private = ...
 -- Builtins
 local getmetatable = getmetatable
 local max = math.max
+local pairs = pairs
+local sort = table.sort
 local tinsert = table.insert
 local tremove = table.remove
 
 -- Globals
 local Command = Command
 local Inspect = Inspect
+local UI = UI
 local UICreateFrame = UI.CreateFrame
 local UIParent = UIParent
 
@@ -62,7 +65,7 @@ local function createDialog(self)
 	right:SetPoint("BOTTOMRIGHT", bottomright, "TOPRIGHT")
 end
 
-local function createCharacterFrame(self, name)
+local function createCharacterFrame(self, name, alliance)
 	if(#characterFramesCache > 0) then
 		local frame = tremove(characterFramesCache)
 		frame.nameLabel:SetText(name)
@@ -100,7 +103,7 @@ local function createCharacterFrame(self, name)
 		Ux.ShowItemWindow(name, "currency")
 	end
 	
-	frame.guildButton = Ux.IconButton.New(frame, ItemDB.GetCharacterAlliance(name) == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or
+	frame.guildButton = Ux.IconButton.New(frame, alliance == "defiant" and [[Data/\UI\item_icons\GuildCharter_Defiants.dds]] or
 		[[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
 	function frame.guildButton.LeftPress()
 		self:SetVisible(false)
@@ -213,25 +216,22 @@ local function layoutMenu(self, horizontal, vertical)
 end
 
 local function updateCharacters(self)
-	local chars = ItemDB.GetAvailableCharacters()
+	local alliances = Item.Storage.GetCharacterAlliances()
+	local names = { }
+	for name in pairs(alliances) do
+		if(name ~= Player.name) then
+			names[#names + 1] = name
+		end
+	end
+	sort(names)
 	
 	for i = 1, #self.chars do
 		disposeCharacterFrame(self.chars[i])
-	end
-	
-	for i = 1, #chars do
-		if(chars[i] == Player.name) then
-			tremove(chars, i)
-			break
-		end
-	end
-	
-	for i = 1, #chars do
-		self.chars[i] = createCharacterFrame(self, chars[i])
-	end
-
-	for i = #chars + 1, #self.chars do
 		self.chars[i] = nil
+	end
+	
+	for i = 1, #names do
+		self.chars[i] = createCharacterFrame(self, names[i], alliances[names[i]])
 	end
 end
 
@@ -289,7 +289,7 @@ function Ux.MenuWindow()
 		self:SetVisible(false)
 	end
 	
-	self.player = createCharacterFrame(self, Player.name)
+	self.player = createCharacterFrame(self, Player.name, Player.alliance)
 	
 	self.playerSeparator = UICreateFrame("Texture", "playerSeparator", self)
 	self.playerSeparator:SetTexture("ImhoBags", "textures/hr1.png")
