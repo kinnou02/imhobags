@@ -222,7 +222,7 @@ local function updateItemList(itemTypes)
 end
 
 local function updateProc()
-	local itemTypes = ItemDB.GetAllItemTypes()
+	local itemTypes = Item.Storage.GetAllItemTypes()
 	coroutine.yield()
 	updateItemList(itemTypes)
 	coroutine.yield()
