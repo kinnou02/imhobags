@@ -54,7 +54,6 @@ private.L = {
 	
 	-- The shortcuts used in the tooltip overview
 	TooltipEnhancer = {
-		line = "+%s: %i", -- 1: character name, 2: item count
 		bank = "(bank %i)",
 		currency = "(currencies %i)",
 		equipment = "(equipped %i)",
@@ -62,7 +61,6 @@ private.L = {
 		quest = "(quest %i)",
 		mail = "(mail %i)",
 		wardrobe = "(wardrobe %i)",
-		total = "= %i",
 	},
 	
 	Currency = {
