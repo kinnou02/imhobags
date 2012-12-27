@@ -34,11 +34,12 @@ local context = UI.CreateContext(Addon.identifier)
 local frame = UI.CreateFrame("RiftWindow", "", context)
 local content = frame:GetContent()
 local border = frame:GetBorder()
+local filter
 Ux.SearchWindow = frame
 frame:SetVisible(false)
 frame:SetTitle(L.Ux.WindowTitle.search)
 
-Ux.RiftWindowCloseButton.New(frame, frame)
+Ux.RiftWindowCloseButton.New(frame, function() filter.text:SetKeyFocus(false) frame:SetVisible(false) end)
 
 function border.Event:LeftDown()
 	local mouse = Inspect.Mouse()
@@ -61,7 +62,7 @@ function border.Event:MouseMove()
 	end
 end
 
-local filter = Ux.Textfield.New(frame, "RIGHT", L.Ux.search)
+filter = Ux.Textfield.New(frame, "RIGHT", L.Ux.search)
 filter:SetPoint("TOPLEFT", content, "TOPLEFT", 4, 0)
 filter:SetPoint("BOTTOMRIGHT", content, "TOPRIGHT", -4, 24)
 function filter.text.Event:KeyFocusGain()
