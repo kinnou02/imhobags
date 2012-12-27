@@ -488,11 +488,6 @@ end
 
 function Item.Storage.GetCharacterItemCounts(type)
 	local counts = { }
-	local function merge(location, name)
-		local count = location.totals[type] or 0
-		counts[name] = (counts[name] or 0) + count
-	end
-
 	for char, data in pairs(characters) do
 		counts[char] = {
 			bank		= data.bank.totals[type] or 0,
@@ -502,6 +497,25 @@ function Item.Storage.GetCharacterItemCounts(type)
 			quest		= data.quest.totals[type] or 0,
 			wardrobe	= data.wardrobe.totals[type] or 0,
 		}
+	end
+	return counts
+end
+
+function Item.Storage.GetGuildItemCounts(type)
+	local counts = { }
+	local function merge(counts, vault)
+		local count = vault.totals[type] or 0
+		if(count > 0) then
+			counts[#counts + 1] = vault.name
+			counts[#counts + 1] = count
+		end
+	end
+
+	for guild, data in pairs(guilds) do
+		counts[guild] = { }
+		for id, vault in pairs(data.vault) do
+			merge(counts[guild], vault)
+		end
 	end
 	return counts
 end
