@@ -464,7 +464,7 @@ function Item.Storage.GetAllItemTypes()
 	
 	local function merge(location)
 		for type, count in pairs(location.totals) do
-			types[count] = (types[count] or 0) + count
+			types[type] = (types[type] or 0) + count
 		end
 	end
 	
@@ -477,7 +477,7 @@ function Item.Storage.GetAllItemTypes()
 		merge(data.wardrobe)
 	end
 	
-	for guild, data in pairs(characters) do
+	for guild, data in pairs(guilds) do
 		for id, vault in pairs(data.vault) do
 			merge(vault)
 		end
