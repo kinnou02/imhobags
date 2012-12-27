@@ -122,7 +122,6 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	local total = 0
 	local lines = 0
 	local counts = Item.Storage.GetCharacterItemCounts(itemType)
-	local guildCounts = { }--ItemDB.GetGuildItemCounts(itemType)
 	local names = { }
 	for name in pairs(counts) do
 		names[#names + 1] = name
