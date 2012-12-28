@@ -93,7 +93,7 @@ Correct usage:
 	Displayes the current values of all config options.
 ]],
 		unknownChar = [[
-No data available for character "%s" (or it is member of the enemy faction).]],
+No data available for character "%s".]],
 
 		unknownLocation = [[
 Unknown location "%s".
