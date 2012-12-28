@@ -266,7 +266,9 @@ local function createBehaviorPane(self)
 	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
 	description:SetText(L.Ux.ConfigWindow.autoOpen)
 
-	local autoOpen = createHighlightedTexture(backdrop, "textures/ConfigWindow/autoOpen.png", "/imhobags autoOpen yes/no")
+	local autoOpen = createHighlightedTexture(backdrop, "textures/ConfigWindow/autoOpen.png", "/imhobags autoOpen yes/no", function(frame)
+		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
+	end)
 	autoOpen:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
 	
 	autoOpen:SetChecked(Config.autoOpen == true)
@@ -277,44 +279,7 @@ local function createBehaviorPane(self)
 			autoOpen:SetChecked(v)
 		end
 	end , Addon.identifier, "" })
-	
-	-- Enemy faction treatment
-	description = UICreateFrame("Text", "", backdrop)
-	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", autoOpen, "BOTTOMLEFT", 0, 0)
-	description:SetPoint("TOPRIGHT", autoOpen, "BOTTOMRIGHT", 0, 0)
-	description:SetText(L.Ux.ConfigWindow.showEnemyFaction)
 
-	local showEnemyFaction_y = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEnemyFaction yes.png", "/imhobags showEnemyFaction yes")
-	showEnemyFaction_y:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-	local showEnemyFaction_a = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEnemyFaction account.png", "/imhobags showEnemyFaction account")
-	showEnemyFaction_a:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
-	local showEnemyFaction_n = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEnemyFaction " .. Player.alliance .. ".png", "/imhobags showEnemyFaction no", function(frame)
-		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
-	end)
-	showEnemyFaction_n:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
---[[	local text = UICreateFrame("Text", "", showEnemyItems_a)
-	text:SetPoint("TOPCENTER", showEnemyFaction_a, "BOTTOMCENTER", 0, -3)
-	text:SetText("Bound to Account")
-	text:SetFontSize(14)
-	text:SetFontColor(unpack(accountBoundColor))
-	showEnemyFaction_a.highlight:SetLayer(2)
-]]	
-	showEnemyFaction_y:SetChecked(Config.showEnemyFaction == "yes")
-	function showEnemyFaction_y.Event:LeftDown() Config.showEnemyFaction = "yes" end
-	showEnemyFaction_a:SetChecked(Config.showEnemyFaction == "account")
-	function showEnemyFaction_a.Event:LeftDown() Config.showEnemyFaction = "account" end
-	showEnemyFaction_n:SetChecked(Config.showEnemyFaction == "no")
-	function showEnemyFaction_n.Event:LeftDown() Config.showEnemyFaction = "no" end
-	
-	tinsert(ImhoEvent.Config, { function(k, v)
-		if(k == "showEnemyFaction") then
-			showEnemyFaction_y:SetChecked(v == "yes")
-			showEnemyFaction_a:SetChecked(v == "account")
-			showEnemyFaction_n:SetChecked(v == "no")
-		end
-	end , Addon.identifier, "" })
-	
 	backdrop:SetVisible(false)
 	return backdrop
 end

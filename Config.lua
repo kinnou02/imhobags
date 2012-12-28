@@ -2,7 +2,6 @@ local Addon, private = ...
 
 -- Only the keys in this table are valid config options
 local defaults = {
-	showEnemyFaction = "yes",
 	autoOpen = false,
 	itemButtonSkin = "pretty",
 	packGroups = true,
@@ -14,7 +13,6 @@ local defaults = {
 
 -- Contains valid values for string/int
 local allowedValues = {
-	showEnemyFaction = { no = true, yes = true, account = true },
 	itemButtonSkin = { simple = true, pretty = true },
 }
 

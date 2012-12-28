@@ -126,11 +126,6 @@ Available config options:
 * showEmptySlots yes/no
 	Controls whether the number of empty bag slots is displayed above
 	the Trion bags bar.
-* showEnemyFaction yes/no/account
-	Controls whether items of the enemy faction are considered.
-	no: Enemy faction characters are completely ignored.
-	yes: All items of enemy faction characters are considered.
-	account: Only account-bound items of enemy faction characters are considered.
 ]],
 	},
 	
@@ -181,7 +176,6 @@ Available config options:
 			packGroups = "Choose whether multiple small groups should be packed into one line where possible instead of creating a new line for every single group. The former may result in inconsistent group sorting but can drastically decrease the size of the item windows.",
 			itemButtonSkin = "Choose how item buttons should be rendered. The left option requires more resources than the right one but looks better. If you play with a very low UI scale the right button skin might look better. Note that changes to this option require a /reloadui before becoming effective.",
 			autoOpen = "Choose whether the ImhoBags inventory or bank windows should automatically open and close when the respective Trion windows are opened and closed.",
-			showEnemyFaction = "Choose how items of enemy faction characters are treated. The options are to show all items regardless of character faction, to show only account-bound items of enemy faction characters, or to completely ignore all their items.",
 			enhanceTooltips = "Choose whether you want item tooltips to be extended with additional information showing you which of your characters already own the displayed item.",
 			showEmptySlots = "Choose whether you want a counter displayed on top of your bags bar showing how many empty item slots remain in your backpack.",
 			showBoundIcon = "Display a small indicator over the icons of soul- and account-bound items. A blue icon indicates soul-bound items, the red/blue tinted account-bound ones.",

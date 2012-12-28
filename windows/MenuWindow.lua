@@ -235,15 +235,6 @@ local function updateCharacters(self)
 	end
 end
 
-local function configChanged(self, name, value)
-	if(name == "showEnemyFaction") then
-		updateCharacters(self)
-		if(self:GetVisible()) then
-			layoutMenu(self, self.horizontal, self.vertical)
-		end
-	end
-end
-
 -- Public methods
 -- ============================================================================
 
@@ -304,8 +295,6 @@ function Ux.MenuWindow()
 	
 	self.SetVisible = MenuWindow_SetVisible
 	
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(...) configChanged(self, ...) end, Addon.identifier, "MenuWindow_configChanged" }
-
 	self:SetVisible(true)
 	Ux.MenuWindow = self
 	return self
