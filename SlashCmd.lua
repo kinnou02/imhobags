@@ -14,10 +14,9 @@ local shortcuts = {
 	i = "inventory",
 	inv = "inventory",
 	b = "bank",
-	m = "mail",
 	c = "currency",
 	e = "equipment",
-	w = "wardrobe",
+	q = "quest",
 }
 
 local allowedLocations = {
@@ -25,8 +24,7 @@ local allowedLocations = {
 	bank = true,
 	currency = true,
 	equipment = true,
-	mail = true,
-	wardrobe = true,
+	quest = true,
 }
 
 setfenv(1, private)

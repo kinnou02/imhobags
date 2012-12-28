@@ -77,8 +77,9 @@ Correct usage:
 	"location" must be one of: 
 		* Backpack: "inventory", "inv" or "i"
 		* Bank: "bank" or "b"
-		* Mailbox: "mail" or "m"
 		* Currencies: "currency" or "c"
+		* Equipment: "equipment" or "e"
+		* Quest: "quest" or "q"
 		* defaults to "inventory" if omitted
 /imhobags search
 	Opens the search window.
@@ -99,8 +100,9 @@ Unknown location "%s".
 "location" must be one of: 
 	* Backpack: "inventory", "inv" or "i"
 	* Bank: "bank" or "b"
-	* Mailbox: "mail" or "m"
 	* Currencies: "currency" or "c"
+	* Equipment: "equipment" or "e"
+	* Quest: "quest" or "q"
 	* defaults to "inventory" if omitted
 ]],
 		configOptions = [[
