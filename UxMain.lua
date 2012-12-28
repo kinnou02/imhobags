@@ -11,16 +11,6 @@ local Event = Event
 local UICreateContext = UI.CreateContext
 local UIParent = UIParent
 
-local defaultItemWindows =  {
-	BackpackItemWindow = { "inventory", UI.Native.BagInventory1, "ItemWindow" },
-	BankItemWindow = { "bank", UI.Native.Bank, "ItemWindow" },
-	CurrencyItemWindow = { "currency", nil, "CurrencyWindow" },
-	EquipmentItemWindow = { "equipment", nil, "EquipmentWindow" },
-	GuildItemWindow = { "guildbank", UI.Native.BankGuild, "GuildWindow" },
-	MailItemWindow = { "mail", nil, "MailWindow" },
-	WardrobeItemWindow = { "wardrobe", nil, "EquipmentWindow" },
-}
-
 local itemWindows = {
 	{ "bank", UI.Native.Bank },
 	{ "currency", nil },
@@ -47,78 +37,9 @@ local function centerWindow(window)
 	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor((screenWidth - window:GetWidth()) / 2), floor((screenHeight - window:GetHeight()) / 2))
 end
 
-local function createItemWindow(name, character)
-	local data = defaultItemWindows[name]
-	local info = _G.ImhoBags_WindowInfo[name] or { }
-	
-	local x, y
-	local sorting = "name"
-	if(info) then
-		x, y = info.x, info.y
-		sorting = info.sorting or sorting
-	end
-	
-	local itemSize = info and info.itemSize or Ux.ItemButtonSizeDefault
-	local title = L.Ux.WindowTitle[data[1]]
-	local window = Ux[data[3]].New(title, character, data[1], itemSize, sorting)
-
-	if(x and y) then
-		window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor(info.x), floor(info.y))
-		window:SetWidth(info.width)
-	else
-		centerWindow(window)
-	end
-	Ux[name] = window
-	return window
-end
-
-local function init()
-	-- Hook the native opening events
-	for k, v in pairs(defaultItemWindows) do
-		local native = v[2]
-		if(native) then
-			-- This will not work if other addons try to do the same
-			function native.Event:Loaded()
-				if(Config.autoOpen) then
-					if(self:GetLoaded()) then
-						Ux.ShowItemWindow("player", v[1])
-					else
-						Ux.HideItemWindow(v[1])
-					end
-					log("TODO", "disable native frame(s)")
-				end
-			end
-		end
-	end
-	
-	-- Load the search window's position
-	local info = _G.ImhoBags_WindowInfo.SearchWindow
-	if(info) then
-		Ux.SearchWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
-	else
-		centerWindow(Ux.SearchWindow)
-	end
-	
-	-- Other windows
-	Ux.MoneySummaryWindow()
-end
-
 local function Ux_savedVariablesSaveBegin(addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
-	end
-	for k, v in pairs(defaultItemWindows) do
-		local window = Ux[k]
-		if(window) then
-			_G.ImhoBags_WindowInfo[k] = {
-				x = window:GetLeft(),
-				y = window:GetTop(),
-				width = window:GetWidth(),
-				condensed = window.condensed,
-				itemSize = window.itemSize,
-				sorting = window.sort,
-			}
-		end
 	end
 	_G.ImhoBags_WindowInfo.SearchWindow = {
 		x = Ux.SearchWindow:GetLeft(),
