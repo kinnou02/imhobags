@@ -355,7 +355,7 @@ local function createLocationButtons(self, location)
 		equipment = -40,
 		quest = -60,
 		currency = -80,
-		guildbank = -90,
+		guildbank = -100,
 	}
 	self.rightHiddenButtonsOffset = offsets[location]
 	self.rightHiddenButtonsOffsetCurrent = self.rightHiddenButtonsOffset
