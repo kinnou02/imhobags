@@ -16,7 +16,7 @@ local filterBoxLeft = 24
 local filterBoxWidth = 100
 local rightPanelMinWidth = 40
 local rightHiddenMinWidth = 20
-local rightHiddenMaxWidth = 7 * 20
+local rightHiddenMaxWidth = 6 * 20
 -- Specialized animation template for (self, width, offset)
 local locationPanelAnimationTemplate = LibAnimate.CreateTemplate({ false, "smoothstep", "smoothstep" })
 
@@ -344,7 +344,6 @@ local function createLocationButtons(self, location)
 	local locations = {
 		"inventory",	"ImhoBags",	"textures/icon_menu_bags.png",	28, 28, -1, 0,
 		"bank",			"ImhoBags",	"textures/icon_menu_bank.png",	28, 28, 2, 2,
-		"mail",			"ImhoBags",	"textures/icon_menu_mail.png",	29, 29, 1, 1,
 		"equipment",	"Rift",		"icon_menu_raid.png.dds",		22, 22, 0, 0,
 		"quest",		"Rift",		"icon_menu_quest.png.dds",		22, 22, 0, 0,
 		"currency",		"ImhoBags",	"textures/icon_menu_gold.png",	24, 24, 0, 0,
@@ -353,18 +352,17 @@ local function createLocationButtons(self, location)
 	local offsets = {
 		inventory = 0,
 		bank = -20,
-		mail = -40,
-		equipment = -60,
-		quest = -80,
-		currency = -100,
-		guildbank = -120,
+		equipment = -40,
+		quest = -60,
+		currency = -80,
+		guildbank = -90,
 	}
 	self.rightHiddenButtonsOffset = offsets[location]
 	self.rightHiddenButtonsOffsetCurrent = self.rightHiddenButtonsOffset
 	local prev = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, locations[2], locations[3], locations[4], locations[5], locations[6], locations[7], function() self.locationCallback(locations[1]) end)
 	prev:SetPoint("LEFTCENTER", self.rightHidden, "LEFTCENTER", self.rightHiddenButtonsOffset, 0)
 	self.locationButtons = { prev }
-	for i = 1, 6 do
+	for i = 1, 5 do
 		local j = i * 7
 		local btn = Ux.ItemWindowTemplate.TitleBarButton(self.rightHidden, locations[j+2], locations[j+3], locations[j+4], locations[j+5], locations[j+6], locations[j+7], function() self.locationCallback(locations[j+1]) end)
 		btn:SetPoint("LEFTCENTER", prev, "RIGHTCENTER")
