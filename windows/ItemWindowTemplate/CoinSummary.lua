@@ -1,16 +1,7 @@
 local Addon, private = ...
 
--- Builtins
-local pairs = pairs
+-- Upvalue
 local max = math.max
-local sort = table.sort
-
--- Globals
-local Event = Event
-local InspectCurrencyDetail = Inspect.Currency.Detail
-local InspectGuildBankCoin = Inspect.Guild.Bank.Coin
-local InspectInteraction = Inspect.Interaction
-local UICreateFrame = UI.CreateFrame
 
 -- Locals
 local characterNames = { }
@@ -45,7 +36,7 @@ ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
 			enemyAllianceCoinTotal = enemyAllianceCoinTotal + coin
 		end
 	end
-	sort(characterNames)
+	table.sort(characterNames)
 	for i = 1, #characterNames do
 		local name = characterNames[i]
 		characterCoins[i] = chars[name]
@@ -53,7 +44,7 @@ ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
 end, Addon.identifier, "" }
 
 local function createCharEntry(parent, name, coins, y)
-	local text = UICreateFrame("Text", "", parent)
+	local text = UI.CreateFrame("Text", "", parent)
 	text:SetText(name)
 	text:SetFontColor(textColor[1], textColor[2], textColor[3])
 	text:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPaddingLeft, y)
@@ -68,7 +59,7 @@ local function createCharEntry(parent, name, coins, y)
 end
 
 local function createAllianceEntry(parent, allliance, coins, y)
-	local icon = UICreateFrame("Texture", "", parent)
+	local icon = UI.CreateFrame("Texture", "", parent)
 	icon:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPaddingLeft, y - 5)
 	icon:SetTextureAsync("Rift", allliance .. ".png.dds")
 	icon:SetWidth(40)
@@ -83,7 +74,7 @@ local function createAllianceEntry(parent, allliance, coins, y)
 end
 
 local function createSeparator(parent, y)
-	local sep = UICreateFrame("Texture", "", parent)
+	local sep = UI.CreateFrame("Texture", "", parent)
 	sep:SetTexture("Rift", "rollover_divider_alpha.png.dds")
 	sep:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPaddingLeft, y)
 	sep:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPaddingLeft, y)
@@ -128,7 +119,7 @@ local function createCharFrames(self, background)
 end
 
 local function setPlayerCoin(self, background)
-	local coin = InspectCurrencyDetail("coin").stack
+	local coin = Inspect.Currency.Detail("coin").stack
 	
 	self.playerCoinFrame:SetCoin(coin)
 	self.playerAllianceCoinFrame:SetCoin(coin + playerAllianceCoinTotal)
@@ -145,7 +136,7 @@ local function updateGuildList(self, guilds)
 	for name in pairs(guilds) do
 		names[#names + 1] = name
 	end
-	sort(names)
+	table.sort(names)
 	
 	local y = contentPaddingTop
 	self.nameWidth = 0
@@ -188,8 +179,8 @@ local function createGuildFrames(self, background)
 		y = y + name:GetHeight()
 	end
 	
-	if(InspectInteraction("guildbank")) then
-		guilds[Player.guild] = InspectGuildBankCoin()
+	if(Inspect.Interaction("guildbank")) then
+		guilds[Player.guild] = Inspect.Guild.Bank.Coin()
 	end
 	updateGuildList(self, guilds)
 end
@@ -203,7 +194,7 @@ end
 local function eventInteraction(self, interaction, status)
 	if(interaction == "guildbank" and status) then
 		local guilds = Item.Storage.GetGuildCoins()
-		guilds[Player.guild] = InspectGuildBankCoin()
+		guilds[Player.guild] = Inspect.Guild.Bank.Coin()
 		updateGuildList(self, guilds)
 	end
 end
@@ -212,10 +203,10 @@ end
 -- ============================================================================
 
 function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar, location)
-	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
+	local self = UI.CreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetHeight(0)
 	
-	local background = UICreateFrame("Texture", "", self)
+	local background = UI.CreateFrame("Texture", "", self)
 	background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT")
 	background:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT")
 	background:SetTexture("Rift", "dropdown_list.png.dds")

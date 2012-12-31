@@ -1,40 +1,6 @@
 local Addon, private = ...
 
-if(Addon.toc.debug) then
-	ImhoBagsDebug = private
-end
-
-local pairs = pairs
-local print = print
-
-local Command = Command
-local Event = Event
-local Inspect = Inspect
-local UI = UI
-local Utility = Utility
-
-if(string.find(Addon.toc.Version, "alpha")) then
-	Command.Console.Display("general", false, "<font color='#FF8000'>This is a development version of ImhoBags and not intended for release. It may be broken, have errors or not work at all. You have been warned.</font>", true)
-end
-local lang = Inspect.System.Language()
-local translators = {
-	German = true,
-	English = true,
-}
-if(not translators[lang]) then
-	Command.Console.Display("general", false, "<font color='#FFFF00'>ImhoBags is looking for " .. lang .. " translators and reviewers!\nContact Imhothar on Curse or RiftUI if you'd like to help!</font>", true)
-end
-
--- Make this global available everywhere
-private.dump = dump
-
 setfenv(1, private)
-
-if(Addon.toc.debug) then
-	log = print
-else
-	log = function() end
-end
 
 -- Always available
 Player = Inspect.Unit.Detail("player")
@@ -65,6 +31,7 @@ local function unitAvailable(units)
 			
 			Player.alliance = defiants[Player.race] and "defiant" or "guardian"
 			Player.enemyAlliance = defiants[Player.race] and "guardian" or "defiant"
+			log("Init", Player.guild)
 			Trigger.Init()
 			
 			unitAvailableEntry[1] = function() end

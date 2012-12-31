@@ -1,17 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-local ipairs = ipairs
-local max = math.max
-local pairs = pairs
-local sort = table.sort
-
--- Globals
-local dump = dump
-local Inspect = Inspect
-local UICreateFrame = UI.CreateFrame
-local UIParent = UIParent
-
 -- Locals
 local charFrameHeight = 20
 local allianceIconWidth = charFrameHeight * 1.5 -- Aspect ratio of image
@@ -40,9 +28,10 @@ local function sortOutCharacters(chars)
 	for name, coin in pairs(enemy) do
 		names[#names + 1] = name
 	end
-	sort(names)
+	table.sort(names)
 	
-	for i, name in ipairs(names) do
+	for i = 1, #names do
+		local name = names[i]
 		if(player[name]) then
 			coins[i] = player[name]
 			playerTotal = playerTotal + coins[i]
@@ -56,9 +45,9 @@ local function sortOutCharacters(chars)
 end
 
 local function createEntryFrame(self, text)
-	local frame = UICreateFrame("Frame", "", self)
+	local frame = UI.CreateFrame("Frame", "", self)
 	
-	frame.name = UICreateFrame("Text", "", frame)
+	frame.name = UI.CreateFrame("Text", "", frame)
 	frame.name:SetPoint("LEFTCENTER", frame, "LEFTCENTER")
 	frame.name:SetFontSize(14)
 	frame.name:SetText(text)
@@ -88,7 +77,9 @@ local function fillCharacterFrames(self, names, coins, playerTotal, enemyTotal)
 	local nameWidth = 0
 	local coinWidth = 0
 	local height = 2 * padding
-	for i, name in ipairs(names) do
+	local max = math.max
+	for i = 1, #names do
+		local name = names[i]
 		if(not self.charFrames[i]) then
 			self.charFrames[i] = createCharFrame(self)
 		end
@@ -128,7 +119,7 @@ local function fillCharacterFrames(self, names, coins, playerTotal, enemyTotal)
 end
 
 local function createSeparator(self)
-	local sep = UICreateFrame("Texture", "", self)
+	local sep = UI.CreateFrame("Texture", "", self)
 	sep:SetTexture("ImhoBags", "textures/hr1.png")
 	sep:SetHeight(6)
 	return sep
@@ -162,7 +153,7 @@ local function MoneySummaryWindow_ShowAtCursor(self)
 end
 
 function Ux.MoneySummaryWindow()
-	local self = UICreateFrame("Frame", "Money Summary Window", Ux.TooltipContext)
+	local self = UI.CreateFrame("Frame", "Money Summary Window", Ux.TooltipContext)
 
 	self:SetVisible(false)
 	self:SetBackgroundColor(0, 0, 0, 0.75)

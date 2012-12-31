@@ -1,13 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-local floor = math.floor
-local next = next
-
--- Globals
-local LibAnimate = LibAnimate
-local UICreateFrame = UI.CreateFrame
-
 -- Locals
 local groupCache = { }
 -- Specialized animation template for (self, target, x, y, width)
@@ -43,7 +35,7 @@ end
 
 local function Rearrange(self, duration, dx, spacing)
 	local x, y = 0, 0
-	local columns = floor((self.width + spacing) / (dx + spacing))
+	local columns = math.floor((self.width + spacing) / (dx + spacing))
 	for i = 1, #self.buttons do
 		local button = self.buttons[i]
 		button:MoveToGrid(self, x, y, spacing, duration)
@@ -58,7 +50,7 @@ end
 local function SetButtons(self, duration, alive, prealive, buttons, dx, spacing)
 	-- Don't use Rearrange as some buttons may be new
 	local x, y = 0, 0
-	local columns = floor((self.width + spacing) / (dx + spacing))
+	local columns = math.floor((self.width + spacing) / (dx + spacing))
 	for i = 1, #buttons do
 		local button = buttons[i]
 		-- Buttons which were not alive previously are moved instantly

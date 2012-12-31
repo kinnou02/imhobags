@@ -1,20 +1,5 @@
 local Addon, private = ...
 
--- Builtin
-local floor = math.floor
-local max = math.max
-local min = math.min
-
--- Globals
-local Command = Command
-local Event = Event
-local Inspect = Inspect
-local LibAnimate = LibAnimate
-local UI = UI
-local UIParent = UIParent
-
--- Locals
-
 setfenv(1, private)
 Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 
@@ -112,8 +97,8 @@ local function leftDown(self)
 		self.window.container:DropCursorItem()
 	else
 		local mouse = Inspect.Mouse()
-		self.mouseOffsetX = floor(mouse.x - self.window:GetLeft())
-		self.mouseOffsetY = floor(mouse.y - self.window:GetTop())
+		self.mouseOffsetX = math.floor(mouse.x - self.window:GetLeft())
+		self.mouseOffsetY = math.floor(mouse.y - self.window:GetTop())
 	end
 end
 
@@ -155,7 +140,7 @@ local function createResizeButton(self)
 	end
 	btn.Event.MouseMove = function()
 		if(btn.offset) then
-			self:SetWidth(max(Const.ItemWindowMinWidth, Inspect.Mouse().x - self:GetLeft() + btn.offset))
+			self:SetWidth(math.max(Const.ItemWindowMinWidth, Inspect.Mouse().x - self:GetLeft() + btn.offset))
 			self.container:SetNeedsLayout()
 		elseif(isInsideResizeButton(btn)) then
 			btn:SetTexture("Rift", "chat_resize_(over).png.dds")
@@ -170,7 +155,7 @@ local function containerDisplayChanged(container, values)
 	if(values.height) then
 		self.heightAnimation:Stop()
 		self.heightAnimation = self:AnimateHeight(Const.AnimationsDuration, "easeOutCubic",
-			max(Const.ItemWindowMinHeight, self.containerOffset + values.height))
+			math.max(Const.ItemWindowMinHeight, self.containerOffset + values.height))
 	end
 	if(values.empty) then
 		self.titleBar:SetEmptySlots(values.empty)
@@ -205,7 +190,7 @@ local function createBackground(self)
 	self.background = background
 	
 	local fn = function(self)
-		local size = min(self:GetWidth(), self:GetHeight())
+		local size = math.min(self:GetWidth(), self:GetHeight())
 		self.window.background:SetWidth(size)
 		self.window.background:SetHeight(size)
 	end
@@ -278,7 +263,7 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	self:SetVisible(false)
 	
 	self:SetController("content")
-	self:SetWidth(max(Const.ItemWindowMinWidth, config.width or (Const.ItemWindowDefaultColumns * (Const.ItemButtonDefaultSize + Const.ItemWindowCellSpacing))))
+	self:SetWidth(math.max(Const.ItemWindowMinWidth, config.width or (Const.ItemWindowDefaultColumns * (Const.ItemButtonDefaultSize + Const.ItemWindowCellSpacing))))
 	self:SetHeight(Const.ItemWindowMinHeight)
 	local x = config.x or (UIParent:GetWidth() - self:GetWidth()) / 2
 	local y = config.y or (UIParent:GetHeight() - self:GetHeight()) / 2

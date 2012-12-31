@@ -1,19 +1,11 @@
 local Addon, private = ...
 
--- Buildints
-local format = string.format
-local max = math.max
-local min = math.min
-local pairs = pairs
-
--- Globals
-local Event = Event
+-- Upvalue
 local InspectGuildBankCoin = Inspect.Guild.Bank.Coin
 local InspectGuildBankList = Inspect.Guild.Bank.List
 local InspectGuildRankDetail = Inspect.Guild.Rank.Detail
 local InspectGuildRosterDetail = Inspect.Guild.Roster.Detail
 local InspectInteraction = Inspect.Interaction
-local UICreateFrame = UI.CreateFrame
 local UtilityItemSlotGuild = Utility.Item.Slot.Guild
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
@@ -68,7 +60,7 @@ local function setVault(self, index)
 	for i = 1, #self.vaultButtons do
 		local slot = slot(i)
 		if(self.vaultAccess[slot]) then
-			self.vaultButtons[i]:SetTexture("Rift", format(i == index and formats.activeVault or formats.inactiveVault, i))
+			self.vaultButtons[i]:SetTexture("Rift", string.format(i == index and formats.activeVault or formats.inactiveVault, i))
 		end
 	end
 	self.vault = index
@@ -79,12 +71,12 @@ local function setVault(self, index)
 end
 
 local function createVaultButton(parent, index)
-	local self = UICreateFrame("Texture", "", parent)
-	self:SetTexture("Rift", format(formats.inactiveVault, index))
+	local self = UI.CreateFrame("Texture", "", parent)
+	self:SetTexture("Rift", string.format(formats.inactiveVault, index))
 	self:SetWidth(0)
 	self:SetHeight(16)
 	self:AnimateWidth(Const.AnimationsDuration, "linear", 16)
-	self.access = UICreateFrame("Texture", "", self)
+	self.access = UI.CreateFrame("Texture", "", self)
 	self.access:SetAllPoints()
 	self.access:SetTexture("Rift", "vfx_ui_mob_tag_no_mini.png.dds")
 	self.slot = slot(index)
@@ -106,6 +98,7 @@ end
 
 local function setVaults(self, vaults)
 	local maxn = 0
+	local max = math.max
 	
 	for slot, name in pairs(vaults) do
 		local index = index(slot)
@@ -281,11 +274,11 @@ local function SetGuild(self, guild)
 end
 
 function ItemContainer.GuildBar(parent, vaultCallback)
-	local self = UICreateFrame("Texture", "", parent)
+	local self = UI.CreateFrame("Texture", "", parent)
 	self:SetTexture("Rift", "QuestBarOver.png.dds")
 	self:SetHeight(24)
 	
-	self.vaultName = UICreateFrame("Text", "", self)
+	self.vaultName = UI.CreateFrame("Text", "", self)
 	self.vaultName:SetPoint("LEFTCENTER", self, "LEFTCENTER")
 	self.vaultName:SetFontSize(14)
 	self.vaultName.slot = "sg00"

@@ -1,7 +1,5 @@
 local Addon, private = ...
 
-local UICreateFrame = UI.CreateFrame
-
 setfenv(1, private)
 Ux = Ux or { }
 Ux.Textfield = { }
@@ -15,8 +13,8 @@ local borderWidth = 2
 -- ============================================================================
 
 function Ux.Textfield.New(parent, clearAnchor, defaultString)
-	local frame = UICreateFrame("Frame", "", parent)
-	local text = UICreateFrame("RiftTextfield", "", frame)
+	local frame = UI.CreateFrame("Frame", "", parent)
+	local text = UI.CreateFrame("RiftTextfield", "", frame)
 	text:SetPoint("TOPLEFT", frame, "TOPLEFT", borderWidth, borderWidth)
 	text:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -borderWidth, -borderWidth)
 	
@@ -26,7 +24,7 @@ function Ux.Textfield.New(parent, clearAnchor, defaultString)
 	frame.text = text
 
 	if(clearAnchor and defaultString) then
-		local x = UICreateFrame("RiftButton", "", text)
+		local x = UI.CreateFrame("RiftButton", "", text)
 		x:SetSkin("close")
 		x:SetPoint(clearAnchor .. "TOP", text, clearAnchor .. "TOP")
 		function x.Event:LeftPress()

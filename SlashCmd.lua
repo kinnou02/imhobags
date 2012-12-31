@@ -1,15 +1,5 @@
 local Addon, private = ...
 
-local format = string.format
-local pcall = pcall
-local print = print
-local strsplit = string.split
-local tostring = tostring
-local type = type
-local unpack = unpack
-
-local Command = Command
-
 local shortcuts = {
 	i = "inventory",
 	inv = "inventory",
@@ -30,7 +20,7 @@ local allowedLocations = {
 setfenv(1, private)
 
 local function slashMain(args)
-	local arg1, arg2 = unpack(strsplit(args, "%s", true))
+	local arg1, arg2 = unpack(string.split(args, "%s", true))
 	
 	if(arg1 == "") then arg1 = nil end
 	if(arg2 == "") then arg2 = nil end
@@ -86,13 +76,13 @@ local function slashMain(args)
 	-- /imhobags char [location]
 	if(not Item.Storage.GetCharacterAlliances()[arg1]) then
 		print("\n/imhobags " .. args)
-		print(format(L.SlashMessage.unknownChar, arg1))
+		print(string.format(L.SlashMessage.unknownChar, arg1))
 		return
 	end
 	local loc = shortcuts[arg2 or "i"] or arg2
 	if(not allowedLocations[loc]) then
 		print("\n/imhobags " .. args)
-		print(format(L.SlashMessage.unknownLocation, arg2))
+		print(string.format(L.SlashMessage.unknownLocation, arg2))
 		return
 	end
 	Ux.ToggleItemWindow(arg1, loc)

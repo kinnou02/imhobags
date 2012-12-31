@@ -1,12 +1,6 @@
 local Addon, private = ...
 
--- Builtins
-local _G = _G
-local pairs = pairs
-local type = type
-
--- Globals
-local Event = Event
+-- Upvalue
 local InspectCurrencyDetail = Inspect.Currency.Detail
 local InspectItemDetail = Inspect.Item.Detail
 local InspectItemList = Inspect.Item.List
@@ -14,6 +8,7 @@ local InspectGuildBankCoin = Inspect.Guild.Bank.Coin
 local InspectGuildBankList = Inspect.Guild.Bank.List
 local InspectGuildRankDetail = Inspect.Guild.Rank.Detail
 local InspectGuildRosterDetail = Inspect.Guild.Roster.Detail
+local pairs = pairs
 local UtilityItemSlotGuild = Utility.Item.Slot.Guild
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 

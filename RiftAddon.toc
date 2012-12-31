@@ -25,6 +25,8 @@ Dependencies = {
 }
 
 RunOnStartup = {
+	"bootstrap.lua",
+	
 	"locales/deDE.lua",
 	"locales/frFR.lua",
 	"locales/koKR.lua",
@@ -40,7 +42,6 @@ RunOnStartup = {
 	"Item/Storage.lua",
 	"Item/Type.lua",
 	
-	"Animate.lua",
 	"Group.Default.lua",
 	"ItemHandler.lua",
 	"PublicInterface.lua",

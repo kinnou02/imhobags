@@ -1,10 +1,5 @@
 local Addon, private = ...
 
-local max = math.max
-local type = type
-
-local UICreateFrame = UI.CreateFrame
-
 setfenv(1, private)
 Ux = Ux or { }
 Ux.OptionSelector = { }
@@ -18,8 +13,8 @@ local function getButton(self, i)
 	if(self.menu.buttons[i]) then
 		return self.menu.buttons[i]
 	else
-		local btn = UICreateFrame("Frame", "", self.menu)
-		local label = UICreateFrame("Text", "", btn)
+		local btn = UI.CreateFrame("Frame", "", self.menu)
+		local label = UI.CreateFrame("Text", "", btn)
 		label:SetFontSize(14)
 		label:SetPoint("CENTER", btn, "CENTER")
 		label:SetText("X")
@@ -59,6 +54,7 @@ local function updateMenu(self)
 		options = self.options
 	end
 	
+	local max = math.max
 	local width, height = 0, 0
 	for i = 1, #options do
 		local btn = getButton(self, i)
@@ -82,7 +78,7 @@ local function showMenu(self)
 	else
 		updateMenu(self)
 		self.menu:SetVisible(true)
-		self.menu:SetWidth(max(self:GetWidth(), self.menu:GetWidth()))
+		self.menu:SetWidth(math.max(self:GetWidth(), self.menu:GetWidth()))
 	end
 end
 
@@ -97,13 +93,13 @@ function Ux.OptionSelector.New(parent, icon, tooltip, options, callback, size)
 	self.LeftPress = showMenu
 	self.UpdateMenu = updateMenu
 	
-	local menu = UICreateFrame("Frame", "", parent)
+	local menu = UI.CreateFrame("Frame", "", parent)
 	menu:SetLayer(100)
 	self.menu = menu
 	menu:SetPoint("CENTER", self, "CENTER")
 	menu:SetBackgroundColor(0.6, 0.6, 0.6)
 	menu:SetVisible(false)
-	menu.background = UICreateFrame("Frame", "", menu)
+	menu.background = UI.CreateFrame("Frame", "", menu)
 	menu.background:SetPoint("TOPLEFT", menu, "TOPLEFT", borderWidth + 1, borderWidth + 1)
 	menu.background:SetPoint("BOTTOMRIGHT", menu, "BOTTOMRIGHT", -borderWidth, -borderWidth)
 	menu.background:SetBackgroundColor(0, 0, 0)

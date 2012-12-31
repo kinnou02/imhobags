@@ -1,10 +1,5 @@
 local Addon, private = ...
 
-local floor = math.floor
-local tostring = tostring
-
-local UICreateFrame = UI.CreateFrame
-
 setfenv(1, private)
 Ux = Ux or { }
 Ux.MoneyFrame = { }
@@ -17,8 +12,8 @@ local iconWidth = 18
 local function setCoin(self, coin)
 	coin = coin or 0
 	
-	local p = floor(coin / 10000)
-	local g = floor(coin / 100 % 100)
+	local p = math.floor(coin / 10000)
+	local g = math.floor(coin / 100 % 100)
 	local s = coin % 100
 	
 	self.stxt:SetText(tostring(s))
@@ -54,6 +49,7 @@ end
 -- ============================================================================
 
 function Ux.MoneyFrame.New(parent, coin)
+	local UICreateFrame = UI.CreateFrame
 	local self = UICreateFrame("Frame", "ImhoBags.Ux.MoneyFrame", parent)
 	self:SetHeight(16)
 	

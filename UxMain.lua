@@ -1,16 +1,5 @@
 ﻿local Addon, private = ...
 
--- Builtins
-local _G = _G
-local floor = math.floor
-local pairs = pairs
-local type = type
-
--- Globals
-local Event = Event
-local UICreateContext = UI.CreateContext
-local UIParent = UIParent
-
 local itemWindows = {
 	{ "bank", UI.Native.Bank },
 	{ "currency", nil },
@@ -24,8 +13,8 @@ setfenv(1, private)
 Ux = Ux or { }
 Ux.ItemWindow = { }
 
-Ux.Context = UICreateContext(Addon.identifier)
-Ux.TooltipContext = UICreateContext(Addon.identifier)
+Ux.Context = UI.CreateContext(Addon.identifier)
+Ux.TooltipContext = UI.CreateContext(Addon.identifier)
 Ux.TooltipContext:SetStrata("topmost")
 
 -- Private methods
@@ -34,7 +23,7 @@ Ux.TooltipContext:SetStrata("topmost")
 local function centerWindow(window)
 	local screenWidth = UIParent:GetWidth()
 	local screenHeight = UIParent:GetHeight()
-	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", floor((screenWidth - window:GetWidth()) / 2), floor((screenHeight - window:GetHeight()) / 2))
+	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor((screenWidth - window:GetWidth()) / 2), math.floor((screenHeight - window:GetHeight()) / 2))
 end
 
 local function Ux_savedVariablesSaveBegin(addonIdentifier)

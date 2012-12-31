@@ -1,8 +1,9 @@
-- refactoring
 - new item highlights
 - cooldowns
 - Unusable: red
-- item animations
 - search window
-- resize highlight
 - factions
+- guildbank
+- mail
+- menu
+- stacking

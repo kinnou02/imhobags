@@ -1,20 +1,8 @@
 local Addon, private = ...
 
--- Builtins
-local concat = table.concat
+-- Upvalue
 local format = string.format
-local formatn = string.formatn
 local gsub = string.gsub
-local pairs = pairs
-local select = select
-local sort = table.sort
-
--- Globals
-local Command = Command
-local Event = Event
-local Inspect = Inspect
-local UI = UI
-local UIParent = UIParent
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -126,7 +114,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	for name in pairs(counts) do
 		names[#names + 1] = name
 	end
-	sort(names)
+	table.sort(names)
 	
 	for i = 1, #names do
 		local data = counts[names[i]]
@@ -142,7 +130,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	for name in pairs(counts) do
 		names[#names + 1] = name
 	end
-	sort(names)
+	table.sort(names)
 
 	for i = 1, #names do
 		local data = counts[names[i]]
@@ -157,7 +145,7 @@ local function tooltipTargetChanged(ttype, shown, buff)
 		if(lines > 1) then
 			tooltip[#tooltip + 1] = format("= %i", total)
 		end
-		showTooltip(concat(tooltip))
+		showTooltip(table.concat(tooltip))
 	end
 end
 

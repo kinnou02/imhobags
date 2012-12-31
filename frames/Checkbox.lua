@@ -1,7 +1,5 @@
 local Addon, private = ...
 
-local UICreateFrame = UI.CreateFrame
-
 setfenv(1, private)
 Ux = Ux or { }
 Ux.Checkbox = { }
@@ -17,8 +15,8 @@ function Checkbox_RealWidth(self)
 end
 
 function Ux.Checkbox.New(parent, text, side)
-	local frame = UICreateFrame("RiftCheckbox", "", parent)
-	frame.text = UICreateFrame("Text", "", frame)
+	local frame = UI.CreateFrame("RiftCheckbox", "", parent)
+	frame.text = UI.CreateFrame("Text", "", frame)
 	frame.text:SetPoint("TOP" .. ((side == "LEFT" and "RIGHT") or "LEFT"), frame, "TOP" .. side)
 	frame.text:SetText(text)
 	

@@ -1,8 +1,6 @@
 local Addon, private = ...
 
--- Builtins
-
--- Globals
+-- Upvalue
 local InspectItemDetail = Inspect.Item.Detail
 
 -- Locals

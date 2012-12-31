@@ -1,10 +1,8 @@
 local Addon, private = ...
 
--- Builtins
-local strmatch = string.match
-
--- Globals
+-- Upvalue
 local InspectCurrencyCategoryDetail = Inspect.Currency.Category.Detail
+local strmatch = string.match
 
 local shortCategoryCache = { } -- Used for avoiding string.match on known categories
 

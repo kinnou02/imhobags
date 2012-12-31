@@ -1,8 +1,5 @@
 local Addon, private = ...
 
--- Globals
-local UICreateFrame = UI.CreateFrame
-
 -- Locals
 local width = 20
 local height = 20
@@ -17,13 +14,13 @@ Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 -- ============================================================================
 
 function Ux.ItemWindowTemplate.TitleBarButton(parent, source, texture, dx, dy, offsetx, offsety, callback)
-	local self = UICreateFrame("Frame", "", parent)
+	local self = UI.CreateFrame("Frame", "", parent)
 	self:SetWidth(width)
 	self:SetHeight(height)
 	self:SetMouseMasking("limited")
 	self.Event.LeftClick = callback
 	
-	local tex = UICreateFrame("Texture", "", self)
+	local tex = UI.CreateFrame("Texture", "", self)
 	tex:SetPoint("CENTER", self, "CENTER", offsetx or 0, offsety or 0)
 	tex:SetTextureAsync(source, texture, function()
 		tex:SetWidth(dx or tex:GetWidth())

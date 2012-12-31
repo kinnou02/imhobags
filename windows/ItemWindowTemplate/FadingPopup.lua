@@ -1,13 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-
--- Globals
-local LibAnimate = LibAnimate
-local UICreateFrame = UI.CreateFrame
-
--- Locals
-
 setfenv(1, private)
 Ux.ItemWindowTemplate.FadingPopup = { }
 
@@ -31,7 +23,7 @@ end
 -- ============================================================================
 
 function Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(frame, titleBar, fullHeight)
-	local hotArea = UICreateFrame("Frame", "", frame)
+	local hotArea = UI.CreateFrame("Frame", "", frame)
 	hotArea:SetLayer(100)
 	hotArea:SetPoint("TOPLEFT", frame, "TOPLEFT")
 	hotArea:SetPoint("TOPRIGHT", frame, "TOPRIGHT")

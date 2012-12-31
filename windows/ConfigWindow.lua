@@ -1,21 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-local floor = math.floor
-local max = math.max
-local pairs = pairs
-local pcall = pcall
-local strupper = string.upper
-local tinsert = table.insert
-local unpack = unpack
-
--- Globals
-local Command = Command
-local Inspect = Inspect
-local LibAsyncTextures = LibAsyncTextures
-local UICreateFrame = UI.CreateFrame
-local UIParent = UIParent
-
 local contentPadding = 10
 local contentPanePaddingLeft = 140
 local headingColor = { 216 / 255, 203 / 255, 153 / 255 }
@@ -27,15 +11,15 @@ Ux = Ux or { }
 -- Private methods
 -- ============================================================================
 
-local slashTooltip = UICreateFrame("Text", "", Ux.TooltipContext)
+local slashTooltip = UI.CreateFrame("Text", "", Ux.TooltipContext)
 slashTooltip:SetVisible(false)
 slashTooltip:SetFontSize(12)
 slashTooltip:SetBackgroundColor(0, 0, 0, 0.75)
 
 local function createHighlightedTexture(parent, path, tooltip, textureCallback)
-	local icon = UICreateFrame("Texture", "", parent)
+	local icon = UI.CreateFrame("Texture", "", parent)
 	icon:SetTextureAsync("ImhoBags", path, textureCallback)
-	local highlight = UICreateFrame("Texture", "", parent)
+	local highlight = UI.CreateFrame("Texture", "", parent)
 	highlight:SetTexture("ImhoBags", "textures/highlight.png")
 	highlight:SetAllPoints(icon)
 	highlight:SetVisible(false)
@@ -88,8 +72,8 @@ end
 local function content_LeftDown(self)
 	local mouse = Inspect.Mouse()
 	local left, top, right, bottom = self.window:GetTrimDimensions()
-	self.mouseOffsetX = floor(mouse.x - self.window:GetLeft())
-	self.mouseOffsetY = floor(mouse.y - self.window:GetTop())
+	self.mouseOffsetX = math.floor(mouse.x - self.window:GetLeft())
+	self.mouseOffsetY = math.floor(mouse.y - self.window:GetTop())
 end
 
 local function content_LeftUpoutside(self)
@@ -115,9 +99,9 @@ local function makeMovable(self)
 end
 
 local function createPaneButton(self, pane, name, previous)
-	local button = UICreateFrame("RiftButton", "", self)
+	local button = UI.CreateFrame("RiftButton", "", self)
 	button:SetText(name)
-	name = strupper(name)
+	name = string.upper(name)
 	function button.Event.LeftPress()
 		for k, v in pairs(self.panes) do
 			v:SetVisible(v == pane)
@@ -138,13 +122,13 @@ local function createPaneButton(self, pane, name, previous)
 end
 
 local function createAppearance1Pane(self)
-	local backdrop = UICreateFrame("Frame", "", self)
+	local backdrop = UI.CreateFrame("Frame", "", self)
 	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
 	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
 	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
 	
 	-- Condensed config
-	local description = UICreateFrame("Text", "", backdrop)
+	local description = UI.CreateFrame("Text", "", backdrop)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
 	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
@@ -160,15 +144,15 @@ local function createAppearance1Pane(self)
 	function condensed_y.Event:LeftDown() Config.condensed = true end
 	function condensed_n.Event:LeftDown() Config.condensed = false end
 	
-	tinsert(ImhoEvent.Config, { function(k, v)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 		if(k == "condensed") then
 			condensed_y:SetChecked(v == true)
 			condensed_n:SetChecked(v == false)
 		end
-	end , Addon.identifier, "" })
+	end , Addon.identifier, "" }
 	
 	-- Group packing option
-	description = UICreateFrame("Text", "", backdrop)
+	description = UI.CreateFrame("Text", "", backdrop)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", condensed_y, "BOTTOMLEFT", 0, contentPadding)
 	description:SetPoint("TOPRIGHT", condensed_n, "BOTTOMRIGHT", 0, contentPadding)
@@ -184,15 +168,15 @@ local function createAppearance1Pane(self)
 	function packGroups_y.Event:LeftDown() Config.packGroups = true end
 	function packGroups_n.Event:LeftDown() Config.packGroups = false end
 	
-	tinsert(ImhoEvent.Config, { function(k, v)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 		if(k == "packGroups") then
 			packGroups_y:SetChecked(v == true)
 			packGroups_n:SetChecked(v == false)
 		end
-	end , Addon.identifier, "" })
+	end , Addon.identifier, "" }
 	
 	-- Item button skin option
-	description = UICreateFrame("Text", "", backdrop)
+	description = UI.CreateFrame("Text", "", backdrop)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", packGroups_y, "BOTTOMLEFT", 0, contentPadding)
 	description:SetPoint("TOPRIGHT", packGroups_n, "BOTTOMRIGHT", 0, contentPadding)
@@ -211,25 +195,25 @@ local function createAppearance1Pane(self)
 	function itemButtonSkin_pretty.Event:LeftDown() Config.itemButtonSkin = "pretty" end
 	function itemButtonSkin_simple.Event:LeftDown() Config.itemButtonSkin = "simple" end
 
-	tinsert(ImhoEvent.Config, { function(k, v)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 		if(k == "itemButtonSkin") then
 			itemButtonSkin_pretty:SetChecked(v == "pretty")
 			itemButtonSkin_simple:SetChecked(v == "simple")
 		end
-	end , Addon.identifier, "" })
+	end , Addon.identifier, "" }
 	
 	backdrop:SetVisible(false)
 	return backdrop
 end
 
 local function createAppearance2Pane(self)
-	local backdrop = UICreateFrame("Frame", "", self)
+	local backdrop = UI.CreateFrame("Frame", "", self)
 	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
 	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
 	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
 	
 	-- Condensed config
-	local description = UICreateFrame("Text", "", backdrop)
+	local description = UI.CreateFrame("Text", "", backdrop)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
 	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
@@ -243,24 +227,24 @@ local function createAppearance2Pane(self)
 	showBoundIcon:SetChecked(Config.showBoundIcon == true)
 	function showBoundIcon.Event:LeftDown() Config.showBoundIcon = not self:GetChecked() end
 	
-	tinsert(ImhoEvent.Config, { function(k, v)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 		if(k == "showBoundIcon") then
 			showBoundIcon:SetChecked(v)
 		end
-	end , Addon.identifier, "" })
+	end , Addon.identifier, "" }
 	
 	backdrop:SetVisible(false)
 	return backdrop
 end
 
 local function createBehaviorPane(self)
-	local backdrop = UICreateFrame("Frame", "", self)
+	local backdrop = UI.CreateFrame("Frame", "", self)
 	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
 	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
 	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
 	
 	-- Auto Open
-	local description = UICreateFrame("Text", "", backdrop)
+	local description = UI.CreateFrame("Text", "", backdrop)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
 	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
@@ -274,24 +258,24 @@ local function createBehaviorPane(self)
 	autoOpen:SetChecked(Config.autoOpen == true)
 	function autoOpen.Event:LeftDown() Config.autoOpen = not self:GetChecked() end
 
-	tinsert(ImhoEvent.Config, { function(k, v)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 		if(k == "autoOpen") then
 			autoOpen:SetChecked(v)
 		end
-	end , Addon.identifier, "" })
+	end , Addon.identifier, "" }
 
 	backdrop:SetVisible(false)
 	return backdrop
 end
 
 local function createExtrasPane(self)
-	local backdrop = UICreateFrame("Frame", "", self)
+	local backdrop = UI.CreateFrame("Frame", "", self)
 	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
 	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
 	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
 	
 	-- Tooltip enhancement
-	local description = UICreateFrame("Text", "", backdrop)
+	local description = UI.CreateFrame("Text", "", backdrop)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
 	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
@@ -303,14 +287,14 @@ local function createExtrasPane(self)
 	enhanceTooltips:SetChecked(Config.enhanceTooltips == true)
 	function enhanceTooltips.Event:LeftDown() Config.enhanceTooltips = not self:GetChecked() end
 
-	tinsert(ImhoEvent.Config, { function(k, v)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 		if(k == "enhanceTooltips") then
 			enhanceTooltips:SetChecked(v)
 		end
-	end , Addon.identifier, "" })
+	end , Addon.identifier, "" }
 	
 	-- Empty slot indication
-	local description2 = UICreateFrame("Text", "", backdrop)
+	local description2 = UI.CreateFrame("Text", "", backdrop)
 	description2:SetWordwrap(true)
 	description2:SetPoint("TOPCENTER", enhanceTooltips, "BOTTOMCENTER")
 	description2:SetWidth(description:GetWidth())
@@ -324,11 +308,11 @@ local function createExtrasPane(self)
 	showEmptySlots:SetChecked(Config.showEmptySlots == true)
 	function showEmptySlots.Event:LeftDown() Config.showEmptySlots = not self:GetChecked() end
 
-	tinsert(ImhoEvent.Config, { function(k, v)
+	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 		if(k == "showEmptySlots") then
 			showEmptySlots:SetChecked(v)
 		end
-	end , Addon.identifier, "" })
+	end , Addon.identifier, "" }
 	
 	
 	backdrop:SetVisible(false)
@@ -339,7 +323,7 @@ end
 -- ============================================================================
 
 function Ux.ConfigWindow()
-	local self = UICreateFrame("RiftWindow", "", Ux.Context)
+	local self = UI.CreateFrame("RiftWindow", "", Ux.Context)
 	self:SetTitle(L.Ux.ConfigWindow.title)
 	self:SetController("content")
 	self:SetWidth(650)
@@ -351,11 +335,11 @@ function Ux.ConfigWindow()
 	Ux.RiftWindowCloseButton.New(self, self)
 	
 	-- Section headline
-	self.heading = UICreateFrame("Text", "", self)
+	self.heading = UI.CreateFrame("Text", "", self)
 	self.heading:SetFontSize(18)
 	self.heading:SetFontColor(unpack(headingColor))
 	self.heading:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft + 15, 0)
-	self.underline = UICreateFrame("Texture", "", self)
+	self.underline = UI.CreateFrame("Texture", "", self)
 	self.underline:SetTexture("Rift", "quest_description_short_frame.png.dds")
 	self.underline:SetHeight(self.underline:GetTextureHeight())
 	self.underline:SetPoint("TOPLEFT", self.heading, "BOTTOMLEFT", -15, -20)
@@ -378,7 +362,7 @@ function Ux.ConfigWindow()
 	LibAsyncTextures.EnqueueCallback(function()
 		local height = 0
 		for k, v in pairs(self.panes) do
-			height = max(v:GetHeight(), height)
+			height = math.max(v:GetHeight(), height)
 		end
 		for k, v in pairs(self.panes) do
 			v:SetHeight(height)

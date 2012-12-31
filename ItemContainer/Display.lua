@@ -1,28 +1,7 @@
 local Addon, private = ...
 
--- Builtins
-local ceil = math.ceil
-local floor = math.floor
-local format = string.format
-local min = math.min
-local next = next
+-- Upvalue
 local pairs = pairs
-local pcall = pcall
-local setmetatable = setmetatable
-local sort = table.sort
-local tostring = tostring
-local type = type
-
--- Globals
-local Command = Command
-local Event = Event
-local Inspect = Inspect
-local InspectCurrencyCategoryDetail = Inspect.Currency.Category.Detail
-local InspectCurrencyDetail = Inspect.Currency.Detail
-local InspectGuildBankList = Inspect.Guild.Bank.List
-local InspectItemDetail = Inspect.Item.Detail
-local UICreateFrame = UI.CreateFrame
-local UtilityItemSlotGuild = Utility.Item.Slot.Guild
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
@@ -68,9 +47,9 @@ local function setupGroupLabel(self, display, group, items)
 end
 
 local function groupLabelFactory(parent)
-	local self = UICreateFrame("Texture", "", parent)
+	local self = UI.CreateFrame("Texture", "", parent)
 	self:SetTexture("Rift", "QuestBarUp.png.dds")
-	self.text = UICreateFrame("Text", "", self)
+	self.text = UI.CreateFrame("Text", "", self)
 	self.text:SetFontSize(labelFontSize)
 	self.text:SetPoint("CENTER", self, "CENTER")
 	self:SetHeight(labelHeight)
@@ -253,6 +232,7 @@ local function SetCharacter(self, character)
 end
 
 local function SetGuild(self, guild, vault)
+	log(Player.guild, guild, vault)
 	if(guild == Player.guild) then
 		if(Inspect.Interaction("guildbank")) then
 			self.set = self.playerSet[vault or 1] or ItemContainer.ItemSet("guildbank")
@@ -301,7 +281,7 @@ local function DropCursorItem(self)
 end
 
 function ItemContainer.Display(parent, location, config, changeCallback)
-	local self = UICreateFrame("Frame", "ItemContainer." .. location, parent)
+	local self = UI.CreateFrame("Frame", "ItemContainer." .. location, parent)
 	
 	config = checkConfig(location, config)
 	if(location == "guildbank") then

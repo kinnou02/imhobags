@@ -1,18 +1,13 @@
 local Addon, private = ...
 
--- Builtins
+-- Upvalue
 local format = string.format
-local pairs = pairs
-local pcall = pcall
-local setmetatable = setmetatable
-
--- Globals
 local InspectCurrencyCategoryDetail = Inspect.Currency.Category.Detail
 local InspectCurrencyDetail = Inspect.Currency.Detail
 local InspectItemDetail = Inspect.Item.Detail
+local pairs = pairs
+local pcall = pcall
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
-
--- Locals
 
 setfenv(1, private)
 ItemContainer = ItemContainer or { }
@@ -86,7 +81,7 @@ local function populateWithStoredItems(self, totals, slots, counts, bags)
 			self.Slots[slot] = id
 			self.Items[id] = detail
 			local container, bag, index = UtilityItemSlotParse(slot)
-			self.Groups[id] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
+			self.Groups[id] = container ~= "wardrobe" and self.groupFunc(detail) or format(L.CategoryName.wardrobe, bag)
 			id = id + 1
 		else
 			self.Slots[slot] = false
@@ -130,7 +125,7 @@ function ResolveUnknownItems(self, unknownTypes, callback)
 			self.Items[id] = detail
 			if(self.location ~= "currency") then
 				local container, bag, index = UtilityItemSlotParse(slot)
-				self.Groups[id] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
+				self.Groups[id] = container ~= "wardrobe" and self.groupFunc(detail) or format(L.CategoryName.wardrobe, bag)
 			end
 			callback(id)
 		else
@@ -211,16 +206,16 @@ function ItemContainer.ItemSet(location, character, vault)
 		Slots = {
 			-- [slot] = id|false
 		},
-		Items = setmetatable({
+		Items = {
 			-- [id] = detail
 			-- [slot] = detail
-		}, { __mode = " " }),
+		},
 		Empty = {
 			-- [slot] = true
 		},
-		Groups = setmetatable({
+		Groups = {
 			-- [id] = group
-		}, { __mode = " " }),
+		},
 		
 		ResolveUnknownItems = ResolveUnknownItems,
 		UpdateCurrency = UpdateCurrency,

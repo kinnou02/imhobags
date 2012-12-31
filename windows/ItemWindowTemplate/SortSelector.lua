@@ -1,10 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-
--- Globals
-local UICreateFrame = UI.CreateFrame
-
 -- Locals
 local backgroundOffset = 3
 local backgroundHeight = 32
@@ -24,6 +19,7 @@ Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 -- ============================================================================
 
 function Ux.ItemWindowTemplate.SortSelector(parent, titleBar, hasLayout)
+	local UICreateFrame = UI.CreateFrame
 	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetHeight(0)
 	

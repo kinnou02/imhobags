@@ -1,16 +1,6 @@
 local Addon, private = ...
 
--- Builtins
-local tostring = tostring
-local type = type
-
--- Globals
-local Inspect = Inspect
-local UIParent = UIParent
-
 -- Locals
-local UICreateFrame = UI.CreateFrame
-
 local stackFontSizes = {
 	[30] = 10,
 	[40] = 12,
@@ -25,12 +15,12 @@ Ux.ItemButton_simple = { }
 -- Private methods
 -- ============================================================================
 
-local highlight = UICreateFrame("Texture", "", Ux.Context)
+local highlight = UI.CreateFrame("Texture", "", Ux.Context)
 highlight:SetTexture("Rift", "IconSlot_Blue_Blur_Glow.png.dds")
 highlight:SetVisible(false)
 highlight:SetLayer(3)
 
-local tooltip = UICreateFrame("Text", "", Ux.TooltipContext)
+local tooltip = UI.CreateFrame("Text", "", Ux.TooltipContext)
 tooltip:SetBackgroundColor(0, 0, 0, 0.75)
 tooltip:SetText("")
 tooltip:SetVisible(false)
@@ -167,6 +157,7 @@ local function SetSize(self, size)
 end
 
 function Ux.ItemButton_simple.New(parent)
+	local UICreateFrame = UI.CreateFrame
 	local self = UICreateFrame("Frame", "ImhoBags_ItemButton", parent)
 	
 	self.backdrop = UICreateFrame("Frame", "", self)

@@ -115,4 +115,8 @@ local function variablesLoaded(addonIdentifier)
 	})
 end
 
-table.insert(Event.Addon.SavedVariables.Load.End, { variablesLoaded, Addon.identifier, "Config_variablesLoaded"})
+Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
+	variablesLoaded,
+	Addon.identifier,
+	"Config_variablesLoaded"
+}

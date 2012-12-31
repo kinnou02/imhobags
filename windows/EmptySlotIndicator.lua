@@ -1,30 +1,10 @@
 local Addon, private = ...
 
--- Builtins
-local ceil = math.ceil
-local tostring = tostring
-
--- Globals
-local Event = Event
-local InspectTimeReal = Inspect.Time.Real
-local UI = UI
-
 setfenv(1, private)
 Ux = Ux or { }
 
 -- Private methods
 -- ============================================================================
-
-local function adjustPosition()
-	local normalWidth = 275 -- Width of UI.Native.Bag at 100% scale
-	local actualWidth = UI.Native.Bag:GetWidth()
-	local factor = actualWidth / normalWidth
-	
-	Ux.EmptySlotIndicator:SetWidth(ceil(29 * factor))
-	Ux.EmptySlotIndicator:SetHeight(ceil(29 * factor))
-	Ux.EmptySlotIndicator.label:SetFontSize(ceil(18 * factor))
-	Ux.EmptySlotIndicator:SetPoint("CENTER", UI.Native.Bag, "TOPLEFT", ceil(71 * factor), ceil(28 * factor))
-end
 
 local function showOrHideEmptySlotIndicator()
 	log(UI.Native.Bag:GetLoaded(), Config.showEmptySlots)
@@ -45,7 +25,7 @@ local function createEmptySlotIndicator()
 	resizeFrame:SetAllPoints(UI.Native.Bag)
 	resizeFrame:SetVisible(false)
 	function window.Event:Size()
-		Ux.EmptySlotIndicator.label:SetFontSize(ceil(0.6 * window:GetHeight()))
+		Ux.EmptySlotIndicator.label:SetFontSize(math.ceil(0.6 * window:GetHeight()))
 	end
 	
 	window:SetPoint("TOPLEFT", UI.Native.Bag, 57 / 275, 14 / 85)

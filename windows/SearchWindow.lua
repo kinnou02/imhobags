@@ -1,24 +1,8 @@
 local Addon, private = ...
 
-local assert = assert
-local coroutine = coroutine
-local floor = math.floor
-local format = string.format
-local pairs = pairs
-local pcall = pcall
-local sort = table.sort
-local strfind = string.find
-local strgsub = string.gsub
-local strlower = string.lower
-local strupper = string.upper
-
-local Command = Command
-local Event = Event
-local Inspect = Inspect
+-- Upvalue
 local InspectItemDetail = Inspect.Item.Detail
 local InspectTimeReal = Inspect.Time.Real
-local UI = UI
-local UIParent = UIParent
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -83,7 +67,7 @@ local buttons = { }
 local items = { }
 
 local function update()
-	local offset = floor(scrollbar:GetPosition())
+	local offset = math.floor(scrollbar:GetPosition())
 	for i = 1, #buttons do
 		local button = buttons[i]
 		local index = i + offset
@@ -108,10 +92,14 @@ local function applySearchFilter()
 		end
 	else
 		-- Make a case-insensitive search pattern
-		pattern = strgsub(filter.text:GetText(), "%a", function(s)
+		local format = string.format
+		local strlower = string.lower
+		local strupper = string.upper
+		pattern = string.gsub(filter.text:GetText(), "%a", function(s)
 			return format("[%s%s]", strlower(s), strupper(s))
 		end)
 		display = { }
+		local strfind = string.find
 		for i = 1, #items do
 			local item = items[i]
 			if(strfind(item[1], pattern)) then
@@ -206,10 +194,11 @@ local function updateItemList(itemTypes)
 	local now = InspectTimeReal()
 	items = { }
 	display = { }
+	local gsub = string.gsub
 	for k in pairs(itemTypes) do
 		local result, detail = pcall(InspectItemDetail, k)
 		if(result) then
-			local n = strgsub(detail.name, "\n", "")
+			local n = gsub(detail.name, "\n", "")
 			items[#items + 1] = { n, detail.rarity, detail.icon, k }
 			display[#display + 1] = items[#items]
 		end
@@ -219,7 +208,7 @@ local function updateItemList(itemTypes)
 		end
 	end
 	coroutine.yield()
-	sort(items, function(a, b) return a[1] < b[1] end)
+	table.sort(items, function(a, b) return a[1] < b[1] end)
 end
 
 local function updateProc()

@@ -1,11 +1,7 @@
 local Addon, private = ...
 
--- Builtins
-local next = next
+-- Upvalue
 local pairs = pairs
-
--- Globals
-local Event = Event
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals

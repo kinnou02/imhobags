@@ -1,16 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-local ipairs = ipairs
-local max = math.max
-local pairs = pairs
-local tostring = tostring
-
--- Globals
-local InspectMouse = Inspect.Mouse
-local LibAnimate = LibAnimate
-local UICreateFrame = UI.CreateFrame
-
 -- Locals
 local filterBoxLeft = 24
 local filterBoxWidth = 100
@@ -32,7 +21,7 @@ local function hitTest(frame, x, y)
 end
 
 local function createFadeAnimationLeft(self)
-	local hotArea = UICreateFrame("Frame", "", self)
+	local hotArea = UI.CreateFrame("Frame", "", self)
 	hotArea:SetLayer(100)
 	hotArea:SetAllPoints(self.leftPanel)
 	hotArea:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 2)
@@ -73,7 +62,7 @@ local function createFadeAnimationLeft(self)
 		end
 	end
 	local function isMouseHot(self)
-		local mouse = InspectMouse()
+		local mouse = Inspect.Mouse()
 		local outside = hitTest(hotArea, mouse.x, mouse.y)
 		for k, v in pairs(hotArea.extern) do
 			outside = outside and hitTest(k, mouse.x, mouse.y)
@@ -98,13 +87,13 @@ end
 
 local function locationPanelAnimationFunction(self, width, offset) 
 	self.rightHidden:SetWidth(width)
-	self.rightPanel:SetWidth(max(rightPanelMinWidth, width))
+	self.rightPanel:SetWidth(math.max(rightPanelMinWidth, width))
 	self.rightHiddenButtonsOffsetCurrent = offset
 	self.locationButtons[1]:SetPoint("LEFTCENTER", self.rightHidden, "LEFTCENTER", offset, 0)
 end
 
 local function createFadeAnimationRight(self)
-	local hotArea = UICreateFrame("Frame", "", self)
+	local hotArea = UI.CreateFrame("Frame", "", self)
 	hotArea:SetLayer(100)
 	hotArea:SetAllPoints(self.rightPanel)
 	hotArea:SetMouseMasking("limited")
@@ -133,7 +122,7 @@ local function createFadeAnimationRight(self)
 end
 
 local function createAllianceLogo(self, location)
-	self.allianceIcon = UICreateFrame("Texture", "", self.leftPanel)
+	self.allianceIcon = UI.CreateFrame("Texture", "", self.leftPanel)
 	if(location == "guildbank") then
 		self.allianceIcon:SetPoint("BOTTOMLEFT", self.leftPanel, "BOTTOMLEFT", 0, 3)
 	else
@@ -159,7 +148,7 @@ local function createAllianceLogo(self, location)
 end
 
 local function createMainLabel(self)
-	self.mainLabel = UICreateFrame("Text", "", self.leftPanel)
+	self.mainLabel = UI.CreateFrame("Text", "", self.leftPanel)
 	self.mainLabel:SetFontColor(0, 0, 0)
 	self.mainLabel:SetFontSize(18)
 	self.mainLabel:SetText("")
@@ -225,7 +214,7 @@ local function createGoldButton(self, location)
 end
 
 local function createSearchFilter(self)
-	local background = UICreateFrame("Texture", "", self.leftHidden)
+	local background = UI.CreateFrame("Texture", "", self.leftHidden)
 	background:SetTexture("Rift", "window_field.png.dds")
 	background:SetPoint("TOPLEFT", self.goldButton, "TOPRIGHT", 0, 0)
 	background:SetWidth(filterBoxWidth)
@@ -234,7 +223,7 @@ local function createSearchFilter(self)
 	local button = Ux.ItemWindowTemplate.TitleBarButton(background, "Rift", "icon_menu_LFP.png.dds", 26, 26, 0, 1, function() Ux.SearchWindow:Toggle() end)
 	button:SetPoint("RIGHTCENTER", background, "RIGHTCENTER", -4, -1)
 	
-	local input = UICreateFrame("RiftTextfield", "", background)
+	local input = UI.CreateFrame("RiftTextfield", "", background)
 	input:SetPoint("LEFTCENTER", background, "LEFTCENTER", 4, 1)
 	input:SetPoint("RIGHTCENTER", button, "LEFTCENTER", 0, 1)
 	input:SetText("")
@@ -305,20 +294,20 @@ end
 
 local function createEmptySlotIndicator(self, location)
 	if(location == "currency" or location == "equipment") then
-		self.emptySlotsBackground = UICreateFrame("Frame", "", self)
+		self.emptySlotsBackground = UI.CreateFrame("Frame", "", self)
 		self.emptySlotsBackground:SetWidth(0)
 		self.emptySlotsBackground:SetHeight(24)
 		self.emptySlotsBackground:SetPoint("TOPRIGHT", self, "TOPRIGHT", -4, -1)
 		function self:SetEmptySlotsCallback(callback) end
 		function self:SetEmptySlots(n) end
 	else
-		self.emptySlotsBackground = UICreateFrame("Texture", "", self)
+		self.emptySlotsBackground = UI.CreateFrame("Texture", "", self)
 		self.emptySlotsBackground:SetTexture("Rift", "icon_empty.png.dds")
 		self.emptySlotsBackground:SetWidth(24)
 		self.emptySlotsBackground:SetHeight(24)
 		self.emptySlotsBackground:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -1)
 		
-		self.emptySlotsIndicator = UICreateFrame("Text", "", self.emptySlotsBackground)
+		self.emptySlotsIndicator = UI.CreateFrame("Text", "", self.emptySlotsBackground)
 		self.emptySlotsIndicator:SetPoint("BOTTOMRIGHT", self.emptySlotsBackground, "BOTTOMRIGHT", -2, 0)
 		self.emptySlotsIndicator:SetFontSize(12)
 		
@@ -379,7 +368,7 @@ end
 function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	local border = parent:GetBorder()
 	
-	local self = UICreateFrame("Frame", "", border)
+	local self = UI.CreateFrame("Frame", "", border)
 	self:SetPoint("TOPLEFT", border, "TOPLEFT", 80, 18)
 	self:SetPoint("TOPRIGHT", border, "TOPRIGHT", -80, 18)
 	self:SetHeight(24)
@@ -387,12 +376,12 @@ function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	-- Right panel
 	createEmptySlotIndicator(self, location)
 	
-	local rightPanel = UICreateFrame("Mask", "", self)
+	local rightPanel = UI.CreateFrame("Mask", "", self)
 	rightPanel:SetPoint("TOPRIGHT", self.emptySlotsBackground, "TOPLEFT", 3, 3)
 	rightPanel:SetPoint("BOTTOMRIGHT", self.emptySlotsBackground, "BOTTOMLEFT", 3, -3)
 	rightPanel:SetWidth(rightPanelMinWidth)
 	
-	local rightHidden = UICreateFrame("Mask", "", self)
+	local rightHidden = UI.CreateFrame("Mask", "", self)
 	rightHidden:SetPoint("TOPRIGHT", rightPanel, "TOPRIGHT")
 	rightHidden:SetPoint("BOTTOMRIGHT", rightPanel, "BOTTOMRIGHT")
 	rightHidden:SetWidth(rightHiddenMinWidth)
@@ -402,12 +391,12 @@ function Ux.ItemWindowTemplate.TitleBar(parent, location)
 	createLocationButtons(self, location)
 
 	-- Left panel
-	local leftHidden = UICreateFrame("Mask", "", self)
+	local leftHidden = UI.CreateFrame("Mask", "", self)
 	leftHidden:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, -2)
 	leftHidden:SetPoint("RIGHT", rightPanel, "LEFT")
 	leftHidden:SetHeight(0)
 	
-	local leftPanel = UICreateFrame("Mask", "", self)
+	local leftPanel = UI.CreateFrame("Mask", "", self)
 	leftPanel:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 2)
 	leftPanel:SetPoint("BOTTOMLEFT", leftHidden, "TOPLEFT")
 	leftPanel:SetPoint("RIGHT", rightPanel, "LEFT")

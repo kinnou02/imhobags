@@ -1,11 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-local tostring = tostring
-
--- Globals
-local UICreateFrame = UI.CreateFrame
-
 -- Locals
 local backgroundOffset = 3
 local backgroundWidth = 160
@@ -23,22 +17,22 @@ Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 -- ============================================================================
 
 function Ux.ItemWindowTemplate.SizeSelector(parent, titleBar)
-	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
+	local self = UI.CreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetWidth(backgroundWidth)
 	self:SetHeight(0)
 	
-	local background = UICreateFrame("Texture", "", self)
+	local background = UI.CreateFrame("Texture", "", self)
 	background:SetPoint("BOTTOMCENTER", self, "BOTTOMCENTER")
 	background:SetWidth(self:GetWidth())
 	background:SetTexture("Rift", "dropdown_list.png.dds")
 	
-	local slider = UICreateFrame("RiftSlider", "", background)
+	local slider = UI.CreateFrame("RiftSlider", "", background)
 	slider:SetPoint("BOTTOMCENTER", background, "BOTTOMCENTER", -14, 0)
 	slider:SetWidth(self:GetWidth() - 64)
 	slider:SetRange(3, 6)
 	slider:SetPosition(3)
 	
-	local indicator = UICreateFrame("Text", "", background)
+	local indicator = UI.CreateFrame("Text", "", background)
 	indicator:SetPoint("LEFTCENTER", slider, "RIGHTCENTER", 10, -6)
 	indicator:SetFontColor(textColor[1], textColor[2], textColor[3])
 	indicator:SetFontSize(14)

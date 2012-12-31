@@ -1,13 +1,5 @@
 local Addon, private = ...
 
--- Bulitins
-local ipairs = ipairs
-
--- Globals
-local Command = Command
-local UICreateFrame = UI.CreateFrame
-
--- Locals
 local iconSize = 48
 
 setfenv(1, private)
@@ -29,7 +21,7 @@ local rarityTextureMap = {
 }
 -- preload external textures
 for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendant", "uncommon" }) do
-	local tex = UICreateFrame("Texture", "", Ux.Context)
+	local tex = UI.CreateFrame("Texture", "", Ux.Context)
 	tex:SetTexture("Rift", rarityTextureMap[v])
 	tex:SetVisible(false)
 end
@@ -63,7 +55,7 @@ function Ux.ItemButton_pretty.New(parent)
 	self.backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", 1, 1)
 	self.backdrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, -1)
 	
-	self.border = UICreateFrame("Texture", "", self)
+	self.border = UI.CreateFrame("Texture", "", self)
 	self.border:SetPoint("TOPLEFT", self, -0.14, -0.14)
 	self.border:SetPoint("BOTTOMRIGHT", self, 1.14, 1.14)
 	self.border:SetLayer(4)

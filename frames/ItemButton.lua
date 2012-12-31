@@ -1,15 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-local next = next
-local type = type
-
--- Globals
-local Command = Command
-local Inspect = Inspect
-local LibAnimate = LibAnimate
-local UIParent = UIParent
-
 -- Frames cannot be deleted, keep a cache and only create new frames if the cache is empty
 -- Calling Dispose() on a button moves it back to the cache
 local cachedButtons = { }

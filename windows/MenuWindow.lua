@@ -1,19 +1,7 @@
 local Addon, private = ...
 
--- Builtins
-local getmetatable = getmetatable
-local max = math.max
-local pairs = pairs
-local sort = table.sort
-local tinsert = table.insert
-local tremove = table.remove
-
--- Globals
-local Command = Command
-local Inspect = Inspect
-local UI = UI
+-- Upvalue
 local UICreateFrame = UI.CreateFrame
-local UIParent = UIParent
 
 -- Locals
 local spacing = 2
@@ -66,14 +54,15 @@ local function createDialog(self)
 end
 
 local function createCharacterFrame(self, name, alliance)
-	if(#characterFramesCache > 0) then
-		local frame = tremove(characterFramesCache)
+	local frame = next(characterFramesCache)
+	if(frame) then
+		characterFramesCache[frame] = nil
 		frame.nameLabel:SetText(name)
 		frame:SetVisible(true)
 		return frame
 	end
 	
-	local frame = UICreateFrame("Frame", "", self)
+	frame = UICreateFrame("Frame", "", self)
 	
 	frame.inventoryButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\bag20.dds]], L.Ux.WindowTitle.inventory)
 	function frame.inventoryButton.LeftPress()
@@ -131,7 +120,7 @@ end
 local function disposeCharacterFrame(frame)
 	clearCorners(frame)
 	frame:SetVisible(false)
-	characterFramesCache[#characterFramesCache + 1] = frame
+	characterFramesCache[frame] = true
 end
 
 local function layoutCharacterFrame(self, direction)
@@ -193,6 +182,7 @@ local function layoutMenu(self, horizontal, vertical)
 	clearCorners(self.playerSeparator)
 	self.playerSeparator:SetPoint(anchor1, self.player, anchor2)
 	
+	local max = math.max
 	local width = self.player:GetWidth()
 	local previous = self.playerSeparator
 	for i = 1, #self.chars do
@@ -223,7 +213,7 @@ local function updateCharacters(self)
 			names[#names + 1] = name
 		end
 	end
-	sort(names)
+	table.sort(names)
 	
 	for i = 1, #self.chars do
 		disposeCharacterFrame(self.chars[i])

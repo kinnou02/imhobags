@@ -1,6 +1,6 @@
 local Addon, private = ...
 
--- Builtins
+-- Upvalue
 local ceil = math.ceil
 local floor = math.floor
 local format = string.format
@@ -10,9 +10,6 @@ local next = next
 local pairs = pairs
 local sort = table.sort
 local strfind = string.find
-
--- Globals
-local UICreateFrame = UI.CreateFrame
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
 -- Locals
@@ -34,7 +31,7 @@ local function setupGroupLabel()
 end
 
 local function onebagGroupFactory(parent)
-	local self = UICreateFrame("Frame", "", parent)
+	local self = UI.CreateFrame("Frame", "", parent)
 	self:SetHeight(0)
 	self.GetMinWidth = getGroupLabelMinWidth
 	self.Setup = setupGroupLabel

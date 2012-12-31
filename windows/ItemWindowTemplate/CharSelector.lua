@@ -1,16 +1,5 @@
 local Addon, private = ...
 
--- Builtins
-local floor = math.floor
-local ipairs = ipairs
-local max = math.max
-local min = math.min
-local sort = table.sort
-
--- Globals
-local InspectMouse = Inspect.Mouse
-local UICreateFrame = UI.CreateFrame
-
 -- Locals
 local backgroundWidth = 128
 local backgroundHeight = 128
@@ -33,17 +22,17 @@ Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 -- ============================================================================
 
 local function createItem(self, i)
-	local item = UICreateFrame("Texture", "", self.scrolling)
+	local item = UI.CreateFrame("Texture", "", self.scrolling)
 	item:SetTexture("Rift", "dropdown_bar_(normal).png.dds")
 	item:SetWidth(itemWidth)
 	item:SetHeight(itemHeight)
 	item:SetPoint("TOPCENTER", self.scrolling, "TOPCENTER", 0, itemSpacing / 2 + (i - 1) * (itemHeight + itemSpacing))
 	
-	local text = UICreateFrame("Text", "", item)
+	local text = UI.CreateFrame("Text", "", item)
 	text:SetPoint("CENTER", item, "CENTER")
 	text:SetFontColor(textColor[1], textColor[2], textColor[3])
 
-	local clickable = UICreateFrame("Frame", "", text)
+	local clickable = UI.CreateFrame("Frame", "", text)
 	clickable:SetPoint("CENTER", text, "CENTER")
 	clickable:SetWidth(itemWidth)
 	clickable:SetHeight(itemClickableHeight)
@@ -60,7 +49,7 @@ end
 local function showForChars(self, chars)
 	self:FadeIn()
 
-	sort(chars)
+	table.sort(chars)
 	self.chars = chars
 	
 	for i = 1, #chars do
@@ -87,13 +76,13 @@ local function makeScrollable(self, hotArea)
 			local top, bottom = self.mask:GetTop(), self.mask:GetBottom()
 			top = top + (itemHeight + itemSpacing) / 2
 			bottom = bottom - (itemHeight + itemSpacing) / 2
-			local mouse = InspectMouse()
+			local mouse = Inspect.Mouse()
 			
-			mouse.y = max(top, mouse.y)
-			mouse.y = min(bottom, mouse.y)
+			mouse.y = math.max(top, mouse.y)
+			mouse.y = math.min(bottom, mouse.y)
 			mouse.y = (mouse.y - top) / self.visibleHeight
 			
-			self.scrolling:SetPoint("TOPCENTER", self.mask, "TOPCENTER", 0, floor(mouse.y * (self.visibleHeight - self.itemsHeight)))
+			self.scrolling:SetPoint("TOPCENTER", self.mask, "TOPCENTER", 0, math.floor(mouse.y * (self.visibleHeight - self.itemsHeight)))
 		end
 	end
 end
@@ -102,19 +91,19 @@ end
 -- ============================================================================
 
 function Ux.ItemWindowTemplate.CharSelector(parent, titleBar)
-	local self = UICreateFrame("Mask", "", Ux.TooltipContext)
+	local self = UI.CreateFrame("Mask", "", Ux.TooltipContext)
 	self:SetWidth(backgroundWidth)
 	self:SetHeight(0)
 	
-	local background = UICreateFrame("Texture", "", self)
+	local background = UI.CreateFrame("Texture", "", self)
 	background:SetPoint("BOTTOMCENTER", self, "BOTTOMCENTER")
 	background:SetTexture("Rift", "dropdown_list.png.dds")
 	
-	self.mask = UICreateFrame("Mask", "", background)
+	self.mask = UI.CreateFrame("Mask", "", background)
 	self.mask:SetPoint("TOPLEFT", background, "TOPLEFT", contentPaddingLeft, contentPaddingTop)
 	self.mask:SetPoint("BOTTOMRIGHT", background, "BOTTOMRIGHT", -contentPaddingLeft, -contentPaddingBottom)
 	
-	self.scrolling = UICreateFrame("Frame", "", self.mask)
+	self.scrolling = UI.CreateFrame("Frame", "", self.mask)
 	self.scrolling:SetPoint("TOPCENTER", self.mask, "TOPCENTER")
 	
 	self.chars = { }
