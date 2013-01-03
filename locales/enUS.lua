@@ -121,10 +121,6 @@ Available config options:
 	visuals, "pretty" aims to look like Trion item buttons. Requires
 	/reloadui before taking effect. "simple" may look better on very
 	low UI-scalings.
-* packGroups yes/no
-	If set to yes reducing screen space has a higher priority than
-	correct sorting of groups. Multiple groups are packed together
-	per line where possible.
 * showEmptySlots yes/no
 	Controls whether the number of empty bag slots is displayed above
 	the Trion bags bar.
@@ -174,7 +170,6 @@ Available config options:
 			behaviorSection = "Behavior",
 			extrasSection = "Extras",
 			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
-			packGroups = "Choose whether multiple small groups should be packed into one line where possible instead of creating a new line for every single group. The former may result in inconsistent group sorting but can drastically decrease the size of the item windows.",
 			itemButtonSkin = "Choose how item buttons should be rendered. The left option requires more resources than the right one but looks better. If you play with a very low UI scale the right button skin might look better. Note that changes to this option require a /reloadui before becoming effective.",
 			autoOpen = "Choose whether the ImhoBags inventory or bank windows should automatically open and close when the respective Trion windows are opened and closed.",
 			enhanceTooltips = "Choose whether you want item tooltips to be extended with additional information showing you which of your characters already own the displayed item.",

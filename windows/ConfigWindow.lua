@@ -23,15 +23,6 @@ local topPanes = {
 				},
 			},
 			{
-				description = L.Ux.ConfigWindow.packGroups,
-				config = "packGroups",
-				height = 140,
-				options = {
-					{ true, "textures/ConfigWindow/packGroups yes.png", "/imhobags packGroups yes" },
-					{ false, "textures/ConfigWindow/packGroups no.png", "/imhobags packGroups no" },
-				},
-			},
-			{
 				description = L.Ux.ConfigWindow.itemButtonSkin,
 				config = "itemButtonSkin",
 				height = 160,

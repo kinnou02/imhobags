@@ -4,7 +4,6 @@ local Addon, private = ...
 local defaults = {
 	autoOpen = false,
 	itemButtonSkin = "pretty",
-	packGroups = true,
 	showEmptySlots = true,
 	condensed = true,
 	enhanceTooltips = true,

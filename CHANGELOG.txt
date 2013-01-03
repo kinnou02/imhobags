@@ -14,6 +14,7 @@ FEATURES:
 * Item animations giving clues about where a category or item moves to.
 CHANGES:
 * The "showEnemyFaction" option was removed as it is obsolete now.
+* The "packGroups" option was removed and groups are always packed now.
 * The mail window is no longer there. Get a dedicated mail addon if you want one.
 	The addon still tracks items in mails for tooltips.
 FIXES:
