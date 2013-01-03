@@ -2,11 +2,82 @@ local Addon, private = ...
 
 local contentPadding = 10
 local contentPanePaddingLeft = 140
+local contentPanePaddingRight = 25
 local headingColor = { 216 / 255, 203 / 255, 153 / 255 }
 local accountBoundColor = { 251 / 255, 242 / 255, 142 / 255 }
 
 setfenv(1, private)
 Ux = Ux or { }
+
+local topPanes = {
+	{
+		name = L.Ux.ConfigWindow.appearanceSection,
+		content = {
+			{
+				description = L.Ux.ConfigWindow.condensed,
+				config = "condensed",
+				options = {
+					{ true, "textures/ConfigWindow/condensed yes.png", "/imhobags condensed yes" },
+					{ false, "textures/ConfigWindow/condensed no.png", "/imhobags condensed no" },
+				},
+			},
+			{
+				description = L.Ux.ConfigWindow.packGroups,
+				config = "packGroups",
+				options = {
+					{ true, "textures/ConfigWindow/packGroups yes.png", "/imhobags packGroups yes" },
+					{ false, "textures/ConfigWindow/packGroups no.png", "/imhobags packGroups no" },
+				},
+			},
+			{
+				description = L.Ux.ConfigWindow.itemButtonSkin,
+				config = "itemButtonSkin",
+				options = {
+					{ "pretty", "textures/ConfigWindow/itemButtonSkin pretty.png", "/imhobags itemButtonSkin pretty" },
+					{ "simple", "textures/ConfigWindow/itemButtonSkin simple.png", "/imhobags itemButtonSkin simple" },
+				},
+			},
+			{
+				description = L.Ux.ConfigWindow.showBoundIcon,
+				config = "showBoundIcon",
+				options = {
+					{ true, "textures/ConfigWindow/showBoundIcon.png", "/imhobags showBoundIcon yes/no" },
+				},
+			},
+		},
+	},
+	{
+		name = L.Ux.ConfigWindow.behaviorSection,
+		content = {
+			{
+				description = L.Ux.ConfigWindow.autoOpen,
+				config = "autoOpen",
+				options = {
+					{ true, "textures/ConfigWindow/autoOpen.png", "/imhobags autoOpen yes/no" },
+				},
+			},
+		},
+	},
+	{
+		name = L.Ux.ConfigWindow.extrasSection,
+		content = {
+			{
+				description = L.Ux.ConfigWindow.enhanceTooltips,
+				config = "enhanceTooltips",
+				options = {
+					{ true, "textures/ConfigWindow/enhanceTooltips.png", "/imhobags enhanceTooltips yes/no" },
+				},
+			},
+			{
+				description = L.Ux.ConfigWindow.showEmptySlots,
+				config = "showEmptySlots",
+				options = {
+					{ true, "textures/ConfigWindow/showEmptySlots.png", "/imhobags showEmptySlots yes/no" },
+				},
+			},
+		},
+	},
+}
 
 -- Private methods
 -- ============================================================================
@@ -18,7 +89,7 @@ slashTooltip:SetBackgroundColor(0, 0, 0, 0.75)
 
 local function createHighlightedTexture(parent, path, tooltip, textureCallback)
 	local icon = UI.CreateFrame("Texture", "", parent)
-	icon:SetTextureAsync("ImhoBags", path, textureCallback)
+	icon:SetTexture("ImhoBags", path)
 	local highlight = UI.CreateFrame("Texture", "", parent)
 	highlight:SetTexture("ImhoBags", "textures/highlight.png")
 	highlight:SetAllPoints(icon)
@@ -110,6 +181,11 @@ local function createPaneButton(self, pane, name, previous)
 			v:SetEnabled(v ~= button)
 		end
 		self.heading:SetText(name)
+		self.activePane = pane
+		local scroll = math.max(0, pane:GetHeight() - self.scrollbar:GetThickness())
+		self.scrollbar:SetRange(0, scroll)
+		self.scrollbar:SetPosition(pane.offset)
+		self.scrollbar:SetEnabled(scroll > 0)
 	end
 	
 	if(previous) then
@@ -121,202 +197,52 @@ local function createPaneButton(self, pane, name, previous)
 	return button
 end
 
-local function createAppearance1Pane(self)
-	local backdrop = UI.CreateFrame("Frame", "", self)
-	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
-	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
-	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
-	
-	-- Condensed config
-	local description = UI.CreateFrame("Text", "", backdrop)
+local function createContent(content, parent, dy)
+	local description = UI.CreateFrame("Text", "", parent)
 	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
-	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
-	description:SetText(L.Ux.ConfigWindow.condensed)
-
-	local condensed_y = createHighlightedTexture(backdrop, "textures/ConfigWindow/condensed yes.png", "/imhobags condensed yes")
-	condensed_y:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-	local condensed_n = createHighlightedTexture(backdrop, "textures/ConfigWindow/condensed no.png", "/imhobags condensed no")
-	condensed_n:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
+	description:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy + contentPadding / 2)
+	description:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPadding, dy + contentPadding / 2)
+	description:SetText(content.description)
 	
-	condensed_y:SetChecked(Config.condensed == true)
-	condensed_n:SetChecked(Config.condensed == false)
-	function condensed_y.Event:LeftDown() Config.condensed = true end
-	function condensed_n.Event:LeftDown() Config.condensed = false end
-	
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == "condensed") then
-			condensed_y:SetChecked(v == true)
-			condensed_n:SetChecked(v == false)
-		end
-	end , Addon.identifier, "" }
-	
-	-- Group packing option
-	description = UI.CreateFrame("Text", "", backdrop)
-	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", condensed_y, "BOTTOMLEFT", 0, contentPadding)
-	description:SetPoint("TOPRIGHT", condensed_n, "BOTTOMRIGHT", 0, contentPadding)
-	description:SetText(L.Ux.ConfigWindow.packGroups)
-	
-	local packGroups_y = createHighlightedTexture(backdrop, "textures/ConfigWindow/packGroups yes.png", "/imhobags packGroups yes")
-	packGroups_y:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-	local packGroups_n = createHighlightedTexture(backdrop, "textures/ConfigWindow/packGroups no.png", "/imhobags packGroups no")
-	packGroups_n:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
-	
-	packGroups_y:SetChecked(Config.packGroups == true)
-	packGroups_n:SetChecked(Config.packGroups == false)
-	function packGroups_y.Event:LeftDown() Config.packGroups = true end
-	function packGroups_n.Event:LeftDown() Config.packGroups = false end
-	
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == "packGroups") then
-			packGroups_y:SetChecked(v == true)
-			packGroups_n:SetChecked(v == false)
-		end
-	end , Addon.identifier, "" }
-	
-	-- Item button skin option
-	description = UI.CreateFrame("Text", "", backdrop)
-	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", packGroups_y, "BOTTOMLEFT", 0, contentPadding)
-	description:SetPoint("TOPRIGHT", packGroups_n, "BOTTOMRIGHT", 0, contentPadding)
-	description:SetText(L.Ux.ConfigWindow.itemButtonSkin)
-	
-	local itemButtonSkin_pretty = createHighlightedTexture(backdrop, "textures/ConfigWindow/itemButtonSkin pretty.png", "/imhobags itemButtonSkin pretty")
-	itemButtonSkin_pretty:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-	local itemButtonSkin_simple = createHighlightedTexture(backdrop, "textures/ConfigWindow/itemButtonSkin simple.png", "/imhobags itemButtonSkin simple", function(frame)
-		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
-	end)
-	itemButtonSkin_simple:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
-	backdrop:SetHeight(itemButtonSkin_simple:GetBottom() - backdrop:GetTop() + contentPadding)
-	
-	itemButtonSkin_pretty:SetChecked(Config.itemButtonSkin == "pretty")
-	itemButtonSkin_simple:SetChecked(Config.itemButtonSkin == "simple")
-	function itemButtonSkin_pretty.Event:LeftDown() Config.itemButtonSkin = "pretty" end
-	function itemButtonSkin_simple.Event:LeftDown() Config.itemButtonSkin = "simple" end
+	local pictureHeight = 0
+	local pictures = { }
+	for i = 1, #content.options do
+		pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
+		pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
+	end
+	if(#pictures == 1) then
+		pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
+		pictures[1].Event.LeftDown = function(self) Config[content.config] = not self:GetChecked() end
+	elseif(#pictures == 2) then
+		pictures[1]:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
+		pictures[2]:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
+		pictures[1].Event.LeftDown = function(self) Config[content.config] = content.options[1][1] end
+		pictures[2].Event.LeftDown = function(self) Config[content.config] = content.options[2][1] end
+	end
 
 	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == "itemButtonSkin") then
-			itemButtonSkin_pretty:SetChecked(v == "pretty")
-			itemButtonSkin_simple:SetChecked(v == "simple")
+		if(k == content.config) then
+			for i = 1, #pictures do
+				pictures[i]:SetChecked(v == content.options[i][1])
+			end
 		end
 	end , Addon.identifier, "" }
-	
-	backdrop:SetVisible(false)
-	return backdrop
+
+	return contentPadding + description:GetHeight() + (#pictures > 0 and pictures[1]:GetHeight() or 0)
 end
 
-local function createAppearance2Pane(self)
-	local backdrop = UI.CreateFrame("Frame", "", self)
-	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
-	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
-	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
+local function createPane(pane, parent)
+	local content = UI.CreateFrame("Frame", "", parent)
+	content:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+	content:SetWidth(parent:GetWidth())
 	
-	-- Condensed config
-	local description = UI.CreateFrame("Text", "", backdrop)
-	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
-	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
-	description:SetText(L.Ux.ConfigWindow.showBoundIcon)
-
-	local showBoundIcon = createHighlightedTexture(backdrop, "textures/ConfigWindow/showBoundIcon.png", "/imhobags showBoundIcon yes/no", function(frame)
-		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
-	end)
-	showBoundIcon:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
-	
-	showBoundIcon:SetChecked(Config.showBoundIcon == true)
-	function showBoundIcon.Event:LeftDown() Config.showBoundIcon = not self:GetChecked() end
-	
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == "showBoundIcon") then
-			showBoundIcon:SetChecked(v)
-		end
-	end , Addon.identifier, "" }
-	
-	backdrop:SetVisible(false)
-	return backdrop
-end
-
-local function createBehaviorPane(self)
-	local backdrop = UI.CreateFrame("Frame", "", self)
-	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
-	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
-	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
-	
-	-- Auto Open
-	local description = UI.CreateFrame("Text", "", backdrop)
-	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
-	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
-	description:SetText(L.Ux.ConfigWindow.autoOpen)
-
-	local autoOpen = createHighlightedTexture(backdrop, "textures/ConfigWindow/autoOpen.png", "/imhobags autoOpen yes/no", function(frame)
-		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
-	end)
-	autoOpen:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-	
-	autoOpen:SetChecked(Config.autoOpen == true)
-	function autoOpen.Event:LeftDown() Config.autoOpen = not self:GetChecked() end
-
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == "autoOpen") then
-			autoOpen:SetChecked(v)
-		end
-	end , Addon.identifier, "" }
-
-	backdrop:SetVisible(false)
-	return backdrop
-end
-
-local function createExtrasPane(self)
-	local backdrop = UI.CreateFrame("Frame", "", self)
-	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
-	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
-	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
-	
-	-- Tooltip enhancement
-	local description = UI.CreateFrame("Text", "", backdrop)
-	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", backdrop, "TOPLEFT", contentPadding, contentPadding / 2)
-	description:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", -contentPadding, contentPadding / 2)
-	description:SetText(L.Ux.ConfigWindow.enhanceTooltips)
-
-	local enhanceTooltips = createHighlightedTexture(backdrop, "textures/ConfigWindow/enhanceTooltips.png", "/imhobags enhanceTooltips yes/no")
-	enhanceTooltips:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
-
-	enhanceTooltips:SetChecked(Config.enhanceTooltips == true)
-	function enhanceTooltips.Event:LeftDown() Config.enhanceTooltips = not self:GetChecked() end
-
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == "enhanceTooltips") then
-			enhanceTooltips:SetChecked(v)
-		end
-	end , Addon.identifier, "" }
-	
-	-- Empty slot indication
-	local description2 = UI.CreateFrame("Text", "", backdrop)
-	description2:SetWordwrap(true)
-	description2:SetPoint("TOPCENTER", enhanceTooltips, "BOTTOMCENTER")
-	description2:SetWidth(description:GetWidth())
-	description2:SetText(L.Ux.ConfigWindow.showEmptySlots)
-
-	local showEmptySlots = createHighlightedTexture(backdrop, "textures/ConfigWindow/showEmptySlots.png", "/imhobags showEmptySlots yes/no", function(frame)
-		backdrop:SetHeight(frame:GetBottom() - backdrop:GetTop() + contentPadding)
-	end)
-	showEmptySlots:SetPoint("TOPCENTER", description2, "BOTTOMCENTER")
-
-	showEmptySlots:SetChecked(Config.showEmptySlots == true)
-	function showEmptySlots.Event:LeftDown() Config.showEmptySlots = not self:GetChecked() end
-
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == "showEmptySlots") then
-			showEmptySlots:SetChecked(v)
-		end
-	end , Addon.identifier, "" }
-	
-	
-	backdrop:SetVisible(false)
-	return backdrop
+	local height = 0
+	for i = 1, #pane.content do
+		height = height + createContent(pane.content[i], content, height)
+	end
+	content:SetHeight(height)
+	content.offset = 0
+	return content
 end
 	
 -- Public methods
@@ -326,7 +252,7 @@ function Ux.ConfigWindow()
 	local self = UI.CreateFrame("RiftWindow", "", Ux.Context)
 	self:SetTitle(L.Ux.ConfigWindow.title)
 	self:SetController("content")
-	self:SetWidth(650)
+	self:SetWidth(665)
 	Ux.ConfigWindow = self
 	makeMovable(self)
 	self.showSlashTooltips = false
@@ -351,31 +277,33 @@ function Ux.ConfigWindow()
 	tooltipCheck:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, contentPadding / 2)
 	tooltipCheck.Event.CheckboxChange = function() self.showSlashTooltips = tooltipCheck:GetChecked() end
 	
+	-- ScrolPane background and scrolling
+	local backdrop = UI.CreateFrame("Mask", "", self)
+	backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", contentPanePaddingLeft, 25)
+	backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPanePaddingRight, 25)
+	backdrop:SetPoint("BOTTOM", self, "BOTTOM", nil, -contentPadding)
+	backdrop:SetBackgroundColor(0, 0, 0, 0.5)
+
+	self.scrollbar = UI.CreateFrame("RiftScrollbar", "", self)
+	self.scrollbar:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
+	self.scrollbar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -contentPadding, -contentPadding)
+	self.scrollbar:SetThickness(backdrop:GetHeight())
+	self.scrollbar.Event.ScrollbarChange = function()
+		self.activePane.offset = self.scrollbar:GetPosition()
+		self.activePane:SetPoint("TOPLEFT", backdrop, "TOPLEFT", 0, -self.activePane.offset)
+	end
+	
 	-- Config panes
 	self.panes = { }
-	self.panes.appearance1 = createAppearance1Pane(self)
-	self.panes.appearance2 = createAppearance2Pane(self)
-	self.panes.behavior = createBehaviorPane(self)
-	self.panes.extras = createExtrasPane(self)
-	
-	-- Make all backdrops have the same height after all textures have loaded
-	LibAsyncTextures.EnqueueCallback(function()
-		local height = 0
-		for k, v in pairs(self.panes) do
-			height = math.max(v:GetHeight(), height)
-		end
-		for k, v in pairs(self.panes) do
-			v:SetHeight(height)
-		end
-		self:SetHeight(height + contentPadding + 25)
-	end)
+	for i = 1, #topPanes do
+		self.panes[i] = createPane(topPanes[i], backdrop)
+	end
 	
 	-- Pane selection buttons
 	self.buttons = { }
-	self.buttons[#self.buttons + 1] = createPaneButton(self, self.panes.appearance1, L.Ux.ConfigWindow.appearance1Section, nil)
-	self.buttons[#self.buttons + 1] = createPaneButton(self, self.panes.appearance2, L.Ux.ConfigWindow.appearance2Section, self.buttons[#self.buttons])
-	self.buttons[#self.buttons + 1] = createPaneButton(self, self.panes.behavior, L.Ux.ConfigWindow.behaviorSection, self.buttons[#self.buttons])
-	self.buttons[#self.buttons + 1] = createPaneButton(self, self.panes.extras, L.Ux.ConfigWindow.extrasSection, self.buttons[#self.buttons])
+	for i = 1, #topPanes do
+		self.buttons[i] = createPaneButton(self, self.panes[i], topPanes[i].name, self.buttons[i - 1])
+	end
 
 	self.buttons[1].Event.LeftPress(self.buttons[1])
 end

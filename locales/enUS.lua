@@ -170,8 +170,7 @@ Available config options:
 		ConfigWindow = {
 			title = "Configuration for Imhothar's Bags",
 			showTooltips = "Show slash commands",
-			appearance1Section = "Appearance I",
-			appearance2Section = "Appearance II",
+			appearanceSection = "Appearance",
 			behaviorSection = "Behavior",
 			extrasSection = "Extras",
 			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
