@@ -1,18 +1,32 @@
-0.13beta
+0.14beta
 
 FEATURES:
+* Items are now stored for all accounts.
+* Some item locations now support multiple types of views:
+	- default: This is the way you know it with items grouped by AH category.
+	- bags: Group items by the bag they are located in isntead of AH category.
+	- onebag: No item grouping whatsoever, all items in a single group.
+* You can now sort your items by the bag slot they are placed in.
+* It is now possible to show the empty slots as concrete items in the bag
+	windows by clicking the empty item count in the top right corner.
+* Setting your layout to "onebag", the sorting to "slot" and showing
+	empty items gives you the same view as known from "all-in-one" addons.
+* Item animations giving clues about where a category or item moves to.
 CHANGES:
-* Chanes were made to the top area of item windows to use less space.
-	Move your mouse ocer the title bar to get to the old options.
+* The "showEnemyFaction" option was removed as it is obsolete now.
+* The mail window is no longer there. Get a dedicated mail addon if you want one.
+	The addon still tracks items in mails for tooltips.
 FIXES:
-* Fixed error occurring when switching bags with different sizes
-* Fixed compatibility issues and deprecation errors
-* 
+* Dimension items no longer cause errors.
+* Performance warning in search window should be gone now.
 ISSUES:
+* Condensing of full stacks is currently disabled.
+* Cooldowns are not displayed.
+* Visual indicator for new items is not displayed.
 * The mail database is cleared everytime the Trion mail window is opened.
-* Item tooltips may show up in the top-left corner of the screen.
 * Some items may not show up in the item windows due to broken values in the API.
 * Equipped and wardrobe items cannot be draged until the character/wardrobe window
 	has been opened at least once with the respective set.
-* Using artifacts may cause a performance warning if the Artifacts Window takes
-	too long to load.
+* Item tooltips triggered by the Addon windows may display in the top left
+	corner of the screen. This is a bug in the Addon API.
+* The native Trion windows cannot be hidden.

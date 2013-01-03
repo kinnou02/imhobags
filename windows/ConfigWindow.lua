@@ -89,6 +89,9 @@ local bottomPanes = {
 	{
 		name = "Known Issues",
 		content = {
+			{ description = "Condensing of full stacks is currently disabled.", },
+			{ description = "Cooldowns are not displayed.", },
+			{ description = "Visual indicator for new items is not displayed.", },
 			{ description = "The mail database is cleared everytime the Trion mail window is opened.", },
 			{ description = "Some items may not show up in the item windows due to broken values in the API.", },
 			{ description = "Equipped and wardrobe items cannot be draged until the character/wardrobe window has been opened at least once with the respective set.", },
