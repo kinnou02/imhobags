@@ -71,6 +71,7 @@ local function eventAddonSavedVariablesLoadEnd(identifier)
 	end
 	
 	_G.ImhoBags_ItemStorage = _G.ImhoBags_ItemStorage or { }
+	_G.ImhoBags_ItemStorage.version = 0.14
 	_G.ImhoBags_ItemStorage[Shard.name] = _G.ImhoBags_ItemStorage[Shard.name] or {
 		characters = {
 		},

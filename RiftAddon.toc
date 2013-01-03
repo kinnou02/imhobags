@@ -33,6 +33,8 @@ RunOnStartup = {
 	"locales/ruRU.lua",
 	"locales/enUS.lua",
 	
+	"migration/0.14.lua",
+	
 	"Constants.lua",
 	"Main.lua",
 	"Config.lua",
@@ -85,11 +87,6 @@ RunOnStartup = {
 
 SavedVariables = {
 	ImhoBags_ItemStorage = "global",
-	ImhoBags_ItemMatrix_defiant = "shard",
-	ImhoBags_ItemMatrix_guardian = "shard",
-	ImhoBags_GuildMatrix_defiant = "shard",
-	ImhoBags_GuildMatrix_guardian = "shard",
-	ImhoBags_PlayerItemMatrix = "character", -- Temporary workaround for /reloadui
 	ImhoBags_WindowInfo = "character",
 	ImhoBags_Config = "account",
 }

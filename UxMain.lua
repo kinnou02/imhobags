@@ -26,28 +26,17 @@ local function centerWindow(window)
 	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor((screenWidth - window:GetWidth()) / 2), math.floor((screenHeight - window:GetHeight()) / 2))
 end
 
-local function Ux_savedVariablesSaveBegin(addonIdentifier)
-	if(addonIdentifier ~= Addon.identifier) then
-		return
-	end
-	_G.ImhoBags_WindowInfo.SearchWindow = {
-		x = Ux.SearchWindow:GetLeft(),
-		y = Ux.SearchWindow:GetTop(),
-	}
-	if(type(Ux.ConfigWindow) ~= "function") then
-		log("save")
-		_G.ImhoBags_WindowInfo.ConfigWindow = {
-			x = Ux.ConfigWindow:GetLeft(),
-			y = Ux.ConfigWindow:GetTop(),
-		}
-	end
-end
-
 local function storageLoaded()
-	_G.ImhoBags_WindowInfo = _G.ImhoBags_WindowInfo or { }
+	_G.ImhoBags_WindowInfo = _G.ImhoBags_WindowInfo or {
+		ItemContainer = { }
+	}
 	
 	for k, v in pairs(itemWindows) do
-		Ux.ItemWindow[v[1]] = Ux.ItemWindowTemplate.WindowFrame(v[1], _G.ImhoBags_WindowInfo[v[1]] or { }, v[2])
+		Ux.ItemWindow[v[1]] = Ux.ItemWindowTemplate.WindowFrame(v[1], _G.ImhoBags_WindowInfo.ItemContainer[v[1]] or { }, v[2])
+	end
+	
+	if(_G.ImhoBags_WindowInfo.SearchWindow) then
+		Ux.SearchWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", _G.ImhoBags_WindowInfo.SearchWindow.x or 0, _G.ImhoBags_WindowInfo.SearchWindow.y or 0)
 	end
 end
 
@@ -55,10 +44,22 @@ local function savedVariablesSaveBegin(identifier)
 	if(identifier ~= Addon.identifier) then
 		return
 	end
+	
+	_G.ImhoBags_WindowInfo.version = 0.14
+	_G.ImhoBags_WindowInfo.SearchWindow = {
+		x = Ux.SearchWindow:GetLeft(),
+		y = Ux.SearchWindow:GetTop(),
+	}
+	if(type(Ux.ConfigWindow) ~= "function") then
+		_G.ImhoBags_WindowInfo.ConfigWindow = {
+			x = Ux.ConfigWindow:GetLeft(),
+			y = Ux.ConfigWindow:GetTop(),
+		}
+	end
 
 	for k, v in pairs(itemWindows) do
 		local window = Ux.ItemWindow[v[1]]
-		_G.ImhoBags_WindowInfo[v[1]] = window:FillConfig({ })
+		_G.ImhoBags_WindowInfo.ItemContainer[v[1]] = window:FillConfig({ })
 	end
 end
 
