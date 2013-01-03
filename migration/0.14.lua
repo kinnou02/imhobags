@@ -9,6 +9,7 @@ local function migrateSavedVariables(identifier)
 		local version = ImhoBags_ItemStorage.version or 0.0
 		if(version < 0.14) then
 			ImhoBags_ItemStorage = nil
+			Command.Console.Display("general", true, "<font color='#FFC000'>Incompatible item database: deleting all characters.</font>", true)
 		end
 	end
 
