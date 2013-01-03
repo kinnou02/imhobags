@@ -96,9 +96,11 @@ local function SetDepressed(self, depressed)
 end
 
 local function SetBound(self, bound, bind)
-	self.bind:SetVisible(bound == true)
+	self.bind:SetVisible(Config.showBoundIcon)
 	if(bound) then
 		self.bind:SetTextureAsync("Rift", bind == "account" and "elementalward3.dds" or "soulbind.dds")
+	else
+		self.bind:SetTextureAsync("Rift", " ")
 	end
 end
 

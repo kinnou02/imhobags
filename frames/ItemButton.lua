@@ -3,6 +3,7 @@ local Addon, private = ...
 -- Frames cannot be deleted, keep a cache and only create new frames if the cache is empty
 -- Calling Dispose() on a button moves it back to the cache
 local cachedButtons = { }
+local usedButtons = { }
 local createButton
 -- Specialized animation template for SetPoint(self, point, target, point, x, y)
 local moveAnimationTemplate = LibAnimate.CreateTemplate({ false, false, false, false, "easeOutCubic", "easeOutCubic" })
@@ -115,6 +116,14 @@ local function storageLoaded()
 	end
 end
 
+local function configChanged(k, v)
+	if(k == "showBoundIcon") then
+		for button in pairs(usedButtons) do
+			button.bind:SetVisible(v)
+		end
+	end
+end
+
 -- Public methods
 -- ============================================================================
 
@@ -173,6 +182,7 @@ local function Dispose(self, duration)
 	self.moveAnimation:Stop()
 	self.fadeAnimation:Stop()
 	self.fadeAnimation = self:AnimateAlpha(self:GetAlpha() * (duration or 0), "linear", 0, function()
+		usedButtons[self] = nil
 		cachedButtons[self] = true
 		self:SetVisible(false)
 	end)
@@ -209,6 +219,7 @@ function Ux.ItemButton.New(parent, available, duration)
 		button:SetVisible(true)
 		button:SetParent(parent)
 	end
+	usedButtons[button] = true
 	button.available = available
 	button:SetAlpha(0)
 	button.fadeAnimation = button:AnimateAlpha(duration, "linear", available and 1.0 or Const.ItemButtonUnavailableAlpha)
@@ -246,4 +257,13 @@ createButton = function(parent)
 	return self
 end
 
-ImhoEvent.StorageLoaded[#ImhoEvent.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "" }
+Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = {
+	storageLoaded,
+	Addon.identifier,
+	""
+}
+Event.ImhoBags.Private.Config[#Event.ImhoBags.Private.Config + 1] = {
+	configChanged,
+	Addon.identifier,
+	""
+}
