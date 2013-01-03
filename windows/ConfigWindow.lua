@@ -16,6 +16,7 @@ local topPanes = {
 			{
 				description = L.Ux.ConfigWindow.condensed,
 				config = "condensed",
+				height = 118,
 				options = {
 					{ true, "textures/ConfigWindow/condensed yes.png", "/imhobags condensed yes" },
 					{ false, "textures/ConfigWindow/condensed no.png", "/imhobags condensed no" },
@@ -24,6 +25,7 @@ local topPanes = {
 			{
 				description = L.Ux.ConfigWindow.packGroups,
 				config = "packGroups",
+				height = 140,
 				options = {
 					{ true, "textures/ConfigWindow/packGroups yes.png", "/imhobags packGroups yes" },
 					{ false, "textures/ConfigWindow/packGroups no.png", "/imhobags packGroups no" },
@@ -32,6 +34,7 @@ local topPanes = {
 			{
 				description = L.Ux.ConfigWindow.itemButtonSkin,
 				config = "itemButtonSkin",
+				height = 160,
 				options = {
 					{ "pretty", "textures/ConfigWindow/itemButtonSkin pretty.png", "/imhobags itemButtonSkin pretty" },
 					{ "simple", "textures/ConfigWindow/itemButtonSkin simple.png", "/imhobags itemButtonSkin simple" },
@@ -40,6 +43,7 @@ local topPanes = {
 			{
 				description = L.Ux.ConfigWindow.showBoundIcon,
 				config = "showBoundIcon",
+				height = 191,
 				options = {
 					{ true, "textures/ConfigWindow/showBoundIcon.png", "/imhobags showBoundIcon yes/no" },
 				},
@@ -52,6 +56,7 @@ local topPanes = {
 			{
 				description = L.Ux.ConfigWindow.autoOpen,
 				config = "autoOpen",
+				height = 150,
 				options = {
 					{ true, "textures/ConfigWindow/autoOpen.png", "/imhobags autoOpen yes/no" },
 				},
@@ -64,6 +69,7 @@ local topPanes = {
 			{
 				description = L.Ux.ConfigWindow.enhanceTooltips,
 				config = "enhanceTooltips",
+				height = 170,
 				options = {
 					{ true, "textures/ConfigWindow/enhanceTooltips.png", "/imhobags enhanceTooltips yes/no" },
 				},
@@ -71,6 +77,7 @@ local topPanes = {
 			{
 				description = L.Ux.ConfigWindow.showEmptySlots,
 				config = "showEmptySlots",
+				height = 87,
 				options = {
 					{ true, "textures/ConfigWindow/showEmptySlots.png", "/imhobags showEmptySlots yes/no" },
 				},
@@ -87,11 +94,11 @@ slashTooltip:SetVisible(false)
 slashTooltip:SetFontSize(12)
 slashTooltip:SetBackgroundColor(0, 0, 0, 0.75)
 
-local function createHighlightedTexture(parent, path, tooltip, textureCallback)
+local function createHighlightedTexture(parent, path, tooltip)
 	local icon = UI.CreateFrame("Texture", "", parent)
 	icon:SetTexture("ImhoBags", path)
 	local highlight = UI.CreateFrame("Texture", "", parent)
-	highlight:SetTexture("ImhoBags", "textures/highlight.png")
+	highlight:SetTextureAsync("ImhoBags", "textures/highlight.png")
 	highlight:SetAllPoints(icon)
 	highlight:SetVisible(false)
 	icon:SetLayer(highlight:GetLayer() + 1)
@@ -228,7 +235,7 @@ local function createContent(content, parent, dy)
 		end
 	end , Addon.identifier, "" }
 
-	return contentPadding + description:GetHeight() + (#pictures > 0 and pictures[1]:GetHeight() or 0)
+	return contentPadding + description:GetHeight() + content.height
 end
 
 local function createPane(pane, parent)
@@ -307,4 +314,3 @@ function Ux.ConfigWindow()
 
 	self.buttons[1].Event.LeftPress(self.buttons[1])
 end
-
