@@ -85,6 +85,18 @@ local topPanes = {
 		},
 	},
 }
+local bottomPanes = {
+	{
+		name = "Known Issues",
+		content = {
+			{ description = "The mail database is cleared everytime the Trion mail window is opened.", },
+			{ description = "Some items may not show up in the item windows due to broken values in the API.", },
+			{ description = "Equipped and wardrobe items cannot be draged until the character/wardrobe window has been opened at least once with the respective set.", },
+			{ description = "Item tooltips triggered by the Addon windows may display in the top left corner of the screen.", },
+			{ description = "The native Trion windows cannot be hidden.", },
+		},
+	},
+}
 
 -- Private methods
 -- ============================================================================
@@ -176,7 +188,7 @@ local function makeMovable(self)
 	border.Event.LeftUpoutside = content_LeftUpoutside
 end
 
-local function createPaneButton(self, pane, name, previous)
+local function createPaneButton(self, pane, name, previous, down)
 	local button = UI.CreateFrame("RiftButton", "", self)
 	button:SetText(name)
 	name = string.upper(name)
@@ -196,10 +208,19 @@ local function createPaneButton(self, pane, name, previous)
 	end
 	
 	if(previous) then
-		button:SetPoint("TOPLEFT", previous, "BOTTOMLEFT")
-		button:SetPoint("TOPRIGHT", previous, "BOTTOMRIGHT")
+		if(down) then
+			button:SetPoint("TOPLEFT", previous, "BOTTOMLEFT")
+			button:SetPoint("TOPRIGHT", previous, "BOTTOMRIGHT")
+		else
+			button:SetPoint("BOTTOMLEFT", previous, "TOPLEFT")
+			button:SetPoint("BOTTOMRIGHT", previous, "TOPRIGHT")
+		end
 	else
-		button:SetPoint("TOPLEFT", self, "TOPLEFT", 3, 25)
+		if(down) then
+			button:SetPoint("TOPLEFT", self, "TOPLEFT", 3, 25)
+		else
+			button:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 3, -contentPadding)
+		end
 	end
 	return button
 end
@@ -209,11 +230,11 @@ local function createContent(content, parent, dy)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy + contentPadding / 2)
 	description:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPadding, dy + contentPadding / 2)
-	description:SetText(content.description)
+	description:SetText(content.description, true)
 	
 	local pictureHeight = 0
 	local pictures = { }
-	for i = 1, #content.options do
+	for i = 1, #(content.options or { }) do
 		pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
 		pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
 	end
@@ -235,7 +256,7 @@ local function createContent(content, parent, dy)
 		end
 	end , Addon.identifier, "" }
 
-	return contentPadding + description:GetHeight() + content.height
+	return contentPadding + description:GetHeight() + (content.height or 0)
 end
 
 local function createPane(pane, parent)
@@ -303,13 +324,20 @@ function Ux.ConfigWindow()
 	-- Config panes
 	self.panes = { }
 	for i = 1, #topPanes do
-		self.panes[i] = createPane(topPanes[i], backdrop)
+		self.panes[#self.panes + 1] = createPane(topPanes[i], backdrop)
+	end
+	for i = 1, #bottomPanes do
+		self.panes[#self.panes + 1] = createPane(bottomPanes[i], backdrop)
 	end
 	
 	-- Pane selection buttons
 	self.buttons = { }
 	for i = 1, #topPanes do
-		self.buttons[i] = createPaneButton(self, self.panes[i], topPanes[i].name, self.buttons[i - 1])
+		self.buttons[#self.buttons + 1] = createPaneButton(self, self.panes[#self.buttons + 1], topPanes[i].name, self.buttons[#self.buttons], true)
+	end
+	for i = 1, #bottomPanes do
+		local count = #topPanes + #bottomPanes
+		self.buttons[count - i + 1] = createPaneButton(self, self.panes[#topPanes + i], bottomPanes[i].name, self.buttons[count - i + 2], false)
 	end
 
 	self.buttons[1].Event.LeftPress(self.buttons[1])
