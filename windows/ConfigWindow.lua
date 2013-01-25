@@ -13,7 +13,7 @@ local topPanes = {
 	{
 		name = L.Ux.ConfigWindow.appearanceSection,
 		content = {
-			{
+--[[			{
 				description = L.Ux.ConfigWindow.condensed,
 				config = "condensed",
 				height = 118,
@@ -22,7 +22,7 @@ local topPanes = {
 					{ false, "textures/ConfigWindow/condensed no.png", "/imhobags condensed no" },
 				},
 			},
-			{
+]]			{
 				description = L.Ux.ConfigWindow.itemButtonSkin,
 				config = "itemButtonSkin",
 				height = 160,
@@ -88,6 +88,8 @@ local bottomPanes = {
 			{ description = "Equipped and wardrobe items cannot be draged until the character/wardrobe window has been opened at least once with the respective set.", },
 			{ description = "Item tooltips triggered by the Addon windows may display in the top left corner of the screen.", },
 			{ description = "The native Trion windows cannot be hidden.", },
+			{ description = "The stack grouping feature is currently disabled.", },
+			{ description = "Tracking of mailbox items is currently disabled.", },
 		},
 	},
 }

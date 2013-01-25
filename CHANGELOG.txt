@@ -31,3 +31,5 @@ ISSUES:
 * Item tooltips triggered by the Addon windows may display in the top left
 	corner of the screen. This is a bug in the Addon API.
 * The native Trion windows cannot be hidden.
+* The stack grouping feature is currently disabled.
+* Tracking of mailbox items is currently disabled.
