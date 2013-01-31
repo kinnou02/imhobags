@@ -80,6 +80,14 @@ local bottomPanes = {
 	{
 		name = "Known Issues",
 		content = {
+			{ description = "Annotations:", },
+			{ description = "<font color='#FF0000'>[!]</font>: Critical issue which is being actively worked on.", },
+			{ description = "<font color='#FFFF00'>[Rift API]</font>: Requires changes or additions to the Rift API in order to be possible.", },
+			{ description = "<font color='#FF8000'>[Rift Bug]</font>: Is broken due to an internal bug in Rift and requires an official Rift patch.", },
+			{ separator = true },
+			
+			{ description = "<font color='#FF0000'>[!]</font> After a few hours of playing loading screens may cause performance errors.", },
+			{ description = "<font color='#FF0000'>[!]</font> Opening big containers may cause performance warnings.", },
 			{ description = "Condensing of full stacks is currently disabled.", },
 			{ description = "Cooldowns are missing.", },
 			{ description = "<font color='#FFFF00'>[Rift API]</font> Visual indicator for new items is missing.", },
@@ -91,11 +99,6 @@ local bottomPanes = {
 			{ description = "<font color='#FFFF00'>[Rift API]</font> The native Trion windows cannot be hidden.", },
 			{ description = "The stack grouping feature is currently disabled.", },
 			{ description = "Tracking of mailbox items is currently disabled.", },
-			
-			{ description = "\n\n\n", },
-			{ description = "Legend", },
-			{ description = "<font color='#FFFF00'>[Rift API]</font>: Requires changes or additions to the Rift API in order to be possible.", },
-			{ description = "<font color='#FF8000'>[Rift Bug]</font>: Is broken due to an internal bug in Rift and requires an official Rift patch.", },
 		},
 	},
 }
@@ -233,39 +236,51 @@ local function createPaneButton(self, pane, name, previous, down)
 	return button
 end
 
+local function createSeparator(content, parent, dy)
+	local separator = UI.CreateFrame("Texture", "", parent)
+	separator:SetTexture("Rift", "header_divider.png.dds")
+	separator:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy)
+	separator:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPadding, dy)
+	separator:SetHeight(separator:GetHeight() * separator:GetWidth() / 512) -- Unscaled texture width is 512
+	return separator and separator:GetHeight() or 0
+end
+
 local function createContent(content, parent, dy)
-	local description = UI.CreateFrame("Text", "", parent)
-	description:SetWordwrap(true)
-	description:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy + contentPadding / 2)
-	description:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPadding, dy + contentPadding / 2)
-	description:SetText("", true)
-	description:SetText(content.description, true)
-	
-	local pictureHeight = 0
-	local pictures = { }
-	for i = 1, #(content.options or { }) do
-		pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
-		pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
-	end
-	if(#pictures == 1) then
-		pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
-		pictures[1].Event.LeftDown = function(self) Config[content.config] = not self:GetChecked() end
-	elseif(#pictures == 2) then
-		pictures[1]:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-		pictures[2]:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
-		pictures[1].Event.LeftDown = function(self) Config[content.config] = content.options[1][1] end
-		pictures[2].Event.LeftDown = function(self) Config[content.config] = content.options[2][1] end
-	end
-
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-		if(k == content.config) then
-			for i = 1, #pictures do
-				pictures[i]:SetChecked(v == content.options[i][1])
-			end
+	if(content.separator) then
+		return createSeparator(content, parent, dy)
+	else
+		local description = UI.CreateFrame("Text", "", parent)
+		description:SetWordwrap(true)
+		description:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy + contentPadding / 2)
+		description:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPadding, dy + contentPadding / 2)
+		description:SetText("", true)
+		description:SetText(content.description or "", true)
+		
+		local pictures = { }
+		for i = 1, #(content.options or { }) do
+			pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
+			pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
 		end
-	end , Addon.identifier, "" }
+		if(#pictures == 1) then
+			pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
+			pictures[1].Event.LeftDown = function(self) Config[content.config] = not self:GetChecked() end
+		elseif(#pictures == 2) then
+			pictures[1]:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
+			pictures[2]:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
+			pictures[1].Event.LeftDown = function(self) Config[content.config] = content.options[1][1] end
+			pictures[2].Event.LeftDown = function(self) Config[content.config] = content.options[2][1] end
+		end
 
-	return contentPadding + description:GetHeight() + (content.height or 0)
+		ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
+			if(k == content.config) then
+				for i = 1, #pictures do
+					pictures[i]:SetChecked(v == content.options[i][1])
+				end
+			end
+		end , Addon.identifier, "" }
+
+		return contentPadding + description:GetHeight() + (content.height or 0)
+	end
 end
 
 local function createPane(pane, parent)
@@ -350,4 +365,8 @@ function Ux.ConfigWindow()
 	end
 
 	self.buttons[1].Event.LeftPress(self.buttons[1])
+	
+	-- Get rid of the no longer needed tables
+	topPanes = nil
+	bottomPanes = nil
 end
