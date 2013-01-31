@@ -30,7 +30,6 @@ end
 
 local function closeButton_LeftPress(self)
 	local window = self:GetParent()
-	window:SetVisible(false)
 	window.titleBar:ClearKeyFocus()
 	window:onClose()
 	log("TODO", "close the native frame(s)")
@@ -172,9 +171,9 @@ local function createNativeHook(self, native, location)
 					else
 						self:SetCharacter(Player.name)
 					end
-					self:SetVisible(true)
+					self:FadeIn()
 				else
-					self:SetVisible(false)
+					self:FadeOut()
 				end
 				log("TODO", "disable native frame(s)")
 			end
@@ -282,7 +281,7 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 	self.SetGuild = SetGuild
 	self.SetVisible = SetVisible
 	
-	self.onClose = function() self:SetVisible(false) end
+	self.onClose = function() self:FadeOut() end
 
 	local content = self:GetContent()
 	content.window = self

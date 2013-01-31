@@ -23,7 +23,7 @@ Ux.SearchWindow = frame
 frame:SetVisible(false)
 frame:SetTitle(L.Ux.WindowTitle.search)
 
-Ux.RiftWindowCloseButton.New(frame, function() filter.text:SetKeyFocus(false) frame:SetVisible(false) end)
+Ux.RiftWindowCloseButton.New(frame, function() filter.text:SetKeyFocus(false) frame:FadeOut() end)
 
 function border.Event:LeftDown()
 	local mouse = Inspect.Mouse()
@@ -72,9 +72,9 @@ local function update()
 		local button = buttons[i]
 		local index = i + offset
 		if(index > #display) then
-			button:SetVisible(false)
+			button:FadeOut()
 		else
-			button:SetVisible(true)
+			button:FadeIn()
 			local item = display[index]
 			button.text:SetText(item[1])
 			button.text:SetFontColor(Item.Type.Color(item[2]))
@@ -108,14 +108,9 @@ local function applySearchFilter()
 		end
 	end
 
-	if(#display > displayItemsCount) then
-		scrollbar:SetVisible(true)
-		scrollbar:SetRange(0, #display - displayItemsCount)
-	else
-		scrollbar:SetRange(0, 1)
-		scrollbar:SetVisible(false)
-	end
+	scrollbar:SetRange(0, math.max(0, #display - displayItemsCount))
 	scrollbar:SetPosition(0)
+	scrollbar:SetEnabled(#display - displayItemsCount > 0)
 
 	update()
 end
@@ -241,7 +236,7 @@ Event.System.Update.Begin[#Event.System.Update.Begin + 1] = {
 -- ============================================================================
 
 function frame:Show()
-	frame:SetVisible(true)
+	frame:FadeIn()
 	filter.text:SetText("")
 	filter.text:SetKeyFocus(true)
 	
@@ -249,9 +244,11 @@ function frame:Show()
 end
 
 function frame:Toggle()
-	if(frame:GetVisible()) then
-		frame:SetVisible(false)
+	if(not self:GetVisible()) then
+		self:Show()
+	elseif(self:FadingOut()) then
+		self:Show()
 	else
-		frame:Show()
+		self:FadeOut()
 	end
 end

@@ -63,6 +63,16 @@ local function savedVariablesSaveBegin(identifier)
 	end
 end
 
+local function toggleFade(self)
+	if(not self:GetVisible()) then
+		self:FadeIn()
+	elseif(self:FadingOut()) then
+		self:FadeIn()
+	else
+		self:FadeOut()
+	end
+end
+
 Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = { savedVariablesSaveBegin, Addon.identifier, "savedVariablesSaveBegin" }
 Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "storageLoaded" }
 
@@ -72,8 +82,8 @@ Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] 
 function Ux.ToggleItemWindow(character, location)
 	local window = Ux.ItemWindow[location]
 	if(window) then
-		window:SetVisible(not window:GetVisible())
-		if(window:GetVisible()) then
+		toggleFade(window)
+		if(window:FadingIn()) then
 			if(location == "guildbank") then
 				window:SetGuild(Item.Storage.FindGuild(character))
 			else
@@ -86,7 +96,7 @@ end
 function Ux.ShowItemWindow(character, location)
 	local window = Ux.ItemWindow[location]
 	if(window) then
-		window:SetVisible(true)
+		window:FadeIn()
 		if(location == "guildbank") then
 			window:SetGuild(Item.Storage.FindGuild(character))
 		else
@@ -98,7 +108,7 @@ end
 function Ux.HideItemWindow(location)
 	local window = Ux.ItemWindow[location]
 	if(window) then
-		window:SetVisible(false)
+		window:FadeOut()
 	end
 end
 
@@ -112,15 +122,19 @@ function Ux.ToggleConfigWindow()
 		else
 			centerWindow(Ux.ConfigWindow)
 		end
+		Ux.ConfigWindow:SetVisible(false)
+		Ux.ConfigWindow:FadeIn()
 	else
-		Ux.ConfigWindow:SetVisible(not Ux.ConfigWindow:GetVisible())
+		toggleFade(Ux.ConfigWindow)
 	end
 end
 
 function Ux.ToggleMenuWindow()
 	if(type(Ux.MenuWindow) == "function") then
 		Ux.MenuWindow()
+		Ux.MenuWindow:SetVisible(false)
+		Ux.MenuWindow:FadeIn()
 	else
-		Ux.MenuWindow:SetVisible(not Ux.MenuWindow:GetVisible())
+		toggleFade(Ux.MenuWindow)
 	end
 end

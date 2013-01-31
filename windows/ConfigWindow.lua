@@ -295,7 +295,7 @@ function Ux.ConfigWindow()
 	self.showSlashTooltips = false
 	
 	-- Close button
-	Ux.RiftWindowCloseButton.New(self, self)
+	Ux.RiftWindowCloseButton.New(self, self, true)
 	
 	-- Section headline
 	self.heading = UI.CreateFrame("Text", "", self)
