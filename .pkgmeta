@@ -17,6 +17,8 @@ enable-nolib-creation: yes
 externals:
   libs/LibAnimate:
     url: git://git.curseforge.net/rift/libanimate/mainline.git
+  libs/LibAnimate/LibString:
+    url: git://git.curseforge.net/rift/libstring/mainline.git
   libs/LibAsyncTextures:
     url: git://git.curseforge.net/rift/lib-async-textures/mainline.git
   libs/LibString:
