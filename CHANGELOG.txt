@@ -21,15 +21,4 @@ FIXES:
 * Dimension items no longer cause errors.
 * Performance warning in search window should be gone now.
 ISSUES:
-* Condensing of full stacks is currently disabled.
-* Cooldowns are not displayed.
-* Visual indicator for new items is not displayed.
-* The mail database is cleared everytime the Trion mail window is opened.
-* Some items may not show up in the item windows due to broken values in the API.
-* Equipped and wardrobe items cannot be draged until the character/wardrobe window
-	has been opened at least once with the respective set.
-* Item tooltips triggered by the Addon windows may display in the top left
-	corner of the screen. This is a bug in the Addon API.
-* The native Trion windows cannot be hidden.
-* The stack grouping feature is currently disabled.
-* Tracking of mailbox items is currently disabled.
+* This information can now be viewed in the config window in-game.

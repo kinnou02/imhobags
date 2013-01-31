@@ -32,7 +32,7 @@ else
 end
 
 if(string.find(Addon.toc.Version, "alpha")) then
-	Command.Console.Display("general", false, "<font color='#FF8000'>This is a development version of ImhoBags and not intended for release. It may be broken, have errors or not work at all. You have been warned.</font>", true)
+	Command.Console.Display("general", false, "<font color='#FF8000'>This is an ALPHA development version of ImhoBags and not intended for release. It may be broken, have errors or not work at all. You have been warned.</font>", true)
 end
 local lang = Inspect.System.Language()
 local translators = {

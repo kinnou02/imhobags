@@ -81,19 +81,27 @@ local bottomPanes = {
 		name = "Known Issues",
 		content = {
 			{ description = "Condensing of full stacks is currently disabled.", },
-			{ description = "Cooldowns are not displayed.", },
-			{ description = "Visual indicator for new items is not displayed.", },
+			{ description = "Cooldowns are missing.", },
+			{ description = "<font color='#FFFF00'>[Rift API]</font> Visual indicator for new items is missing.", },
 			{ description = "The mail database is cleared everytime the Trion mail window is opened.", },
 			{ description = "Some items may not show up in the item windows due to broken values in the API.", },
-			{ description = "Equipped and wardrobe items cannot be draged until the character/wardrobe window has been opened at least once with the respective set.", },
-			{ description = "Item tooltips triggered by the Addon windows may display in the top left corner of the screen.", },
-			{ description = "The native Trion windows cannot be hidden.", },
+			{ description = "<font color='#FF8000'>[Rift Bug]</font> Equipped and wardrobe items cannot be draged until the character/wardrobe window has been opened at least once with the respective set.", },
+			{ description = "<font color='#FF8000'>[Rift Bug]</font> Item tooltips triggered by the Addons are display in the top left corner of the screen.", },
+			{ description = "<font color='#FF8000'>[Rift Bug]</font> Tooltip summaries don't display for comparison and chat link tooltips.", },
+			{ description = "<font color='#FFFF00'>[Rift API]</font> The native Trion windows cannot be hidden.", },
 			{ description = "The stack grouping feature is currently disabled.", },
 			{ description = "Tracking of mailbox items is currently disabled.", },
+			
+			{ description = "\n\n\n", },
+			{ description = "Legend", },
+			{ description = "<font color='#FFFF00'>[Rift API]</font>: Requires changes or additions to the Rift API in order to be possible.", },
+			{ description = "<font color='#FF8000'>[Rift Bug]</font>: Is broken due to an internal bug in Rift and requires an official Rift patch.", },
 		},
 	},
 }
-
+if(string.find(Addon.toc.Version, "alpha")) then
+	table.insert(bottomPanes[1].content, 1, { description = "<font color='#FF8000'>This is an ALPHA development version of ImhoBags and not intended for release. It may be broken, have errors or not work at all. You have been warned.</font>" })
+end
 -- Private methods
 -- ============================================================================
 
@@ -190,7 +198,11 @@ local function createPaneButton(self, pane, name, previous, down)
 	name = string.upper(name)
 	function button.Event.LeftPress()
 		for k, v in pairs(self.panes) do
-			v:SetVisible(v == pane)
+			if(v == pane) then
+				v:FadeIn()
+			else
+				v:FadeOut()
+			end
 		end
 		for k, v in pairs(self.buttons) do
 			v:SetEnabled(v ~= button)
@@ -226,6 +238,7 @@ local function createContent(content, parent, dy)
 	description:SetWordwrap(true)
 	description:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy + contentPadding / 2)
 	description:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -contentPadding, dy + contentPadding / 2)
+	description:SetText("", true)
 	description:SetText(content.description, true)
 	
 	local pictureHeight = 0
