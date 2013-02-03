@@ -101,6 +101,24 @@ local bottomPanes = {
 			{ description = "Tracking of mailbox items is currently disabled.", },
 		},
 	},
+	{
+		name = "Help",
+		content = {
+			{
+				description = "Help string",
+				height = 132,
+				options = {
+					{ true, "textures/ConfigWindow/help_sort_menu.png" },
+				},
+				list = {
+					{ "Alphabetically.\n<font color='#C0C0C0'>Sorts items from left to right alphabetically. The order depends on the sort algorithm implemented by the game's localization.</font>", "ImhoBags", "textures/icon_menu_sort_name.png" },
+					{ "Texture.\n<font color='#C0C0C0'>Sorts items by the file name of their in-game icon texture. This has the chance of grouping similar items together.</font>\n", "ImhoBags", "textures/icon_menu_sort_icon.png" },
+					{ "Rarity.\n<font color='#C0C0C0'>Sorts items by their rarity from left to right in the order: <font color='#FFFF00'>quest</font>, <font color='#FF8000'>relic</font>, <font color='#AC47F9'>epic</font>, <font color='#257EF9'>rare</font>, <font color='#00CB00'>uncommon</font>, <font color='#C0C0C0'>common</font>, <font color='#808080'>junk</font>.</font>", "ImhoBags", "textures/icon_menu_sort_rarity.png" },
+					{ "None.\n<font color='#C0C0C0'>Does not apply any sorting. The items are displayed from left to right in the same order as they appear in the game's default bag windows.</font>", "ImhoBags", "textures/icon_menu_bags.png" },
+				}
+			},
+		},
+	},
 }
 if(string.find(Addon.toc.Version, "alpha")) then
 	table.insert(bottomPanes[1].content, 1, { description = "<font color='#FF8000'>This is an ALPHA development version of ImhoBags and not intended for release. It may be broken, have errors or not work at all. You have been warned.</font>" })
