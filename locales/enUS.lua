@@ -192,7 +192,18 @@ Available config options:
 			showEmptySlots = "Choose whether you want a counter displayed on top of your bags bar showing how many empty item slots remain in your backpack.",
 			showBoundIcon = "Display a small indicator over the icons of soul- and account-bound items. A blue icon indicates soul-bound items, the red/blue tinted account-bound ones.",
 			titleBar = {
-				sortDescription = "In the upper row of the layout menu you can select how items are sorted. This option is saved per item window and character, making it possible to have different sorting behavor in every ImhoBags item window.",
+				description = "The title bar contains options with which you can customize the appearance of items. Most of the buttons are hidden by default. To make them visible simply move your cursor over the top area. These options are saved separately for each item window and character, making it possible to have different appearances and behavior in every ImhoBags item window.",
+				
+				charsLabel = "Characters",
+				charsDescription = "Opens a menu allowing you to chose which character's items are displayed in the current window. Not shown in the Guild Bank window.",
+				guildsLabel = "Guilds",
+				guildsDescription = "Opens a menu allowing you to chose which guild's items are displayed in the current window. Only shown in the Guild Bank window.",
+				coinsLabel = "Money",
+				coinsDescription = "Opens an overview of the money of all your characters and known guilds.",
+				searchLabel = "Search",
+				searchDescription = "The dark area is a text box functioning as a filter, highlighting items in the window matching the entered text. Clicking the icon opens a separate window where you can search all items owned by all your characters and known guilds.",
+				
+				sortDescription = "In the upper row of the layout menu you can select how items are sorted:",
 				sortNameLabel = "Alphabetically",
 				sortNameDescription = "Sorts items from left to right alphabetically. The order depends on the sort algorithm implemented by the game's localization.",
 				sortIconLabel = "Icon",
@@ -202,9 +213,9 @@ Available config options:
 				sortNoneLabel = "None",
 				sortNoneDescription = "Does not apply any sorting. The items are displayed from left to right in the same order as they appear in the game's default bag windows.",
 
-				layoutDescription = "In the lower row of the layout menu you can select how items are grouped. This option is saved per item window and character, making it possible to have different grouping behavor in every ImhoBags item window.",
+				layoutDescription = "In the lower row of the layout menu you can select how items are grouped:",
 				layoutDefaultLabel = "Category",
-				layoutDefaultDescription = "Items are grouped by their category similar to how they appear in the auction house. Note that the game doesn't provide category information for some items (especially world event items). In that case they are grouped under '%s'.",
+				layoutDefaultDescription = "Items are grouped by their category similar to how they are in the auction house. Note that the game doesn't provide category information for some items (especially world event items). In that case they are grouped under '%s'.",
 				layoutBagsLabel = "Bags",
 				layoutBagsDescription = "Groups items by the bag they are placed in.",
 				layoutOnebagLabel = "Onebag",

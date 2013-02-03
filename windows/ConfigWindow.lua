@@ -9,6 +9,7 @@ local accountBoundColor = { 251 / 255, 242 / 255, 142 / 255 }
 setfenv(1, private)
 Ux = Ux or { }
 
+local listFormat = "%s\n<font color='#C0C0C0'>%s</font>"
 local topPanes = {
 	{
 		name = L.Ux.ConfigWindow.sections.appearance,
@@ -105,18 +106,33 @@ local bottomPanes = {
 		name = L.Ux.ConfigWindow.sections.titleBar,
 		content = {
 			{
+				description = L.Ux.ConfigWindow.titleBar.description,
+				height = 132,
+				options = {
+					{ true, "textures/ConfigWindow/help_titlebar.png" },
+				},
+				list = {
+					{ L.Ux.ConfigWindow.titleBar.charsLabel, L.Ux.ConfigWindow.titleBar.charsDescription, "Rift", "icon_menu_charpanel.png.dds", 24, 24 },
+					{ L.Ux.ConfigWindow.titleBar.guildsLabel, L.Ux.ConfigWindow.titleBar.guildsDescription, "Rift", "icon_menu_guild.png.dds", 24, 24 },
+					{ L.Ux.ConfigWindow.titleBar.coinsLabel, L.Ux.ConfigWindow.titleBar.coinsDescription, "ImhoBags", "textures/icon_menu_gold.png", 24, 24 },
+					{ L.Ux.ConfigWindow.titleBar.searchLabel, L.Ux.ConfigWindow.titleBar.searchDescription, "Rift", "icon_menu_LFP.png.dds", 24, 24 },
+				},
+			},
+			"separator",
+			{
 				description = L.Ux.ConfigWindow.titleBar.sortDescription,
 				height = 132,
 				options = {
 					{ true, "textures/ConfigWindow/help_menu_sort.png" },
 				},
 				list = {
-					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortNameLabel, L.Ux.ConfigWindow.titleBar.sortNameDescription), "ImhoBags", "textures/icon_menu_sort_name.png" },
-					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortIconLabel, L.Ux.ConfigWindow.titleBar.sortIconDescription), "ImhoBags", "textures/icon_menu_sort_icon.png" },
-					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortRarityLabel, string.format(L.Ux.ConfigWindow.titleBar.sortRarityDescription, string.format("<font color='#FFFF00'>%s</font>, <font color='#FF8000'>%s</font>, <font color='#AC47F9'>%s</font>, <font color='#257EF9'>%s</font>, <font color='#00CB00'>%s</font>, <font color='#C0C0C0'>%s</font>, <font color='#808080'>%s</font>", L.Rarity.adjective.quest, L.Rarity.adjective.relic, L.Rarity.adjective.epic, L.Rarity.adjective.rare, L.Rarity.adjective.uncommon, L.Rarity.adjective.common, L.Rarity.adjective.junk))), "ImhoBags", "textures/icon_menu_sort_rarity.png" },
-					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortNoneLabel, L.Ux.ConfigWindow.titleBar.sortNoneDescription), "ImhoBags", "textures/icon_menu_bags.png" },
+					{ L.Ux.ConfigWindow.titleBar.sortNameLabel, L.Ux.ConfigWindow.titleBar.sortNameDescription, "ImhoBags", "textures/icon_menu_sort_name.png" },
+					{ L.Ux.ConfigWindow.titleBar.sortIconLabel, L.Ux.ConfigWindow.titleBar.sortIconDescription, "ImhoBags", "textures/icon_menu_sort_icon.png" },
+					{ L.Ux.ConfigWindow.titleBar.sortRarityLabel, string.format(L.Ux.ConfigWindow.titleBar.sortRarityDescription, string.format("<font color='#FFFF00'>%s</font>, <font color='#FF8000'>%s</font>, <font color='#AC47F9'>%s</font>, <font color='#257EF9'>%s</font>, <font color='#00CB00'>%s</font>, <font color='#C0C0C0'>%s</font>, <font color='#808080'>%s</font>", L.Rarity.adjective.quest, L.Rarity.adjective.relic, L.Rarity.adjective.epic, L.Rarity.adjective.rare, L.Rarity.adjective.uncommon, L.Rarity.adjective.common, L.Rarity.adjective.junk)), "ImhoBags", "textures/icon_menu_sort_rarity.png" },
+					{ L.Ux.ConfigWindow.titleBar.sortNoneLabel, L.Ux.ConfigWindow.titleBar.sortNoneDescription, "ImhoBags", "textures/icon_menu_bags.png" },
 				}
 			},
+			"separator",
 			{
 				description = L.Ux.ConfigWindow.titleBar.layoutDescription,
 				height = 132,
@@ -124,9 +140,9 @@ local bottomPanes = {
 					{ true, "textures/ConfigWindow/help_menu_layout.png" },
 				},
 				list = {
-					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.layoutDefaultLabel, string.format(L.Ux.ConfigWindow.titleBar.layoutDefaultDescription, L.CategoryName.misc)), "Rift", "NPCDialogIcon_auctioneer.png.dds" },
-					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.layoutBagsLabel, L.Ux.ConfigWindow.titleBar.layoutBagsDescription), "ImhoBags", "textures/icon_menu_bags.png" },
-					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.layoutOnebagLabel, L.Ux.ConfigWindow.titleBar.layoutOnebagDescription), "ImhoBags", "textures/icon_menu_layout_onebag.png" },
+					{ L.Ux.ConfigWindow.titleBar.layoutDefaultLabel, string.format(L.Ux.ConfigWindow.titleBar.layoutDefaultDescription, L.CategoryName.misc), "Rift", "NPCDialogIcon_auctioneer.png.dds" },
+					{ L.Ux.ConfigWindow.titleBar.layoutBagsLabel, L.Ux.ConfigWindow.titleBar.layoutBagsDescription, "ImhoBags", "textures/icon_menu_bags.png" },
+					{ L.Ux.ConfigWindow.titleBar.layoutOnebagLabel, L.Ux.ConfigWindow.titleBar.layoutOnebagDescription, "ImhoBags", "textures/icon_menu_layout_onebag.png" },
 				}
 			},
 		},
@@ -289,10 +305,14 @@ local function createList(list, parent, dy)
 		label:SetWordwrap(true)
 		label:SetPoint("RIGHT", parent, "RIGHT", -contentPadding, nil)
 		label:SetText("", true)
-		if(#entry > 1) then
+		if(#entry > 2) then
 			local bullet = UI.CreateFrame("Texture", "", parent)
 			bullets[i] = bullet
-			bullet:SetTexture(entry[2], entry[3])
+			bullet:SetTexture(entry[3], entry[4])
+			if(#entry > 4) then
+				bullet:SetWidth(entry[5])
+				bullet:SetHeight(entry[6])
+			end
 			bulletsWidth = math.max(bulletsWidth, bullet:GetWidth())
 		end
 	end
@@ -302,7 +322,7 @@ local function createList(list, parent, dy)
 		local label = labels[i]
 		label:SetPoint("RIGHT", parent, "RIGHT", -contentPadding, nil)
 		label:SetPoint("LEFT", parent, "LEFT", contentPadding + bulletsWidth + (bulletsWidth > 0 and contentPadding / 2 or 0), nil)
-		label:SetText(list[i][1], true)
+		label:SetText(string.format(listFormat, list[i][1], list[i][2]), true)
 		if(bullet) then
 			bullet:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy)
 			if(label:GetHeight() > bullet:GetHeight()) then
