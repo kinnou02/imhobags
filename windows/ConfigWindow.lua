@@ -84,7 +84,7 @@ local bottomPanes = {
 			{ description = "<font color='#FF0000'>[!]</font>: Critical issue which is being actively worked on.", },
 			{ description = "<font color='#FFFF00'>[Rift API]</font>: Requires changes or additions to the Rift API in order to be possible.", },
 			{ description = "<font color='#FF8000'>[Rift Bug]</font>: Is broken due to an internal bug in Rift and requires an official Rift patch.", },
-			{ separator = true },
+			"separator",
 			
 			{ description = "<font color='#FF0000'>[!]</font> After a few hours of playing loading screens may cause performance errors.", },
 			{ description = "<font color='#FF0000'>[!]</font> Opening big containers may cause performance warnings.", },
@@ -246,7 +246,7 @@ local function createSeparator(content, parent, dy)
 end
 
 local function createContent(content, parent, dy)
-	if(content.separator) then
+	if(content == "separator") then
 		return createSeparator(content, parent, dy)
 	else
 		local description = UI.CreateFrame("Text", "", parent)
