@@ -202,8 +202,12 @@ Available config options:
 				coinsDescription = "Opens an overview of the money of all your characters and known guilds.",
 				searchLabel = "Search",
 				searchDescription = "The dark area is a text box functioning as a filter, highlighting items in the window matching the entered text. Clicking the icon opens a separate window where you can search all items owned by all your characters and known guilds.",
+				sizeLabel = "Size",
+				sizeDescription = "Shows a menu where you can change the item size.",
+				arrangementLabel = "Arrangement",
+				arrangementDescription = "Shows a menu where you can change the sorting and grouping of items.",
 				
-				sortDescription = "In the upper row of the layout menu you can select how items are sorted:",
+				sortDescription = "In the upper row of the arrangement menu you can select how items are sorted:",
 				sortNameLabel = "Alphabetically",
 				sortNameDescription = "Sorts items from left to right alphabetically. The order depends on the sort algorithm implemented by the game's localization.",
 				sortIconLabel = "Icon",
@@ -213,7 +217,7 @@ Available config options:
 				sortNoneLabel = "None",
 				sortNoneDescription = "Does not apply any sorting. The items are displayed from left to right in the same order as they appear in the game's default bag windows.",
 
-				layoutDescription = "In the lower row of the layout menu you can select how items are grouped:",
+				layoutDescription = "In the lower row of the arrangement menu you can select how items are grouped:",
 				layoutDefaultLabel = "Category",
 				layoutDefaultDescription = "Items are grouped by their category similar to how they are in the auction house. Note that the game doesn't provide category information for some items (especially world event items). In that case they are grouped under '%s'.",
 				layoutBagsLabel = "Bags",
