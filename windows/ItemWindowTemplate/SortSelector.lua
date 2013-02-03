@@ -73,12 +73,10 @@ function Ux.ItemWindowTemplate.SortSelector(parent, titleBar, hasLayout)
 	local icon = UICreateFrame("Texture", "", background)
 	icon:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMCENTER", 0, -4)
 	icon:SetTextureAsync("ImhoBags", "textures/icon_menu_sort_icon.png")
-	
-	local name = UICreateFrame("Text", "", background)
+
+	local name = UICreateFrame("Texture", "", background)
 	name:SetPoint("RIGHTCENTER", icon, "LEFTCENTER", -contentPaddingLeft, 0)
-	name:SetFontColor(textColor[1], textColor[2], textColor[3])
-	name:SetFontSize(14)
-	name:SetText(L.Ux.SortOption.name)
+	name:SetTextureAsync("ImhoBags", "textures/icon_menu_sort_name.png")
 	
 	local rarity = UICreateFrame("Texture", "", background)
 	rarity:SetPoint("LEFTCENTER", icon, "RIGHTCENTER", contentPaddingLeft, 0)
