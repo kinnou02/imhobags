@@ -247,6 +247,49 @@ local function createSeparator(content, parent, dy)
 	return separator and separator:GetHeight() or 0
 end
 
+local function createList(list, parent, dy)
+	local bullets = { }
+	local labels = { }
+	local bulletsWidth = 0
+	local dyStart = dy
+	for i = 1, #list do
+		local entry = list[i]
+		local label = UI.CreateFrame("Text", "", parent)
+		labels[i] = label
+		label:SetWordwrap(true)
+		label:SetPoint("RIGHT", parent, "RIGHT", -contentPadding, nil)
+		label:SetText("", true)
+		if(#entry > 1) then
+			local bullet = UI.CreateFrame("Texture", "", parent)
+			bullets[i] = bullet
+			bullet:SetTexture(entry[2], entry[3])
+			bulletsWidth = math.max(bulletsWidth, bullet:GetWidth())
+		end
+	end
+	
+	for i = 1, #list do
+		local bullet = bullets[i]
+		local label = labels[i]
+		label:SetPoint("RIGHT", parent, "RIGHT", -contentPadding, nil)
+		label:SetPoint("LEFT", parent, "LEFT", contentPadding + bulletsWidth + (bulletsWidth > 0 and contentPadding / 2 or 0), nil)
+		label:SetText(list[i][1], true)
+		if(bullet) then
+			bullet:SetPoint("TOPLEFT", parent, "TOPLEFT", contentPadding, dy)
+			if(label:GetHeight() > bullet:GetHeight()) then
+				label:SetPoint("TOP", parent, "TOP", nil, dy)
+			else
+				label:SetPoint("CENTERY", bullet, "CENTERY")
+			end
+			dy = dy + math.max(label:GetHeight(), bullet:GetHeight())
+		else
+			label:SetPoint("TOP", parent, "TOP", nil, dy)
+			dy = dy + label:GetHeight()
+		end
+		dy = dy-- + contentPadding / 2
+	end
+	return dy - dyStart
+end
+
 local function createContent(content, parent, dy)
 	if(content == "separator") then
 		return createSeparator(content, parent, dy)
@@ -291,7 +334,14 @@ local function createContent(content, parent, dy)
 			end , Addon.identifier, "" }
 		end
 		
-		return contentPadding + description:GetHeight() + (content.height or 0)
+		local offset = contentPadding / 2 + description:GetHeight() + (content.height or 0)
+		
+		local list
+		if(content.list) then
+			createList(content.list, parent, dy + offset)
+		end
+
+		return contentPadding / 2 + offset + (list and list:GetHeight() or 0)
 	end
 end
 
