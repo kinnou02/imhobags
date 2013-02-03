@@ -116,45 +116,47 @@ slashTooltip:SetBackgroundColor(0, 0, 0, 0.75)
 local function createHighlightedTexture(parent, path, tooltip)
 	local icon = UI.CreateFrame("Texture", "", parent)
 	icon:SetTexture("ImhoBags", path)
-	local highlight = UI.CreateFrame("Texture", "", parent)
-	highlight:SetTextureAsync("ImhoBags", "textures/highlight.png")
-	highlight:SetAllPoints(icon)
-	highlight:SetVisible(false)
-	icon:SetLayer(highlight:GetLayer() + 1)
-	function icon.Event:MouseIn()
-		highlight:SetVisible(true)
-		highlight:SetAlpha(1.0)
-		if(Ux.ConfigWindow.showSlashTooltips) then
-			slashTooltip:SetVisible(true)
-			slashTooltip:ClearAll()
-			slashTooltip:SetText(tooltip)
-		end
-		self.Event.MouseMove(self)
-	end
-	function icon.Event:MouseMove()
-		local mouse = Inspect.Mouse()
-		slashTooltip:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", mouse.x, mouse.y)
-	end
-	function icon.Event:MouseOut()
-		if(self.checked) then
-			highlight:SetAlpha(0.7)
-		else
-			highlight:SetVisible(false)
-		end
-		slashTooltip:SetVisible(false)
-	end
-	function icon:SetChecked(checked)
-		self.checked = checked
-		if(checked) then
-			highlight:SetAlpha(0.7)
+	if(type(tooltip) == "string") then
+		local highlight = UI.CreateFrame("Texture", "", parent)
+		highlight:SetTextureAsync("ImhoBags", "textures/highlight.png")
+		highlight:SetAllPoints(icon)
+		highlight:SetVisible(false)
+		icon:SetLayer(highlight:GetLayer() + 1)
+		function icon.Event:MouseIn()
 			highlight:SetVisible(true)
-		else
 			highlight:SetAlpha(1.0)
-			highlight:SetVisible(false)
+			if(Ux.ConfigWindow.showSlashTooltips) then
+				slashTooltip:SetVisible(true)
+				slashTooltip:ClearAll()
+				slashTooltip:SetText(tooltip)
+			end
+			self.Event.MouseMove(self)
 		end
+		function icon.Event:MouseMove()
+			local mouse = Inspect.Mouse()
+			slashTooltip:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", mouse.x, mouse.y)
+		end
+		function icon.Event:MouseOut()
+			if(self.checked) then
+				highlight:SetAlpha(0.7)
+			else
+				highlight:SetVisible(false)
+			end
+			slashTooltip:SetVisible(false)
+		end
+		function icon:SetChecked(checked)
+			self.checked = checked
+			if(checked) then
+				highlight:SetAlpha(0.7)
+				highlight:SetVisible(true)
+			else
+				highlight:SetAlpha(1.0)
+				highlight:SetVisible(false)
+			end
+		end
+		function icon:GetChecked() return icon.checked end
+		icon.highlight = highlight
 	end
-	function icon:GetChecked() return icon.checked end
-	icon.highlight = highlight
 	
 	return icon
 end
@@ -256,29 +258,39 @@ local function createContent(content, parent, dy)
 		description:SetText("", true)
 		description:SetText(content.description or "", true)
 		
+		local options = content.options or { }
 		local pictures = { }
-		for i = 1, #(content.options or { }) do
+		local isOption = #options > 0 and options[1][3] ~= nil
+		for i = 1, #options do
 			pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
-			pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
+			if(isOption) then
+				pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
+			end
 		end
 		if(#pictures == 1) then
 			pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
-			pictures[1].Event.LeftDown = function(self) Config[content.config] = not self:GetChecked() end
+			if(isOption) then
+				pictures[1].Event.LeftDown = function(self) Config[content.config] = not self:GetChecked() end
+			end
 		elseif(#pictures == 2) then
 			pictures[1]:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
 			pictures[2]:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
-			pictures[1].Event.LeftDown = function(self) Config[content.config] = content.options[1][1] end
-			pictures[2].Event.LeftDown = function(self) Config[content.config] = content.options[2][1] end
+			if(isOption) then
+				pictures[1].Event.LeftDown = function(self) Config[content.config] = content.options[1][1] end
+				pictures[2].Event.LeftDown = function(self) Config[content.config] = content.options[2][1] end
+			end
 		end
 
-		ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
-			if(k == content.config) then
-				for i = 1, #pictures do
-					pictures[i]:SetChecked(v == content.options[i][1])
+		if(isOption) then
+			ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
+				if(k == content.config) then
+					for i = 1, #pictures do
+						pictures[i]:SetChecked(v == content.options[i][1])
+					end
 				end
-			end
-		end , Addon.identifier, "" }
-
+			end , Addon.identifier, "" }
+		end
+		
 		return contentPadding + description:GetHeight() + (content.height or 0)
 	end
 end
