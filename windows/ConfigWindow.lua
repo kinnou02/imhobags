@@ -11,7 +11,7 @@ Ux = Ux or { }
 
 local topPanes = {
 	{
-		name = L.Ux.ConfigWindow.appearanceSection,
+		name = L.Ux.ConfigWindow.sections.appearance,
 		content = {
 --[[			{
 				description = L.Ux.ConfigWindow.condensed,
@@ -42,7 +42,7 @@ local topPanes = {
 		},
 	},
 	{
-		name = L.Ux.ConfigWindow.behaviorSection,
+		name = L.Ux.ConfigWindow.sections.behavior,
 		content = {
 			{
 				description = L.Ux.ConfigWindow.autoOpen,
@@ -55,7 +55,7 @@ local topPanes = {
 		},
 	},
 	{
-		name = L.Ux.ConfigWindow.extrasSection,
+		name = L.Ux.ConfigWindow.sections.extras,
 		content = {
 			{
 				description = L.Ux.ConfigWindow.enhanceTooltips,
@@ -102,19 +102,31 @@ local bottomPanes = {
 		},
 	},
 	{
-		name = "Help",
+		name = L.Ux.ConfigWindow.sections.titleBar,
 		content = {
 			{
-				description = "Help string",
+				description = L.Ux.ConfigWindow.titleBar.sortDescription,
 				height = 132,
 				options = {
-					{ true, "textures/ConfigWindow/help_sort_menu.png" },
+					{ true, "textures/ConfigWindow/help_menu_sort.png" },
 				},
 				list = {
-					{ "Alphabetically.\n<font color='#C0C0C0'>Sorts items from left to right alphabetically. The order depends on the sort algorithm implemented by the game's localization.</font>", "ImhoBags", "textures/icon_menu_sort_name.png" },
-					{ "Texture.\n<font color='#C0C0C0'>Sorts items by the file name of their in-game icon texture. This has the chance of grouping similar items together.</font>\n", "ImhoBags", "textures/icon_menu_sort_icon.png" },
-					{ "Rarity.\n<font color='#C0C0C0'>Sorts items by their rarity from left to right in the order: <font color='#FFFF00'>quest</font>, <font color='#FF8000'>relic</font>, <font color='#AC47F9'>epic</font>, <font color='#257EF9'>rare</font>, <font color='#00CB00'>uncommon</font>, <font color='#C0C0C0'>common</font>, <font color='#808080'>junk</font>.</font>", "ImhoBags", "textures/icon_menu_sort_rarity.png" },
-					{ "None.\n<font color='#C0C0C0'>Does not apply any sorting. The items are displayed from left to right in the same order as they appear in the game's default bag windows.</font>", "ImhoBags", "textures/icon_menu_bags.png" },
+					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortNameLabel, L.Ux.ConfigWindow.titleBar.sortNameDescription), "ImhoBags", "textures/icon_menu_sort_name.png" },
+					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortIconLabel, L.Ux.ConfigWindow.titleBar.sortIconDescription), "ImhoBags", "textures/icon_menu_sort_icon.png" },
+					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortRarityLabel, string.format(L.Ux.ConfigWindow.titleBar.sortRarityDescription, string.format("<font color='#FFFF00'>%s</font>, <font color='#FF8000'>%s</font>, <font color='#AC47F9'>%s</font>, <font color='#257EF9'>%s</font>, <font color='#00CB00'>%s</font>, <font color='#C0C0C0'>%s</font>, <font color='#808080'>%s</font>", L.Rarity.adjective.quest, L.Rarity.adjective.relic, L.Rarity.adjective.epic, L.Rarity.adjective.rare, L.Rarity.adjective.uncommon, L.Rarity.adjective.common, L.Rarity.adjective.junk))), "ImhoBags", "textures/icon_menu_sort_rarity.png" },
+					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.sortNoneLabel, L.Ux.ConfigWindow.titleBar.sortNoneDescription), "ImhoBags", "textures/icon_menu_bags.png" },
+				}
+			},
+			{
+				description = L.Ux.ConfigWindow.titleBar.layoutDescription,
+				height = 132,
+				options = {
+					{ true, "textures/ConfigWindow/help_menu_layout.png" },
+				},
+				list = {
+					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.layoutDefaultLabel, string.format(L.Ux.ConfigWindow.titleBar.layoutDefaultDescription, L.CategoryName.misc)), "Rift", "NPCDialogIcon_auctioneer.png.dds" },
+					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.layoutBagsLabel, L.Ux.ConfigWindow.titleBar.layoutBagsDescription), "ImhoBags", "textures/icon_menu_bags.png" },
+					{ string.format("%s\n<font color='#C0C0C0'>%s</font>", L.Ux.ConfigWindow.titleBar.layoutOnebagLabel, L.Ux.ConfigWindow.titleBar.layoutOnebagDescription), "ImhoBags", "textures/icon_menu_layout_onebag.png" },
 				}
 			},
 		},
@@ -311,6 +323,8 @@ end
 local function createContent(content, parent, dy)
 	if(content == "separator") then
 		return createSeparator(content, parent, dy)
+	elseif(type(content) == "function") then
+		return content(parent, dy)
 	else
 		local description = UI.CreateFrame("Text", "", parent)
 		description:SetWordwrap(true)
@@ -354,12 +368,12 @@ local function createContent(content, parent, dy)
 		
 		local offset = contentPadding / 2 + description:GetHeight() + (content.height or 0)
 		
-		local list
+		local listHeight
 		if(content.list) then
-			createList(content.list, parent, dy + offset)
+			listHeight = createList(content.list, parent, dy + offset)
 		end
 
-		return contentPadding / 2 + offset + (list and list:GetHeight() or 0)
+		return contentPadding / 2 + offset + (listHeight or 0)
 	end
 end
 
