@@ -206,6 +206,10 @@ Available config options:
 				sizeDescription = "Shows a menu where you can change the item size.",
 				arrangementLabel = "Arrangement",
 				arrangementDescription = "Shows a menu where you can change the sorting and grouping of items.",
+				locationLabel = "Location",
+				locationDescription = "This icon shows the location of the current window (inventory, bank, etc.). Move the cursor here to show the other available locations.",
+				emptyLabel = "Empty Slots",
+				emptyDescription = "Shows the number of empty slots in this location. Clicking the symbol toggles the display of empty item slots inside the window.",
 				
 				sortDescription = "In the upper row of the arrangement menu you can select how items are sorted:",
 				sortNameLabel = "Alphabetically",

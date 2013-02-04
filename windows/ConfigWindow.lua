@@ -118,6 +118,8 @@ local bottomPanes = {
 					{ L.Ux.ConfigWindow.titleBar.searchLabel, L.Ux.ConfigWindow.titleBar.searchDescription, "Rift", "icon_menu_LFP.png.dds" },
 					{ L.Ux.ConfigWindow.titleBar.sizeLabel, L.Ux.ConfigWindow.titleBar.sizeDescription, "ImhoBags", "textures/icon_menu_size.png" },
 					{ L.Ux.ConfigWindow.titleBar.arrangementLabel, L.Ux.ConfigWindow.titleBar.arrangementDescription, "ImhoBags", "textures/icon_menu_sort.png" },
+					{ L.Ux.ConfigWindow.titleBar.locationLabel, L.Ux.ConfigWindow.titleBar.locationDescription, "ImhoBags", "textures/icon_menu_bags.png" },
+					{ L.Ux.ConfigWindow.titleBar.emptyLabel, L.Ux.ConfigWindow.titleBar.emptyDescription, "Rift", "icon_empty.png.dds", 32, 32 },
 				},
 			},
 			"separator",
