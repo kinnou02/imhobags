@@ -6,10 +6,6 @@ manual-changelog: CHANGELOG.txt
 ignore:
   - ignored
   - screenshots
-  - textures/highlight.pspimage
-  - textures/icon_menu_layout_onebag.pspimage
-  - textures/icon_menu_sort_icon.pspimage
-  - textures/ConfigWindow/showEnemyFaction.pspimage
   - TODO.txt
 
 enable-nolib-creation: yes
