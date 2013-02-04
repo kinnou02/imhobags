@@ -79,7 +79,7 @@ local topPanes = {
 }
 local bottomPanes = {
 	{
-		name = L.Ux.ConfigWindow.sections.knownIssues,
+		name = "Knwon Issues",
 		content = {
 			{ description = "Annotations:", },
 			{ description = "<font color='#FF0000'>[!]</font>: Critical issue which is being actively worked on.", },
@@ -149,7 +149,7 @@ local bottomPanes = {
 				list = {
 					{ L.Ux.ConfigWindow.titleBar.sortNameLabel, L.Ux.ConfigWindow.titleBar.sortNameDescription, "ImhoBags", "textures/icon_menu_sort_name.png" },
 					{ L.Ux.ConfigWindow.titleBar.sortIconLabel, L.Ux.ConfigWindow.titleBar.sortIconDescription, "ImhoBags", "textures/icon_menu_sort_icon.png" },
-					{ L.Ux.ConfigWindow.titleBar.sortRarityLabel, string.format(L.Ux.ConfigWindow.titleBar.sortRarityDescription, string.format("<font color='#FFFF00'>%s</font>, <font color='#FF8000'>%s</font>, <font color='#AC47F9'>%s</font>, <font color='#257EF9'>%s</font>, <font color='#00CB00'>%s</font>, <font color='#C0C0C0'>%s</font>, <font color='#808080'>%s</font>", L.Rarity.adjective.quest, L.Rarity.adjective.relic, L.Rarity.adjective.epic, L.Rarity.adjective.rare, L.Rarity.adjective.uncommon, L.Rarity.adjective.common, L.Rarity.adjective.junk)), "ImhoBags", "textures/icon_menu_sort_rarity.png" },
+					{ L.Ux.ConfigWindow.titleBar.sortRarityLabel, string.format(L.Ux.ConfigWindow.titleBar.sortRarityDescription, string.format("<font color='#FFFF00'>%s</font>, <font color='#FF8000'>%s</font>, <font color='#AC47F9'>%s</font>, <font color='#257EF9'>%s</font>, <font color='#00CB00'>%s</font>, <font color='#C0C0C0'>%s</font>, <font color='#808080'>%s</font>", L.Rarity.quest, L.Rarity.relic, L.Rarity.epic, L.Rarity.rare, L.Rarity.uncommon, L.Rarity.common, L.Rarity.junk)), "ImhoBags", "textures/icon_menu_sort_rarity.png" },
 					{ L.Ux.ConfigWindow.titleBar.sortNoneLabel, L.Ux.ConfigWindow.titleBar.sortNoneDescription, "ImhoBags", "textures/icon_menu_bags.png" },
 				}
 			},

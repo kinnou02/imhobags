@@ -70,15 +70,13 @@ private.L = {
 	},
 	
 	Rarity = {
-		adjective = {
-			quest = "quest",
-			relic = "relic",
-			epic = "epic",
-			rare = "rare",
-			uncommon = "uncommon",
-			common = "common",
-			junk = "junk",
-		},
+		quest = "quest",
+		relic = "relic",
+		epic = "epic",
+		rare = "rare",
+		uncommon = "uncommon",
+		common = "common",
+		junk = "junk",
 	},
 	
 	SlashMessage = {
@@ -184,7 +182,6 @@ Available config options:
 				extras = "Extras",
 				titleBar = "Help: Title Bar",
 				onebag = "Help: One Bag",
-				knownIssues = "Known Issues",
 			},
 			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
 			itemButtonSkin = "Choose how item buttons should be rendered. The left option requires more resources than the right one but looks better. If you play with a very low UI scale the right button skin might look better. Note that changes to this option require a /reloadui before becoming effective.",
