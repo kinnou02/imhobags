@@ -79,7 +79,7 @@ local topPanes = {
 }
 local bottomPanes = {
 	{
-		name = "Known Issues",
+		name = L.Ux.ConfigWindow.sections.knownIssues,
 		content = {
 			{ description = "Annotations:", },
 			{ description = "<font color='#FF0000'>[!]</font>: Critical issue which is being actively worked on.", },
@@ -100,6 +100,23 @@ local bottomPanes = {
 			{ description = "<font color='#FFFF00'>[Rift API]</font> The native Trion windows cannot be hidden.", },
 			{ description = "The stack grouping feature is currently disabled.", },
 			{ description = "Tracking of mailbox items is currently disabled.", },
+		},
+	},
+	{
+		name = L.Ux.ConfigWindow.sections.onebag,
+		content = {
+			{
+				description = L.Ux.ConfigWindow.onebag.description,
+				height = 132,
+				options = {
+					{ true, "textures/ConfigWindow/help_onebag.png" },
+				},
+				list = {
+					{ L.Ux.ConfigWindow.titleBar.sortNoneLabel, L.Ux.ConfigWindow.titleBar.sortNoneDescription, "ImhoBags", "textures/icon_menu_bags.png" },
+					{ L.Ux.ConfigWindow.titleBar.layoutOnebagLabel, L.Ux.ConfigWindow.titleBar.layoutOnebagDescription, "ImhoBags", "textures/icon_menu_layout_onebag.png" },
+					{ L.Ux.ConfigWindow.titleBar.emptyLabel, L.Ux.ConfigWindow.titleBar.emptyDescription, "Rift", "icon_empty.png.dds", 32, 32 },
+				},
+			},
 		},
 	},
 	{

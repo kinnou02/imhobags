@@ -183,6 +183,7 @@ Available config options:
 				behavior = "Behavior",
 				extras = "Extras",
 				titleBar = "Help: Title Bar",
+				onebag = "Help: One Bag",
 				knownIssues = "Known Issues",
 			},
 			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
@@ -228,6 +229,9 @@ Available config options:
 				layoutBagsDescription = "Groups items by the bag they are placed in.",
 				layoutOnebagLabel = "Onebag",
 				layoutOnebagDescription = "All items are thrown in one big bag.",
+			},
+			onebag = {
+				description = "If you prefer the \"all-in-one\" display without any grouping or sorting, then the following options make ImhoBags behave exactly like that:",
 			},
 		},
 	},
