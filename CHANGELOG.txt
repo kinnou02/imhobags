@@ -4,13 +4,13 @@ FEATURES:
 * Items are now stored for all accounts.
 * Some item locations now support multiple types of views:
 	- default: This is the way you know it with items grouped by AH category.
-	- bags: Group items by the bag they are located in isntead of AH category.
+	- bags: Group items by the bag they are located in.
 	- onebag: No item grouping whatsoever, all items in a single group.
 * You can now sort your items by the bag slot they are placed in.
 * It is now possible to show the empty slots as concrete items in the bag
 	windows by clicking the empty item count in the top right corner.
-* Setting your layout to "onebag", the sorting to "slot" and showing
-	empty items gives you the same view as known from "all-in-one" addons.
+* "All-In-One": setting your layout to "onebag", the sorting to "slot"
+	and showing empty items gives you the well known "onebag" layout.
 * Item animations giving clues about where a category or item moves to.
 CHANGES:
 * The "showEnemyFaction" option was removed as it is obsolete now.
