@@ -184,7 +184,10 @@ end
 
 local function eventGuildBankChange(self, vaults)
 	setVaults(self, vaults)
-	applyRank(self, InspectGuildRosterDetail(Player.name).rank)
+	local member = InspectGuildRosterDetail(Player.name)
+	if(member) then
+		applyRank(self, member.rank)
+	end
 end
 
 local function eventGuildRank(self, ranks)
