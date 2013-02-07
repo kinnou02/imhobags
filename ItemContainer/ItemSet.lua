@@ -114,7 +114,7 @@ end
 -- Public methods
 -- ============================================================================
 
-function ResolveUnknownItems(self, unknownTypes, callback)
+local function ResolveUnknownItems(self, unknownTypes, callback)
 	local unknown = { }
 	for slot, id in pairs(unknownTypes) do
 		local type = self.Items[id].type
@@ -135,7 +135,7 @@ function ResolveUnknownItems(self, unknownTypes, callback)
 	return unknown
 end
 
-function UpdateCurrency(self, currencies, callback)
+local function UpdateCurrency(self, currencies, callback)
 	for id, count in pairs(currencies) do
 		-- Don't show money here
 		if(id ~= "coin" and count > 0) then
@@ -149,7 +149,7 @@ function UpdateCurrency(self, currencies, callback)
 	end
 end
 
-function UpdateItem(self, slot, item, container, bag, index)
+local function UpdateItem(self, slot, item, container, bag, index)
 	if(bag == "bag") then
 		return
 	end
@@ -163,7 +163,7 @@ function UpdateItem(self, slot, item, container, bag, index)
 	end
 end
 
-function UpdateSlot(self, slot, item, container, bag, index)
+local function UpdateSlot(self, slot, item, container, bag, index)
 	if(bag == "bag") then
 		self.Bags[index] = item
 		if(item) then
