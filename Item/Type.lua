@@ -1,8 +1,5 @@
 local Addon, private = ...
 
--- Upvalue
-local InspectItemDetail = Inspect.Item.Detail
-
 -- Locals
 local types = setmetatable({ }, { __mode = "v" })
 local colors = {

@@ -10,10 +10,6 @@ Ux.Checkbox = { }
 -- Public methods
 -- ============================================================================
 
-function Checkbox_RealWidth(self)
-	return self:GetWidth() + self.text:GetWidth()
-end
-
 function Ux.Checkbox.New(parent, text, side)
 	local frame = UI.CreateFrame("RiftCheckbox", "", parent)
 	frame.text = UI.CreateFrame("Text", "", frame)

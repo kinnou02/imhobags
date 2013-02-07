@@ -15,10 +15,6 @@ local list = {
 	wardrobe = function() return Inspect.Item.List(Utility.Item.Slot.Wardrobe()) end,
 }
 
-function ImhoBagsDispatch(container)
-	private.Item.Dispatcher.RunSlot(container)
-end
-
 setfenv(1, private)
 Item = Item or { }
 Item.Dispatcher = { }
