@@ -97,8 +97,11 @@ local function eventItemSlotGuild(self, slot, item, container, bag, index)
 	if(not set) then
 		set = ItemContainer.ItemSet("guildbank")
 		self.playerSet[bag] = set
+		-- Differentiate cases for error reports
+		set:UpdateSlot(slot, item, container, bag, index)
+	else
+		set:UpdateSlot(slot, item, container, bag, index)
 	end
-	set:UpdateSlot(slot, item, container, bag, index)
 	
 	if(set == self.set) then
 		self.needsUpdate = true
