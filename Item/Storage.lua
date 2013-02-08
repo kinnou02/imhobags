@@ -234,9 +234,12 @@ local function applyGuildRank(rank)
 end
 
 local function eventGuildRank(ranks)
-	local playerRank = InspectGuildRosterDetail(Player.name).rank
-	if(ranks[playerRank]) then
-		applyGuildRank(playerRank)
+	local member = InspectGuildRosterDetail(Player.name)
+	if(member) then
+		local playerRank = member.rank
+		if(ranks[playerRank]) then
+			applyGuildRank(playerRank)
+		end
 	end
 end
 
