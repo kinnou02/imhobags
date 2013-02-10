@@ -291,7 +291,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 		self.playerSet = { ItemContainer.ItemSet("guildbank") }
 		self.set = self.playerSet[1]
 	else
-		self.playerSet =  ItemContainer.ItemSet(location)
+		self.playerSet = ItemContainer.ItemSet(location)
 		self.set = self.playerSet
 	end
 	self.unknownItemDetails = {
@@ -320,7 +320,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.groupFunc = Group.Default.GetLocalizedShortCategoryWithJunkAndLootable
 	
 	self.layouter = ItemContainer.Layouter(self, config, groupLabelFactory)
-	self.layouter:SetItemSet(self.playerSet)
+	self.layouter:SetItemSet(self.set)
 	
 	local interaction = Inspect.Interaction()
 	if(interaction[location] ~= nil) then
