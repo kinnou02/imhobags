@@ -181,13 +181,15 @@ local function UpdateSlot(self, slot, item, container, bag, index)
 		if(old and old.slot) then
 			removeItem(self, old.slot, "nil") -- "nil" prevents unnecessary makeEmptyItemDetail call
 		end
-		self.Slots[slot] = item
-		self.Empty[slot] = nil
-		self.Items[slot] = nil
 		local detail = InspectItemDetail(item)
-		detail.slot = slot -- Add custom field for slot-sorting
-		self.Items[item] = detail
-		self.Groups[item] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
+		if(detail) then
+			self.Slots[slot] = item
+			self.Empty[slot] = nil
+			self.Items[slot] = nil
+			detail.slot = slot -- Add custom field for slot-sorting
+			self.Items[item] = detail
+			self.Groups[item] = container == "wardrobe" and format(L.CategoryName.wardrobe, bag) or self.groupFunc(detail)
+		end
 	else
 		local old = self.Slots[slot]
 		if(old) then
