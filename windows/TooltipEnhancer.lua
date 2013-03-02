@@ -149,4 +149,4 @@ local function tooltipTargetChanged(ttype, shown, buff)
 	end
 end
 
-Event.Tooltip[#Event.Tooltip + 1] = { tooltipTargetChanged, Addon.identifier, "TooltipEnhancer tooltipTargetChanged" }
+Command.Event.Attach(Event.Tooltip, tooltipTargetChanged, "TooltipEnhancer tooltipTargetChanged")

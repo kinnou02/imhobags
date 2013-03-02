@@ -81,17 +81,17 @@ local function createVaultButton(parent, index)
 	self.access:SetTexture("Rift", "vfx_ui_mob_tag_no_mini.png.dds")
 	self.slot = slot(index)
 
-	function self.Event:MouseMove()
+	self:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function()
 		setVaultNameText(parent, parent.vaultButtons[index].name or "", self.slot)
-	end
-	function self.Event:MouseOut()
+	end, "")
+	self:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function()
 		setVaultNameText(parent, parent.vaultButtons[parent.vault].name or "", slot(parent.vault))
-	end
-	function self.Event:LeftClick()
+	end, "")
+	self:EventAttach(Event.UI.Input.Mouse.Left.Click, function()
 		if(parent.vaultAccess[self.slot]) then
 			setVault(parent, index)
 		end
-	end
+	end, "")
 	
 	return self
 end
@@ -209,31 +209,11 @@ local function eventGuildRosterDetailRank(self, ranks)
 end
 
 local function hookGulidEvents(self)
-	Event.Interaction[#Event.Interaction + 1] = {
-		function(...) eventInteraction(self, ...) end,
-		Addon.identifier,
-		"ItemContainer.GuildBar.eventInteraction"
-	}
-	Event.Guild.Bank.Change[#Event.Guild.Bank.Change + 1] = {
-		function(...) eventGuildBankChange(self, ...) end,
-		Addon.identifier,
-		"ItemContainer.GuildBar.eventGuildBankChange"
-	}
-	Event.Guild.Bank.Coin[#Event.Guild.Bank.Coin + 1] = {
-		function(...) eventGuildBankCoin(self, ...) end,
-		Addon.identifier,
-		"ItemContainer.GuildBar.eventGuildBankCoin"
-	}
-	Event.Guild.Rank[#Event.Guild.Rank + 1] = {
-		function(...) eventGuildRank(self, ...) end,
-		Addon.identifier,
-		"ItemContainer.GuildBar.eventGuildRank"
-	}
-	Event.Guild.Roster.Detail.Rank[#Event.Guild.Roster.Detail.Rank + 1] = {
-		function(...) eventGuildRosterDetailRank(self, ...) end,
-		Addon.identifier,
-		"ItemContainer.GuildBar.eventGuildRosterDetailRank"
-	}
+	Command.Event.Attach(Event.Interaction, function(handle, ...) eventInteraction(self, ...) end, "ItemContainer.GuildBar.eventInteraction")
+	Command.Event.Attach(Event.Guild.Bank.Change, function(handle, ...) eventGuildBankChange(self, ...) end, "ItemContainer.GuildBar.eventGuildBankChange")
+	Command.Event.Attach(Event.Guild.Bank.Coin, function(handle, ...) eventGuildBankCoin(self, ...) end, "ItemContainer.GuildBar.eventGuildBankCoin")
+	Command.Event.Attach(Event.Guild.Rank, function(handle, ...) eventGuildRank(self, ...) end, "ItemContainer.GuildBar.eventGuildRank")
+	Command.Event.Attach(Event.Guild.Roster.Detail.Rank, function(handle, ...) eventGuildRosterDetailRank(self, ...) end, "ItemContainer.GuildBar.eventGuildRosterDetailRank")
 	Event.ImhoBags.Private.Guild[#Event.ImhoBags.Private.Guild + 1] = {
 		function(old, new) self:SetGulid(new) end,
 		Addon.identifier,

@@ -19,7 +19,7 @@ Trigger.Config, ImhoEvent.Config = Utility.Event.Create(Addon.identifier, "Priva
 Trigger.Guild, ImhoEvent.Guild = Utility.Event.Create(Addon.identifier, "Private.Guild")
 
 local unitAvailableEntry
-local function unitAvailable(units)
+local function unitAvailable(handle, units)
 	for k, v in pairs(units) do
 		if(v == "player") then
 			local defiants = {
@@ -34,13 +34,13 @@ local function unitAvailable(units)
 			log("Init", Player.guild)
 			Trigger.Init()
 			
-			unitAvailableEntry[1] = function() end
+			Command.Event.Detach(Event.Unit.Availability.Full, unitAvailable)
 			break
 		end
 	end
 end
 
-local function guildChanged(units)
+local function guildChanged(handle, units)
 	for unit, guild in pairs(units) do
 		if(unit == "player") then
 			local old = Player.guild
@@ -51,7 +51,5 @@ local function guildChanged(units)
 	end
 end
 
-unitAvailableEntry = { unitAvailable, Addon.identifier, "unitAvailable" }
-Event.Unit.Availability.Full[#Event.Unit.Availability.Full + 1] = unitAvailableEntry
-
-Event.Unit.Detail.Guild[#Event.Unit.Detail.Guild + 1] = { guildChanged, Addon.identifier, "guildChanged" }
+Command.Event.Attach(Event.Unit.Availability.Full, unitAvailable, "unitAvailable")
+Command.Event.Attach(Event.Unit.Detail.Guild, guildChanged, "guildChanged")

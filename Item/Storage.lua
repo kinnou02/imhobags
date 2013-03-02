@@ -65,7 +65,7 @@ local function newGuild()
 	}
 end
 
-local function eventAddonSavedVariablesLoadEnd(identifier)
+local function eventAddonSavedVariablesLoadEnd(handle, identifier)
 	if(identifier ~= Addon.identifier) then
 		return
 	end
@@ -150,7 +150,7 @@ local function mergeSlotGuild(container, slot, item, bag, index)
 	end
 end
 
-local function eventCurrency(currencies)
+local function eventCurrency(handle, currencies)
 	for type, count in pairs(currencies) do
 		if(not count or count <= 0) then
 			player.currency.totals[type] = nil
@@ -162,24 +162,24 @@ local function eventCurrency(currencies)
 	end
 end
 
-local function eventGuildBankChange(vaults)
+local function eventGuildBankChange(handle, vaults)
 	for id, name in pairs(vaults) do
 		guild.vault[id] = guild.vault[id] or newLocation()
 		guild.vault[id].name = name
 	end
 end
 
-local function eventGuildBankCoin(coin)
+local function eventGuildBankCoin(handle, coin)
 	guild.info.coin = coin
 end
 
-local function eventInteraction(interaction, state)
+local function eventInteraction(handle, interaction, state)
 	if(interaction == "guildbank" and state) then
-		eventGuildBankCoin(InspectGuildBankCoin())
+		eventGuildBankCoin(handle, InspectGuildBankCoin())
 	end
 end
 
-local function eventItemSlot(items)
+local function eventItemSlot(handle, items)
 	for slot, item in pairs(items) do
 		local container, bag, index = UtilityItemSlotParse(slot)
 		log("eventItemSlot", slot, container, item)
@@ -196,7 +196,7 @@ local function eventItemSlot(items)
 	end
 end
 
-local function eventItemUpdate(items)
+local function eventItemUpdate(handle, items)
 	for slot, item in pairs(items) do
 		local container, bag, index = UtilityItemSlotParse(slot)
 		log("eventItemUpdate", slot, container, item)
@@ -233,7 +233,7 @@ local function applyGuildRank(rank)
 	end
 end
 
-local function eventGuildRank(ranks)
+local function eventGuildRank(handle, ranks)
 	local member = InspectGuildRosterDetail(Player.name)
 	if(member) then
 		local playerRank = member.rank
@@ -243,14 +243,14 @@ local function eventGuildRank(ranks)
 	end
 end
 
-local function eventGuildRosterDetailRank(units)
+local function eventGuildRosterDetailRank(handle, units)
 	local rank = units[Player.name]
 	if(rank) then
 		applyGuildRank(rank)
 	end
 end
 
-local function guildChanged(old, new)
+local function guildChanged(handle, old, new)
 	player.info.guild = new
 	if(old) then
 		local members = 0
@@ -266,7 +266,7 @@ local function guildChanged(old, new)
 	if(new) then
 		guild = guilds[new] or newGuild()
 		guilds[new] = guild
-		eventGuildBankChange(InspectGuildBankList())
+		eventGuildBankChange(handle, InspectGuildBankList())
 		local roster = InspectGuildRosterDetail(Player.name)
 		if(roster) then
 			applyGuildRank(roster.rank)
@@ -277,72 +277,36 @@ local function guildChanged(old, new)
 end
 
 local function hookGuildEvents()
-	Event.Guild.Bank.Change[#Event.Guild.Bank.Change + 1] = {
-		eventGuildBankChange,
-		Addon.identifier,
-		"Item.Storage.eventGuildBankChange"
-	}
-	Event.Guild.Bank.Coin[#Event.Guild.Bank.Coin + 1] = {
-		eventGuildBankCoin,
-		Addon.identifier,
-		"Item.Storage.eventGuildBankCoin"
-	}
-	Event.Guild.Rank[#Event.Guild.Rank + 1] = {
-		eventGuildRank,
-		Addon.identifier,
-		"Item.Storage.eventGuildRank"
-	}
-	Event.Guild.Roster.Detail.Rank[#Event.Guild.Roster.Detail.Rank + 1] = {
-		eventGuildRosterDetailRank,
-		Addon.identifier,
-		"Item.Storage.eventGuildRosterDetailRank"
-	}
+	Command.Event.Attach(Event.Guild.Bank.Change, eventGuildBankChange, "Item.Storage.eventGuildBankChange")
+	Command.Event.Attach(Event.Guild.Bank.Coin, eventGuildBankCoin, "Item.Storage.eventGuildBankCoin")
+	Command.Event.Attach(Event.Guild.Rank, eventGuildRank, "Item.Storage.eventGuildRank")
+	Command.Event.Attach(Event.Guild.Roster.Detail.Rank, eventGuildRosterDetailRank, "Item.Storage.eventGuildRosterDetailRank")
 end
 
-local function init()
+local function init(handle)
 	player.info.alliance = Player.alliance
-	eventItemSlot(InspectItemList("si"))
+	eventItemSlot(handle, InspectItemList("si"))
 
 	guilds = _G.ImhoBags_ItemStorage[Shard.name].guilds
 	-- Catch cases where a character is removed from a guild while offline
-	guildChanged(player.info.guild, Player.guild)
+	guildChanged(handle, player.info.guild, Player.guild)
 	hookGuildEvents()
 end
 
-Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
-	eventAddonSavedVariablesLoadEnd,
-	Addon.identifier,
-	"Item.Storage.eventAddonSavedVariablesLoadEnd"
-}
-Event.Currency[#Event.Currency + 1] = {
-	eventCurrency,
-	Addon.identifier,
-	"Item.Storage.eventCurrency"
-}
-Event.Interaction[#Event.Interaction + 1] = {
-	eventInteraction,
-	Addon.identifier,
-	"Item.Storage.eventInteraction"
-}
-Event.Item.Slot[#Event.Item.Slot + 1] = {
-	eventItemSlot,
-	Addon.identifier,
-	"Item.Storage.eventItemSlot"
-}
-Event.Item.Update[#Event.Item.Update + 1] = {
-	eventItemUpdate,
-	Addon.identifier,
-	"Item.Storage.eventItemUpdate"
-}
+Command.Event.Attach(Event.Addon.SavedVariables.Load.End, eventAddonSavedVariablesLoadEnd, "Item.Storage.eventAddonSavedVariablesLoadEnd")
+Command.Event.Attach(Event.Currency, eventCurrency, "Item.Storage.eventCurrency")
+Command.Event.Attach(Event.Interaction, eventInteraction, "Item.Storage.eventInteraction")
+Command.Event.Attach(Event.Item.Slot, eventItemSlot, "Item.Storage.eventItemSlot")
+Command.Event.Attach(Event.Item.Update, eventItemUpdate, "Item.Storage.eventItemUpdate")
 Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = {
 	init,
 	Addon.identifier,
-	"Item.Storage.init"
+	"Item.Storage.init",
 }
 Event.ImhoBags.Private.Guild[#Event.ImhoBags.Private.Guild + 1] = {
 	guildChanged,
 	Addon.identifier,
-	"Item.Storage.guildChanged"
+	"Item.Storage.guildChanged",
 }
 
 -- Public methods

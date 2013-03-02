@@ -11,16 +11,12 @@ local function createHelpButton(self)
 	helpBtn:SetPoint("BOTTOMLEFT", self:GetContent(), "TOPLEFT", -4, -6)
 	helpBtn:SetWidth(36)
 	helpBtn:SetHeight(36)
-	helpBtn.Event.MouseIn = function(self) self.icon:SetTexture("Rift", "AATree_I3A.dds") end
-	helpBtn.Event.MouseOut = function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end
-	helpBtn.Event.LeftUpoutside = function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end
-	helpBtn.Event.LeftDown = function(self)
-		self.icon:SetTexture("Rift", "AATree_I3F.dds")
-	end
-	helpBtn.Event.LeftUp = function(self)
-		self.icon:SetTexture("Rift", "AATree_I3A.dds")
-		Ux.ToggleConfigWindow()
-	end
+	helpBtn:EventAttach(Event.UI.Input.Mouse.Cursor.In, function(self) self.icon:SetTexture("Rift", "AATree_I3A.dds") end, "")
+	helpBtn:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end, "")
+	helpBtn:EventAttach(Event.UI.Input.Mouse.Left.Upoutside, function(self) self.icon:SetTexture("Rift", "AATree_I38.dds") end, "")
+	helpBtn:EventAttach(Event.UI.Input.Mouse.Left.Down, function(self) self.icon:SetTexture("Rift", "AATree_I3F.dds") end, "")
+	helpBtn:EventAttach(Event.UI.Input.Mouse.Left.Up, function(self) self.icon:SetTexture("Rift", "AATree_I3A.dds") end, "")
+	helpBtn:EventAttach(Event.UI.Input.Mouse.Left.Click, function() Ux.ToggleConfigWindow() end, "")
 	helpBtn.icon = UI.CreateFrame("Texture", "", self)
 	helpBtn.icon:SetPoint("CENTER", helpBtn, "CENTER")
 	helpBtn.icon:SetWidth(38)
@@ -123,21 +119,21 @@ local function createResizeButton(self)
 	btn:SetTexture("Rift", "chat_resize_(normal).png.dds")
 	btn:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 8, 8)
 	btn.offset = nil
-	btn.Event.MouseIn = function(self)
+	btn:EventAttach(Event.UI.Input.Mouse.Cursor.In, function(self)
 		if(isInsideResizeButton(self)) then
 			self:SetTexture("Rift", self.offset and "chat_resize_(click).png.dds" or "chat_resize_(over).png.dds")
 		end
-	end
-	btn.Event.MouseOut = function(self) self:SetTexture("Rift", self.offset and "chat_resize_(click).png.dds" or "chat_resize_(normal).png.dds") end
-	btn.Event.LeftUp = function(self) self:SetTexture("Rift", "chat_resize_(over).png.dds") self.offset = nil end
-	btn.Event.LeftUpoutside = function(self) self:SetTexture("Rift", "chat_resize_(normal).png.dds") self.offset = nil end
-	btn.Event.LeftDown = function()
+	end, "")
+	btn:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function(self) self:SetTexture("Rift", self.offset and "chat_resize_(click).png.dds" or "chat_resize_(normal).png.dds") end, "")
+	btn:EventAttach(Event.UI.Input.Mouse.Left.Up, function(self) self:SetTexture("Rift", "chat_resize_(over).png.dds") self.offset = nil end, "")
+	btn:EventAttach(Event.UI.Input.Mouse.Left.Upoutside, function(self) self:SetTexture("Rift", "chat_resize_(normal).png.dds") self.offset = nil end, "")
+	btn:EventAttach(Event.UI.Input.Mouse.Left.Down, function()
 		if(isInsideResizeButton(btn)) then
 			btn:SetTexture("Rift", "chat_resize_(click).png.dds")
 			btn.offset = self:GetRight() - Inspect.Mouse().x
 		end
-	end
-	btn.Event.MouseMove = function()
+	end, "")
+	btn:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function()
 		if(btn.offset) then
 			self:SetWidth(math.max(Const.ItemWindowMinWidth, Inspect.Mouse().x - self:GetLeft() + btn.offset))
 			self.container:SetNeedsLayout()
@@ -146,7 +142,7 @@ local function createResizeButton(self)
 		else
 			btn:SetTexture("Rift", "chat_resize_(normal).png.dds")
 		end
-	end
+	end, "")
 end
 
 local function containerDisplayChanged(container, values)
@@ -163,7 +159,7 @@ end
 
 local function createNativeHook(self, native, location)
 	if(native) then
-		function native.Event.Loaded(native)
+		native:EventAttach(Event.UI.Native.Loaded, function(native)
 			if(Config.autoOpen) then
 				if(native:GetLoaded()) then
 					if(location == "guildbank") then
@@ -177,7 +173,7 @@ local function createNativeHook(self, native, location)
 				end
 				log("TODO", "disable native frame(s)")
 			end
-		end
+		end, "")
 	end
 end
 
@@ -193,7 +189,7 @@ local function createBackground(self)
 		self.window.background:SetWidth(size)
 		self.window.background:SetHeight(size)
 	end
-	self:GetContent().Event.Size = fn
+	self:GetContent():EventAttach(Event.UI.Layout.Size, fn, "")
 	fn(self:GetContent())
 end
 
@@ -285,16 +281,16 @@ function Ux.ItemWindowTemplate.WindowFrame(location, config, native)
 
 	local content = self:GetContent()
 	content.window = self
-	content.Event.MouseMove = mouseMove
-	content.Event.LeftDown = leftDown
-	content.Event.LeftUp = leftUp
-	content.Event.LeftUpoutside = leftUpoutside
+	content:EventAttach(Event.UI.Input.Mouse.Cursor.Move, mouseMove, "")
+	content:EventAttach(Event.UI.Input.Mouse.Left.Down, leftDown, "")
+	content:EventAttach(Event.UI.Input.Mouse.Left.Up, leftUp, "")
+	content:EventAttach(Event.UI.Input.Mouse.Left.Upoutside, leftUpoutside, "")
 	local border = self:GetBorder()
 	border.window = self
-	border.Event.MouseMove = mouseMove
-	border.Event.LeftDown = leftDown
-	border.Event.LeftUp = leftUp
-	border.Event.LeftUpoutside = leftUpoutside
+	border:EventAttach(Event.UI.Input.Mouse.Cursor.Move, mouseMove, "")
+	border:EventAttach(Event.UI.Input.Mouse.Left.Down, leftDown, "")
+	border:EventAttach(Event.UI.Input.Mouse.Left.Up, leftUp, "")
+	border:EventAttach(Event.UI.Input.Mouse.Left.Upoutside, leftUpoutside, "")
 
 	Ux.RiftWindowCloseButton.New(self, closeButton_LeftPress)
 	createHelpButton(self)

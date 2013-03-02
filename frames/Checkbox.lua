@@ -16,17 +16,8 @@ function Ux.Checkbox.New(parent, text, side)
 	frame.text:SetPoint("TOP" .. ((side == "LEFT" and "RIGHT") or "LEFT"), frame, "TOP" .. side)
 	frame.text:SetText(text)
 	
-	function frame.text.Event:LeftDown()
-		self.clicking = true
-	end
-	function frame.text.Event:LeftUp()
-		if(self.clicking) then
-			frame:SetChecked(not frame:GetChecked())
-		end
-		self.clicking = false
-	end
-	function frame.text.Event:LeftUpoutside()
-		self.clicking = false
-	end
+	frame.text:EventAttach(Event.UI.Input.Mouse.Left.Click, function()
+		frame:SetChecked(not frame:GetChecked())
+	end, "")
 	return frame
 end

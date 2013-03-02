@@ -52,11 +52,11 @@ local function dispatch(items, callbacks)
 	end
 end
 
-local function eventItemSlot(items)
+local function eventItemSlot(handle, items)
 	dispatch(items, slotCallbacks)
 end
 
-local function eventItemUpdate(items)
+local function eventItemUpdate(handle, items)
 	dispatch(items, updateCallbacks)
 end
 
@@ -107,8 +107,8 @@ function Item.Dispatcher.RunSlot(location)
 end
 
 function Item.Dispatcher.Enable()
-	Event.Item.Slot[#Event.Item.Slot + 1] = { eventItemSlot, Addon.identifier, "ItemProcessing.Dispatcher.eventItemSlot" }
-	Event.Item.Update[#Event.Item.Update + 1] = { eventItemUpdate, Addon.identifier, "ItemProcessing.Dispatcher.eventItemUpdate" }
+	Command.Event.Attach(Event.Item.Slot, eventItemSlot, "ItemProcessing.Dispatcher.eventItemSlot")
+	Command.Event.Attach(Event.Item.Update, eventItemUpdate, "ItemProcessing.Dispatcher.eventItemUpdate")
 end
 
 Item.Dispatcher.Enable()

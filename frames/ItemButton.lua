@@ -242,17 +242,16 @@ createButton = function(parent)
 	self.SetLocked = SetLocked
 	self.ShowTooltip = ShowTooltip
 	
-	self.Event.MouseMove = mouseMove
-	self.Event.MouseOut = mouseOut
-	self.Event.MouseIn = mouseIn
-	self.Event.LeftDown = leftDown
-	self.Event.LeftUp = leftUp
-	self.Event.LeftUpoutside = leftUpoutside
-	self.Event.LeftClick = leftClick
-	self.Event.RightDown = rightDown
-	self.Event.RightUp = rightUp
-	self.Event.RightUpoutside = rightUpoutside
-	self.Event.RightClick = rightClick
+	self:EventAttach(Event.UI.Input.Mouse.Cursor.Move, mouseMove, "")
+	self:EventAttach(Event.UI.Input.Mouse.Cursor.Out,  mouseOut, "")
+	self:EventAttach(Event.UI.Input.Mouse.Cursor.In, mouseIn, "")
+	self:EventAttach(Event.UI.Input.Mouse.Left.Down, leftDown, "")
+	self:EventAttach(Event.UI.Input.Mouse.Left.Up, leftUp, "")
+	self:EventAttach(Event.UI.Input.Mouse.Left.Upoutside, leftUpoutside, "")
+	self:EventAttach(Event.UI.Input.Mouse.Right.Down, rightDown, "")
+	self:EventAttach(Event.UI.Input.Mouse.Right.Up, rightUp, "")
+	self:EventAttach(Event.UI.Input.Mouse.Right.Upoutside, rightUpoutside, "")
+	self:EventAttach(Event.UI.Input.Mouse.Right.Click, rightClick, "")
 	
 	return self
 end

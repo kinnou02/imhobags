@@ -40,7 +40,7 @@ local function storageLoaded()
 	end
 end
 
-local function savedVariablesSaveBegin(identifier)
+local function savedVariablesSaveBegin(handle, identifier)
 	if(identifier ~= Addon.identifier) then
 		return
 	end
@@ -73,7 +73,7 @@ local function toggleFade(self)
 	end
 end
 
-Event.Addon.SavedVariables.Save.Begin[#Event.Addon.SavedVariables.Save.Begin + 1] = { savedVariablesSaveBegin, Addon.identifier, "savedVariablesSaveBegin" }
+Command.Event.Attach(Event.Addon.SavedVariables.Save.Begin, savedVariablesSaveBegin, "savedVariablesSaveBegin")
 Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "storageLoaded" }
 
 -- Public methods

@@ -24,14 +24,14 @@ local function createEmptySlotIndicator()
 	local resizeFrame = UI.CreateFrame("Frame", "", Ux.Context)
 	resizeFrame:SetAllPoints(UI.Native.Bag)
 	resizeFrame:SetVisible(false)
-	function window.Event:Size()
-		Ux.EmptySlotIndicator.label:SetFontSize(math.ceil(0.6 * window:GetHeight()))
-	end
+	window:EventAttach(Event.UI.Layout.Size, function(self)
+		Ux.EmptySlotIndicator.label:SetFontSize(math.ceil(0.6 * self:GetHeight()))
+	end, "")
 	
 	window:SetPoint("TOPLEFT", UI.Native.Bag, 57 / 275, 14 / 85)
 	window:SetPoint("BOTTOMRIGHT", UI.Native.Bag, 85 / 275, 42 / 85)
 	
-	UI.Native.Bag.Event.Loaded = showOrHideEmptySlotIndicator
+	UI.Native.Bag:EventAttach(Event.UI.Native.Loaded, showOrHideEmptySlotIndicator, "")
 end
 
 local function configChanged(name, value)
@@ -60,11 +60,7 @@ Event.ImhoBags.Private.Config[#Event.ImhoBags.Private.Config + 1] = {
 	Addon.identifier,
 	"Ux.EmptySlotIndicator_configChanged"
 }
-Event.Item.Slot[#Event.Item.Slot + 1] = {
-	eventItemSlot,
-	Addon.identifier,
-	"Ux.EmptySlotIndicator_eventItemSlot",
-}
+Command.Event.Attach(Event.Item.Slot, eventItemSlot, "Ux.EmptySlotIndicator_eventItemSlot")
 
 -- Public methods
 -- ============================================================================

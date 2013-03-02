@@ -51,9 +51,9 @@ function Ux.ItemWindowTemplate.SortSelector(parent, titleBar, hasLayout)
 		sep:SetPoint("RIGHT", background, "RIGHT")
 		sep:SetPoint("BOTTOM", bags, "TOP", nil, 5)
 		
-		function default.Event.LeftClick() self.layoutCallback("default") end
-		function bags.Event.LeftClick() self.layoutCallback("bags") end
-		function onebag.Event.LeftClick() self.layoutCallback("onebag") end
+		default:EventAttach(Event.UI.Input.Mouse.Left.Click, function() self.layoutCallback("default") end, "")
+		bags:EventAttach(Event.UI.Input.Mouse.Left.Click, function() self.layoutCallback("bags") end, "")
+		onebag:EventAttach(Event.UI.Input.Mouse.Left.Click, function() self.layoutCallback("onebag") end, "")
 		
 		function self:SetLayoutCallback(callback)
 			self.layoutCallback = callback
@@ -89,10 +89,10 @@ function Ux.ItemWindowTemplate.SortSelector(parent, titleBar, hasLayout)
 	self:SetWidth(icon:GetWidth() + name:GetWidth() + rarity:GetWidth() + slot:GetWidth() + 4 * contentPaddingLeft)
 	background:SetWidth(self:GetWidth())
 	
-	function icon.Event.LeftClick() self.sortCallback("icon") end
-	function name.Event.LeftClick() self.sortCallback("name") end
-	function rarity.Event.LeftClick() self.sortCallback("rarity") end
-	function slot.Event.LeftClick() self.sortCallback("slot") end
+	icon:EventAttach(Event.UI.Input.Mouse.Left.Click, function() self.sortCallback("icon") end, "")
+	name:EventAttach(Event.UI.Input.Mouse.Left.Click, function() self.sortCallback("name") end, "")
+	rarity:EventAttach(Event.UI.Input.Mouse.Left.Click, function() self.sortCallback("rarity") end, "")
+	slot:EventAttach(Event.UI.Input.Mouse.Left.Click, function() self.sortCallback("slot") end, "")
 	
 	function self:SetSortCallback(callback)
 		self.sortCallback = callback

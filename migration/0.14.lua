@@ -79,8 +79,4 @@ local function migrateSavedVariables(identifier)
 	end
 end
 
-Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
-	migrateSavedVariables,
-	Addon.identifier,
-	""
-}
+Command.Event.Attach(Event.Addon.SavedVariables.Load.End, migrateSavedVariables, "")

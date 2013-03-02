@@ -225,14 +225,14 @@ function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar, location)
 		ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
 			createCharFrames(self, background)
 			setPlayerCoin(self, background)
-			Event.Currency[#Event.Currency + 1] = { function() setPlayerCoin(self, background) end, Addon.identifier, "" }
+			Command.Event.Attach(Event.Currency, function() setPlayerCoin(self, background) end, "")
 			Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
 		end, Addon.identifier, "" }
 	else
 		ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
 			createGuildFrames(self, background)
-			Event.Interaction[#Event.Interaction + 1] = { function(...) eventInteraction(self, ...) end, Addon.identifier, "" }
-			Event.Guild.Bank.Coin[#Event.Guild.Bank.Coin + 1] = { function(coin) eventGuildBankCoin(self, coin) end, Addon.identifier, "" }
+			Command.Event.Attach(Event.Interaction, function(handle, ...) eventInteraction(self, ...) end, "CoinSummary.eventInteraction")
+			Command.Event.Attach(Event.Guild.Bank.Coin, function(handle, ...) eventGuildBankCoin(self, ...) end, "CoinSummary.eventGuildBankCoin")
 			Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
 		end, Addon.identifier, "" }
 	end

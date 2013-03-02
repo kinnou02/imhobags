@@ -19,37 +19,27 @@ function Ux.IconButton.New(parent, icon, tooltip, size)
 	self:SetIcon(icon)
 	self:SetRarity("common")
 	self:SetBound(false)
-	self.clicked = false
 	self:SetTooltip(tooltip)
 	
-	function self.Event.MouseIn()
+	self:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function(self)
 		self:SetHighlighted(true)
 		self:ShowTooltip()
-	end
-	function self.Event.MouseMove()
-		self:SetHighlighted(true)
-		self:ShowTooltip()
-	end
-	function self.Event.MouseOut()
+	end, "")
+	self:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function(self)
 		self:SetHighlighted(false)
 		self:SetDepressed(false)
 		self:HideTooltip()
-	end
+	end, "")
 	
-	function self.Event.LeftDown()
+	self:EventAttach(Event.UI.Input.Mouse.Left.Down, function(self)
 		self:SetDepressed(true)
-		self.clicked = true
-	end
-	function self.Event.LeftUp()
+	end, "")
+	self:EventAttach(Event.UI.Input.Mouse.Left.Up, function(self)
 		self:SetDepressed(false)
-		if(self.clicked and self.LeftPress) then
-			self:LeftPress()
-		end
-		self.clicked = false
-	end
-	function self.Event.LeftUpoutside()
-		self.clicked = false
-	end
+	end, "")
+	self:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self)
+		self:LeftPress()
+	end, "")
 	
 	return self
 end

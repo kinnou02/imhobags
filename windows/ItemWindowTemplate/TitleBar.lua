@@ -75,8 +75,8 @@ local function createFadeAnimationLeft(self)
 		end
 	end
 	
-	hotArea.Event.MouseIn = fadeIn
-	hotArea.Event.MouseOut = fadeOutIfOutside
+	hotArea:EventAttach(Event.UI.Input.Mouse.Cursor.In, fadeIn, "")
+	hotArea:EventAttach(Event.UI.Input.Mouse.Cursor.Out, fadeOutIfOutside, "")
 	
 	self.Freeze = freeze
 	self.FadeIn = fadeIn
@@ -117,8 +117,8 @@ local function createFadeAnimationRight(self)
 		end
 	end
 
-	hotArea.Event.MouseIn = fadeIn
-	hotArea.Event.MouseOut = fadeOut
+	hotArea:EventAttach(Event.UI.Input.Mouse.Cursor.In, fadeIn, "")
+	hotArea:EventAttach(Event.UI.Input.Mouse.Cursor.Out, fadeOut, "")
 end
 
 local function createAllianceLogo(self, location)
@@ -234,14 +234,14 @@ local function createSearchFilter(self)
 	
 	function self:SetFilterCallback(callback) input.callback = callback end
 
-	input.Event.KeyFocusGain = function() self:Freeze(true) end
-	input.Event.KeyFocusLoss = function()
+	input:EventAttach(Event.UI.Input.Key.Focus.Gain, function() self:Freeze(true) end, "")
+	input:EventAttach(Event.UI.Input.Key.Focus.Loss, function()
 		self:Freeze(false)
 		self:FadeOutIfOutside()
 		input:SetText("")
 		input.callback("")
-	end
-	input.Event.TextfieldChange = function() input.callback(input:GetText()) end
+	end, "")
+	input:EventAttach(Event.UI.Textfield.Change, function() input.callback(input:GetText()) end, "")
 	
 	self.filterBox = background
 end
@@ -312,7 +312,7 @@ local function createEmptySlotIndicator(self, location)
 		self.emptySlotsIndicator:SetFontSize(12)
 		
 		function self:SetEmptySlotsCallback(callback)
-			self.emptySlotsBackground.Event.LeftClick = callback
+			self.emptySlotsBackground:EventAttach(Event.UI.Input.Mouse.Left.Click, callback, "")
 		end
 		
 		function self:SetEmptySlots(n)

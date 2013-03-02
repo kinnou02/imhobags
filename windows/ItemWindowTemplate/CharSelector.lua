@@ -37,10 +37,10 @@ local function createItem(self, i)
 	clickable:SetWidth(itemWidth)
 	clickable:SetHeight(itemClickableHeight)
 
-	function clickable.Event.LeftClick()
+	clickable:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self)
 		self:FadeOut()
 		self.callback(text:GetText())
-	end
+	end, "")
 
 	item.text = text
 	return item
@@ -71,7 +71,7 @@ local function showForChars(self, chars)
 end
 
 local function makeScrollable(self, hotArea)
-	function hotArea.Event.MouseMove()
+	hotArea:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function()
 		if(self.itemsHeight > self.visibleHeight) then
 			local top, bottom = self.mask:GetTop(), self.mask:GetBottom()
 			top = top + (itemHeight + itemSpacing) / 2
@@ -84,7 +84,7 @@ local function makeScrollable(self, hotArea)
 			
 			self.scrolling:SetPoint("TOPCENTER", self.mask, "TOPCENTER", 0, math.floor(mouse.y * (self.visibleHeight - self.itemsHeight)))
 		end
-	end
+	end, "")
 end
 
 -- Public methods

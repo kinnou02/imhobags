@@ -74,7 +74,7 @@ local function set(t, k, v)
 	private.Trigger.Config(k, ImhoBags_Config[k])
 end
 
-local function variablesLoaded(addonIdentifier)
+local function variablesLoaded(handle, addonIdentifier)
 	if(addonIdentifier ~= Addon.identifier) then
 		return
 	end
@@ -114,8 +114,4 @@ local function variablesLoaded(addonIdentifier)
 	})
 end
 
-Event.Addon.SavedVariables.Load.End[#Event.Addon.SavedVariables.Load.End + 1] = {
-	variablesLoaded,
-	Addon.identifier,
-	"Config_variablesLoaded"
-}
+Command.Event.Attach(Event.Addon.SavedVariables.Load.End, variablesLoaded, "Config_variablesLoaded")

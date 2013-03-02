@@ -266,9 +266,7 @@ function Ux.MenuWindow()
 	self.closeButton:SetLayer(10)
 	self.closeButton:SetWidth(20)
 	self.closeButton:SetHeight(self.closeButton:GetWidth())
-	function self.closeButton.Event.LeftPress()
-		self:FadeOut()
-	end
+	self.closeButton:EventAttach(Event.UI.Button.Left.Press, function() self:FadeOut() end, "")
 	
 	self.player = createCharacterFrame(self, Player.name, Player.alliance)
 	

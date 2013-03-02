@@ -189,7 +189,7 @@ local function createHighlightedTexture(parent, path, tooltip)
 		highlight:SetAllPoints(icon)
 		highlight:SetVisible(false)
 		icon:SetLayer(highlight:GetLayer() + 1)
-		function icon.Event:MouseIn()
+		icon:EventAttach(Event.UI.Input.Mouse.Cursor.In, function()
 			highlight:SetVisible(true)
 			highlight:SetAlpha(1.0)
 			if(Ux.ConfigWindow.showSlashTooltips) then
@@ -197,20 +197,21 @@ local function createHighlightedTexture(parent, path, tooltip)
 				slashTooltip:ClearAll()
 				slashTooltip:SetText(tooltip)
 			end
-			self.Event.MouseMove(self)
-		end
-		function icon.Event:MouseMove()
 			local mouse = Inspect.Mouse()
 			slashTooltip:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", mouse.x, mouse.y)
-		end
-		function icon.Event:MouseOut()
+		end, "")
+		icon:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function()
+			local mouse = Inspect.Mouse()
+			slashTooltip:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", mouse.x, mouse.y)
+		end, "")
+		icon:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function(self)
 			if(self.checked) then
 				highlight:SetAlpha(0.7)
 			else
 				highlight:SetVisible(false)
 			end
 			slashTooltip:SetVisible(false)
-		end
+		end, "")
 		function icon:SetChecked(checked)
 			self.checked = checked
 			if(checked) then
@@ -253,22 +254,22 @@ end
 local function makeMovable(self)
 	local content = self:GetContent()
 	content.window = self
-	content.Event.MouseMove = content_MouseMove
-	content.Event.LeftDown = content_LeftDown
-	content.Event.LeftUp = content_LeftUp
+	content:EventAttach(Event.UI.Input.Mouse.Cursor.Move, content_MouseMove, "")
+	content:EventAttach(Event.UI.Input.Mouse.Left.Down, content_LeftDown, "")
+	content:EventAttach(Event.UI.Input.Mouse.Left.Up, content_LeftUp, "")
 	local border = self:GetBorder()
 	border.window = self
-	border.Event.MouseMove = content_MouseMove
-	border.Event.LeftDown = content_LeftDown
-	border.Event.LeftUp = content_LeftUp
-	border.Event.LeftUpoutside = content_LeftUpoutside
+	border:EventAttach(Event.UI.Input.Mouse.Cursor.Move, content_MouseMove, "")
+	border:EventAttach(Event.UI.Input.Mouse.Left.Down, content_LeftDown, "")
+	border:EventAttach(Event.UI.Input.Mouse.Left.Up, content_LeftUp, "")
+	border:EventAttach(Event.UI.Input.Mouse.Left.Upoutside, content_LeftUpoutside, "")
 end
 
 local function createPaneButton(self, pane, name, previous, down)
 	local button = UI.CreateFrame("RiftButton", "", self)
 	button:SetText(name)
 	name = string.upper(name)
-	function button.Event.LeftPress()
+	button:EventAttach(Event.UI.Button.Left.Press, function()
 		for k, v in pairs(self.panes) do
 			if(v == pane) then
 				v:FadeIn()
@@ -285,7 +286,7 @@ local function createPaneButton(self, pane, name, previous, down)
 		self.scrollbar:SetRange(0, scroll)
 		self.scrollbar:SetPosition(pane.offset)
 		self.scrollbar:SetEnabled(scroll > 0)
-	end
+	end, "")
 	
 	if(previous) then
 		if(down) then
@@ -386,14 +387,14 @@ local function createContent(content, parent, dy)
 		if(#pictures == 1) then
 			pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
 			if(isOption) then
-				pictures[1].Event.LeftDown = function(self) Config[content.config] = not self:GetChecked() end
+				pictures[1]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = not self:GetChecked() end, "")
 			end
 		elseif(#pictures == 2) then
 			pictures[1]:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
 			pictures[2]:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
 			if(isOption) then
-				pictures[1].Event.LeftDown = function(self) Config[content.config] = content.options[1][1] end
-				pictures[2].Event.LeftDown = function(self) Config[content.config] = content.options[2][1] end
+				pictures[1]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = content.options[1][1] end, "")
+				pictures[2]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = content.options[2][1] end, "")
 			end
 		end
 
@@ -462,7 +463,7 @@ function Ux.ConfigWindow()
 	-- Slash tooltip checkbox
 	local tooltipCheck = Ux.Checkbox.New(self, L.Ux.ConfigWindow.showTooltips, "LEFT")
 	tooltipCheck:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, contentPadding / 2)
-	tooltipCheck.Event.CheckboxChange = function() self.showSlashTooltips = tooltipCheck:GetChecked() end
+	tooltipCheck:EventAttach(Event.UI.Checkbox.Change, function() self.showSlashTooltips = tooltipCheck:GetChecked() end, "")
 	
 	-- ScrolPane background and scrolling
 	local backdrop = UI.CreateFrame("Mask", "", self)
@@ -475,10 +476,10 @@ function Ux.ConfigWindow()
 	self.scrollbar:SetPoint("TOPRIGHT", self, "TOPRIGHT", -contentPadding, 25)
 	self.scrollbar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -contentPadding, -contentPadding)
 	self.scrollbar:SetThickness(backdrop:GetHeight())
-	self.scrollbar.Event.ScrollbarChange = function()
+	self.scrollbar:EventAttach(Event.UI.Scrollbar.Change, function()
 		self.activePane.offset = self.scrollbar:GetPosition()
 		self.activePane:SetPoint("TOPLEFT", backdrop, "TOPLEFT", 0, -self.activePane.offset)
-	end
+	end, "")
 	
 	-- Config panes
 	self.panes = { }
@@ -499,7 +500,12 @@ function Ux.ConfigWindow()
 		self.buttons[count - i + 1] = createPaneButton(self, self.panes[#topPanes + i], bottomPanes[i].name, self.buttons[count - i + 2], false)
 	end
 
-	self.buttons[1].Event.LeftPress(self.buttons[1])
+	self.buttons[1]:SetEnabled(false)
+	self.panes[1]:SetVisible(true)
+	self.heading:SetText(string.upper(self.buttons[1]:GetText()))
+	for i = 2, #self.panes do
+		self.panes[i]:SetVisible(false)
+	end
 	
 	-- Get rid of the no longer needed tables
 	topPanes = nil

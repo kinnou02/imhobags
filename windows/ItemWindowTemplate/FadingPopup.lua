@@ -31,20 +31,20 @@ function Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(frame, titleBar, fullHei
 	hotArea:SetMouseMasking("limited")
 	
 	if(titleBar) then
-		function hotArea.Event.MouseOut()
+		hotArea:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function()
 			if(frame:GetHeight() > 1) then
 				if(not titleBar:IsMouseHot()) then
 					titleBar:FadeOut()
 				end
 				frame:FadeOut()
 			end
-		end
+		end, "")
 	else
-		function hotArea.Event.MouseOut()
+		hotArea:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function()
 			if(frame:GetHeight() > 1) then
 				frame:FadeOut()
 			end
-		end
+		end, "")
 	end
 	
 	frame.FadeIn = function(self) fadeIn(self, fullHeight) end

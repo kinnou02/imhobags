@@ -9,15 +9,11 @@ function Ux.RiftWindowCloseButton.New(parent, closeTarget, fade)
 	btn:SetSkin("close")
 	btn:SetPoint("TOPRIGHT", parent:GetBorder(), "TOPRIGHT", -8, 16)
 	if(type(closeTarget) == "function") then
-		btn.Event.LeftPress = closeTarget
+		btn:EventAttach(Event.UI.Button.Left.Press, closeTarget, "")
 	elseif(fade) then
-		function btn.Event:LeftPress()
-			closeTarget:FadeOut()
-		end
+		btn:EventAttach(Event.UI.Button.Left.Press, function() closeTarget:FadeOut() end, "")
 	else
-		function btn.Event:LeftPress()
-			closeTarget:SetVisible(false)
-		end
+		btn:EventAttach(Event.UI.Button.Left.Press, function() closeTarget:SetVisible(false) end, "")
 	end
 	return btn
 end

@@ -38,11 +38,11 @@ function Ux.ItemWindowTemplate.SizeSelector(parent, titleBar)
 	indicator:SetFontSize(14)
 	indicator:SetText("50")
 	
-	function slider.Event.SliderChange()
+	slider:EventAttach(Event.UI.Slider.Change, function()
 		local n = slider:GetPosition() * 10
 		indicator:SetText(tostring(n))
 		self.callback(n)
-	end
+	end, "")
 	
 	function self:SetCallback(callback)
 		self.callback = callback

@@ -324,17 +324,17 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	
 	local interaction = Inspect.Interaction()
 	if(interaction[location] ~= nil) then
-		Event.Interaction[#Event.Interaction + 1] = { function(...) eventInteraction(self, ...) end, Addon.identifier, "eventInteraction" }
+		Command.Event.Attach(Event.Interaction, function(handle, ...) eventInteraction(self, ...) end, "eventInteraction")
 		eventInteraction(self, location, interaction[location])
 	end
 	
 	if(location == "currency") then
-		Event.Currency[#Event.Currency + 1] = { function(...) eventCurrency(self, ...) end, Addon.identifier, "ItemContainer.currency.eventCurrency" }
+		Command.Event.Attach(Event.Currency, function(handle, ...) eventCurrency(self, ...) end, "ItemContainer.currency.eventCurrency")
 		eventCurrency(self, Inspect.Currency.List())
 	elseif(location == "guildbank") then
 		Item.Dispatcher.AddSlotCallback("guild", function(...) eventItemSlotGuild(self, ...) end)
 		Item.Dispatcher.AddUpdateCallback("guild", function(...) eventItemUpdateGuild(self, ...) end)
-		Event.Guild.Bank.Change[#Event.Guild.Bank.Change + 1] = { function(...) eventGuildBankChange(self, ...) end, Addon.identifier, "eventGuildBankChange" }
+		Command.Event.Attach(Event.Guild.Bank.Change, function(handle, ...) eventGuildBankChange(self, ...) end, "eventGuildBankChange")
 	else
 		Item.Dispatcher.AddSlotCallback(location, function(...) eventItemSlot(self, ...) end)
 		Item.Dispatcher.AddUpdateCallback(location, function(...) eventItemUpdate(self, ...) end)
@@ -343,7 +343,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 			Item.Dispatcher.AddUpdateCallback("wardrobe", function(...) eventItemUpdate(self, ...) end)
 		end
 	end
-	Event.System.Update.Begin[#Event.System.Update.Begin + 1] = { function() systemUpdateBegin(self) end, Addon.identifier, "ItemContainer." .. location .. ".systemUpdateBegin" }
+	Command.Event.Attach(Event.System.Update.Begin, function() systemUpdateBegin(self) end, "ItemContainer[" .. location .. "].systemUpdateBegin")
 	
 	return self
 end

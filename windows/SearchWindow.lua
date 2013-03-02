@@ -25,41 +25,41 @@ frame:SetTitle(L.Ux.WindowTitle.search)
 
 Ux.RiftWindowCloseButton.New(frame, function() filter.text:SetKeyFocus(false) frame:FadeOut() end)
 
-function border.Event:LeftDown()
+border:EventAttach(Event.UI.Input.Mouse.Left.Down, function(self)
 	local mouse = Inspect.Mouse()
 	self.mouseOffsetX = mouse.x - frame:GetLeft()
 	self.mouseOffsetY = mouse.y - frame:GetTop()
-end
+end, "")
 
-function border.Event:LeftUp()
+border:EventAttach(Event.UI.Input.Mouse.Left.Up, function(self)
 	self.mouseOffsetX, self.mouseOffsetY = nil, nil
-end
+end, "")
 
-function border.Event:LeftUpoutside()
+border:EventAttach(Event.UI.Input.Mouse.Left.Upoutside, function(self)
 	self.mouseOffsetX, self.mouseOffsetY = nil, nil
-end
+end, "")
 
-function border.Event:MouseMove()
+border:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function(self)
 	local mouse = Inspect.Mouse()
 	if(self.mouseOffsetX) then
 		frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", mouse.x - self.mouseOffsetX, mouse.y - self.mouseOffsetY)
 	end
-end
+end, "")
 
 filter = Ux.Textfield.New(frame, "RIGHT", L.Ux.search)
 filter:SetPoint("TOPLEFT", content, "TOPLEFT", 4, 0)
 filter:SetPoint("BOTTOMRIGHT", content, "TOPRIGHT", -4, 24)
-function filter.text.Event:KeyFocusGain()
+filter.text:EventAttach(Event.UI.Input.Key.Focus.Gain, function(self)
 	if(self:GetText() == L.Ux.search) then
 		self:SetText("")
 	end
-end
+end, "")
 
-function filter.text.Event:KeyFocusLoss()
+filter.text:EventAttach(Event.UI.Input.Key.Focus.Loss, function(self)
 	if(self:GetText() == "") then
 		self:SetText(L.Ux.search)
 	end
-end
+end, "")
 
 local scrollbar
 local display = { }
@@ -115,18 +115,18 @@ local function applySearchFilter()
 	update()
 end
 
-function filter.text.Event:TextfieldChange()
+filter.text:EventAttach(Event.UI.Textfield.Change, function()
 	if(updater == nil) then
 		applySearchFilter()
 	else
 		applyFilterAfterCoroutine = true
 	end
-end
+end, "")
 
 scrollbar = UI.CreateFrame("RiftScrollbar", "", frame)
 scrollbar:SetPoint("TOPRIGHT", filter, "BOTTOMRIGHT", 0, 2)
 scrollbar:SetPoint("BOTTOMRIGHT", content, "BOTTOMRIGHT", -4, -4)
-scrollbar.Event.ScrollbarChange = update
+scrollbar:EventAttach(Event.UI.Scrollbar.Change, update, "")
 scrollbar:SetLayer(10)
 
 local prevAnchor = filter
@@ -155,7 +155,7 @@ for i = 1, displayItemsCount do
 	entry.icon = icon
 	entry.text = text
 	
-	function entry.Event:MouseMove()
+	local f = function(self)
 		Command.Tooltip(self.type)
 		-- Temporary fix while tooltip is displayed in top-left
 		Ux.TooltipEnhancer:ClearAll();
@@ -163,12 +163,13 @@ for i = 1, displayItemsCount do
 		Ux.TooltipEnhancer:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -6, -4)
 		self:SetBackgroundColor(0, 0, 0, 0.5)
 	end
-	entry.Event.MouseIn = entry.Event.MouseMove
+	entry:EventAttach(Event.UI.Input.Mouse.Cursor.Move, f, "")
+	entry:EventAttach(Event.UI.Input.Mouse.Cursor.In, f, "")
 	
-	function entry.Event:MouseOut()
+	entry:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function(self)
 		Command.Tooltip(nil)
 		self:SetBackgroundColor(0, 0, 0, 0)
-	end
+	end, "")
 end
 
 local function eventSystemUpdateBegin()
@@ -218,19 +219,15 @@ local function update()
 	updater = coroutine.create(updateProc)
 end
 
-function content.Event:WheelBack()
+content:EventAttach(Event.UI.Input.Mouse.Wheel.Back, function()
 	scrollbar:NudgeDown()
-end
+end, "")
 
-function content.Event:WheelForward()
+content:EventAttach(Event.UI.Input.Mouse.Wheel.Forward, function()
 	scrollbar:NudgeUp()
-end
+end, "")
 
-Event.System.Update.Begin[#Event.System.Update.Begin + 1] = {
-	eventSystemUpdateBegin,
-	Addon.identifier,
-	"SearchWindow_eventSystemUpdateBegin"
-}
+Command.Event.Attach(Event.System.Update.Begin, eventSystemUpdateBegin, "SearchWindow_eventSystemUpdateBegin")
 
 -- Public methods
 -- ============================================================================
