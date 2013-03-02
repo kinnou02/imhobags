@@ -152,14 +152,14 @@ end
 local function createToolsFrame(self)
 	local frame = UICreateFrame("Frame", "", self)
 	
-	frame.configButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\small_student_experiment.dds]], L.Ux.Tooltip.config)
+	frame.configButton = Ux.IconButton.New(frame, "small_student_experiment.dds", L.Ux.Tooltip.config)
 	function frame.configButton.LeftPress()
 		self:SetVisible(false)
 		frame.configButton.Event:MouseOut()
 		Ux.ToggleConfigWindow()
 	end
 
-	frame.bankButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)
+	frame.bankButton = Ux.IconButton.New(frame, "chest2.dds", L.Ux.WindowTitle.bank)
 	function frame.bankButton.LeftPress()
 		self:SetVisible(false)
 		frame.bankButton.Event:MouseOut()
