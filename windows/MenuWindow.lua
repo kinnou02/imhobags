@@ -257,7 +257,7 @@ function Ux.MenuWindow()
 	end
 	
 	local context = UI.CreateContext("MenuWindow")
-	context:SetStrata("topmost")
+	context:SetStrata("layout")
 	local self = UICreateFrame("Texture", "Menu Window", context)
 	createDialog(self)
 	
