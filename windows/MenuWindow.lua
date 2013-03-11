@@ -67,28 +67,28 @@ local function createCharacterFrame(self, name, alliance)
 	frame.inventoryButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\bag20.dds]], L.Ux.WindowTitle.inventory)
 	function frame.inventoryButton.LeftPress()
 		self:SetVisible(false)
-		frame.inventoryButton.Event:MouseOut()
+		frame.inventoryButton:HideTooltip()
 		Ux.ShowItemWindow(name, "inventory")
 	end
 
 	frame.bankButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\chest2.dds]], L.Ux.WindowTitle.bank)
 	function frame.bankButton.LeftPress()
 		self:SetVisible(false)
-		frame.bankButton.Event:MouseOut()
+		frame.bankButton:HideTooltip()
 		Ux.ShowItemWindow(name, "bank")
 	end
 
 	frame.equipmentButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\1h_sword_065b.dds]], L.Ux.WindowTitle.equipment)
 	function frame.equipmentButton.LeftPress()
 		self:SetVisible(false)
-		frame.equipmentButton.Event:MouseOut()
+		frame.equipmentButton:HideTooltip()
 		Ux.ShowItemWindow(name, "equipment")
 	end
 
 	frame.currencyButton = Ux.IconButton.New(frame, [[Data/\UI\item_icons\loot_gold_coins.dds]], L.Ux.WindowTitle.currency)
 	function frame.currencyButton.LeftPress()
 		self:SetVisible(false)
-		frame.currencyButton.Event:MouseOut()
+		frame.currencyButton:HideTooltip()
 		Ux.ShowItemWindow(name, "currency")
 	end
 	
@@ -96,7 +96,7 @@ local function createCharacterFrame(self, name, alliance)
 		[[Data/\UI\item_icons\GuildCharter_Guardians.dds]], L.Ux.Tooltip.guild)
 	function frame.guildButton.LeftPress()
 		self:SetVisible(false)
-		frame.guildButton.Event:MouseOut()
+		frame.guildButton:HideTooltip()
 		Ux.ShowItemWindow(name, "guildbank")
 	end
 	
