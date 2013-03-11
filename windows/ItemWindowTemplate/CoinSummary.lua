@@ -22,7 +22,7 @@ Ux.ItemWindowTemplate = Ux.ItemWindowTemplate or { }
 -- Private methods
 -- ============================================================================
 
-ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
+Command.Event.Attach(Event.ImhoBags.Private.Init, function()
 	local chars = Item.Storage.GetCharacterCoins()
 	local alliances = Item.Storage.GetCharacterAlliances()
 	
@@ -41,7 +41,7 @@ ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
 		local name = characterNames[i]
 		characterCoins[i] = chars[name]
 	end
-end, Addon.identifier, "" }
+end, "ItemWindowTemplate.CoinSummary.init[main chunk]")
 
 local function createCharEntry(parent, name, coins, y)
 	local text = UI.CreateFrame("Text", "", parent)
@@ -222,19 +222,19 @@ function Ux.ItemWindowTemplate.CoinSummary(parent, titleBar, location)
 	end
 	
 	if(location ~= "guildbank") then
-		ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
+		Command.Event.Attach(Event.ImhoBags.Private.Init, function()
 			createCharFrames(self, background)
 			setPlayerCoin(self, background)
-			Command.Event.Attach(Event.Currency, function() setPlayerCoin(self, background) end, "")
+			Command.Event.Attach(Event.Currency, function() setPlayerCoin(self, background) end, "CoinSummary.eventCurrency")
 			Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
-		end, Addon.identifier, "" }
+		end, "ItemWindowTemplate.CoinSummary.init")
 	else
-		ImhoEvent.Init[#ImhoEvent.Init + 1] = { function()
+		Command.Event.Attach(Event.ImhoBags.Private.Init, function()
 			createGuildFrames(self, background)
-			Command.Event.Attach(Event.Interaction, function(handle, ...) eventInteraction(self, ...) end, "CoinSummary.eventInteraction")
-			Command.Event.Attach(Event.Guild.Bank.Coin, function(handle, ...) eventGuildBankCoin(self, ...) end, "CoinSummary.eventGuildBankCoin")
+			Command.Event.Attach(Event.Interaction, function(handle, ...) eventInteraction(self, ...) end, "ItemWindowTemplate.CoinSummary.eventInteraction")
+			Command.Event.Attach(Event.Guild.Bank.Coin, function(handle, ...) eventGuildBankCoin(self, ...) end, "ItemWindowTemplate.CoinSummary.eventGuildBankCoin")
 			Ux.ItemWindowTemplate.FadingPopup.MakeFadeable(self, titleBar, background:GetHeight())
-		end, Addon.identifier, "" }
+		end, "ItemWindowTemplate.CoinSummary.init")
 	end
 
 	return self

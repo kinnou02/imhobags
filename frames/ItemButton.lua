@@ -106,7 +106,7 @@ local function rightClick(self)
 	end
 end
 
-local function storageLoaded()
+local function storageLoaded(handle)
 	skinFactory = Ux["ItemButton_" .. Config.itemButtonSkin].New
 	-- Preload buttons to avoid the Watchdog later
 	for i = 1, Const.ItemButtonWarmupCache do
@@ -116,7 +116,7 @@ local function storageLoaded()
 	end
 end
 
-local function configChanged(k, v)
+local function configChanged(handle, k, v)
 	if(k == "showBoundIcon") then
 		for button in pairs(usedButtons) do
 			button.bind:SetVisible(v)
@@ -256,13 +256,5 @@ createButton = function(parent)
 	return self
 end
 
-Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = {
-	storageLoaded,
-	Addon.identifier,
-	""
-}
-Event.ImhoBags.Private.Config[#Event.ImhoBags.Private.Config + 1] = {
-	configChanged,
-	Addon.identifier,
-	""
-}
+Command.Event.Attach(Event.ImhoBags.Private.StorageLoaded, storageLoaded, "ItemButton.storageLoaded")
+Command.Event.Attach(Event.ImhoBags.Private.Config, configChanged, "ItemButton.configChanged")

@@ -26,7 +26,7 @@ local function centerWindow(window)
 	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor((screenWidth - window:GetWidth()) / 2), math.floor((screenHeight - window:GetHeight()) / 2))
 end
 
-local function storageLoaded()
+local function storageLoaded(handle)
 	_G.ImhoBags_WindowInfo = _G.ImhoBags_WindowInfo or {
 		ItemContainer = { }
 	}
@@ -74,7 +74,7 @@ local function toggleFade(self)
 end
 
 Command.Event.Attach(Event.Addon.SavedVariables.Save.Begin, savedVariablesSaveBegin, "savedVariablesSaveBegin")
-Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = { storageLoaded, Addon.identifier, "storageLoaded" }
+Command.Event.Attach(Event.ImhoBags.Private.StorageLoaded, storageLoaded, "storageLoaded")
 
 -- Public methods
 -- ============================================================================

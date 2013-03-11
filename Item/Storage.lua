@@ -298,16 +298,8 @@ Command.Event.Attach(Event.Currency, eventCurrency, "Item.Storage.eventCurrency"
 Command.Event.Attach(Event.Interaction, eventInteraction, "Item.Storage.eventInteraction")
 Command.Event.Attach(Event.Item.Slot, eventItemSlot, "Item.Storage.eventItemSlot")
 Command.Event.Attach(Event.Item.Update, eventItemUpdate, "Item.Storage.eventItemUpdate")
-Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = {
-	init,
-	Addon.identifier,
-	"Item.Storage.init",
-}
-Event.ImhoBags.Private.Guild[#Event.ImhoBags.Private.Guild + 1] = {
-	guildChanged,
-	Addon.identifier,
-	"Item.Storage.guildChanged",
-}
+Command.Event.Attach(Event.ImhoBags.Private.Init, init, "Item.Storage.init")
+Command.Event.Attach(Event.ImhoBags.Private.Guild, guildChanged, "Item.Storage.guildChanged")
 
 -- Public methods
 -- ============================================================================

@@ -214,11 +214,9 @@ local function hookGulidEvents(self)
 	Command.Event.Attach(Event.Guild.Bank.Coin, function(handle, ...) eventGuildBankCoin(self, ...) end, "ItemContainer.GuildBar.eventGuildBankCoin")
 	Command.Event.Attach(Event.Guild.Rank, function(handle, ...) eventGuildRank(self, ...) end, "ItemContainer.GuildBar.eventGuildRank")
 	Command.Event.Attach(Event.Guild.Roster.Detail.Rank, function(handle, ...) eventGuildRosterDetailRank(self, ...) end, "ItemContainer.GuildBar.eventGuildRosterDetailRank")
-	Event.ImhoBags.Private.Guild[#Event.ImhoBags.Private.Guild + 1] = {
-		function(old, new) self:SetGulid(new) end,
-		Addon.identifier,
-		"ItemContainer.GuildBar.guildChanged"
-	}
+	Command.Event.Attach(Event.ImhoBags.Private.Guild, function(handle, old, new)
+		self:SetGulid(new)
+	end, "ItemContainer.GuildBar.guildChanged")
 end
 
 local function init(self)
@@ -277,7 +275,7 @@ function ItemContainer.GuildBar(parent, vaultCallback)
 	
 	self.SetGuild = SetGuild
 	
-	Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = { function() init(self) end, Addon.identifier, "GuildBar.init" }
+	Command.Event.Attach(Event.ImhoBags.Private.Init, function() init(self) end, "ItemContainer.GuildBar.init")
 	
 	return self
 end

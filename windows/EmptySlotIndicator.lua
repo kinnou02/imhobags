@@ -34,7 +34,7 @@ local function createEmptySlotIndicator()
 	UI.Native.Bag:EventAttach(Event.UI.Native.Loaded, showOrHideEmptySlotIndicator, "")
 end
 
-local function configChanged(name, value)
+local function configChanged(handle, name, value)
 	if(name == "showEmptySlots") then
 		showOrHideEmptySlotIndicator()
 	end
@@ -45,22 +45,10 @@ local function eventItemSlot()
 	Ux.EmptySlotIndicator.label:SetText(tostring(empty))
 end
 
-Event.ImhoBags.Private.StorageLoaded[#Event.ImhoBags.Private.StorageLoaded + 1] = {
-	eventItemSlot,
-	Addon.identifier,
-	"Ux.EmptySlotIndicator_storageLoaded"
-}
-Event.ImhoBags.Private.Init[#Event.ImhoBags.Private.Init + 1] = {
-	showOrHideEmptySlotIndicator,
-	Addon.identifier,
-	"Ux.EmptySlotIndicator_init"
-}
-Event.ImhoBags.Private.Config[#Event.ImhoBags.Private.Config + 1] = {
-	configChanged,
-	Addon.identifier,
-	"Ux.EmptySlotIndicator_configChanged"
-}
-Command.Event.Attach(Event.Item.Slot, eventItemSlot, "Ux.EmptySlotIndicator_eventItemSlot")
+Command.Event.Attach(Event.ImhoBags.Private.StorageLoaded, eventItemSlot, "Ux.EmptySlotIndicator.storageLoaded")
+Command.Event.Attach(Event.ImhoBags.Private.Init, showOrHideEmptySlotIndicator, "Ux.EmptySlotIndicator.init")
+Command.Event.Attach(Event.ImhoBags.Private.Config, configChanged, "Ux.EmptySlotIndicator.configChanged")
+Command.Event.Attach(Event.Item.Slot, eventItemSlot, "Ux.EmptySlotIndicator.eventItemSlot")
 
 -- Public methods
 -- ============================================================================

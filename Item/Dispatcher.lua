@@ -107,8 +107,8 @@ function Item.Dispatcher.RunSlot(location)
 end
 
 function Item.Dispatcher.Enable()
-	Command.Event.Attach(Event.Item.Slot, eventItemSlot, "ItemProcessing.Dispatcher.eventItemSlot")
-	Command.Event.Attach(Event.Item.Update, eventItemUpdate, "ItemProcessing.Dispatcher.eventItemUpdate")
+	Command.Event.Attach(Event.Item.Slot, eventItemSlot, "Item.Dispatcher.eventItemSlot")
+	Command.Event.Attach(Event.Item.Update, eventItemUpdate, "Item.Dispatcher.eventItemUpdate")
 end
 
 Item.Dispatcher.Enable()

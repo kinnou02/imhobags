@@ -1,6 +1,6 @@
 local Addon, private = ...
 
-local function migrateSavedVariables(identifier)
+local function migrateSavedVariables(handle, identifier)
 	if(identifier ~= Addon.identifier) then
 		return
 	end

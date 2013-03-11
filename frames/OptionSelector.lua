@@ -108,9 +108,9 @@ function Ux.OptionSelector.New(parent, icon, tooltip, options, callback, size)
 	
 	updateMenu(self)
 	
-	ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(name)
+	Command.Event.Attach(Event.ImhoBags.Private.Config, function(handle, name)
 		updateMenu(self, options)
-	end, Addon.identifier, "Ux.OptionSelector_updateMenu" }
+	end, "Ux.OptionSelector_updateMenu")
 	
 	return self
 end

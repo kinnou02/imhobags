@@ -19,7 +19,7 @@ local allowedLocations = {
 
 setfenv(1, private)
 
-local function slashMain(args)
+local function slashMain(handle, args)
 	local arg1, arg2 = unpack(string.split(args, "%s", true))
 	
 	if(arg1 == "") then arg1 = nil end
@@ -88,5 +88,4 @@ local function slashMain(args)
 	Ux.ToggleItemWindow(arg1, loc)
 end
 
-eventTable = Command.Slash.Register("imhobags")
-eventTable[#eventTable + 1] = { slashMain, Addon.identifier, "slashMain" }
+Command.Event.Attach(Command.Slash.Register("imhobags"), slashMain, "slashMain")
