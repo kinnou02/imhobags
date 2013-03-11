@@ -288,7 +288,7 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	
 	config = checkConfig(location, config)
 	if(location == "guildbank") then
-		self.playerSet = { ItemContainer.ItemSet("guildbank") }
+		self.playerSet = { (ItemContainer.ItemSet("guildbank")) }
 		self.set = self.playerSet[1]
 	else
 		self.playerSet = ItemContainer.ItemSet(location)
