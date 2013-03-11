@@ -97,11 +97,8 @@ local function eventItemSlotGuild(self, slot, item, container, bag, index)
 	if(not set) then
 		set = ItemContainer.ItemSet("guildbank")
 		self.playerSet[bag] = set
-		-- Differentiate cases for error reports
-		set:UpdateSlot(slot, item, container, bag, index)
-	else
-		set:UpdateSlot(slot, item, container, bag, index)
 	end
+	set:UpdateSlot(slot, item, container, bag, index)
 	
 	if(set == self.set) then
 		self.needsUpdate = true
@@ -185,6 +182,7 @@ end
 local function eventGuildBankChange(self, vaults)
 	for slot in pairs(vaults) do
 		local container, bag = UtilityItemSlotParse(slot)
+		log("eventGuildBankChange", slot, container, bag)
 		self.playerSet[bag] = self.playerSet[bag] or ItemContainer.ItemSet("guildbank")
 	end
 end
