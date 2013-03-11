@@ -37,7 +37,7 @@ local function createItem(self, i)
 	clickable:SetWidth(itemWidth)
 	clickable:SetHeight(itemClickableHeight)
 
-	clickable:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self)
+	clickable:EventAttach(Event.UI.Input.Mouse.Left.Click, function()
 		self:FadeOut()
 		self.callback(text:GetText())
 	end, "")
