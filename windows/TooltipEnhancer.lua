@@ -82,7 +82,7 @@ local function formatGuildLine(name, data, tooltip)
 	return sum
 end
 
-local function tooltipTargetChanged(ttype, shown, buff)
+local function tooltipTargetChanged(handle, ttype, shown, buff)
 	window:SetVisible(false)
 	if(not Config.enhanceTooltips) then
 		return
