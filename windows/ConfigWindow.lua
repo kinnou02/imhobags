@@ -423,6 +423,7 @@ local function createPane(pane, parent)
 	local content = UI.CreateFrame("Frame", "", parent)
 	content:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
 	content:SetWidth(parent:GetWidth())
+	content:SetVisible(false)
 	
 	local height = 0
 	for i = 1, #pane.content do
@@ -500,12 +501,10 @@ function Ux.ConfigWindow()
 		self.buttons[count - i + 1] = createPaneButton(self, self.panes[#topPanes + i], bottomPanes[i].name, self.buttons[count - i + 2], false)
 	end
 
+	self.activePane = self.panes[1]
 	self.buttons[1]:SetEnabled(false)
 	self.panes[1]:SetVisible(true)
 	self.heading:SetText(string.upper(self.buttons[1]:GetText()))
-	for i = 2, #self.panes do
-		self.panes[i]:SetVisible(false)
-	end
 	
 	-- Get rid of the no longer needed tables
 	topPanes = nil
