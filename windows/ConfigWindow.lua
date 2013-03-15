@@ -79,7 +79,7 @@ local topPanes = {
 }
 local bottomPanes = {
 	{
-		name = "Knwon Issues",
+		name = "Known Issues",
 		content = {
 			{ description = "Annotations:", },
 			{ description = "<font color='#FF0000'>[!]</font>: Critical issue which is being actively worked on.", },
