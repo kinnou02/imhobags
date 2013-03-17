@@ -284,7 +284,7 @@ local function createPaneButton(self, pane, name, previous, down)
 		self.activePane = pane
 		local scroll = math.max(0, pane:GetHeight() - self.scrollbar:GetThickness())
 		self.scrollbar:SetRange(0, scroll)
-		self.scrollbar:SetPosition(pane.offset)
+		self.scrollbar:SetPosition(math.min(pane.offset, scroll))
 		self.scrollbar:SetEnabled(scroll > 0)
 	end, "")
 	
