@@ -60,7 +60,8 @@ end
 local function loadStoredCurrency(self, character)
 	local unknown = { }
 	local totals, categories = Item.Storage.GetCharacterItems(character, self.location)
-	totals.coin = nil -- Don't show coin here
+	totals.coin = nil -- Don't show coin and credits here
+	totals.credit = nil
 	local slot = 1
 	for type, count in pairs(totals) do
 		local detail = inspectItemDetailTwink(type, type, slot, count, unknown)
@@ -137,8 +138,8 @@ end
 
 local function UpdateCurrency(self, currencies, callback)
 	for id, count in pairs(currencies) do
-		-- Don't show money here
-		if(id ~= "coin" and count > 0) then
+		-- Don't show money and credits here
+		if(id ~= "coin" and id ~= "credit" and count > 0) then
 			local detail = InspectItemDetail(id)
 			detail.stack = count
 			detail.type = id
