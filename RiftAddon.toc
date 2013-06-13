@@ -31,7 +31,9 @@ RunOnStartup = {
 	"locales/frFR.lua",
 	"locales/koKR.lua",
 	"locales/ruRU.lua",
-	"locales/enUS.lua",
+	"locales/zhCN.lua",
+	"locales/zhTW.lua",
+	"locales/enUS.lua", -- Must be last
 	
 	"migration/0.14.lua",
 	

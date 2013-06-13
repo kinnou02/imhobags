@@ -38,6 +38,8 @@ local lang = Inspect.System.Language()
 local translators = {
 	German = true,
 	English = true,
+	Russian = true,
+	French = true,
 }
 if(not translators[lang]) then
 	Command.Console.Display("general", false, "<font color='#FFFF00'>ImhoBags is looking for " .. lang .. " translators and reviewers!\nContact Imhothar on Curse or RiftUI if you'd like to help!</font>", true)
