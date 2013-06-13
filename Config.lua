@@ -2,7 +2,7 @@ local Addon, private = ...
 
 -- Only the keys in this table are valid config options
 local defaults = {
-	autoOpen = false,
+	autoOpen = true,
 	itemButtonSkin = "pretty",
 	showEmptySlots = true,
 	condensed = true,
