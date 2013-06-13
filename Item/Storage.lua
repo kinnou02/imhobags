@@ -191,7 +191,10 @@ local function eventItemSlot(handle, items)
 				vault = UtilityItemSlotGuild(bag)
 				guildVaultSlots[bag] = vault
 			end
-			mergeSlotGuild(guild.vault[vault], slot, item, bag, index)
+			container = guild.vault[vault]
+			if(container) then
+				mergeSlotGuild(container, slot, item, bag, index)
+			end
 		end
 	end
 end
