@@ -194,7 +194,8 @@ end
 local function eventInteraction(self, interaction, status)
 	if(interaction == "guildbank" and status) then
 		local guilds = Item.Storage.GetGuildCoins()
-		guilds[Player.guild] = Inspect.Guild.Bank.Coin()
+		local guild = Inspect.Unit.Detail("player").guild
+		guilds[guild] = Inspect.Guild.Bank.Coin()
 		updateGuildList(self, guilds)
 	end
 end
