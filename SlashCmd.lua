@@ -74,6 +74,9 @@ local function slashMain(handle, args)
 	end
 	
 	-- /imhobags char [location]
+	if(arg1 == "player") then
+		arg1 = Player.Name
+	end
 	if(not Item.Storage.GetCharacterAlliances()[arg1]) then
 		print("\n/imhobags " .. args)
 		print(string.format(L.SlashMessage.unknownChar, arg1))
