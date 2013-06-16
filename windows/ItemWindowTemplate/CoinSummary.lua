@@ -187,7 +187,8 @@ end
 
 local function eventGuildBankCoin(self, coin)
 	local guilds = Item.Storage.GetGuildCoins()
-	guilds[Player.guild] = coin
+	local guild = Inspect.Unit.Detail("player").guild
+	guilds[guild] = coin
 	updateGuildList(self, guilds)
 end
 
