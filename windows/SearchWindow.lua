@@ -10,6 +10,7 @@ Ux = Ux or { }
 local displayItemsCount = 24
 local applyFilterAfterCoroutine = false
 local updater
+local applySearchFilter
 
 -- Private methods
 -- ============================================================================
@@ -46,7 +47,7 @@ border:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function(self)
 	end
 end, "")
 
-filter = Ux.Textfield.New(frame, "RIGHT", L.Ux.search)
+filter = Ux.Textfield.New(frame, "RIGHT", L.Ux.search, function() applySearchFilter() end)
 filter:SetPoint("TOPLEFT", content, "TOPLEFT", 4, 0)
 filter:SetPoint("BOTTOMRIGHT", content, "TOPRIGHT", -4, 24)
 filter.text:EventAttach(Event.UI.Input.Key.Focus.Gain, function(self)
@@ -84,7 +85,7 @@ local function update()
 	end
 end
 
-local function applySearchFilter()
+applySearchFilter = function()
 	local pattern = filter.text:GetText()
 	if(pattern == "" or pattern == L.Ux.search) then
 		for i = 1, #items do

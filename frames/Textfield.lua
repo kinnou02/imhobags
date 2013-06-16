@@ -12,7 +12,7 @@ local borderWidth = 2
 -- Public methods
 -- ============================================================================
 
-function Ux.Textfield.New(parent, clearAnchor, defaultString)
+function Ux.Textfield.New(parent, clearAnchor, defaultString, clearCallback)
 	local frame = UI.CreateFrame("Frame", "", parent)
 	local text = UI.CreateFrame("RiftTextfield", "", frame)
 	text:SetPoint("TOPLEFT", frame, "TOPLEFT", borderWidth, borderWidth)
@@ -30,7 +30,7 @@ function Ux.Textfield.New(parent, clearAnchor, defaultString)
 		function x.Event:LeftPress()
 			if(text:GetText() ~= defaultString) then
 				text:SetText("")
-				text.Event.TextfieldChange(text)
+				clearCallback()
 				if(not text:GetKeyFocus()) then
 					text:SetText(defaultString)
 				end
