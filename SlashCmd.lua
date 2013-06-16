@@ -75,7 +75,7 @@ local function slashMain(handle, args)
 	
 	-- /imhobags char [location]
 	if(arg1 == "player") then
-		arg1 = Player.Name
+		arg1 = Player.name
 	end
 	if(not Item.Storage.GetCharacterAlliances()[arg1]) then
 		print("\n/imhobags " .. args)
