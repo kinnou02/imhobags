@@ -8,7 +8,7 @@ Website = "http://www.curse.com/addons/rift/imhobags"
 Email = "imhothar@freenet.de"
 
 Version = "0.15beta2"
-Environment = "2.3"
+Environment = "2.5"
 
 --@no-lib-strip@
 Embed = {
@@ -35,7 +35,7 @@ RunOnStartup = {
 	"locales/zhTW.lua",
 	"locales/enUS.lua", -- Must be last
 	
-	"migration/0.14.lua",
+	"migration/0.16.lua",
 	
 	"Constants.lua",
 	"Main.lua",
@@ -95,8 +95,12 @@ SavedVariables = {
 
 -- Set this value to true to enable chat spamming debug messages and other debugging facilities
 --@debug@
-debug = true
+-- debug = true
 --@end-debug@
 
 -- Indicate which version the public API has
 publicAPI = 1
+-- X-Curse-Packaged-Version: 0.15beta2
+-- X-Curse-Project-Name: Imhothar's Bags
+-- X-Curse-Project-ID: imhobags
+-- X-Curse-Repository-ID: rift/imhobags/mainline

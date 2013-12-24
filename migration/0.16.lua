@@ -7,16 +7,16 @@ local function migrateSavedVariables(handle, identifier)
 
 	if(ImhoBags_ItemStorage) then
 		local version = ImhoBags_ItemStorage.version or 0.0
-		if(version < 0.14) then
+		if(version < 0.16) then
 			ImhoBags_ItemStorage = nil
-			Command.Console.Display("general", true, "<font color='#FFC000'>Incompatible item database: deleting all characters.</font>", true)
+			Command.Console.Display("general", true, "<font color='#FFC000'>Imhothar's Bags:: Incompatible item database: Recreating database for all characters.</font>", true)
 		end
 	end
 
 	if(ImhoBags_WindowInfo) then
 		local info = ImhoBags_WindowInfo
 		local version = info.version or 0.0
-		if(version < 0.14) then
+		if(version < 0.16) then
 			info.ItemContainer = { }
 			if(info.inventory) then
 				info.ItemContainer.inventory = info.inventory
