@@ -82,6 +82,7 @@ local function populateWithStoredItems(self, totals, slots, counts, bags)
 			self.Slots[slot] = id
 			self.Items[id] = detail
 			local container, bag, index = UtilityItemSlotParse(slot)
+			if container == "vault" then container = "bank" end
 			self.Groups[id] = container ~= "wardrobe" and self.groupFunc(detail) or format(L.CategoryName.wardrobe, bag)
 			id = id + 1
 		else
@@ -126,6 +127,7 @@ local function ResolveUnknownItems(self, unknownTypes, callback)
 			self.Items[id] = detail
 			if(self.location ~= "currency") then
 				local container, bag, index = UtilityItemSlotParse(slot)
+				if container == "vault" then container = "bank" end
 				self.Groups[id] = container ~= "wardrobe" and self.groupFunc(detail) or format(L.CategoryName.wardrobe, bag)
 			end
 			callback(id)

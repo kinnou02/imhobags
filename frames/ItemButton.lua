@@ -172,7 +172,7 @@ local function SetItem(self, item, slots, stack, available, locked)
 	self.item = item
 	self.slots = slots
 	self.stack = stack
-	self.dropTarget = item and item.id or (isTable and slots[1] or slots)
+	self.dropTarget = isTable and slots[1] or slots
 end
 
 local function Dispose(self, duration)

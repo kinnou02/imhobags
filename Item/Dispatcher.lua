@@ -4,10 +4,15 @@ local Addon, private = ...
 local pairs = pairs
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 
+local function mergetables(l, r)
+	for k, v in pairs(r) do l[k] = v end
+	return l
+end
+
 -- Locals
 local list = {
 --	all = function() Inspect.Item.List() end,
-	bank = function() return Inspect.Item.List(Utility.Item.Slot.Bank()) end,
+	bank = function() return mergetables(Inspect.Item.List(Utility.Item.Slot.Bank()), Inspect.Item.List(Utility.Item.Slot.Vault())) end,
 	equipment = function() return Inspect.Item.List(Utility.Item.Slot.Equipment()) end,
 	guild = function() return Inspect.Item.List(Utility.Item.Slot.Guild()) end,
 	inventory = function() return Inspect.Item.List(Utility.Item.Slot.Inventory()) end,
@@ -46,6 +51,7 @@ local empty = { }
 local function dispatch(items, callbacks)
 	for slot, item in pairs(items) do
 		local container, bag, index = UtilityItemSlotParse(slot)
+		if container == "vault" then container = "bank" end
 		for k, v in pairs(callbacks[container] or empty) do
 			v(slot, item, container, bag, index)
 		end

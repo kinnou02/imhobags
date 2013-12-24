@@ -8,7 +8,7 @@ local rarityOrder = {
 	rare = 4,
 	epic = 5,
 	relic = 6,
-	transcendant = 7,
+	transcendent = 7,
 	quest = 8,
 	
 	empty = 0,

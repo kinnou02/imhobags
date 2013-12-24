@@ -182,6 +182,7 @@ end
 local function eventItemSlot(handle, items)
 	for slot, item in pairs(items) do
 		local container, bag, index = UtilityItemSlotParse(slot)
+		if container == "vault" then container = "bank" end
 		log("eventItemSlot", slot, container, item)
 		if(player[container]) then
 			mergeSlot(player[container], slot, item, bag, index)
@@ -202,6 +203,7 @@ end
 local function eventItemUpdate(handle, items)
 	for slot, item in pairs(items) do
 		local container, bag, index = UtilityItemSlotParse(slot)
+		if container == "vault" then container = "bank" end
 		log("eventItemUpdate", slot, container, item)
 		item = InspectItemDetail(item)
 		if(player[container]) then
