@@ -19,4 +19,6 @@ Const = {
 	ItemWindowMinWidth = 345, -- Prevents header buttons from overlapping and is lower bound for full columns
 	ItemWindowMinHeight = 310, -- Title bar starts stretching below this content size
 	ItemWindowPadding = 4,
+	
+	MaxBankBags = 8,
 }

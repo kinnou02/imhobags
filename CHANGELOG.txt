@@ -1,4 +1,22 @@
-0.15beta
+0.16beta (December 2013)
+
+FEATURES:
+* General updates for RIFT 2.5 compatibility (Big thanks to Ivnedar for his expertise!)
+CHANGES:
+* The Addon will update the internal item storage database if ItemStorage.version < 0.16
+  (In other words, the addon should reset the "SavedVariables" file for you when upgrading
+   to this version.)  If you have a lot of bank vaults, you may get a "performance warning"
+   the first time you open your full bank.  This shouldn't happen again until the internal
+   item storage database requires another update.   Please note that this update may reset
+   your window positions/configuration, sort options, etc.
+FIXES:
+* Fixed a typo involving "transcendant" items
+* Fixed items currently placed in bank vault slots (caused by addon API changes in RIFT 2.4)
+* Fixed the Texture:SetTexture() "Incorrect function usage" bug
+* Fixed the display of bank vaults when grouped by 'bags'
+
+
+0.15beta (June 2013)
 
 FEATURES:
 * Requires RIFT 2.3

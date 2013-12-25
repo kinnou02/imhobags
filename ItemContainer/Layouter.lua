@@ -61,8 +61,10 @@ local function getGroupAssociation_bags(set, showEmptySlots)
 	local groups = { }
 	for slot, item in pairs(set.Slots) do
 		local container, bag, index = UtilityItemSlotParse(slot)
-		if(bag == "main") then
-			bag = 0
+		-- There are currently Const.MaxBankBags available in the character's bank.  Therefore, bank vaults will be set to 
+		-- Const.MaxBankBags+vault# as their group's location.
+		if (container == "vault") then
+			bag = Const.MaxBankBags+bag
 		end
 		local items = groups[bag] or { }
 		groups[bag] = items
