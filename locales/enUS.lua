@@ -157,14 +157,14 @@ Available config options:
 			config = "Configuration",
 			guild = "Guild",
 			guildvault = "Guild Vault",
-			vault = "Vault",							-- NEW (ToDo 12/25/2013:  Add to other localization files.)
+			vault = "Vault",
 			size = "Size",
 			sorting = "Sorting",
 		},
 		search = "<Enter search text>",
 		cashOnDelivery = "Cash on Delivery",
 		guildVault = "Vault %i",
-		bankVault = "Vault %i",					-- NEW (ToDo 12/25/2013:  Add to other localization files.)
+		bankVault = "Vault %i",
 		defiant = "Defiant",
 		guardian = "Guardian",
 		
