@@ -38,7 +38,7 @@ local function setupGroupLabel(self, display, group, items)
 	if(display.layouter.layout == "default") then
 		self.text:SetText(group)
 	elseif(display.layouter.layout == "bags") then
-		if(group == 0) then -- Legacy:  This should no longer be found (as of Rift 2.4)
+		if(group == 0) then
 			self.text:SetText(L.Ux.WindowTitle[display.location])
 		elseif(group > Const.MaxBankBags) then		-- There are Const.MaxBankBags bags in the bank.  Therefore, bank vaults are Const.MaxBankBags+vault#
 			self.text:SetText(format(L.Ux.bankVault,group-Const.MaxBankBags))

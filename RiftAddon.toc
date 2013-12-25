@@ -5,9 +5,15 @@ Description = "Provides overview and search windows for your inventory as well a
 
 Author = "Imhothar"
 Website = "http://www.curse.com/addons/rift/imhobags"
-Email = "imhothar@freenet.de"
+Email = "amadeus@myself.com"
 
-Version = "0.15beta2"
+--------------------
+-- NOTES:
+-- 1.  Amadeus is currently maintaining Imhothar's Bags.
+-- 2.  Imhothar's email address is 'imhothar@freenet.de'.
+--------------------
+
+Version = "0.16beta"
 Environment = "2.5"
 
 --@no-lib-strip@
@@ -100,7 +106,7 @@ SavedVariables = {
 
 -- Indicate which version the public API has
 publicAPI = 1
--- X-Curse-Packaged-Version: 0.15beta2
+-- X-Curse-Packaged-Version: 0.16beta
 -- X-Curse-Project-Name: Imhothar's Bags
 -- X-Curse-Project-ID: imhobags
 -- X-Curse-Repository-ID: rift/imhobags/mainline

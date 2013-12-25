@@ -45,7 +45,7 @@ local function savedVariablesSaveBegin(handle, identifier)
 		return
 	end
 	
-	_G.ImhoBags_WindowInfo.version = 0.14
+	_G.ImhoBags_WindowInfo.version = 0.16
 	_G.ImhoBags_WindowInfo.SearchWindow = {
 		x = Ux.SearchWindow:GetLeft(),
 		y = Ux.SearchWindow:GetTop(),
