@@ -1,4 +1,10 @@
-0.16beta (December 2013)
+0.16beta3
+FIXES:
+* Fixed Guild Vault labels when sorting by 'bags'
+
+
+
+0.16beta2 (December 2013)
 
 FEATURES:
 * General updates for RIFT 2.5 compatibility (Big thanks to Ivnedar for his expertise!)

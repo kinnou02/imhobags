@@ -40,7 +40,9 @@ local function setupGroupLabel(self, display, group, items)
 	elseif(display.layouter.layout == "bags") then
 		if(group == 0) then
 			self.text:SetText(L.Ux.WindowTitle[display.location])
-		elseif(group > Const.MaxBankBags) then		-- There are Const.MaxBankBags bags in the bank.  Therefore, bank vaults are Const.MaxBankBags+vault#
+		elseif(display.location == "guildbank") then							
+			self.text:SetText(format(L.Ux.guildVault,group))										-- This solution works because there are (currently) no "bags" in the guildbank
+		elseif(group > Const.MaxBankBags) then																-- There are Const.MaxBankBags bags in the bank.  Therefore, bank vaults are Const.MaxBankBags+vault#
 			self.text:SetText(format(L.Ux.bankVault,group-Const.MaxBankBags))
 		else
 			local info = display.set.Items[display.set.Bags[group]]
