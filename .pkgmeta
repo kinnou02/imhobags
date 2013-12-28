@@ -20,4 +20,4 @@ externals:
   libs/LibString:
     url: git://git.curseforge.net/rift/libstring/mainline.git
   libs/Corout:
-  	url: git://git.curseforge.net/rift/corout/mainline.git
+    url: git://git.curseforge.net/rift/corout/mainline.git
