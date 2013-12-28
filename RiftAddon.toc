@@ -1,7 +1,7 @@
 Identifier = "ImhoBags"
 Name = "Imhothar's Bags"
 NameShort = "Imho's Bags"
-Description = "Provides overview and search windows for your inventory as well as inspection of offline characters."
+Description = "Provides overview and search windows for your inventory and banks, as well as inspection of offline characters."
 
 Author = "Imhothar"
 Website = "http://www.curse.com/addons/rift/imhobags"
@@ -13,7 +13,7 @@ Email = "amadeus@myself.com"
 -- 2.  Imhothar's email address is 'imhothar@freenet.de'.
 --------------------
 
-Version = "0.16beta"
+Version = "0.16beta2"
 Environment = "2.5"
 
 --@no-lib-strip@
@@ -21,6 +21,7 @@ Embed = {
 	["libs/LibAnimate"] = true,
 	["libs/LibAsyncTextures"] = true,
 	["libs/LibString"] = true,
+	["libs/Corout"] = true,
 }
 --@end-no-lib-strip@
 
@@ -28,6 +29,7 @@ Dependencies = {
 	LibAnimate = { "required", "before" },
 	LibAsyncTextures = { "required", "before" },
 	LibString = { "required", "before" },
+	Corout = { "required", "before" },
 }
 
 RunOnStartup = {
@@ -101,12 +103,12 @@ SavedVariables = {
 
 -- Set this value to true to enable chat spamming debug messages and other debugging facilities
 --@debug@
--- debug = true
+--debug = true
 --@end-debug@
 
 -- Indicate which version the public API has
 publicAPI = 1
--- X-Curse-Packaged-Version: 0.16beta
+-- X-Curse-Packaged-Version: 0.16beta2
 -- X-Curse-Project-Name: Imhothar's Bags
 -- X-Curse-Project-ID: imhobags
 -- X-Curse-Repository-ID: rift/imhobags/mainline

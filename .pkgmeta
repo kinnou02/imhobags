@@ -19,3 +19,5 @@ externals:
     url: git://git.curseforge.net/rift/lib-async-textures/mainline.git
   libs/LibString:
     url: git://git.curseforge.net/rift/libstring/mainline.git
+  libs/Corout:
+  	url: git://git.curseforge.net/rift/corout/mainline.git

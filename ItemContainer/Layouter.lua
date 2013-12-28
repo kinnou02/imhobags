@@ -11,11 +11,13 @@ local pairs = pairs
 local sort = table.sort
 local strfind = string.find
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
+local corout = corout
 
 -- Locals
 local emptyName = private.L.CategoryName.empty
 local junkName = private.L.CategoryName.sellable
 local newLine = false
+local working = false
 
 setfenv(1, private)
 ItemContainer = ItemContainer or { }
@@ -224,6 +226,8 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 				end
 			elseif(details.rarity == "empty") then
 				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
+			else
+				self:UpdateItem(item)
 			end
 		end
 		button:SetSize(itemSize)
@@ -233,12 +237,28 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 	end
 end
 
-local function sortItemsAndCreateButtons(self, groups, junk, empty)
-	local allButtons = { }
-	local itemButtons = { }
+local function sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
+	if (working) then 
+		log("sortGroupsAndReplaceIdsWithButtons() coroutine yielding...")
+		coroutine.yield() 
+	end
+	working = true
 	for name, items in pairs(groups) do
 		sort(items, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
 		replaceIdsWithButtons(self, items, allButtons, itemButtons, self.itemSize)
+		corout.check()
+	end
+	working = false
+end
+
+local function sortItemsAndCreateButtons(self, groups, junk, empty)
+	local allButtons = { }
+	local itemButtons = { }
+	if (Inspect.System.Secure()) then
+		corout(sortGroupsAndReplaceIdsWithButtons,"ImhoBags.sortItemsAndCreateButtons",self,groups,allButtons,itemButtons)  -- using coroutine to avoid performance warnings
+	else
+		Command.System.Watchdog.Quiet()
+		sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
 	end
 	if(#junk > 0) then
 		sort(junk, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
@@ -317,11 +337,26 @@ local function reset(self)
 	self.empty = { }
 end
 
+local function setButtonsInGroups(self,groups)
+	if (working) then 
+		log("setButtonsInGroups() coroutine yielding...")
+		coroutine.yield() 
+	end
+	working = true
+	for name, group in pairs(groups) do
+		group.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, group, self.itemSize, Const.ItemWindowCellSpacing)
+		corout.check()
+	end
+	working = false
+end
+
 -- Public methods
 -- ============================================================================
 
 -- Rebuild the item grouping and sorting information
 local function UpdateItems(self)
+	--print("UpdateItems()")
+	--reset(self)
 	self.width = self.parent:GetWidth()
 	local groups, junk, empty = self.getGroupAssociation(self.set, self.showEmptySlots)
 	
@@ -340,8 +375,11 @@ local function UpdateItems(self)
 	if(junk.frame) then
 		junk.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, junk, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
 	end
-	for name, group in pairs(groups) do
-		group.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, group, self.itemSize, Const.ItemWindowCellSpacing)
+	if (Inspect.System.Secure()) then
+		corout(setButtonsInGroups,"Imhobags.UpdateItems",self,groups)  -- using coroutine to avoid performance warnings
+	else
+		Command.System.Watchdog.Quiet()
+		setButtonsInGroups(self,groups)
 	end
 	self.groups = groups
 	self.junk = junk
@@ -378,7 +416,8 @@ local function UpdateItem(self, id)
 		duration = 0
 	end
 	local item = self.set.Items[id]
-	button:SetItem(item, item.slot, item.stack or 1, self.available, duration)
+	--print("UpdateItem() -- ID: " .. id .. " -- item.slot: " .. tostring(item.slot))
+	button:SetItem(item, item.slot, item.stack or 1, self.available, duration) 
 	if(button.item) then
 		button:SetFiltered(strfind(button.item.name, self.filter) == nil)
 	end
