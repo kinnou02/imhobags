@@ -10,6 +10,8 @@ local next = next
 local pairs = pairs
 local sort = table.sort
 local strfind = string.find
+local strlower = string.lower
+local strupper = string.upper
 local UtilityItemSlotParse = Utility.Item.Slot.Parse
 local corout = corout
 
@@ -416,10 +418,13 @@ local function UpdateItem(self, id)
 		duration = 0
 	end
 	local item = self.set.Items[id]
+	local pattern = string.gsub(self.filter, "%a", function(s)
+		return format("[%s%s]", strlower(s), strupper(s))
+	end)	
 	--print("UpdateItem() -- ID: " .. id .. " -- item.slot: " .. tostring(item.slot))
 	button:SetItem(item, item.slot, item.stack or 1, self.available, duration) 
 	if(button.item) then
-		button:SetFiltered(strfind(button.item.name, self.filter) == nil)
+		button:SetFiltered(strfind(button.item.name, pattern) == nil)
 	end
 end
 
@@ -429,9 +434,12 @@ local function SetSearchFilter(self, filter)
 			button:SetFiltered(false)
 		end
 	else
+		local pattern = string.gsub(filter, "%a", function(s)
+			return format("[%s%s]", strlower(s), strupper(s))
+		end)	
 		for button in pairs(self.allButtons) do
 			if(button.item) then
-				button:SetFiltered(strfind(button.item.name, filter) == nil)
+				button:SetFiltered(strfind(button.item.name, pattern) == nil)
 			end
 		end
 	end

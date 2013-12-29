@@ -5,6 +5,8 @@ FEATURES:
   experienced.  The methodology used will cause the imhothar bags animation
   used to look a bit different when in combat (this is an addon API limitation.)
   However, there is no functionality changes whatsoever with this feature.
+* The search box in the title bar will now search in the same way that the 
+  "search database" window has always worked: case-insensitive by item name.
 FIXES:
 * Fixed Guild Vault labels when sorting by 'bags'
 * Fixed a bug in which moving multiple stacks of items that have a "quantity"
