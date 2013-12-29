@@ -15,6 +15,7 @@ private.L = {
 	CategoryName = {
 		armor = "Armor",
 		consumable = "Consumables",
+		["consumable enchantment"] = "Item Enchantments",
 		container = "Containers",
 		crafting = "Crafting",
 		dimension = "Dimension",

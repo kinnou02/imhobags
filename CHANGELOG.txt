@@ -7,6 +7,8 @@ FEATURES:
   However, there is no functionality changes whatsoever with this feature.
 * The search box in the title bar will now search in the same way that the 
   "search database" window has always worked: case-insensitive by item name.
+* Item enchantments such as runes, whetstones, and insoles now have their
+  own category.
 FIXES:
 * Fixed Guild Vault labels when sorting by 'bags'
 * Fixed a bug in which moving multiple stacks of items that have a "quantity"
