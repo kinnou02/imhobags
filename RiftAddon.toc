@@ -13,7 +13,7 @@ Email = "amadeus@myself.com"
 -- 2.  Imhothar's email address is 'imhothar@freenet.de'.
 --------------------
 
-Version = "0.16beta2"
+Version = "0.17beta"
 Environment = "2.5"
 
 --@no-lib-strip@
@@ -108,7 +108,7 @@ SavedVariables = {
 
 -- Indicate which version the public API has
 publicAPI = 1
--- X-Curse-Packaged-Version: 0.16beta2
+-- X-Curse-Packaged-Version: 0.17beta
 -- X-Curse-Project-Name: Imhothar's Bags
 -- X-Curse-Project-ID: imhobags
 -- X-Curse-Repository-ID: rift/imhobags/mainline
