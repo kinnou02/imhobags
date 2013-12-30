@@ -239,16 +239,20 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 	end
 end
 
-local function sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
-	if (working) then 
-		log("sortGroupsAndReplaceIdsWithButtons() coroutine yielding...")
-		coroutine.yield() 
+local function sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons,inCoroutine)
+	if (inCoroutine) then
+		if (working) then 
+			log("sortGroupsAndReplaceIdsWithButtons() coroutine yielding...")
+			coroutine.yield() 
+		end
 	end
 	working = true
 	for name, items in pairs(groups) do
 		sort(items, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
 		replaceIdsWithButtons(self, items, allButtons, itemButtons, self.itemSize)
-		corout.check()
+		if (inCoroutine) then
+			corout.check()
+		end
 	end
 	working = false
 end
@@ -257,10 +261,10 @@ local function sortItemsAndCreateButtons(self, groups, junk, empty)
 	local allButtons = { }
 	local itemButtons = { }
 	if (Inspect.System.Secure()) then
-		corout(sortGroupsAndReplaceIdsWithButtons,"ImhoBags.sortItemsAndCreateButtons",self,groups,allButtons,itemButtons)  -- using coroutine to avoid performance warnings
+		corout(sortGroupsAndReplaceIdsWithButtons,"ImhoBags.sortItemsAndCreateButtons",self,groups,allButtons,itemButtons,true)  -- using coroutine to avoid performance warnings
 	else
 		Command.System.Watchdog.Quiet()
-		sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
+		sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons,false)
 	end
 	if(#junk > 0) then
 		sort(junk, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
@@ -339,15 +343,21 @@ local function reset(self)
 	self.empty = { }
 end
 
-local function setButtonsInGroups(self,groups)
-	if (working) then 
-		log("setButtonsInGroups() coroutine yielding...")
-		coroutine.yield() 
+local function setButtonsInGroups(self,groups,inCoroutine)
+	if (inCoroutine) then
+		if (working) then 
+			log("setButtonsInGroups() coroutine yielding...")
+			coroutine.yield() 
+		end
 	end
 	working = true
 	for name, group in pairs(groups) do
-		group.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, group, self.itemSize, Const.ItemWindowCellSpacing)
-		corout.check()
+		if (group ~= nil) then
+			group.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, group, self.itemSize, Const.ItemWindowCellSpacing)
+			if (inCoroutine) then
+				corout.check()
+			end
+		end
 	end
 	working = false
 end
@@ -378,10 +388,10 @@ local function UpdateItems(self)
 		junk.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, junk, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
 	end
 	if (Inspect.System.Secure()) then
-		corout(setButtonsInGroups,"Imhobags.UpdateItems",self,groups)  -- using coroutine to avoid performance warnings
+		corout(setButtonsInGroups,"Imhobags.UpdateItems",self,groups,true)  -- using coroutine to avoid performance warnings
 	else
 		Command.System.Watchdog.Quiet()
-		setButtonsInGroups(self,groups)
+		setButtonsInGroups(self,groups,false)
 	end
 	self.groups = groups
 	self.junk = junk
