@@ -257,10 +257,10 @@ local function sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemBut
 	working = false
 end
 
-local function sortItemsAndCreateButtons(self, groups, junk, empty)
+local function sortItemsAndCreateButtons(self, groups, junk, empty, secure)
 	local allButtons = { }
 	local itemButtons = { }
-	if (Inspect.System.Secure()) then
+	if (secure) then
 		corout(sortGroupsAndReplaceIdsWithButtons,"ImhoBags.sortItemsAndCreateButtons",self,groups,allButtons,itemButtons,true)  -- using coroutine to avoid performance warnings
 	else
 		Command.System.Watchdog.Quiet()
@@ -367,14 +367,13 @@ end
 
 -- Rebuild the item grouping and sorting information
 local function UpdateItems(self)
-	--print("UpdateItems()")
-	--reset(self)
+	local secure = Inspect.System.Secure()
 	self.width = self.parent:GetWidth()
 	local groups, junk, empty = self.getGroupAssociation(self.set, self.showEmptySlots)
 	
 	setupJunk(self, junk)
 	setupEmpty(self, empty)
-	sortItemsAndCreateButtons(self, groups, junk, empty)
+	sortItemsAndCreateButtons(self, groups, junk, empty, secure)
 	hideEmptyGroups(self, groups, junk, empty)
 	createNewGroups(self, groups)
 	local names, sizes, groupWidths = getGroupMetrics(self, groups)
@@ -387,7 +386,7 @@ local function UpdateItems(self)
 	if(junk.frame) then
 		junk.frame:SetButtons(Const.AnimationsDuration, self.allButtons, self.prevButtons, junk, Const.ItemWindowJunkButtonSize, Const.ItemWindowCellSpacing)
 	end
-	if (Inspect.System.Secure()) then
+	if (secure) then
 		corout(setButtonsInGroups,"Imhobags.UpdateItems",self,groups,true)  -- using coroutine to avoid performance warnings
 	else
 		Command.System.Watchdog.Quiet()
