@@ -34,8 +34,34 @@ end
 -- Sort two item types depending on their item rarity
 function Sort.Default.ByItemRarity(type1, type2)
 	local r1 = type1.rarity or "common"
+	local b1 = type1.bind or "N/A"
 	local r2 = type2.rarity or "common"
-	return rarityOrder[r1] > rarityOrder[r2]
+	local b2 = type2.bind or "N/A"
+	local s1 = 1
+	local s2 = 0
+	
+	----
+	-- Within each rarity type, place 'bind on pickup' items first, then items that are 'bind to account', then 'bind on equip' items, and then the remainder.
+	if (b1 == "pickup") then
+		s1 = rarityOrder[r1] + 0.1
+	elseif (b1 == "account") then
+		s1 = rarityOrder[r1] + 0.2
+	elseif (b1 == "equip") then
+		s1 = rarityOrder[r1] + 0.3
+	else
+		s1 = rarityOrder[r1]
+	end
+	if (b2 == "pickup") then
+		s2 = rarityOrder[r2] + 0.1
+	elseif (b2 == "account") then
+		s2 = rarityOrder[r2] + 0.2
+	elseif (b2 == "equip") then
+		s2 = rarityOrder[r2] + 0.3
+	else
+		s2 = rarityOrder[r2]
+	end
+
+	return s1 > s2
 end
 
 -- Sort two item types depending on their slot
