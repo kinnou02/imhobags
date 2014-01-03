@@ -1,4 +1,4 @@
-0.18beta (January 2013)
+0.18beta (January 2014)
 ---------
 FEATURES
 * When sorting items by "rarity", items will now sort first by rarity, then by 'bind' type, with
