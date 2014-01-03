@@ -378,6 +378,10 @@ local function createContent(content, parent, dy)
 		local options = content.options or { }
 		local pictures = { }
 		local isOption = #options > 0 and options[1][3] ~= nil
+		local secure = Inspect.System.Secure()
+		if not secure then
+			Command.System.Watchdog.Quiet()		-- avoid performance warnings when possible
+		end
 		for i = 1, #options do
 			pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
 			if(isOption) then
