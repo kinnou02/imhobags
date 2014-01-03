@@ -24,7 +24,16 @@ Ux.SearchWindow = frame
 frame:SetVisible(false)
 frame:SetTitle(L.Ux.WindowTitle.search)
 
-Ux.RiftWindowCloseButton.New(frame, function() filter.text:SetKeyFocus(false) frame:FadeOut() end)
+
+local function onSearchWindowClose()
+	filter.text:SetKeyFocus(false)
+	if (_G.ImhoBags_WindowInfo.SearchWindow) then
+		_G.ImhoBags_WindowInfo.SearchWindow.x = Ux.SearchWindow:GetLeft()
+		_G.ImhoBags_WindowInfo.SearchWindow.y = Ux.SearchWindow:GetTop()
+	end
+	frame:FadeOut()
+end
+Ux.RiftWindowCloseButton.New(frame, onSearchWindowClose)
 
 border:EventAttach(Event.UI.Input.Mouse.Left.Down, function(self)
 	local mouse = Inspect.Mouse()
@@ -234,6 +243,16 @@ Command.Event.Attach(Event.System.Update.Begin, eventSystemUpdateBegin, "SearchW
 -- ============================================================================
 
 function frame:Show()
+	local info = _G.ImhoBags_WindowInfo.SearchWindow
+	if(info) then
+		Ux.SearchWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
+	else
+		Ux.centerWindow(Ux.SearchWindow)
+		_G.ImhoBags_WindowInfo.SearchWindow = {
+			x = Ux.SearchWindow:GetLeft(),
+			y = Ux.SearchWindow:GetTop(),
+		}
+	end
 	frame:FadeIn()
 	filter.text:SetText("")
 	filter.text:SetKeyFocus(true)
@@ -247,6 +266,8 @@ function frame:Toggle()
 	elseif(self:FadingOut()) then
 		self:Show()
 	else
+		_G.ImhoBags_WindowInfo.SearchWindow.x = Ux.SearchWindow:GetLeft()
+		_G.ImhoBags_WindowInfo.SearchWindow.y = Ux.SearchWindow:GetTop()
 		self:FadeOut()
 	end
 end

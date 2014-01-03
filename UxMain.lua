@@ -20,12 +20,6 @@ Ux.TooltipContext:SetStrata("topmost")
 -- Private methods
 -- ============================================================================
 
-local function centerWindow(window)
-	local screenWidth = UIParent:GetWidth()
-	local screenHeight = UIParent:GetHeight()
-	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor((screenWidth - window:GetWidth()) / 2), math.floor((screenHeight - window:GetHeight()) / 2))
-end
-
 local function storageLoaded(handle)
 	_G.ImhoBags_WindowInfo = _G.ImhoBags_WindowInfo or {
 		ItemContainer = { }
@@ -45,11 +39,18 @@ local function savedVariablesSaveBegin(handle, identifier)
 		return
 	end
 	
+	-- Set Version
 	_G.ImhoBags_WindowInfo.version = 0.16
-	_G.ImhoBags_WindowInfo.SearchWindow = {
-		x = Ux.SearchWindow:GetLeft(),
-		y = Ux.SearchWindow:GetTop(),
-	}
+	
+	if not _G.ImhoBags_WindowInfo.SearchWindow then
+		if Ux.SearchWindow:GetVisible() then
+			_G.ImhoBags_WindowInfo.SearchWindow = {
+				x = Ux.SearchWindow:GetLeft(),
+				y = Ux.SearchWindow:GetTop(),
+			}
+		end
+	end
+	
 	if(type(Ux.ConfigWindow) ~= "function") then
 		_G.ImhoBags_WindowInfo.ConfigWindow = {
 			x = Ux.ConfigWindow:GetLeft(),
@@ -63,7 +64,13 @@ local function savedVariablesSaveBegin(handle, identifier)
 	end
 end
 
-local function toggleFade(self)
+Command.Event.Attach(Event.Addon.SavedVariables.Save.Begin, savedVariablesSaveBegin, "savedVariablesSaveBegin")
+Command.Event.Attach(Event.ImhoBags.Private.StorageLoaded, storageLoaded, "storageLoaded")
+
+-- Public methods
+-- ============================================================================
+
+function Ux.toggleFade(self)
 	if(not self:GetVisible()) then
 		self:FadeIn()
 	elseif(self:FadingOut()) then
@@ -73,11 +80,11 @@ local function toggleFade(self)
 	end
 end
 
-Command.Event.Attach(Event.Addon.SavedVariables.Save.Begin, savedVariablesSaveBegin, "savedVariablesSaveBegin")
-Command.Event.Attach(Event.ImhoBags.Private.StorageLoaded, storageLoaded, "storageLoaded")
-
--- Public methods
--- ============================================================================
+function Ux.centerWindow(window)
+	local screenWidth = UIParent:GetWidth()
+	local screenHeight = UIParent:GetHeight()
+	window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", math.floor((screenWidth - window:GetWidth()) / 2), math.floor((screenHeight - window:GetHeight()) / 2))
+end
 
 function Ux.ToggleItemWindow(character, location)
 	local window = Ux.ItemWindow[location]
@@ -120,12 +127,12 @@ function Ux.ToggleConfigWindow()
 		if(info) then
 			Ux.ConfigWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", info.x, info.y)
 		else
-			centerWindow(Ux.ConfigWindow)
+			Ux.centerWindow(Ux.ConfigWindow)
 		end
 		Ux.ConfigWindow:SetVisible(false)
 		Ux.ConfigWindow:FadeIn()
 	else
-		toggleFade(Ux.ConfigWindow)
+		Ux.toggleFade(Ux.ConfigWindow)
 	end
 end
 
@@ -135,6 +142,6 @@ function Ux.ToggleMenuWindow()
 		Ux.MenuWindow:SetVisible(false)
 		Ux.MenuWindow:FadeIn()
 	else
-		toggleFade(Ux.MenuWindow)
+		Ux.toggleFade(Ux.MenuWindow)
 	end
 end
