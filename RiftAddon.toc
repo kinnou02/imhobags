@@ -13,7 +13,7 @@ Email = "amadeus@myself.com"
 -- 2.  Imhothar's email address is 'imhothar@freenet.de'.
 --------------------
 
-Version = "0.17beta2"
+Version = "0.18beta"
 Environment = "2.5"
 
 --@no-lib-strip@
@@ -21,7 +21,6 @@ Embed = {
 	["libs/LibAnimate"] = true,
 	["libs/LibAsyncTextures"] = true,
 	["libs/LibString"] = true,
-	["libs/Corout"] = true,
 }
 --@end-no-lib-strip@
 
@@ -29,7 +28,6 @@ Dependencies = {
 	LibAnimate = { "required", "before" },
 	LibAsyncTextures = { "required", "before" },
 	LibString = { "required", "before" },
-	Corout = { "required", "before" },
 }
 
 RunOnStartup = {

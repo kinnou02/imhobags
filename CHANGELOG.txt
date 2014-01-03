@@ -1,3 +1,19 @@
+0.18beta (January 2013)
+---------
+FEATURES
+* When sorting items by "rarity", items will now sort first by rarity, then by 'bind' type, with
+  "bind on pickup" items first, then items that are "bind to account", followed by "bind on equip" 
+  items, and finally the rest.
+FIXES:
+* The SearchWindow will now open in the center of the screen on first use.  It will also properly
+  save its location for future use when the window is closed or you logout/exit game/reloadui.
+* Fix for "attempt to call method ''MoveToGrid'' (a nil value)" error.  It appears that the code
+  intended to reduce performance warnings was not 100% successful.  "Performance warning" errors
+  should still be greatly reduced when NOT in combat.  However, fixes for performance warning errors
+  while in combat (i.e., when the system is "secure") is forthcoming.
+* Added code to reduce 'performance warning' errors when opening the Configuration Window.
+
+
 0.17beta (December 2013)
 ---------
 FEATURES:
