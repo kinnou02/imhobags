@@ -89,7 +89,7 @@ end
 function Ux.ToggleItemWindow(character, location)
 	local window = Ux.ItemWindow[location]
 	if(window) then
-		toggleFade(window)
+		Ux.toggleFade(window)
 		if(window:FadingIn()) then
 			if(location == "guildbank") then
 				window:SetGuild(Item.Storage.FindGuild(character))
