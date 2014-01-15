@@ -61,6 +61,10 @@ function Sort.Default.ByItemRarity(type1, type2)
 		s2 = rarityOrder[r2]
 	end
 
+	if (s1 == s2) then
+		return type1.name < type2.name
+	end
+	
 	return s1 > s2
 end
 
