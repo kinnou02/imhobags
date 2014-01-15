@@ -277,10 +277,12 @@ end
 
 local function DropCursorItem(self)
 	if(showsPlayerSet(self) and self.available) then
-		local slot = next(self.playerSet.Empty)
-		if(slot) then
-			ItemHandler.Standard.Drop(slot)
-			return
+		if self.playerSet.Empty then
+			local slot = next(self.playerSet.Empty)
+			if(slot) then
+				ItemHandler.Standard.Drop(slot)
+				return
+			end
 		end
 	end
 	Command.Cursor(nil)
