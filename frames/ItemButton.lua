@@ -191,16 +191,18 @@ end
 local function ShowTooltip(self)
 	if(self.tooltip) then
 		local target
-		if(not self.item.type) then
-			local mouse = Inspect.Mouse()
-			Ux.TooltipEnhancer:ClearAll()
-			Ux.TooltipEnhancer:SetText(self.item.name)
-			Ux.TooltipEnhancer:SetVisible(true)
-			Ux.TooltipEnhancer:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", mouse.x, mouse.y)
---		elseif(self.locked) then
---			target = self.item.type
-		else
-			target = self.item.id or self.item.type
+		if type(self.item) == "table" then
+			if(not self.item.type) then
+				local mouse = Inspect.Mouse()
+				Ux.TooltipEnhancer:ClearAll()
+				Ux.TooltipEnhancer:SetText(self.item.name)
+				Ux.TooltipEnhancer:SetVisible(true)
+				Ux.TooltipEnhancer:SetPoint("BOTTOMRIGHT", UIParent, "TOPLEFT", mouse.x, mouse.y)
+	--		elseif(self.locked) then
+	--			target = self.item.type
+			else
+				target = self.item.id or self.item.type
+			end
 		end
 		Command.Tooltip(target)
 	end
