@@ -223,7 +223,7 @@ local function eventItemUpdate(handle, items)
 end
 
 local function applyGuildRank(rank)
-	local vaultAccess = InspectGuildRankDetail(rank).vaultAccess
+	local vaultAccess = InspectGuildRankDetail(rank).vaultAccess or { }
 	
 	-- Delete item data for vaults we have no longer access to
 	for slot in pairs(guild.vault) do
