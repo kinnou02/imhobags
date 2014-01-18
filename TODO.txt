@@ -1,3 +1,5 @@
+IMHOTHAR
+--------
 - new item highlights
 - cooldowns
 - Unusable: red
@@ -7,3 +9,8 @@
 - mail
 - menu
 - stacking
+
+
+AMADEUS
+-------
+* Check "SetNeedsLayout()" in Display.lua.  Currently it sets needsUpdate rather than needsLayout.  Is this correct/appropriate/bug?
