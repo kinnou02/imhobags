@@ -135,19 +135,44 @@ local function eventCurrency(self, currencies)
 end
 
 local function systemUpdateBegin(self)
+	local now = Inspect.Time.Frame()
 	if(self.needsUpdate) then
-		self.needsUpdate = false
-		self.needsLayout = false
-		local height = self.layouter:UpdateItems()
-		self:SetHeight(height)
-		self:changeCallback({ height = height })
+		if (Const.UpdateItemsTimerInterval == 0) then		-- ignore new code and work as before
+			self.needsUpdate = false
+			self.needsLayout = false
+			local height = self.layouter:UpdateItems()
+			self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
+			self:SetHeight(height)
+			self:changeCallback({ height = height })
+		elseif (now < (self.updateItemsTimer + Const.UpdateItemsTimerInterval)) then
+			self.needsUpdate = false
+			self.needsLayout = false
+			self.updateItemsTimer = now
+			self.forceUpdateItems = true
+		else
+			self.updateItemsTimer = now
+			self.needsUpdate = false
+			self.needsLayout = false
+			local height = self.layouter:UpdateItems()
+			self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
+			self:SetHeight(height)
+			self:changeCallback({ height = height })
+		end
+	elseif self.forceUpdateItems then
+		if (now >= (self.updateItemsTimer + Const.UpdateItemsTimerInterval)) then
+			local height = self.layouter:UpdateItems()
+			self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
+			self:SetHeight(height)
+			self:changeCallback({ height = height })
+			self.forceUpdateItems = false
+		end
 	elseif(self.needsLayout) then
 		self.needsLayout = false
 		local height = self.layouter:UpdateLayout()
+		self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
 		self:SetHeight(height)
 		self:changeCallback({ height = height })
 	end
-	local now = Inspect.Time.Frame()
 	if(now >= self.nextItemDetailQuery and (next(self.unknownItemDetails))) then
 		self.nextItemDetailQuery = now + Const.ItemDisplayQueryInterval
 		self.unknownItemDetails = self.set:ResolveUnknownItems(self.unknownItemDetails, function(id) updateButton(self, id) end)
@@ -309,6 +334,8 @@ function ItemContainer.Display(parent, location, config, changeCallback)
 	self.changeCallback = changeCallback
 	self.location = location
 	self.nextItemDetailQuery = 0
+	self.updateItemsTimer = 0
+	self.forceUpdateItems = false
 	
 	self.DropCursorItem = DropCursorItem
 	self.FillConfig = FillConfig
