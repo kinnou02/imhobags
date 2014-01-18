@@ -10,7 +10,6 @@ Const = {
 	ItemButtonUnavailableAlpha = 0.5,
 	
 	ItemDisplayQueryInterval = 0.5,
-	UpdateItemsTimerInterval = 0,
 	
 	ItemWindowCellSpacing = 2,
 	ItemWindowDefaultColumns = 8, -- Starting size for new windows

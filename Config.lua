@@ -8,6 +8,7 @@ local defaults = {
 	condensed = true,
 	enhanceTooltips = true,
 	showBoundIcon = true,
+	updateItemsTimerInterval = 0,
 }
 
 -- Contains valid values for string/int
@@ -70,6 +71,10 @@ local function set(t, k, v)
 		setBoolean(k, v)
 	elseif(type(defaults[k]) == "string") then
 		setString(k, v)
+	elseif(type(defaults[k]) == "number") then
+		ImhoBags_Config[k] = tonumber(v)
+	elseif(type(defaults[k]) == "table") then
+		ImhoBags_Config[k] = v		
 	end
 	private.Trigger.Config(k, ImhoBags_Config[k])
 end

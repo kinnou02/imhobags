@@ -1,3 +1,20 @@
+0.19beta (January 2014)
+---------
+FEATURES
+* When sorting by 'rarity' the items with the same 'bind' and 'rarity' will then be sorted by name.
+* Added new configuration option in the config window under 'extras':  "This setting allows you to 
+  select the number of seconds the addon waits (after an inventory change) before updating the window.  
+  When this value is greater than zero, the addon will update immediately on the first inventory change 
+  and then will not update again until # seconds has elapsed without any other inventory changes.   
+  (This setting is especially useful for players who move large amounts of items from one window to 
+  another and are frustrated by categories shifting between moves.)"   This is an advanced setting
+  and the default value is 0.
+FIXES:
+* Leatherworking materials (hides, bones, leather, etc.) should now once again be sorted into 
+  their own category.
+* Fixed a number of reported errors (primarily attempts at indexing nil or non-table variables)
+
+
 0.18beta (January 2014)
 ---------
 FEATURES

@@ -5,6 +5,7 @@ local contentPanePaddingLeft = 140
 local contentPanePaddingRight = 25
 local headingColor = { 216 / 255, 203 / 255, 153 / 255 }
 local accountBoundColor = { 251 / 255, 242 / 255, 142 / 255 }
+local textfields = { }
 
 setfenv(1, private)
 Ux = Ux or { }
@@ -72,6 +73,14 @@ local topPanes = {
 				height = 87,
 				options = {
 					{ true, "textures/ConfigWindow/showEmptySlots.png", "/imhobags showEmptySlots yes/no" },
+				},
+			},
+			{
+				description = "This setting allows you to select the number of seconds the addon waits (after an inventory change) before updating the window.  When this value is greater than zero, the addon will update immediately on the first inventory change and then will not update again until # seconds has elapsed without any other inventory changes.   (This setting is especially useful for players who move large amounts of items from one window to another and are frustrated by categories shifting between moves.)  \n[Advanced Setting] [Default = 0]",
+				config = "updateItemsTimerInterval",
+				height = 20,
+				options = {
+					{ 0, "TEXTFIELD", "/imhobags updateItemsTimerInterval #" },
 				},
 			},
 		},
@@ -382,32 +391,63 @@ local function createContent(content, parent, dy)
 		if not secure then
 			Command.System.Watchdog.Quiet()		-- avoid performance warnings when possible
 		end
-		for i = 1, #options do
-			pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
-			if(isOption) then
-				pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
+		if #options > 0 and options[1][2] == "TEXTFIELD" then
+			local tfFrame = UI.CreateFrame("Frame", "", parent)
+			tfFrame:SetPoint("TOPLEFT", description, "BOTTOMLEFT", 4, 4)
+			tfFrame:SetWidth(30)
+			tfFrame:SetHeight(20)
+			tfFrame:SetBackgroundColor(0.1, 0.1, 0.1, 0.8)
+			tfFrame:SetMouseMasking('limited')
+
+			local textfield = UI.CreateFrame("RiftTextfield","",tfFrame)
+			textfield:SetPoint("TOPLEFT", tfFrame, "TOPLEFT", 2, 2)
+			textfield:SetBackgroundColor(0.1, 0.1, 0.1, 0.8)
+			textfield:SetText(tostring(Config[content.config]))
+			textfield:SetWidth(30)
+			textfield:SetHeight(20)
+			textfield:EventAttach(Event.UI.Textfield.Change, 
+				function(self) 
+					if (type(Config[content.config]) == 'number') then				-- if it should be a number, force it to be a number or last value/default
+						local textfieldvalue = tonumber(textfield:GetText())
+						if textfieldvalue == nil then textfieldvalue = Config[content.config] end
+						Config[content.config] = textfieldvalue
+						textfield:SetText(tostring(textfieldvalue))
+					else
+						Config[content.config] = textfield:GetText()			
+					end 
+				end, 
+			"" )
+			textfields[#textfields + 1] = textfield
+		else 
+			for i = 1, #options do
+				pictures[i] = createHighlightedTexture(parent, content.options[i][2], content.options[i][3])
+				if(isOption) then
+					pictures[i]:SetChecked(Config[content.config] == content.options[i][1])
+				end
 			end
-		end
-		if(#pictures == 1) then
-			pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
-			if(isOption) then
-				pictures[1]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = not self:GetChecked() end, "")
-			end
-		elseif(#pictures == 2) then
-			pictures[1]:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
-			pictures[2]:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
-			if(isOption) then
-				pictures[1]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = content.options[1][1] end, "")
-				pictures[2]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = content.options[2][1] end, "")
+			if(#pictures == 1) then
+				pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
+				if(isOption) then
+					pictures[1]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = not self:GetChecked() end, "")
+				end
+			elseif(#pictures == 2) then
+				pictures[1]:SetPoint("TOPLEFT", description, "BOTTOMLEFT")
+				pictures[2]:SetPoint("TOPRIGHT", description, "BOTTOMRIGHT")
+				if(isOption) then
+					pictures[1]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = content.options[1][1] end, "")
+					pictures[2]:EventAttach(Event.UI.Input.Mouse.Left.Click, function(self) Config[content.config] = content.options[2][1] end, "")
+				end
 			end
 		end
 
 		if(isOption) then
 			ImhoEvent.Config[#ImhoEvent.Config + 1] = { function(k, v)
 				if(k == content.config) then
-					for i = 1, #pictures do
-						pictures[i]:SetChecked(v == content.options[i][1])
-					end
+					if content.options[1][2] ~= "TEXTFIELD" then
+						for i = 1, #pictures do
+							pictures[i]:SetChecked(v == content.options[i][1])
+						end
+					end					
 				end
 			end , Addon.identifier, "" }
 		end
@@ -437,6 +477,13 @@ local function createPane(pane, parent)
 	content.offset = 0
 	return content
 end
+
+local function closeConfigWindow()
+	for _,textfield in pairs(Ux.ConfigWindow.textfields) do
+		textfield:SetKeyFocus(false)
+	end
+	Ux.ConfigWindow:FadeOut()
+end
 	
 -- Public methods
 -- ============================================================================
@@ -451,7 +498,7 @@ function Ux.ConfigWindow()
 	self.showSlashTooltips = false
 	
 	-- Close button
-	Ux.RiftWindowCloseButton.New(self, self, true)
+	Ux.RiftWindowCloseButton.New(self, closeConfigWindow)
 	
 	-- Section headline
 	self.heading = UI.CreateFrame("Text", "", self)
@@ -509,6 +556,9 @@ function Ux.ConfigWindow()
 	self.buttons[1]:SetEnabled(false)
 	self.panes[1]:SetVisible(true)
 	self.heading:SetText(string.upper(self.buttons[1]:GetText()))
+	
+	-- all textfields (so that the addon can ensure no key focus when window closes.)
+	self.textfields = textfields
 	
 	-- Get rid of the no longer needed tables
 	topPanes = nil

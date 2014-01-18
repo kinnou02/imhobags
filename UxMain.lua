@@ -132,6 +132,9 @@ function Ux.ToggleConfigWindow()
 		Ux.ConfigWindow:SetVisible(false)
 		Ux.ConfigWindow:FadeIn()
 	else
+		for _,textfield in pairs(Ux.ConfigWindow.textfields) do
+			textfield:SetKeyFocus(false)
+		end
 		Ux.toggleFade(Ux.ConfigWindow)
 	end
 end

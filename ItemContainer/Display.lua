@@ -137,14 +137,14 @@ end
 local function systemUpdateBegin(self)
 	local now = Inspect.Time.Frame()
 	if(self.needsUpdate) then
-		if (Const.UpdateItemsTimerInterval == 0) then		-- ignore new code and work as before
+		if (Config.updateItemsTimerInterval == 0) then		-- ignore new code and work as before
 			self.needsUpdate = false
 			self.needsLayout = false
 			local height = self.layouter:UpdateItems()
-			self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
+			self.updateItemsTimer = now + Config.updateItemsTimerInterval
 			self:SetHeight(height)
 			self:changeCallback({ height = height })
-		elseif (now < (self.updateItemsTimer + Const.UpdateItemsTimerInterval)) then
+		elseif (now < (self.updateItemsTimer + Config.updateItemsTimerInterval)) then
 			self.needsUpdate = false
 			self.needsLayout = false
 			self.updateItemsTimer = now
@@ -154,14 +154,14 @@ local function systemUpdateBegin(self)
 			self.needsUpdate = false
 			self.needsLayout = false
 			local height = self.layouter:UpdateItems()
-			self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
+			self.updateItemsTimer = now + Config.updateItemsTimerInterval
 			self:SetHeight(height)
 			self:changeCallback({ height = height })
 		end
 	elseif self.forceUpdateItems then
-		if (now >= (self.updateItemsTimer + Const.UpdateItemsTimerInterval)) then
+		if (now >= (self.updateItemsTimer + Config.updateItemsTimerInterval)) then
 			local height = self.layouter:UpdateItems()
-			self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
+			self.updateItemsTimer = now + Config.updateItemsTimerInterval
 			self:SetHeight(height)
 			self:changeCallback({ height = height })
 			self.forceUpdateItems = false
@@ -169,7 +169,6 @@ local function systemUpdateBegin(self)
 	elseif(self.needsLayout) then
 		self.needsLayout = false
 		local height = self.layouter:UpdateLayout()
-		self.updateItemsTimer = now + Const.UpdateItemsTimerInterval
 		self:SetHeight(height)
 		self:changeCallback({ height = height })
 	end
