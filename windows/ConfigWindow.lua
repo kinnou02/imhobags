@@ -76,7 +76,7 @@ local topPanes = {
 				},
 			},
 			{
-				description = "This setting allows you to select the number of seconds the addon waits (after an inventory change) before updating the window.  When this value is greater than zero, the addon will update immediately on the first inventory change and then will not update again until # seconds has elapsed without any other inventory changes.   (This setting is especially useful for players who move large amounts of items from one window to another and are frustrated by categories shifting between moves.)  \n[Advanced Setting] [Default = 0]",
+				description = L.Ux.ConfigWindow.updateItemsTimerInterval,
 				config = "updateItemsTimerInterval",
 				height = 20,
 				options = {
