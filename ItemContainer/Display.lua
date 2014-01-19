@@ -137,11 +137,10 @@ end
 local function systemUpdateBegin(self)
 	local now = Inspect.Time.Frame()
 	if(self.needsUpdate) then
-		if (Config.updateItemsTimerInterval == 0) then		-- ignore new code and work as before
+		if (Config.updateItemsTimerInterval == 0) then		-- ignore new code and work as before/default (i.e., no update delay)
 			self.needsUpdate = false
 			self.needsLayout = false
 			local height = self.layouter:UpdateItems()
-			self.updateItemsTimer = now + Config.updateItemsTimerInterval
 			self:SetHeight(height)
 			self:changeCallback({ height = height })
 		elseif (now < (self.updateItemsTimer + Config.updateItemsTimerInterval)) then
