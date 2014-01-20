@@ -237,7 +237,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 	end
 end
 
-local function sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
+local function sortItemsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
 	for name, items in pairs(groups) do
 		sort(items, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
 		replaceIdsWithButtons(self, items, allButtons, itemButtons, self.itemSize)
@@ -250,7 +250,7 @@ local function sortItemsAndCreateButtons(self, groups, junk, empty, secure)
 	if not secure then
 		Command.System.Watchdog.Quiet()
 	end
-	sortGroupsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
+	sortItemsAndReplaceIdsWithButtons(self,groups,allButtons,itemButtons)
 	if(#junk > 0) then
 		sort(junk, function(a, b) return self.sortFunc(self.set.Items[a], self.set.Items[b]) end)
 		replaceIdsWithButtons(self, junk, allButtons, itemButtons, Const.ItemWindowJunkButtonSize)
@@ -299,7 +299,15 @@ local function getGroupMetrics(self, groups)
 	for group in pairs(groups) do
 		names[#names + 1] = group
 	end
-	sort(names)
+	if(self.layout == "default") then
+		local categoryOrderList = { }
+		if Config.categoryOrderList then
+			categoryOrderList = Config.categoryOrderList
+		end
+		names = Group.Default.SortCategoryNames(names,categoryOrderList)  -- will sort alphabetically if no custom category sorting has been defined.
+	else
+		sort(names)
+	end
 	for i = 1, #names do
 		sizes[i] = #groups[names[i]]
 		groupWidths[i] = groups[names[i]].frame:GetMinWidth()
@@ -402,6 +410,9 @@ local function UpdateItem(self, id)
 		duration = 0
 	end
 	local item = self.set.Items[id]
+	if (not item) then
+		return
+	end
 	local pattern = string.gsub(self.filter, "%a", function(s)
 		return format("[%s%s]", strlower(s), strupper(s))
 	end)	

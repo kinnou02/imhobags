@@ -42,6 +42,14 @@ local function savedVariablesSaveBegin(handle, identifier)
 	-- Set Version
 	_G.ImhoBags_WindowInfo.version = 0.16
 	
+	if not _G.ImhoBags_WindowInfo.SetCategorySortWindow then
+		if Ux.SetCategorySortWindow:GetVisible() then
+			_G.ImhoBags_WindowInfo.SetCategorySortWindow = {
+				x = Ux.SetCategorySortWindow:GetLeft(),
+				y = Ux.SetCategorySortWindow:GetTop(),
+			}
+		end
+	end
 	if not _G.ImhoBags_WindowInfo.SearchWindow then
 		if Ux.SearchWindow:GetVisible() then
 			_G.ImhoBags_WindowInfo.SearchWindow = {

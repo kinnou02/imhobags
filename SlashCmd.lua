@@ -35,6 +35,12 @@ local function slashMain(handle, args)
 		return
 	end
 	
+	-- /imhobags SetSort
+	if(arg1 == "SetCategorySortOrder") then
+		Ux.SetCategorySortWindow:Toggle()
+		return
+	end
+	
 	-- /imhobags menu
 	if(arg1 == "menu") then
 		Ux.ToggleMenuWindow()
