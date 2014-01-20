@@ -8,6 +8,8 @@ local defaults = {
 	condensed = true,
 	enhanceTooltips = true,
 	showBoundIcon = true,
+	categoryList = { },
+	categoryOrderList = { },
 	updateItemsTimerInterval = 0,
 }
 

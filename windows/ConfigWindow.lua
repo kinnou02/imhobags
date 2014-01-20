@@ -54,6 +54,17 @@ local topPanes = {
 					{ true, "textures/ConfigWindow/autoOpen.png", "/imhobags autoOpen yes/no" },
 				},
 			},
+			{
+				description = L.Ux.ConfigWindow.setCategorySort,
+				config = {
+					Type = "toggleWindow",
+					window = "Ux.SetCategorySortWindow",
+				},
+				height = 150,
+				options = {
+					{ nil, "textures/ConfigWindow/setCategorySort.png", "/imhobags SetCategorySortOrder" },
+				},
+			},			
 		},
 	},
 	{
@@ -391,7 +402,19 @@ local function createContent(content, parent, dy)
 		if not secure then
 			Command.System.Watchdog.Quiet()		-- avoid performance warnings when possible
 		end
-		if #options > 0 and options[1][2] == "TEXTFIELD" then
+		if (type(content.config) == "table") then
+			if (content.config.Type == "toggleWindow") then
+				pictures[1] = createHighlightedTexture(parent, content.options[1][2], content.options[1][3])
+				pictures[1]:SetPoint("TOPCENTER", description, "BOTTOMCENTER")
+				pictures[1]:EventAttach(Event.UI.Input.Mouse.Left.Click, 
+					function(self) 
+						if (content.config.window == "Ux.SetCategorySortWindow") then
+							Ux.SetCategorySortWindow:Toggle() 
+						end
+					end, 
+				"")
+			end
+		elseif #options > 0 and options[1][2] == "TEXTFIELD" then
 			local tfFrame = UI.CreateFrame("Frame", "", parent)
 			tfFrame:SetPoint("TOPLEFT", description, "BOTTOMLEFT", 4, 4)
 			tfFrame:SetWidth(30)
