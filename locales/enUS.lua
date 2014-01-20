@@ -152,6 +152,7 @@ Available config options:
 			quest = "Quest",
 			search = "Search Database",
 			wardrobe = "Wardrobe",
+			CategorySort = "Category Sort",
 		},
 		Tooltip = {
 			character = "Character",
@@ -189,8 +190,10 @@ Available config options:
 			condensed = "Choose whether multiple full stacks of the same item are condensed into one button or whether each stack is displayed separately.",
 			itemButtonSkin = "Choose how item buttons should be rendered. The left option requires more resources than the right one but looks better. If you play with a very low UI scale the right button skin might look better. Note that changes to this option require a /reloadui before becoming effective.",
 			autoOpen = "Choose whether the ImhoBags inventory or bank windows should automatically open and close when the respective Trion windows are opened and closed.",
+			setCategorySort = "Click the image below to open the 'Set Category Sort Order' window.  This feature will allow you to customize how categories are sorted within the imhobags inventory windows.",
 			enhanceTooltips = "Choose whether you want item tooltips to be extended with additional information showing you which of your characters already own the displayed item.",
 			showEmptySlots = "Choose whether you want a counter displayed on top of your bags bar showing how many empty item slots remain in your backpack.",
+			updateItemsTimerInterval = "The following (advanced) setting allows you to select the number of seconds the addon waits (after an inventory change) before updating the window.  When this value is greater than zero, imhobags will update immediately on the first inventory change and then will not update again until # seconds has elapsed without any other inventory changes.   (This setting is especially useful for players who move large amounts of items from one window to another and are frustrated by categories shifting between moves.)  \n[Default = 0]",
 			showBoundIcon = "Display a small indicator over the icons of soul- and account-bound items. A blue icon indicates soul-bound items, the red/blue tinted account-bound ones.",
 			titleBar = {
 				description = "The title bar contains options with which you can customize the appearance of items. Most of the buttons are hidden by default. To make them visible simply move your cursor over the top area. These options are saved separately for each item window and character, making it possible to have different appearances and behavior in every ImhoBags item window.",
@@ -233,6 +236,19 @@ Available config options:
 			onebag = {
 				description = "If you prefer the \"all-in-one\" display without any grouping or sorting, then the following options make ImhoBags behave exactly like that:",
 			},
+		},
+		
+		-- All text for the SetCategorySortWindow goes here
+		SetCategorySortWindow = {    
+			instructions = "Choose your preferred sorting order for\nitem categories.",
+			catSortOrderNotValidMsg1 = "The value provided for category\n '%s' (%s) is not valid.\n\nPlease choose a number between 1 and %d.",
+			catSortOrderNotValidMsg2 = "The value provided for category\n '%s' (%s) has already been used.\n\nPlease choose a unique number between 1 and %d\nfor each category.",
+		},
+		
+		-- All text for the PopupWindow goes here
+		PopupWindow = {
+			ok = "OK",
+			cancel = "CANCEL",
 		},
 	},
 }
