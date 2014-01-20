@@ -13,7 +13,7 @@ Email = "amadeus@myself.com"
 -- 2.  Imhothar's email address is 'imhothar@freenet.de'.
 --------------------
 
-Version = "0.18beta3"
+Version = "0.18beta4"
 Environment = "2.5"
 
 --@no-lib-strip@
@@ -21,6 +21,7 @@ Embed = {
 	["libs/LibAnimate"] = true,
 	["libs/LibAsyncTextures"] = true,
 	["libs/LibString"] = true,
+	["libs/LibItemList"] = true,
 }
 --@end-no-lib-strip@
 
@@ -28,6 +29,7 @@ Dependencies = {
 	LibAnimate = { "required", "before" },
 	LibAsyncTextures = { "required", "before" },
 	LibString = { "required", "before" },
+	LibItemList = { "required", "before" },
 }
 
 RunOnStartup = {
@@ -89,6 +91,8 @@ RunOnStartup = {
 	"windows/MoneySummaryWindow.lua",
 	"windows/TooltipEnhancer.lua",
 	"windows/SearchWindow.lua",
+	"windows/SetCategorySortWindow.lua",
+	"windows/PopupWindow.lua",
 	
 	"SlashCmd.lua",
 }

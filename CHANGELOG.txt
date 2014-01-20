@@ -9,6 +9,10 @@ FEATURES
   (This setting is especially useful for players who move large amounts of items from one window to 
   another and are frustrated by categories shifting between moves.)"   This is an advanced setting
   and the default value is 0.
+* Added ability to customize the sort order of categories within the inventory windows (currently,
+  categories are sorted alphabetically.)   To utilize this feature, go to the configuration window,
+  click the 'behaivor' button, and then click the 'category sort' window photo.   For a demonstration,
+  please see http://www.youtube.com/watch_popup?v=GTL-E9hprGE&vq=hd1080
 FIXES:
 * Leatherworking materials (hides, bones, leather, etc.) should now once again be sorted into 
   their own category.
