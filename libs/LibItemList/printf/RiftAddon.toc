@@ -1,0 +1,23 @@
+Identifier = "printf"
+
+Version = "0.2-130712-20:34:14"
+
+Email = "riftaddons@seebs.net"
+
+Name = {
+  English = "printf",
+  French = "printf",
+  German = "printf",
+}
+NameShort = "printf"
+
+Description = {
+  English = "Provides sprintf(), printf(), and cprintf() functions."
+}
+
+RunOnStartup = {
+  "printf.lua"
+}
+
+Environment = { "1.11" }
+

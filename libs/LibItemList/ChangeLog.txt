@@ -1,0 +1,12 @@
+2013/07/12:
+	* New event model handling
+	* 2.3 TOC
+	* Version bump (0.3)
+
+2012/10/31:
+	* Switch to printf
+	* 1.11 TOC
+
+2012/06/22:
+	* Start tracking changes.
+
