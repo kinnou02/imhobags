@@ -93,17 +93,17 @@ local function ApplyButton_leftclick()
 		
 		-----------------
 		-- sanity checks
-		if (category_order == nil or tonumber(category_order) < 1 or tonumber(category_order) > #categoryList) then
+		if (category_order == nil or tonumber(category_order) == nill or tonumber(category_order) < 1 or tonumber(category_order) > #categoryList) then
 			local message = string.format(L.Ux.SetCategorySortWindow.catSortOrderNotValidMsg1, category_name, category_order, #categoryList)
 			Ux.DoPopup(1,message)
-			textField:SetText("1")
+			textField:SetText("")
 			textField:SetKeyFocus(false)
 			return
 		end
 		if (used[category_order] == true) then
 			local message = string.format(L.Ux.SetCategorySortWindow.catSortOrderNotValidMsg2, category_name, category_order, #categoryList)
 			Ux.DoPopup(1,message)
-			textField:SetText("1")
+			textField:SetText("")
 			textField:SetKeyFocus(false)
 			return
 		end
@@ -146,7 +146,11 @@ local function SortOrder_TextFieldChanged(self)
 	local parent = self:GetParent()
 	local category = parent:GetText()
 	
-	if (order == nil or (tonumber(order) > #categoryList)) then
+	if (orer == nil) then
+		return
+	end
+	
+	if (tonumber(order) > #categoryList) then
 		local message = string.format(L.Ux.SetCategorySortWindow.catSortOrderNotValidMsg1, category, order, #categoryList)
 		Ux.DoPopup(1,message)
 		self:SetText("1")
