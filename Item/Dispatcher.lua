@@ -48,15 +48,56 @@ local updateCallbacks = {
 }
 
 local empty = { }
+
+----------------------------------------------------------
+local dispatches = { }
+local dispatchHookEnabled = false
 local function dispatch(items, callbacks)
-	for slot, item in pairs(items) do
-		local container, bag, index = UtilityItemSlotParse(slot)
-		if container == "vault" then container = "bank" end
-		for k, v in pairs(callbacks[container] or empty) do
-			v(slot, item, container, bag, index)
+	-- create the thread (a function)
+  local dispatchInstance = coroutine.create( 
+  	function (items, callbacks)
+			for slot, item in pairs(items) do
+				if Inspect.System.Watchdog() < 0.02 then
+					coroutine.yield()
+				end
+				local container, bag, index = UtilityItemSlotParse(slot)
+				if container == "vault" then container = "bank" end
+				for k, v in pairs(callbacks[container] or empty) do
+					v(slot, item, container, bag, index)
+				end
+			end
 		end
-	end
+	)
+  
+  -- Run the thread.  If it is suspended immediately, then add it to 'dispatches' for handling at the System.Update.Begin event.
+	coroutine.resume(dispatchInstance,items,callbacks)
+	if coroutine.status(dispatchInstance) == 'suspended' then
+  	dispatches[#dispatches + 1] = dispatchInstance
+  end
+  
+  -- System.Update.Begin:   Go through all 'dispatches' and handle them appropriately
+  if not dispatchHookEnabled then
+    dispatchHookEnabled = true
+    Command.Event.Attach(Event.System.Update.Begin, function (handle)
+    	if (#dispatches > 0) then
+				for i = 1, #dispatches do
+					local thread = dispatches[i]
+					if thread and type(thread) == 'thread' then
+						local status = coroutine.status(thread)
+						--print(string.format("DEBUG:  #dispatches: %d -- type(thread): %s -- status: %s -- i: %d",#dispatches,type(thread), tostring(status), i))
+						if status == 'suspended' then
+							coroutine.resume(thread)
+						elseif status == 'dead' then
+							table.remove(dispatches,i)
+						end
+					end
+				end
+	    end
+    end, "Display")
+  end
 end
+----------------------------------------------------------
+
 
 local function eventItemSlot(handle, items)
 	dispatch(items, slotCallbacks)
