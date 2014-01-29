@@ -179,26 +179,65 @@ local function eventInteraction(handle, interaction, state)
 	end
 end
 
+----------------------------------------------------------
+local itemSlotEvents = { }
+local eventItemSlotHookEnabled = false
 local function eventItemSlot(handle, items)
-	for slot, item in pairs(items) do
-		local container, bag, index = UtilityItemSlotParse(slot)
-		if container == "vault" then container = "bank" end
-		log("eventItemSlot", slot, container, item)
-		if(player[container]) then
-			mergeSlot(player[container], slot, item, bag, index)
-		elseif(container == "guild") then
-			local vault = guildVaultSlots[bag]
-			if(not vault) then
-				vault = UtilityItemSlotGuild(bag)
-				guildVaultSlots[bag] = vault
-			end
-			container = guild.vault[vault]
-			if(container) then
-				mergeSlotGuild(container, slot, item, bag, index)
+	-- create the thread (a function)
+  local eventItemSlotInstance = coroutine.create( 
+  	function (handle, items)
+			for slot, item in pairs(items) do
+				if Inspect.System.Watchdog() < 0.02 then
+					coroutine.yield()
+				end
+				local container, bag, index = UtilityItemSlotParse(slot)
+				if container == "vault" then container = "bank" end
+				log("eventItemSlot", slot, container, item)
+				if(player[container]) then
+					mergeSlot(player[container], slot, item, bag, index)
+				elseif(container == "guild") then
+					local vault = guildVaultSlots[bag]
+					if(not vault) then
+						vault = UtilityItemSlotGuild(bag)
+						guildVaultSlots[bag] = vault
+					end
+					container = guild.vault[vault]
+					if(container) then
+						mergeSlotGuild(container, slot, item, bag, index)
+					end
+				end
 			end
 		end
-	end
+	)
+  
+  -- Run the thread.  If it is suspended immediately, then add it to 'itemSlotEvents' for handling at the System.Update.Begin event.
+	coroutine.resume(eventItemSlotInstance,handle,items)
+	if coroutine.status(eventItemSlotInstance) == 'suspended' then
+  	itemSlotEvents[#itemSlotEvents + 1] = eventItemSlotInstance
+  end
+  
+  -- System.Update.Begin:   Go through all 'itemSlotEvents' and handle them appropriately
+  if not eventItemSlotHookEnabled then
+    eventItemSlotHookEnabled = true
+    Command.Event.Attach(Event.System.Update.Begin, function (handle)
+    	if (#itemSlotEvents > 0) then
+				for i = 1, #itemSlotEvents do
+					local thread = itemSlotEvents[i]
+					if thread and type(thread) == 'thread' then
+						local status = coroutine.status(thread)
+						--print(string.format("DEBUG:  #itemSlotEvents: %d -- type(thread): %s -- status: %s -- i: %d",#itemSlotEvents,type(thread), tostring(status), i))
+						if status == 'suspended' then
+							coroutine.resume(thread)
+						elseif status == 'dead' then
+							table.remove(itemSlotEvents,i)
+						end
+					end
+				end
+	    end
+    end, "Display")
+  end
 end
+----------------------------------------------------------
 
 local function eventItemUpdate(handle, items)
 	for slot, item in pairs(items) do
