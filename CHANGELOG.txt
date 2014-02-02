@@ -1,4 +1,4 @@
-0.19beta (January 2014)
+0.19beta (February 2014)
 ---------
 FEATURES
 * When sorting by 'rarity' the items with the same 'bind' and 'rarity' will then be sorted by name.
@@ -17,6 +17,7 @@ FIXES:
 * Leatherworking materials (hides, bones, leather, etc.) should now once again be sorted into 
   their own category.
 * Fixed a number of reported errors (primarily attempts at indexing nil or non-table variables)
+* Fix for several 'performance warning' errors.
 
 
 0.18beta (January 2014)
