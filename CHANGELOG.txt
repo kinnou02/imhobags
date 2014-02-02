@@ -1,3 +1,10 @@
+0.19beta2 (February 2014)
+---------
+FIXES:
+* Fixed a bug that was causing items not to appear when viewing the equipment window for
+  stored characters.
+
+
 0.19beta (February 2014)
 ---------
 FEATURES

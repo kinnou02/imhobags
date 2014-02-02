@@ -74,8 +74,15 @@ local function loadStoredCurrency(self, character)
 end
 
 local function populateWithStoredItems(self, totals, slots, counts, bags)
+	local secure = Inspect.System.Secure()
 	local unknown = { }
 	local id = 1
+	if (self.itemsCounter) then
+		id = self.itemsCounter
+	end
+	if not secure then
+		Command.System.Watchdog.Quiet()
+	end
 	for slot, type in pairs(slots or { }) do
 		if(type) then
 			local detail = inspectItemDetailTwink(id, type, slot, counts[slot], unknown)
@@ -85,6 +92,7 @@ local function populateWithStoredItems(self, totals, slots, counts, bags)
 			if container == "vault" then container = "bank" end
 			self.Groups[id] = container ~= "wardrobe" and self.groupFunc(detail) or format(L.CategoryName.wardrobe, bag)
 			id = id + 1
+			self.itemsCounter = id
 		else
 			self.Slots[slot] = false
 			self.Empty[slot] = true
@@ -98,6 +106,7 @@ local function populateWithStoredItems(self, totals, slots, counts, bags)
 			self.Bags[index] = id
 			self.Items[id] = detail
 			id = id + 1
+			self.itemsCounter = id
 		else
 			self.Bags[index] = false
 		end
@@ -235,8 +244,10 @@ function ItemContainer.ItemSet(location, character, vault)
 		if(location == "currency") then
 			unknown = loadStoredCurrency(self, character)
 		elseif(location == "guildbank") then
+			self.itemsCounter = 1
 			unknown = loadStoredGuild(self, character, vault)
 		else
+			self.itemsCounter = 1
 			unknown = loadStoredItems(self, location, character)
 			if(location == "equipment") then
 				local unknown2 = loadStoredItems(self, "wardrobe", character)
