@@ -156,8 +156,14 @@ local function eventCurrency(handle, currencies)
 			player.currency.totals[type] = nil
 			player.currency.categories[type] = nil
 		else
-			player.currency.totals[type] = count
-			player.currency.categories[type] = InspectCurrencyDetail(type).category
+			local currencyDetail = InspectCurrencyDetail(type)
+			if currencyDetail then 
+				player.currency.categories[type] = currencyDetail.category
+				player.currency.totals[type] = count
+			else
+				player.currency.totals[type] = nil
+				player.currency.categories[type] = nil
+			end
 		end
 	end
 end
@@ -262,7 +268,11 @@ local function eventItemUpdate(handle, items)
 end
 
 local function applyGuildRank(rank)
-	local vaultAccess = InspectGuildRankDetail(rank).vaultAccess or { }
+	local guildRankDetail = InspectGuildRankDetail(rank)
+	local vaultAccess = { }
+	if (guildRankDetail) then
+		vaultAccess = guildRankDetail.vaultAccess
+	end
 	
 	-- Delete item data for vaults we have no longer access to
 	for slot in pairs(guild.vault) do
