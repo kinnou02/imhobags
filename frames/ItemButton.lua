@@ -19,20 +19,38 @@ local skinFactory
 
 local leftDownPoint = { x = 0, y = 0 }
 
+
+local mouseMoves = { }
 local function mouseMove(self)
-	self:ShowTooltip()
-	if(self.available and self.leftDown) then
-		local mouse = Inspect.Mouse()
-		local distance = (leftDownPoint.x - mouse.x) * (leftDownPoint.x - mouse.x) + (leftDownPoint.y - mouse.y) * (leftDownPoint.y - mouse.y)
-		if(distance >= Const.ItemButtonDragDistance) then
-			ItemHandler.Standard.Drag(self.dropTarget)
-			self.leftDown = false
-			self:SetDepressed(false)
+	-- create the thread (a function)
+  local mouseMoveInstance = coroutine.create( 
+  	function (self)
+			if Inspect.System.Watchdog() < 0.02 then
+				coroutine.yield()
+			end
+			self:ShowTooltip()
+			if(self.available and self.leftDown) then
+				local mouse = Inspect.Mouse()
+				local distance = (leftDownPoint.x - mouse.x) * (leftDownPoint.x - mouse.x) + (leftDownPoint.y - mouse.y) * (leftDownPoint.y - mouse.y)
+				if(distance >= Const.ItemButtonDragDistance) then
+					ItemHandler.Standard.Drag(self.dropTarget)
+					self.leftDown = false
+					self:SetDepressed(false)
+				end
+			end
+			if(self.item or (Inspect.Cursor()) == "item") then
+				self:ShowHighlight()
+			end
 		end
-	end
-	if(self.item or (Inspect.Cursor()) == "item") then
-		self:ShowHighlight()
-	end
+	)
+
+  -- Run the thread.  If it is suspended immediately, then add it to 'dispatches' for handling at the System.Update.Begin event.
+	coroutine.resume(mouseMoveInstance,self)
+	if coroutine.status(mouseMoveInstance) == 'suspended' then
+  	mouseMoves[#mouseMoves + 1] = mouseMoveInstance
+  end
+  
+  -- See systemUpdateBegin() for handling of suspended threads
 end
 
 local function mouseOut(self)
@@ -122,6 +140,23 @@ local function configChanged(handle, k, v)
 			button.bind:SetVisible(v)
 		end
 	end
+end
+
+local function systemUpdateBegin(self)
+	if (#mouseMoves > 0) then
+		for i = 1, #mouseMoves do
+			local thread = mouseMoves[i]
+			if thread and type(thread) == 'thread' then
+				local status = coroutine.status(thread)
+				--print(string.format("DEBUG:  #mouseMoves: %d -- type(thread): %s -- status: %s -- i: %d",#mouseMoves,type(thread), tostring(status), i))
+				if status == 'suspended' then
+					coroutine.resume(thread)
+				elseif status == 'dead' then
+					table.remove(mouseMoves,i)
+				end
+			end
+		end
+  end
 end
 
 -- Public methods
@@ -260,3 +295,4 @@ end
 
 Command.Event.Attach(Event.ImhoBags.Private.StorageLoaded, storageLoaded, "ItemButton.storageLoaded")
 Command.Event.Attach(Event.ImhoBags.Private.Config, configChanged, "ItemButton.configChanged")
+Command.Event.Attach(Event.System.Update.Begin, function() systemUpdateBegin(self) end, "ItemButton.systemUpdateBegin")
