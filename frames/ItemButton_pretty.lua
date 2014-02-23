@@ -16,7 +16,7 @@ local rarityTextureMap = {
 	rare =			"icon_border_rare.dds",
 	relic =			"icon_border_relic.dds",
 	sellable =		"icon_border_disabled.dds",
-	transcendent =	"icon_border_relic.dds",
+	transcendent =	"icon_border_transcended.dds",
 	uncommon =		"icon_border_uncommon.dds",
 }
 -- preload external textures
