@@ -65,11 +65,6 @@ function Group.Default.GetMail(type)
 	return type.ImhoBags_mail
 end
 
--- The following routine looks overly complex for serving the purpose of just putting the armor and weapons
--- together at the top of the window (when using default sorting.)   However, it's designed with the future
--- in mind and will be expanded upon to allow for a complete customization of how categories are sorted in
--- the window.
---local categoryOrderList = { [L.CategoryName.armor] = 1, [L.CategoryName.weapon] = 2 }
 function Group.Default.SortCategoryNames(names, categoryOrderList)
 	local namesSorted = { }
 	local i, lastElement, nextElement = 1, 1, 1
@@ -148,11 +143,6 @@ function Group.Default.SortCategoryNames(names, categoryOrderList)
 	--         nil values in 'names'.  So, it's just easier to deal with it here.
 	names = namesSorted
 	namesSorted = { }
-	--for _,v in pairs(names) do
-	--	if (v ~= nil) then
-	--		namesSorted[#namesSorted + 1] = v
-	--	end
-	--end
 	
 	---------------------
 	-- Step 4. Iterate through the final sorted table (serving as a vector, in this case) to remove any nil values.  While

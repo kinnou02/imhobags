@@ -1,3 +1,16 @@
+0.20beta (February 2014)
+---------
+FEATURES:
+* Dream Weaving items now have their own category
+FIXES:
+* Transcendent item buttons should now have the proper "red" outline 
+* Fixed "Error: performance warning" (ImhoBags/ItemHandler.lua: in function 'Drag')
+NOTES:
+* I have confirmed that the Rift addon API has a bug that is causing stackable items in
+  bank vaults not to update properly in the imhobags window.  I've reported this directly
+  to Zorba (the addon dev) and hopefully he'll have a chance to fix it in the near future.
+  
+
 0.19beta2 (February 2014)
 ---------
 FIXES:

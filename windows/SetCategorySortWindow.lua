@@ -219,6 +219,13 @@ local function SelectListItem(frametable, frameindex, itemtable, itemindex)
   end
 end
 
+local function table_length(T)
+  local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
+end
+
+
 -----------------
 -- Initial setup (performed when addon first loaded)
 
@@ -276,8 +283,34 @@ end
 function frame:Toggle()
 	if(not self:GetVisible()) then
 		if #Config.categoryList > 0 then
-			categoryList = Config.categoryList
 			categoryOrderList = Config.categoryOrderList
+			if (#Config.categoryList ~= #categoryList) then
+				if (#Config.categoryList < #categoryList) then
+					print(string.format(L.Ux.SetCategorySortWindow.savedCatListNotValidMsg1, #Config.categoryList, #categoryList))
+					local i = 1
+					while i <= #categoryList do
+						local categoryName = categoryList[i]
+						if (categoryOrderList[categoryName] == nil) then
+							print(string.format(L.Ux.SetCategorySortWindow.addingToCatListMsg1,categoryName))
+							categoryOrderList[categoryName] = table_length(categoryOrderList) + 1
+						end
+						i = i + 1
+					end	
+					categoryList = Group.Default.SortCategoryNames(categoryList, categoryOrderList)
+				else
+					print(string.format(L.Ux.SetCategorySortWindow.savedCatListNotValidMsg2, #Config.categoryList, #categoryList))
+					categoryList = Group.Default.SortCategoryNames(categoryList, categoryOrderList)
+					local order = 1
+					categoryOrderList = { }
+					for _, name in pairs(categoryList) do
+						categoryOrderList[name] = order
+						order = order + 1
+					end
+				end
+			else
+				categoryList = Config.categoryList
+				categoryOrderList = Config.categoryOrderList
+			end
 		end
 		ItemList.u.buffers = categoryOrderList
 		ItemList:display(categoryList)

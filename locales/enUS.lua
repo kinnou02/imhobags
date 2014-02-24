@@ -51,6 +51,8 @@ private.L = {
 		["crafting ingredient reagent"] = "Reagents",
 		["crafting ingredient rift"] = "Rifts",
 		["crafting ingredient drop"] = "Drops",
+		-- Dreamweaving
+		["crafting recipe dream weaver"] = "Dream Weaving",
 	},
 	
 	-- The shortcuts used in the tooltip overview
@@ -243,6 +245,9 @@ Available config options:
 			instructions = "Choose your preferred sorting order for\nitem categories.",
 			catSortOrderNotValidMsg1 = "The value provided for category\n '%s' (%s) is not valid.\n\nPlease choose a number between 1 and %d.",
 			catSortOrderNotValidMsg2 = "The value provided for category\n '%s' (%s) has already been used.\n\nPlease choose a unique number between 1 and %d\nfor each category.",
+			savedCatListNotValidMsg1 = "Saved category list is smaller (%d) than the number of default categories defined by the addon (%d).",
+			savedCatListNotValidMsg2 = "Saved category list is larger (%d) than the number of default categories defined by the addon (%d).",
+			addingToCatListMsg1 = "Adding category '%s' to the end of the sort order.",
 		},
 		
 		-- All text for the PopupWindow goes here

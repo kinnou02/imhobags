@@ -50,6 +50,7 @@ local updateCallbacks = {
 local empty = { }
 
 ----------------------------------------------------------
+-- NOTE:  See mouseMove() in ItemButton.lua for example using this technique with seperate function for the system update event
 local dispatches = { }
 local dispatchHookEnabled = false
 local function dispatch(items, callbacks)
