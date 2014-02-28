@@ -41,6 +41,20 @@ function Sort.Default.ByItemRarity(type1, type2)
 	local s2 = 0
 	
 	----
+	-- If item is armor or weapons, and the item is rare or better, sort by armor/weapon category (equip. slot position) first.
+	if (rarityOrder[r1] >= 4 and rarityOrder[r2] >= 4) then
+		local Category1 = Group.Default.GetLocalizedShortCategory(type1)
+		local Category2 = Group.Default.GetLocalizedShortCategory(type2)
+	
+		if (Category1 == "Armor" and Category2 == "Armor" or Category1 == "Weapons" and Category2 == "Weapons") then
+			if (type1.category ~= type2.category) then
+				return type1.category > type2.category
+			end
+		end
+	end
+	
+	
+	----
 	-- Within each rarity type, place 'bind on pickup' items first, then items that are 'bind to account', then 'bind on equip' items, and then the remainder.
 	if (b1 == "pickup") then
 		s1 = rarityOrder[r1] + 0.1
@@ -68,7 +82,7 @@ function Sort.Default.ByItemRarity(type1, type2)
 	return s1 > s2
 end
 
--- Sort two item types depending on their slot
+-- Sort two item types depending on their inventory slot
 function Sort.Default.ByItemSlot(item1, item2)
 	return (item1.slot or "") < (item2.slot or "")
 end

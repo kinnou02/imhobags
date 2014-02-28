@@ -1,3 +1,12 @@
+0.20beta1 (February 2014)
+---------
+FEATURES:
+* When sorting by rarity, if the items are "rare" or better AND are armor or weapons,
+  then the items will be first grouped/sorted by equip. location.  (In other words,
+  all "helms" will be together, etc.)
+
+
+
 0.20beta (February 2014)
 ---------
 FEATURES:
