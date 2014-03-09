@@ -110,7 +110,3 @@ SavedVariables = {
 
 -- Indicate which version the public API has
 publicAPI = 1
--- X-Curse-Packaged-Version: 0.18beta2
--- X-Curse-Project-Name: Imhothar's Bags
--- X-Curse-Project-ID: imhobags
--- X-Curse-Repository-ID: rift/imhobags/mainline
