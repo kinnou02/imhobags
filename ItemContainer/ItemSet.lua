@@ -155,7 +155,16 @@ local function UpdateCurrency(self, currencies, callback)
 			detail.stack = count
 			detail.type = id
 			self.Items[id] = detail
-			self.Groups[id] = InspectCurrencyCategoryDetail(InspectCurrencyDetail(id).category).name
+			local groupName = "Unknown"
+			local currencyDetail = InspectCurrencyDetail(id) 
+			local category = currencyDetail and currencyDetail.category
+			if category then
+				local categoryDetail = InspectCurrencyCategoryDetail(category)
+				if (categoryDetail) then
+					groupName = categoryDetail.name
+				end
+			end
+			self.Groups[id] = groupName
 			callback(id)
 		end
 	end
