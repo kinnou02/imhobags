@@ -30,7 +30,7 @@ local function getEquipSlot(item)
 	--
 	-- The equipSlotCache table is used for efficiency.
 
-	local category = item.category or L.CategoryName.misc
+	local category = item and item.category or L.CategoryName.misc
 	local equipSlot = equipSlotCache[category]
 	if(equipSlot == nil) then
 		if (string.find(category,"feet")) then
@@ -65,26 +65,26 @@ end
 
 -- Sort two item types depending on their item name
 function Sort.Default.ByItemName(type1, type2)
-	return type1.name < type2.name
+	return (type1 and type1.name or "") < (type2 and type2.name or "")
 end
 
 -- Sort two item types depending on their icon path
 function Sort.Default.ByItemIcon(type1, type2)
-	return type1.icon < type2.icon
+	return (type1 and type1.icon or "") < (type2 and type2.icon or "")
 end
 
 -- Sort two item types depending on their item rarity
 function Sort.Default.ByItemRarity(type1, type2)
-	local r1 = type1.rarity or "common"
-	local b1 = type1.bind or "N/A"
-	local r2 = type2.rarity or "common"
-	local b2 = type2.bind or "N/A"
+	local r1 = type1 and type1.rarity or "common"
+	local b1 = type1 and type1.bind or "N/A"
+	local r2 = type2 and type2.rarity or "common"
+	local b2 = type2 and type2.bind or "N/A"
 	local s1 = 1
 	local s2 = 0
 	
 	----
 	-- If item is armor or weapons, and the item is rare or better, sort by armor/weapon category (equip. slot position) first.
-	if (rarityOrder[r1] > 3 and rarityOrder[r2] > 3) then
+	if (rarityOrder[r1] > 4 and rarityOrder[r2] > 4) then
 		local Category1 = Group.Default.GetLocalizedShortCategory(type1)
 		local Category2 = Group.Default.GetLocalizedShortCategory(type2)
 		if (Category1 == "Armor" and Category2 == "Armor" or Category1 == "Weapons" and Category2 == "Weapons") then
@@ -119,7 +119,7 @@ function Sort.Default.ByItemRarity(type1, type2)
 	end
 
 	if (s1 == s2) then
-		return type1.name < type2.name
+		return (type1 and type1.name or "") < (type2 and type2.name or "")
 	end
 	
 	return s1 > s2
@@ -127,6 +127,6 @@ end
 
 -- Sort two item types depending on their inventory slot
 function Sort.Default.ByItemSlot(item1, item2)
-	return (item1.slot or "") < (item2.slot or "")
+	return (item1 and item1.slot or "") < (item2 and item2.slot or "")
 end
 
