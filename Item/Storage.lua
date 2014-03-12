@@ -276,14 +276,16 @@ local function applyGuildRank(rank)
 	
 	-- Delete item data for vaults we have no longer access to
 	for slot in pairs(guild.vault) do
-		local vault = vaultAccess[slot] or { }
+		local vault = vaultAccess and vaultAccess[slot] or { }
 		if(not vault.access) then
 			local name = guild.vault[slot].name
 			guild.vault[slot] = newLocation()
 			guild.vault[slot].name = name
 		end
-		guild.vault[slot].access = vault.access
-		guild.vault[slot].withdrawLimit = vault.withdrawLimit
+		if (vault) then
+			guild.vault[slot].access = vault.access
+			guild.vault[slot].withdrawLimit = vault.withdrawLimit
+		end
 	end
 end
 
