@@ -45,11 +45,11 @@ end
 local function setVaultNameText(self, name, slot)
 	self.vaultName:SetText(name)
 	self.vaultName.slot = slot
-	local access = self.vaultAccess[slot] or { }
+	local access = self.vaultAccess and self.vaultAccess[slot] or { }
 	
-	if(access.access == "deposit") then
+	if(access and access.access == "deposit") then
 		self.vaultName:SetFontColor(0.8, 0.8, 0)
-	elseif(access.access == "full") then
+	elseif(access and access.access == "full") then
 		self.vaultName:SetFontColor(96 / 255, 213 / 255, 1 / 255)
 	else
 		self.vaultName:SetFontColor(239 / 255, 0.1, 0.1)
@@ -180,9 +180,11 @@ local function applyRank(self, rank)
 	if (guildRankDetail) then
 		access = guildRankDetail.vaultAccess
 	end
-	setVaultAccess(self, access)
-	if(not access[slot(self.vault)]) then
-		selectFirstAvailableVault(self)
+	if (access) then
+		setVaultAccess(self, access)
+		if(not access[slot(self.vault)]) then
+			selectFirstAvailableVault(self)
+		end
 	end
 end
 
