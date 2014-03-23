@@ -209,7 +209,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 		if(button) then
 			self.unusedButtons[button] = nil
 			self.itemButtons[item] = button
-			if(details.rarity == "empty") then
+			if(details and details.rarity == "empty") then
 				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
 			else
 				self:UpdateItem(item)
@@ -224,7 +224,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 				else
 					self:UpdateItem(item)
 				end
-			elseif(details.rarity == "empty") then
+			elseif(details and details.rarity == "empty") then
 				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
 			else
 				self:UpdateItem(item)
