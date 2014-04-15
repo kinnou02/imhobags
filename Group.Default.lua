@@ -16,10 +16,15 @@ Group.Default = { }
 
 -- Use the localization of the first category word of an item as group key.
 function Group.Default.GetLocalizedShortCategory(item)
-	--dump(item)		-- for debugging
+	--dump(item)												-- for debugging
 	local name = item.category or "misc"
 	local localized = L.CategoryName[name]
 	if(localized) then
+		-- Trion insists on categorizing Dream Ribbons as Cloth.  This was changed at some point after the release of the 
+		-- Dreamweaver, so I'm not sure if it's a bug or not.
+		if (localized == 'Cloth' and item.name == 'Dream Ribbon') then
+			return L.CategoryName["crafting recipe dream weaver"]
+		end
 		return localized
 	else
 		local category = shortCategoryCache[name]
