@@ -21,6 +21,9 @@ function ItemHandler.Standard.Right(id)
 end
 
 function ItemHandler.Standard.Left(id)
+	if(not Inspect.System.Secure()) then
+		Command.System.Watchdog.Quiet()
+	end
 	local params = {
 		id = id,
 		cancel = false,
