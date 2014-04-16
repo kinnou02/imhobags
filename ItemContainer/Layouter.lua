@@ -224,7 +224,7 @@ local function replaceIdsWithButtons(self, items, allButtons, itemButtons, itemS
 				else
 					self:UpdateItem(item)
 				end
-			elseif(details and and type(details) == "table" and details.rarity == "empty") then
+			elseif(details and type(details) == "table" and details.rarity == "empty") then
 				button:SetItem(false, item, 1, self.available, Const.AnimationsDuration)
 			else
 				self:UpdateItem(item)
