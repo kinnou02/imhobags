@@ -26,11 +26,12 @@ private.L = {
 		-- Used for the collapsible group with sellable items
 		sellable = "Junk",
 		-- Special case for collectibles (e.g. artifacts)
-		["artifacts normal"] = "Collectibles",
-		["artifacts twisted"] = "Collectibles",
-		["artifacts unstable"] = "Collectibles",
-		["artifacts other"] = "Collectibles",
-		["artifacts bounty"] = "Collectibles",
+		["artifact normal"] = "Collectibles",
+		["artifact twisted"] = "Collectibles",
+		["artifact unstable"] = "Collectibles",
+		["artifact other"] = "Collectibles",
+		["artifact bounty"] = "Collectibles",
+		["artifact fishing"] = "Collectibles",
 		["misc collectible"] = "Collectibles",
 		["misc mount"] = "Collectibles",
 		["misc pet"] = "Collectibles",

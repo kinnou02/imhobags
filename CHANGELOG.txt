@@ -1,3 +1,10 @@
+0.22beta (May 2014)
+---------
+FIXES:
+* Artifacts will once again find themselves in the 'collectibles' category.
+* Fishing Artifacts will now appear in the 'collectibles' category.
+
+
 0.21beta (March 2014)
 ---------
 FEATURES:
