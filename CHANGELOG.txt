@@ -3,6 +3,8 @@
 FIXES:
 * Artifacts will once again find themselves in the 'collectibles' category.
 * Fishing Artifacts will now appear in the 'collectibles' category.
+* Leatherworking materials (hides, bones, leather, etc.) should now once again be sorted into 
+  their own category.
 
 
 0.21beta (March 2014)
