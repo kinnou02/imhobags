@@ -36,8 +36,8 @@ local function createEmptySlotIndicator()
 		Ux.EmptySlotIndicator.label:SetFontSize(math.ceil(0.6 * self:GetHeight()))
 	end, "")
 	
-	window:SetPoint("TOPLEFT", UI.Native.Bag, 41 / 275, 21 / 85)
-	window:SetPoint("BOTTOMRIGHT", UI.Native.Bag, 63 / 275, 44 / 85)
+	window:SetPoint("TOPLEFT", UI.Native.Bag, 15 / 275, 12 / 85)
+	window:SetPoint("BOTTOMRIGHT", UI.Native.Bag, 37 / 275, 35 / 85)
 	
 	UI.Native.Bag:EventAttach(Event.UI.Native.Loaded, showOrHideEmptySlotIndicator, "")
 end

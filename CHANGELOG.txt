@@ -1,3 +1,8 @@
+0.23beta (December 2014)
+---------
+* Fixed the location of the EmptySlotIndicator.   [Thanks to JohnCorl]
+
+
 0.22beta (May 2014)
 ---------
 FIXES:
