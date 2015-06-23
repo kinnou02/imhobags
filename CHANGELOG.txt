@@ -1,3 +1,8 @@
+0.24beta (June 2015)
+---------
+* Dream Bolts will once again be sorted into the 'Dream Weaving' category.
+
+
 0.23beta (December 2014)
 ---------
 * Fixed the location of the EmptySlotIndicator.   [Thanks to JohnCorl]

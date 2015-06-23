@@ -22,7 +22,7 @@ function Group.Default.GetLocalizedShortCategory(item)
 	if(localized) then
 		-- Trion insists on categorizing Dream Ribbons as Cloth.  This was changed at some point after the release of the 
 		-- Dreamweaver, so I'm not sure if it's a bug or not.
-		if (localized == 'Cloth' and item.name == 'Dream Ribbon') then
+		if (localized == 'Cloth' and item.name == 'Dream Ribbon' or item.name == 'Dream Bolt') then
 			return L.CategoryName["crafting recipe dream weaver"]
 		end
 		return localized
