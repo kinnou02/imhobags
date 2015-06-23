@@ -14,7 +14,7 @@ Email = "amadeus@myself.com"
 --------------------
 
 Version = "0.24beta"
-Environment = "3.0"
+Environment = "3.2"
 
 --@no-lib-strip@
 Embed = {
