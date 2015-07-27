@@ -9,12 +9,12 @@ Email = "amadeus@myself.com"
 
 --------------------
 -- NOTES:
--- 1.  Amadeus is currently maintaining Imhothar's Bags.
+-- 1.  Amadeus is currently maintaining Imhothar's Bags (however, he is not currently playing the game.)
 -- 2.  Imhothar's email address is 'imhothar@freenet.de'.
 --------------------
 
-Version = "0.25beta"
-Environment = "3.2"
+Version = "0.26beta"
+Environment = "3.3"
 
 --@no-lib-strip@
 Embed = {

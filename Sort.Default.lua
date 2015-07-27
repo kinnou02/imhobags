@@ -9,7 +9,9 @@ local rarityOrder = {
 	epic = 5,
 	relic = 6,
 	transcendent = 7,
-	quest = 8,
+	ascended = 8,
+	quest = 9,
+
 	
 	empty = 0,
 }
@@ -84,14 +86,16 @@ function Sort.Default.ByItemRarity(type1, type2)
 	
 	----
 	-- If item is armor or weapons, and the item is rare or better, sort by armor/weapon category (equip. slot position) first.
-	if (rarityOrder[r1] > 4 and rarityOrder[r2] > 4) then
-		local Category1 = Group.Default.GetLocalizedShortCategory(type1)
-		local Category2 = Group.Default.GetLocalizedShortCategory(type2)
-		if (Category1 == "Armor" and Category2 == "Armor" or Category1 == "Weapons" and Category2 == "Weapons") then
-			local equipSlot1 = getEquipSlot(type1)
-			local equipSlot2 = getEquipSlot(type2)
-			if (equipSlot1 ~= equipSlot2) then
-				return equipSlot1 > equipSlot2
+	if  rarityOrder[r1] ~= nil and rarityOrder[r2] ~= nil  then
+		if (rarityOrder[r1] > 4 and rarityOrder[r2] > 4) then
+			local Category1 = Group.Default.GetLocalizedShortCategory(type1)
+			local Category2 = Group.Default.GetLocalizedShortCategory(type2)
+			if (Category1 == "Armor" and Category2 == "Armor" or Category1 == "Weapons" and Category2 == "Weapons") then
+				local equipSlot1 = getEquipSlot(type1)
+				local equipSlot2 = getEquipSlot(type2)
+				if (equipSlot1 ~= equipSlot2) then
+					return equipSlot1 > equipSlot2
+				end
 			end
 		end
 	end

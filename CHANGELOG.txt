@@ -1,3 +1,8 @@
+0.26beta (July 2015)
+---------
+* Update to allow for items with rarity 'ascended' 
+
+
 0.24beta (June 2015)
 ---------
 * Dream Bolts will once again be sorted into the 'Dream Weaving' category.

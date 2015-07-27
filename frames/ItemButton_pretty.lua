@@ -10,14 +10,15 @@ Ux.ItemButton_pretty = { }
 -- ============================================================================
 
 local rarityTextureMap = {
-	common =		"icon_border.dds",
-	epic =			"icon_border_epic.dds",
-	quest =			"icon_border_quest.dds",
-	rare =			"icon_border_rare.dds",
-	relic =			"icon_border_relic.dds",
-	sellable =		"icon_border_disabled.dds",
+	common =				"icon_border.dds",
+	epic =					"icon_border_epic.dds",
+	quest =					"icon_border_quest.dds",
+	rare =					"icon_border_rare.dds",
+	relic =					"icon_border_relic.dds",
+	sellable =			"icon_border_disabled.dds",
 	transcendent =	"icon_border_transcended.dds",
-	uncommon =		"icon_border_uncommon.dds",
+	uncommon =			"icon_border_uncommon.dds",
+	ascended =      "icon_border_heirloom.dds",   
 }
 -- preload external textures
 for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendent", "uncommon" }) do
