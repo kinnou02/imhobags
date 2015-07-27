@@ -21,7 +21,7 @@ local rarityTextureMap = {
 	ascended =      "icon_border_heirloom.dds",   
 }
 -- preload external textures
-for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendent", "uncommon" }) do
+for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendent", "uncommon", "ascended" }) do
 	local tex = UI.CreateFrame("Texture", "", Ux.Context)
 	tex:SetTexture("Rift", rarityTextureMap[v])
 	tex:SetVisible(false)

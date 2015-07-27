@@ -12,7 +12,6 @@ local rarityOrder = {
 	ascended = 8,
 	quest = 9,
 
-	
 	empty = 0,
 }
 
