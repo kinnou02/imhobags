@@ -13,7 +13,7 @@ Email = "amadeus@myself.com"
 -- 2.  Imhothar's email address is 'imhothar@freenet.de'.
 --------------------
 
-Version = "0.26beta"
+Version = "0.27beta"
 Environment = "3.3"
 
 --@no-lib-strip@
