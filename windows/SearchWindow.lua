@@ -203,7 +203,7 @@ local function updateItemList(itemTypes)
 	local gsub = string.gsub
 	for k in pairs(itemTypes) do
 		local result, detail = pcall(InspectItemDetail, k)
-		if(result) then
+		if(detail) then
 			local n = gsub(detail.name, "\n", "")
 			items[#items + 1] = { n, detail.rarity, detail.icon, k }
 			display[#display + 1] = items[#items]

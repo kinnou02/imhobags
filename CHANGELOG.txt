@@ -1,3 +1,14 @@
+0.30beta (January 2016)
+---------
+- Fixed a rare exception when using the searchwindow
+- "Mark of Notoriety" will now appear in the 'Quest' category
+- Added new category "Minions"
+- Added new category "Fishing"
+- Added new category "Nightmare Rifts" (Note:  This category requires 
+  string comparisons; therefore, it may only work for English clients.  
+  (More testing is needed.)
+
+
 0.26beta (July 2015)
 ---------
 * Update to allow for items with rarity 'ascended' 

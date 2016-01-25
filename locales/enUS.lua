@@ -35,6 +35,8 @@ private.L = {
 		["misc collectible"] = "Collectibles",
 		["misc mount"] = "Collectibles",
 		["misc pet"] = "Collectibles",
+		["misc minion"] = "Minions",
+		["misc fishing"] = "Fishing",
 		-- Special case for costumes
 		["armor costume"] = "Costumes",
 		-- Special case for lootable container items
@@ -59,6 +61,7 @@ private.L = {
 		["crafting ingredient drop"] = "Drops",
 		-- Dreamweaving
 		["crafting recipe dream weaver"] = "Dream Weaving",
+		nightmare = "Nightmare Rifts",
 	},
 	
 	-- The shortcuts used in the tooltip overview

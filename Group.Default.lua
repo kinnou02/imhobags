@@ -6,6 +6,7 @@ local strmatch = string.match
 local sort = table.sort
 
 local shortCategoryCache = { } -- Used for avoiding string.match on known categories
+local shortCategoryCasheByName = { }
 
 setfenv(1, private)
 Group = Group or { }
@@ -19,10 +20,32 @@ function Group.Default.GetLocalizedShortCategory(item)
 	--dump(item)												-- for debugging
 	local name = item.category or "misc"
 	local localized = L.CategoryName[name]
+	local item_name = item.name or "NoName"
+	local item_desc = item.description or ""
+
+    -- Handle special categories based upon names/descriptions
+	if name == 'misc other' then
+	    if (item_name == "Mark of Notoriety") then
+	        return L.CategoryName["misc quest"]
+	    end
+
+        -- Use a cache for logic that involves string.find()
+	    local cat = shortCategoryCasheByName[item_name]
+	    if (cat == nil) then
+    	    if (string.find(item_name,"Nightmare") or string.find(item_name,"Semblance of") or string.len(item_desc) > 0 and string.find(item_desc,"Nightmare"))  then 
+    	        shortCategoryCasheByName[item_name] = L.CategoryName["nightmare"]
+    	        return L.CategoryName["nightmare"]
+    	    end
+    	else
+    	    return cat
+        end
+    end
+
+    -- Special Handling
 	if(localized) then
 		-- Trion insists on categorizing Dream Ribbons as Cloth.  This was changed at some point after the release of the 
 		-- Dreamweaver, so I'm not sure if it's a bug or not.
-		if (localized == 'Cloth' and item.name == 'Dream Ribbon' or item.name == 'Dream Bolt') then
+		if (localized == 'Cloth' and item_name == 'Dream Ribbon' or item_name == 'Dream Bolt') then
 			return L.CategoryName["crafting recipe dream weaver"]
 		end
 		return localized
@@ -66,8 +89,8 @@ function Group.Default.GetCurrencyGroup(item)
 end
 
 -- Use the mail subject as group. Works only for MailMatrix items
-function Group.Default.GetMail(type)
-	return type.ImhoBags_mail
+function Group.Default.GetMail(_type)
+	return _type.ImhoBags_mail
 end
 
 function Group.Default.SortCategoryNames(names, categoryOrderList)
