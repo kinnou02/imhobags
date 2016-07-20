@@ -1,4 +1,4 @@
-0.31beta (July 2016)
+0.32beta (July 2016)
 ---------
 - Bug fixes
 
