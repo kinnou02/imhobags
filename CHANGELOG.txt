@@ -1,3 +1,8 @@
+0.31beta (July 2016)
+---------
+- Bug fixes
+
+
 0.30beta (January 2016)
 ---------
 - Fixed a rare exception when using the searchwindow

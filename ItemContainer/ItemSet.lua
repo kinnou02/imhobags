@@ -150,7 +150,7 @@ end
 local function UpdateCurrency(self, currencies, callback)
 	for id, count in pairs(currencies) do
 		-- Don't show money and credits here
-		if(id ~= "coin" and id ~= "credit" and count > 0) then
+		if(id ~= "coin" and id ~= "credit" and id ~= "affinity" and count > 0) then
 			local detail = InspectItemDetail(id)
 			detail.stack = count
 			detail.type = id
