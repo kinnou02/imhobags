@@ -1,3 +1,8 @@
+0.33beta (August 2016)
+---------
+- Fixed "Error: ImhoBags/Item/Storage.lua:172: bad argument #1 to ''pairs'' (table expected, got nil)"
+
+
 0.32beta (July 2016)
 ---------
 - Bug fixes

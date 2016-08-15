@@ -169,9 +169,11 @@ local function eventCurrency(handle, currencies)
 end
 
 local function eventGuildBankChange(handle, vaults)
-	for id, name in pairs(vaults) do
-		guild.vault[id] = guild.vault[id] or newLocation()
-		guild.vault[id].name = name
+	if(vaults and vaults ~= "nil") then
+		for id, name in pairs(vaults) do
+			guild.vault[id] = guild.vault[id] or newLocation()
+			guild.vault[id].name = name
+		end
 	end
 end
 
