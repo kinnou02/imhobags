@@ -100,22 +100,24 @@ local function setVaults(self, vaults)
 	local maxn = 0
 	local max = math.max
 	
-	for slot, name in pairs(vaults) do
-		local index = index(slot)
-		local btn = self.vaultButtons[index]
-		if(not btn) then
-			btn = createVaultButton(self, index)
-			self.vaultButtons[index] = btn
-			maxn = max(maxn, index)
-			if(index == 1) then
-				btn:SetPoint("LEFTCENTER", self, "LEFTCENTER", 10, 0)
+	if(vaults and vaults ~= "nil") then
+		for slot, name in pairs(vaults) do
+			local index = index(slot)
+			local btn = self.vaultButtons[index]
+			if(not btn) then
+				btn = createVaultButton(self, index)
+				self.vaultButtons[index] = btn
+				maxn = max(maxn, index)
+				if(index == 1) then
+					btn:SetPoint("LEFTCENTER", self, "LEFTCENTER", 10, 0)
+				end
+			elseif(not btn:GetVisible()) then
+				btn:SetWidth(0)
+				btn:SetVisible(true)
+				btn:AnimateWidth(Const.AnimationsDuration, "linear", 16)
 			end
-		elseif(not btn:GetVisible()) then
-			btn:SetWidth(0)
-			btn:SetVisible(true)
-			btn:AnimateWidth(Const.AnimationsDuration, "linear", 16)
+			btn.name = name
 		end
-		btn.name = name
 	end
 	
 	for i = max(2, self.numVaults + 1), maxn do
