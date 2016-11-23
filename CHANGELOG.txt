@@ -1,3 +1,8 @@
+0.35beta (November 2016)
+---------
+- Added new collectible categories
+
+
 0.34beta (August 2016)
 ---------
 - Fixed "Error: ImhoBags/ItemContainer/GuildBar.lua:103: bad argument #1 to ''pairs'' (table expected, got nil)"
