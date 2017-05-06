@@ -1,3 +1,15 @@
+0.37beta (May 2017)
+---------
+**REMOVED CURSE "AUTO" LOCALIZATION ROUTINES**  [Amadeus]
+Curse.com changed something in early 2017 which causes errors in the individual localization files created 
+automatically by Curse.  Since no one is actively working on this addon, and given that I cannot find any 
+documentation on the change, along with the fact that I don't have time to research and/or work on it, I'm 
+simply going to include the generated localization files from 0.35beta.
+
+If/when someone wants to work on this project again, simply revert the entire "locales" directory back to 
+the commit tagged as "0.36beta" then debug/fix it.
+
+
 0.36beta (May 2017)
 ---------
 * Update to allow for items with rarity 'eternal' [submitted by kinou]
