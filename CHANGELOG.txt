@@ -1,3 +1,8 @@
+0.36beta (May 2017)
+---------
+* Update to allow for items with rarity 'eternal' [submitted by kinou]
+
+
 0.35beta (November 2016)
 ---------
 - Added new collectible categories

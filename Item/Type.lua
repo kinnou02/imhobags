@@ -3,15 +3,16 @@ local Addon, private = ...
 -- Locals
 local types = setmetatable({ }, { __mode = "v" })
 local colors = {
-	sellable =			{		0.34375, 	0.34375, 		0.34375 	},
-	common =				{  	0.98,    	0.98,    		0.98 			},
-	uncommon =			{ 	0.0,   		0.797,     	0.0 			},
-	rare =					{   0.148,   	0.496,   		0.977 		},
-	epic =					{   0.676,   	0.281,     	0.98 			},
-	quest =					{  	1.0,     	1.0,     		0.0 			},
-	relic =					{ 	1.0,     	0.5,     		0.0 			},
-	transcendent =	{  	1.0,     	0.0,     		0.0 			},
-	ascended =    	{  	0.93,    	0.51,   	 	0.93			},
+	sellable =			{	0.34375, 	0.34375, 		0.34375 		},
+	common =			{  	0.98,    	0.98,    		0.98 			},
+	uncommon =			{ 	0.0,   		0.797,     		0.0 			},
+	rare =				{   0.148,   	0.496,   		0.977 			},
+	epic =				{   0.676,   	0.281,     		0.98 			},
+	quest =				{  	1.0,     	1.0,     		0.0 			},
+	relic =				{ 	1.0,     	0.5,     		0.0 			},
+	transcendent =		{	1.0,     	0.0,     		0.0 			},
+	ascended =    		{  	0.93,    	0.51,   	 	0.93			},
+	eternal  =      	{   0.39,       0.85,           1               },
 }
 
 setfenv(1, private)

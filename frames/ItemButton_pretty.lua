@@ -15,13 +15,14 @@ local rarityTextureMap = {
 	quest =					"icon_border_quest.dds",
 	rare =					"icon_border_rare.dds",
 	relic =					"icon_border_relic.dds",
-	sellable =			"icon_border_disabled.dds",
-	transcendent =	"icon_border_transcended.dds",
-	uncommon =			"icon_border_uncommon.dds",
-	ascended =      "icon_border_heirloom.dds",   
+	sellable =				"icon_border_disabled.dds",
+	transcendent =			"icon_border_transcended.dds",
+	uncommon =				"icon_border_uncommon.dds",
+	ascended =      		"icon_border_heirloom.dds",
+	eternal =      			"icon_border_eternal.dds",
 }
 -- preload external textures
-for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendent", "uncommon", "ascended" }) do
+for i, v in ipairs({ "common", "epic", "quest", "rare", "relic", "sellable", "transcendent", "uncommon", "ascended", "eternal" }) do
 	local tex = UI.CreateFrame("Texture", "", Ux.Context)
 	tex:SetTexture("Rift", rarityTextureMap[v])
 	tex:SetVisible(false)
