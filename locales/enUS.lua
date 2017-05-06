@@ -6,25 +6,25 @@ if(private.L) then
 end
 --@end-non-debug@]===]
 
-private.L = {
+private["L"] = {
 	-- Category translation
 	-- [english] = translated
 	-- Although categories can have multiple words (e.g. "weapon sword onehand")
 	-- only the first word is used for grouping/sorting and needs to be translated.
 	-- Should match the headings in the auction house.
-	CategoryName = {
-		armor = "Armor",
-		consumable = "Consumables",
+	["CategoryName"] = {
+		["armor"] = "Armor",
+		["consumable"] = "Consumables",
 		["consumable enchantment"] = "Enchantments",
-		container = "Containers",
-		crafting = "Crafting",
-		dimension = "Dimension",
-		misc = "Miscellaneous",
+		["container"] = "Containers",
+		["crafting"] = "Crafting",
+		["dimension"] = "Dimension",
+		["misc"] = "Miscellaneous",
 		["misc quest"] = "Quest",
-		planar = "Planar",
-		weapon = "Weapons",
+		["planar"] = "Planar",
+		["weapon"] = "Weapons",
 		-- Used for the collapsible group with sellable items
-		sellable = "Junk",
+		["sellable"] = "Junk",
 		-- Special case for collectibles (e.g. artifacts)
 		["artifact normal"] = "Collectibles",
 		["artifact twisted"] = "Collectibles",
@@ -43,11 +43,11 @@ private.L = {
 		-- Special case for costumes
 		["armor costume"] = "Costumes",
 		-- Special case for lootable container items
-		lootable = "Lootable",
+		["lootable"] = "Lootable",
 		-- Special case for empty slots
-		empty = "Empty",
+		["empty"] = "Empty",
 		-- Designator for equipped wardrobe sets
-		wardrobe = "Wardrobe Set %i",
+		["wardrobe"] = "Wardrobe Set %i",
 		-- Crafting material names
 		["crafting material cloth"] = "Cloth",
 		["crafting material component"] = "Rune Components",
@@ -64,7 +64,7 @@ private.L = {
 		["crafting ingredient drop"] = "Drops",
 		-- Dreamweaving
 		["crafting recipe dream weaver"] = "Dream Weaving",
-		nightmare = "Nightmare Rifts",
+		["nightmare"] = "Nightmare Rifts",
 	},
 	
 	-- The shortcuts used in the tooltip overview
