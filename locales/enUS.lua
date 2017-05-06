@@ -1,10 +1,10 @@
 local private = select(2, ...)
 
---[===[@non-debug@
+--@non-debug@
 if(private.L) then
 	return
 end
---@end-non-debug@]===]
+--@end-non-debug@
 
 private.L = {
 	-- Category translation
